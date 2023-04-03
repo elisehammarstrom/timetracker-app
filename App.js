@@ -6,6 +6,7 @@ export default function App() {
     <SafeAreaView>
       <Text>Hello World</Text>
       <Text>Nina was here</Text>
+      <Text>Lovisa was here</Text>
       <Text>Platform: {Platform.OS === 'ios' ? 'ios' : 'android'}</Text>
       <StatusBar style='dark'/>
     </SafeAreaView>
