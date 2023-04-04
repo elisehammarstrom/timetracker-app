@@ -1,9 +1,14 @@
-import { StatusBar } from 'expo-status-bar';
 import Home from './components/home';
+import Detail from './components/detail';
 
-export default function App() {
+import { createAppContainer } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
 
-  return (
-      <Home msg="Hello from App"/>
-  );
-}
+const AppNavigator = createStackNavigator({
+  Home: {screen: Home},
+  Detail: {screen: Detail}
+})
+
+const App = createAppContainer(AppNavigator);
+
+export default App;
