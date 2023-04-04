@@ -1,0 +1,6 @@
+{
+    "files.autoSave": "onWindowChange",
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "python.defaultInterpreterPath": "../timetrackerApi/venv/bin/python3"
+    
+}
