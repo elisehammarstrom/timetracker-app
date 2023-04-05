@@ -8,18 +8,21 @@ import { useNavigation } from '@react-navigation/native';
 
 const HomeScreen = () => {
 
-    const onTimerPressed = () => {
-        navigation.navigate('Timer');
+    const onCoursePressed = () => {
+        
+        navigation.navigate('StartCourses');
     };
     
     const navigation = useNavigation();
-    
+
     return (
         <View>
             <Text>Home, sweet home</Text>
+            
             <CustomButton 
-                text="Go to timer" 
-                onPress={onTimerPressed}
+            text="Go to courses" 
+            onPress={onCoursePressed}
+
             />
 
         </View>
