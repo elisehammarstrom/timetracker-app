@@ -11,21 +11,24 @@ const CourseScreen = () => {
     };
     
     const navigation = useNavigation();
+
+
     
     return (
         <View>
-            <FlatList 
+          <FlatList
+            
              data={[
-                 {key: "Mekanik"},
-                 {key: "Miljöteknik"},
-                 {key: "Reglerteknik"},
-                 {key: "Transformmetoder"},
-                 {key: "Envariabelanalys"},
-                 {key: "Linjär Alegebra I"},
+                 {id: 1, name: "Mekanik"},
+                 {id: 2, name: "Miljöteknik"},
+                 {id: 3, name: "Reglerteknik"},
+                 {id: 4, name: "Transformmetoder"},
+                 {id: 5, name: "Envariabelanalys"},
+                 {id: 6, name: "Linjär Alegebra I"},
                  
              ]}
              renderItem={ 
-                 ({item}) => <Text style={styles.text}>{item.key} <CheckBoxes/> </Text>
+                 ({item}) => <Text style={styles.text}>{item.name} <CheckBoxes id ={item.name} /></Text>
              }
          />
             <CustomButton 
@@ -35,7 +38,6 @@ const CourseScreen = () => {
 
         
         </View>
-
         
     )
 }
@@ -58,6 +60,12 @@ const styles = StyleSheet.create ({
       },
       label: {
         margin: 8,
+      },
+      name: {
+        backgroundColor: "blue",
+        color: "white",
+        padding: 2,
+        margin: 2,
       },
 })
 

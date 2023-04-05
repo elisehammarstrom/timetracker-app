@@ -12,6 +12,7 @@ const CheckBoxes= () => {
             style={styles.checkbox}
             />
             {isSelected ? 'yes' : 'no'}
+            
       </SafeAreaView>
 
     );
