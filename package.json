@@ -16,12 +16,8 @@
     "expo-status-bar": "~1.4.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-<<<<<<< HEAD
     "react-hook-form": "^7.43.9",
     "react-native": "0.71.4",
-=======
-    "react-native": "0.71.6",
->>>>>>> 0cfd60babb8c27517d40b921d06d0ad8daaaafd6
     "react-native-gesture-handler": "^2.9.0",
     "react-native-safe-area-context": "4.5.0",
     "react-native-screens": "~3.20.0",
