@@ -1,9 +1,16 @@
 import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import react, {useState} from 'react';
+import { useNavigation } from '@react-navigation/native';
+import CustomButton from '../../components/CustomButton';
 
 const CourseScreen = () => {
+    const navigation = useNavigation();
     const [courses, setCourses] = useState([])
     const options = ["Mekanik", "Reglerteknik", "Envariabelanalys"]
+
+    const onTimerPressed = () => {
+      navigation.navigate('Timer');
+   };
 
       function pickCourse(selectedCourse) {
         if(courses.includes(selectedCourse)){
@@ -28,6 +35,10 @@ const CourseScreen = () => {
                   </View>
 
                 ))}
+                 <CustomButton 
+                text="Go to timer" 
+                onPress={onTimerPressed}
+            />
             </View>
             </View>
     );

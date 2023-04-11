@@ -22,7 +22,6 @@ const HomeScreen = () => {
             <CustomButton 
             text="Go to courses" 
             onPress={onCoursePressed}
-
             />
 
         </View>
