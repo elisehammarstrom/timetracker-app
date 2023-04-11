@@ -32,6 +32,7 @@ class MyUserManager(BaseUserManager):
             password=password,
             name=name,
         )
+
         user.is_admin = True
         user.save(using=self._db)
         return user
@@ -53,7 +54,6 @@ class CustomStudent(AbstractBaseUser):
         "Does the user have permissions to view the app `app_label`?"
         # Simplest possible answer: Yes, always
         return True """
-
 
     USERNAME_FIELD = "email"
     REQUIRED_FELDS=[]
