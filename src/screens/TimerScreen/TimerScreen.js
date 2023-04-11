@@ -14,8 +14,7 @@ const TimerScreen = ({route}) => {
           <Text> Track Your Time</Text>
           {options.map(option => (
                 <View key={option}>
-                  <Text style={styles.title}>{option}</Text>
-                  <Timer/>
+                  <Timer courseName={option}/>
 
                   </View>
 

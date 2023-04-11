@@ -11,6 +11,7 @@ const CourseScreen = () => {
     const onTimerPressed = () => {
 
         navigation.navigate('Timer', {options: courses});
+
       
    };
 
