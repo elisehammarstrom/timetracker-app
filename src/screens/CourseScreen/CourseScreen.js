@@ -1,72 +1,70 @@
-import React, {useState} from "react";
-import { View, Text, CheckBox, FlatList, StyleSheet } from 'react-native';
-import CustomButton from '../../components/CustomButton';
-import { useNavigation } from '@react-navigation/native';
-import CheckBoxes from "../../components/CheckBoxes";
+import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import react, {useState} from 'react';
 
 const CourseScreen = () => {
+    const [courses, setCourses] = useState([])
+    const options = ["Mekanik", "Reglerteknik", "Envariabelanalys"]
 
-    const onTimerPressed = () => {
-        navigation.navigate('Timer');
-    };
-    
-    const navigation = useNavigation();
+      function pickCourse(selectedCourse) {
+        if(courses.includes(selectedCourse)){
+          setCourses(courses.filter(Course => Course !== selectedCourse))
+          return;
+        }
 
+        setCourses(Courses => Courses.concat(selectedCourse))
 
-    
+      }
+
     return (
-        <View>
-          <FlatList
-            
-             data={[
-                 {id: 1, name: "Mekanik"},
-                 {id: 2, name: "Miljöteknik"},
-                 {id: 3, name: "Reglerteknik"},
-                 {id: 4, name: "Transformmetoder"},
-                 {id: 5, name: "Envariabelanalys"},
-                 {id: 6, name: "Linjär Alegebra I"},
-                 
-             ]}
-             renderItem={ 
-                 ({item}) => <Text style={styles.text}>{item.name} <CheckBoxes id ={item.name} /></Text>
-             }
-         />
-            <CustomButton 
-                text="Go to timer" 
-                onPress={onTimerPressed}
-            />
+        <View styles={styles.container}>
+            <Text styles={styles.title}>Select your preferred courses</Text>
+            <View styles={styles.options}>
+              {options.map(option => (
+                <View key={option} style={styles.course}>
+                  <TouchableOpacity style={styles.checkBox} onPress={()=>pickCourse(option)}>
+                    {courses.includes(option) && <Text style={styles.check}>✓</Text>}
+                  </TouchableOpacity>
+                  <Text style={styles.courseName}>{option}</Text>
+                  </View>
 
-        
-        </View>
-        
-    )
-}
-const styles = StyleSheet.create ({
-    text: {
-        flex: 1,
-        fontSize: 40
-    },
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-      },
-      checkboxContainer: {
-        flexDirection: 'row',
-        marginBottom: 20,
-      },
-      checkbox: {
-        alignSelf: 'center',
-      },
-      label: {
-        margin: 8,
-      },
-      name: {
-        backgroundColor: "blue",
-        color: "white",
-        padding: 2,
-        margin: 2,
-      },
+                ))}
+            </View>
+            </View>
+    );
+};
+
+const styles = StyleSheet.create({
+  check: {
+    alignSelf: 'center',
+  },
+  courseName: {
+    textTransform: 'capitalize',
+    fontSize: 16,
+  },
+  checkBox: {
+    width: 25,
+    height: 25,
+    borderWidth: 2,
+    borderColor: 'green',
+    marginRight: 5,
+  },
+  course: {
+    flexDirection: 'row',
+    marginVertical: 7,
+  },
+  options: {
+    alignSelf: 'flex-start',
+    marginLeft: 50,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 })
 
-export default CourseScreen
+export default CourseScreen;
