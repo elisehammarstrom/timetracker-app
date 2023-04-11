@@ -62,7 +62,7 @@ const SignUpScreen = () => {
             />
 
             <CustomButton    
-                text="Have and account? Sign in" 
+                text="Have an account? Sign in" 
                 onPress={onSignInPress}
                 type="TERTIARY"
             />
@@ -75,14 +75,19 @@ const SignUpScreen = () => {
 const styles = StyleSheet.create({
     root: {
         alignItems: 'center',
-        padding: 20,
+        justifyContent: 'center',
+        padding: 50,
+        backgroundColor: '#313131',
+        height: '100%',
 
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#051C60',
+        color: '#EFEFEF',
         margin: 10,
+        marginBottom: 50,
+
     },
     
 });

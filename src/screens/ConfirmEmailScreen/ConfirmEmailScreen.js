@@ -64,13 +64,16 @@ const ConfirmEmailScreen = () => {
 const styles = StyleSheet.create({
     root: {
         alignItems: 'center',
-        padding: 20,
+        justifyContent: 'center',
+        padding: 50,
+        backgroundColor: '#313131',
+        height: '100%',
 
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#051C60',
+        color: '#EFEFEF',
         margin: 10,
     },
     

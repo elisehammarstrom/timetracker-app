@@ -18,6 +18,7 @@ const CustomInput = ({control, name, rules, placeholder, secureTextEntry}) => {
                         placeholder={placeholder} 
                         style={styles.input}
                         secureTextEntry={secureTextEntry}
+                        autoCapitalize="none"
                     />
                     </View>
                     {error && (<Text style={{color: 'red', alignSelf: 'stretch'}}>{error.message || 'Error'} </Text>)}
@@ -30,13 +31,13 @@ const CustomInput = ({control, name, rules, placeholder, secureTextEntry}) => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: 'white',
+        backgroundColor: '#EFEFEF',
         width: '100%',
         borderColor: '#e8e8e8',
         borderWidth: 1,
         borderRadius: 5,
-        marginVertical: 5,
-        padding: 5
+        marginVertical: 10,
+        padding: 10
     },
     input: {
         fontSize: 20
