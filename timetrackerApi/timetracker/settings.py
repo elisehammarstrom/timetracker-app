@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'api',
 ]
+AUTH_USER_MODEL = 'users.CustomStudent'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
