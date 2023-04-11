@@ -4,15 +4,22 @@ import Logo from '../../../assets/icon.png';
 
 
 
-const TimerScreen = () => {
+const TimerScreen = ({route}) => {
+
+  const {options} = route.params;
 
   
   return (
       <View style={styles.test} >
           <Text> Track Your Time</Text>
+          {options.map(option => (
+                <View key={option}>
+                  <Text style={styles.title}>{option}</Text>
+                  <Timer/>
 
-          <Timer 
-          />
+                  </View>
+
+                ))}
 
       </View>
   )
@@ -22,11 +29,16 @@ const TimerScreen = () => {
 
 const styles = StyleSheet.create({
   test: {
-      backgroundColor: '#313131',
       height: '100%',
       
 
-  }
+  },
+  title: {
+    textAlign: 'center',
+    fontSize: 20,
+    fontWeight: 'bold',
+    padding: 20,
+  },
 });
 
 

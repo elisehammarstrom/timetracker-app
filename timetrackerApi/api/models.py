@@ -88,7 +88,11 @@ class Course(models.Model):
         if len(courseEvaluations) > 0:
             return sum / len(courseEvaluations)
         else:
-            return 0
+            return 0 
+    
+    def __str__(self):
+        courseInfoString = self.courseTitle + " (" + self.courseCode + ")"
+        return (courseInfoString)
 
 
 class CourseEvaluation(models.Model):
@@ -100,5 +104,18 @@ class CourseEvaluation(models.Model):
         unique_together = (("user", "course" ), ) #vi behöver kolla att man 
         #kan ändra sin kursutvärdering och stresslevel
         index_together = (("user", "course" ), )
+
+    def __str__(self):
+        courseEvaluationInfoString = "Course:" + self.course.courseTitle + ";" + "User:" + self.user.username + ";"
+        return courseEvaluationInfoString 
+
+class Programme(models.Model):
+    programmeID = models.CharField(max_length=10)
+    programmeName = models.CharField(max_length=100)
+    courses = models.ManyToManyField(Course, related_name="programmes")   
+
+    def __str__(self):
+        programmeInfoString =  self.programmeName + "(" + self.programmeID + ") "
+        return programmeInfoString 
 
 

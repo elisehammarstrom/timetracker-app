@@ -9,7 +9,9 @@ const CourseScreen = () => {
     const options = ["Mekanik", "Reglerteknik", "Envariabelanalys"]
 
     const onTimerPressed = () => {
-      navigation.navigate('Timer');
+
+        navigation.navigate('Timer', {options: courses});
+      
    };
 
       function pickCourse(selectedCourse) {

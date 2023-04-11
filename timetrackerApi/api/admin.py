@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
-from .models import Course, CourseEvaluation, CustomStudent
+from .models import Course, CourseEvaluation, CustomStudent, Programme
 
 
 
@@ -92,5 +92,6 @@ admin.site.register(CustomStudent, UserAdmin)
 
 admin.site.register(Course)
 admin.site.register(CourseEvaluation)
+admin.site.register(Programme)
 
 
