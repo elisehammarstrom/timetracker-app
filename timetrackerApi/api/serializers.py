@@ -11,7 +11,6 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
-        print("innan token tjoho")
         token = Token.objects.create(user=user)
         print("token: ", token)
         return user
