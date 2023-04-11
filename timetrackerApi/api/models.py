@@ -1,12 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.core.validators import MinValueValidator, MaxValueValidator
 from datetime import datetime
 import uuid
 
 # Create your models here.
-
 class MyUserManager(BaseUserManager):
     def create_user(self, email, name, password=None):
         # Creates and saves a User with the given email, date of
@@ -40,12 +39,12 @@ class MyUserManager(BaseUserManager):
 class CustomStudent(AbstractBaseUser):
     email = models.EmailField(verbose_name='email address',
         max_length=255,
-         unique=True,)
+        unique=True,)
     name = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
     teacher = models.BooleanField(default=False)
     admin = models.BooleanField(default=False)
-  """   def has_perm(self, perm, obj=None):
+    """def has_perm(self, perm, obj=None):
         "Does the user have a specific permission?"
         # Simplest possible answer: Yes, always
         return True
