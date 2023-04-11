@@ -13,9 +13,6 @@ const Timer = () => {
     return (
         <SafeAreaView>
            <View style={styles.container}>
-       <Text style={styles.title}>
-         STOPWATCH
-       </Text>
 
        <View style={styles.sectionStyle}>
          <Stopwatch
@@ -23,30 +20,24 @@ const Timer = () => {
            secs
            start={isStopwatchStart}
            // To start
-           reset={resetStopwatch}
-           // To reset
+    
            options={options}
            // Options for the styling
            getTime={(time) => {
              console.log(time);
-           }}
-         />
+           }}/>
+
          <TouchableHighlight
            onPress={() => {
              setIsStopwatchStart(!isStopwatchStart);
              setResetStopwatch(false);
            }}>
            <Text style={styles.buttonText}>
-             {!isStopwatchStart ? 'START' : 'STOP'}
+             {!isStopwatchStart ? '▶️' : '⏸'}
            </Text>
          </TouchableHighlight>
-         <TouchableHighlight
-           onPress={() => {
-             setIsStopwatchStart(false);
-             setResetStopwatch(true);
-           }}>
-           <Text style={styles.buttonText}>RESET</Text>
-         </TouchableHighlight>
+         
+        
        </View>
          </View>
         </SafeAreaView>
@@ -60,12 +51,7 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
     },
-    title: {
-      textAlign: 'center',
-      fontSize: 20,
-      fontWeight: 'bold',
-      padding: 20,
-    },
+
     sectionStyle: {
       flex: 1,
       marginTop: 32,
@@ -74,13 +60,12 @@ const styles = StyleSheet.create({
     },
     buttonText: {
       fontSize: 20,
-      marginTop: 10,
     },
   });
   
   const options = {
     container: {
-      backgroundColor: '#FF0000',
+      backgroundColor: 'blue',
       padding: 5,
       borderRadius: 5,
       width: 200,
