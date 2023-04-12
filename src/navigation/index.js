@@ -1,5 +1,4 @@
 import React from 'react';
-import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
 
@@ -11,6 +10,8 @@ import NewPasswordScreen from '../screens/NewPasswordScreen';
 import HomeScreen from '../screens/HomeScreen';
 import TimerScreen from '../screens/TimerScreen';
 import CourseScreen from '../screens/CourseScreen';
+import CourseStatsScreen from '../screens/CourseStatsScreen';
+import YourReportsScreen from '../screens/YourReportsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,9 +27,9 @@ const Navigation = () => {
                 <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
                 <Stack.Screen name="NewPassword" component={NewPasswordScreen} />
                 <Stack.Screen name="Home" component={HomeScreen} />
-                
-                
-                
+                <Stack.Screen name="CourseStats" component={CourseStatsScreen} /> 
+                <Stack.Screen name="YourReports" component={YourReportsScreen} />                
+
             </Stack.Navigator>
         </NavigationContainer>
     )
