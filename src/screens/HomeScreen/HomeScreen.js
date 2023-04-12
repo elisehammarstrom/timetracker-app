@@ -1,10 +1,9 @@
-import React from "react";
-import { View, Text } from 'react-native';
+
+
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
-
-
-
+import React, {useState} from 'react';
+import {Text, View} from 'react-native';
 
 const HomeScreen = () => {
 
@@ -12,6 +11,12 @@ const HomeScreen = () => {
         
         navigation.navigate('StartCourses');
     };
+
+       const onCalendarPressed = () => {
+        
+        navigation.navigate('StartCalendar');
+    }; 
+
     
     const navigation = useNavigation();
 
@@ -22,6 +27,11 @@ const HomeScreen = () => {
             <CustomButton 
             text="Go to courses" 
             onPress={onCoursePressed}
+            />
+
+            <CustomButton 
+            text="Go to calendar" 
+            onPress={onCalendarPressed}
             />
 
         </View>

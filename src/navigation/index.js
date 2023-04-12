@@ -11,6 +11,7 @@ import NewPasswordScreen from '../screens/NewPasswordScreen';
 import HomeScreen from '../screens/HomeScreen';
 import TimerScreen from '../screens/TimerScreen';
 import CourseScreen from '../screens/CourseScreen';
+import CalendarScreen from '../screens/CalendarScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,6 +19,9 @@ const Navigation = () => {
     return (
         <NavigationContainer>
             <Stack.Navigator screenOptions={{headerShown: true}}>
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="StartCalendar" component={CalendarScreen} />
+            
                 <Stack.Screen name="StartCourses" component={CourseScreen}/>
                 <Stack.Screen name="Timer" component={TimerScreen}/>
                 <Stack.Screen name="SignIn" component={SignInScreen} />
@@ -25,7 +29,8 @@ const Navigation = () => {
                 <Stack.Screen name="ConfirmEmail" component={ConfirmEmailScreen} />
                 <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
                 <Stack.Screen name="NewPassword" component={NewPasswordScreen} />
-                <Stack.Screen name="Home" component={HomeScreen} />
+                
+                
                 
                 
                 
