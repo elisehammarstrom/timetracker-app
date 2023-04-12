@@ -1,13 +1,29 @@
-import {View, Text, StyleSheet, Image, } from 'react-native';
+import {View, Text, StyleSheet } from 'react-native';
 import Timer from '../../components/Timer';
-import Logo from '../../../assets/icon.png';
+import CustomButton from '../../components/CustomButton';
+import { useNavigation } from '@react-navigation/native';
 
 
 
 const TimerScreen = ({route}) => {
 
   const {options} = route.params;
+  const navigation = useNavigation();
 
+  const onYourReportsPress = data => {
+    console.log(data)
+    navigation.navigate('YourReports', {paramKey: options})
+  };
+
+//   const onTimetrackingPress = data => {
+//     console.log(data)
+//     navigation.navigate('Timer')
+// };
+
+ const onCourseStatsPress = data => {
+    console.log(data)
+    navigation.navigate('CourseStats')
+  };
   
   return (
       <View style={styles.test} >
@@ -15,10 +31,30 @@ const TimerScreen = ({route}) => {
           {options.map(option => (
                 <View key={option}>
                   <Timer courseName={option}/>
-
-                  </View>
-
+                </View>
                 ))}
+          <View style={styles.container}>
+            <View style={styles.buttonContainer}>
+            <CustomButton 
+                  text="Your reports"
+                  onPress={onYourReportsPress}
+                  type="SECONDARY"
+                />
+            </View>    
+
+            <View style={styles.buttonContainer}>
+              <CustomButton
+                text="Timetracking"
+              />
+            </View>
+            <View style={styles.buttonContainer}>
+                <CustomButton 
+                  text="Course stats"
+                  onPress={onCourseStatsPress}
+                  type="SECONDARY"
+                />
+              </View>
+            </View>
 
       </View>
   )
@@ -38,6 +74,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     padding: 20,
   },
+  container: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonContainer: {
+    flex: 1,
+
+  }
 });
 
 
