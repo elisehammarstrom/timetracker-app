@@ -15,6 +15,8 @@ const TimerScreen = ({route}) => {
     navigation.navigate('YourReports', {paramKey: options})
   };
 
+
+
 //   const onTimetrackingPress = data => {
 //     console.log(data)
 //     navigation.navigate('Timer')
@@ -24,13 +26,15 @@ const TimerScreen = ({route}) => {
     console.log(data)
     navigation.navigate('CourseStats')
   };
+ 
   
   return (
       <View style={styles.test} >
           <Text> Track Your Time</Text>
           {options.map(option => (
                 <View key={option}>
-                  <Timer courseName={option}/>
+                  
+                  <Timer courseName={option} color="ONE"/>
                 </View>
                 ))}
           <View style={styles.container}>

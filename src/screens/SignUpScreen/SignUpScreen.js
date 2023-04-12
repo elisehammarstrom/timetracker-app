@@ -16,7 +16,7 @@ const SignUpScreen = () => {
 
     const onRegisterPressed = data => {
         console.log(data)
-        navigation.navigate('ConfirmEmail')
+        navigation.navigate('StartCourses')
     };
 
     const onSignInPress = () => {

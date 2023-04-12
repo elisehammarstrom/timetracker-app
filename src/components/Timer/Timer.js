@@ -2,7 +2,7 @@ import { Button,View, Text , TouchableHighlight,  StyleSheet,SafeAreaView, } fro
 import React, {useState} from 'react';
 import {Stopwatch} from 'react-native-stopwatch-timer';
 
-const Timer = ({courseName}) => {
+const Timer = ({courseName, color}) => {
     const [isStopwatchStart, setIsStopwatchStart] = useState(false);
     const [resetStopwatch, setResetStopwatch] = useState(false);
     const [isTimerStart, setIsTimerStart] = useState(false);
@@ -10,19 +10,11 @@ const Timer = ({courseName}) => {
     const [timerDuration, setTimerDuration] = useState(90000);
     const [resetTimer, setResetTimer] = useState(false);
 
-  
-    const colours = []
-
-
-    let courseColours = ['#77BB97', '#8CC2E4', '#FAA79E'];
-
-    let randColour = courseColours[Math.floor(Math.random() * courseColours.length)];
-
     return (
         <SafeAreaView>
            <View style={styles.container}>
 
-       <View style={styles.sectionStyle}>
+       <View style={[styles.sectionStyle, styles[`sectionStyle_${color}`]]}>
         <Text style={styles.title}>{courseName}</Text>
          <Stopwatch
            laps
@@ -74,8 +66,15 @@ const styles = StyleSheet.create({
       alignIems: 'center',
       justifyContent: 'center',
       padding: 10,
-      backgroundColor: 'pink',
-
+      // backgroundColor: 'pink',
+    },
+    sectionStyle_ONE:{
+      backgroundColor: 'pink'
+    }, sectionStyle_TWO:{
+      backgroundColor: 'blue'
+    },
+    sectionStyle_THREE:{
+      backgroundColor: 'green'
     },
     buttonText: {
       fontSize: 20,

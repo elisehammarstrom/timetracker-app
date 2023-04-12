@@ -3,14 +3,14 @@ import react, {useState} from 'react';
 import { useNavigation } from '@react-navigation/native';
 import CustomButton from '../../components/CustomButton';
 
-const CourseScreen = () => {
+const EvaluateCourseScreen = () => {
     const navigation = useNavigation();
     const [courses, setCourses] = useState([])
     const options = ["Mekanik", "Reglerteknik", "Envariabelanalys"]
 
 
-    const onTimerPressed = () => {
-        navigation.navigate('Timer', {options: courses});
+    const onEvaluateCoursePressed = () => {
+        navigation.navigate('Evaluation', {options: courses});
     };
     
 
@@ -26,7 +26,7 @@ const CourseScreen = () => {
 
     return (
         <View styles={styles.container}>
-            <Text styles={styles.title}>Select your preferred courses</Text>
+            <Text styles={styles.title}>Select course to Evaluate</Text>
             <View styles={styles.options}>
               {options.map(option => (
                 <View key={option} style={styles.course}>
@@ -38,49 +38,51 @@ const CourseScreen = () => {
 
                 ))}
                  <CustomButton 
-                text="Go to timer" 
-                onPress={onTimerPressed}
-            />
+                    text="Evaluate course" 
+                    onPress={onEvaluateCoursePressed}
+                />
             </View>
-            </View>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
-  check: {
-    alignSelf: 'center',
-  },
-  courseName: {
-    textTransform: 'capitalize',
-    fontSize: 16,
-  },
-  checkBox: {
-    width: 25,
-    height: 25,
-    borderWidth: 2,
-    borderColor: 'green',
-    marginRight: 5,
-  },
-  course: {
-    flexDirection: 'row',
-    marginVertical: 7,
-  },
-  options: {
-    alignSelf: 'flex-start',
-    marginLeft: 50,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#EFEFEF',
-    margin: 10,
-    marginBottom: 50,
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+    container: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 50,
+        backgroundColor: '#313131',
+        height: '100%'
+    },
+    check: {
+        alignSelf: 'center',
+    },
+    courseName: {
+        textTransform: 'capitalize',
+        fontSize: 16,
+    },
+    checkBox: {
+        width: 25,
+        height: 25,
+        borderWidth: 2,
+        borderColor: 'green',
+        marginRight: 5,
+    },
+    course: {
+        flexDirection: 'row',
+        marginVertical: 7,
+    },
+    options: {
+        alignSelf: 'flex-start',
+        marginLeft: 50,
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#EFEFEF',
+        margin: 10,
+        marginBottom: 50,
+    },
 })
 
-export default CourseScreen;
+export default EvaluateCourseScreen;
