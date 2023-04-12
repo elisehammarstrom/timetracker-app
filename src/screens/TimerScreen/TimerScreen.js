@@ -3,6 +3,8 @@ import Timer from '../../components/Timer';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 
+
+
 const TimerScreen = ({route}) => {
 
   const {options} = route.params;
@@ -22,7 +24,6 @@ const TimerScreen = ({route}) => {
     console.log(data)
     navigation.navigate('CourseStats')
   };
-
   
   return (
       <View style={styles.test} >
@@ -31,33 +32,29 @@ const TimerScreen = ({route}) => {
                 <View key={option}>
                   <Timer courseName={option}/>
                 </View>
-          ))}
-
-          <View styles={styles.container}>
-            <View styles={styles.buttonContainer}>
-              <CustomButton 
-                text="Your reports"
-                onPress={onYourReportsPress}
-                type="SECONDARY"
-              />
-            </View>
-
-            <View styles={styles.buttonContainer}>
-              <CustomButton 
-                text="Timetracking"
-                // onPress={onTimetrackingPress}
-              />
-            </View>
+                ))}
+          <View style={styles.container}>
+            <View style={styles.buttonContainer}>
+            <CustomButton 
+                  text="Your reports"
+                  onPress={onYourReportsPress}
+                  type="SECONDARY"
+                />
+            </View>    
 
             <View style={styles.buttonContainer}>
-              <CustomButton 
-                text="Course stats"
-                onPress={onCourseStatsPress}
-                type="SECONDARY"
+              <CustomButton
+                text="Timetracking"
               />
             </View>
-          </View>
-          
+            <View style={styles.buttonContainer}>
+                <CustomButton 
+                  text="Course stats"
+                  onPress={onCourseStatsPress}
+                  type="SECONDARY"
+                />
+              </View>
+            </View>
 
       </View>
   )
@@ -68,6 +65,8 @@ const TimerScreen = ({route}) => {
 const styles = StyleSheet.create({
   test: {
       height: '100%',
+      
+
   },
   title: {
     textAlign: 'center',

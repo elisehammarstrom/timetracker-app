@@ -1,4 +1,5 @@
 import React from 'react';
+import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
 
@@ -10,9 +11,9 @@ import NewPasswordScreen from '../screens/NewPasswordScreen';
 import HomeScreen from '../screens/HomeScreen';
 import TimerScreen from '../screens/TimerScreen';
 import CourseScreen from '../screens/CourseScreen';
-import CourseStatsScreen from '../screens/CourseStatsScreen';
-import YourReportsScreen from '../screens/YourReportsScreen';
 import CalendarScreen from '../screens/CalendarScreen';
+import CourseStatsScreen from '../screens/CourseStatsScreen/CourseStatsScreen';
+import YourReportsScreen from '../screens/YourReportsScreen/YourReportsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,19 +23,16 @@ const Navigation = () => {
             <Stack.Navigator screenOptions={{headerShown: true}}>
             <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="StartCalendar" component={CalendarScreen} />
-            
-                <Stack.Screen name="StartCourses" component={CourseScreen}/>
-                <Stack.Screen name="Timer" component={TimerScreen}/>
-                <Stack.Screen name="SignIn" component={SignInScreen} />
-                <Stack.Screen name="SignUp" component={SignUpScreen} />
-                <Stack.Screen name="ConfirmEmail" component={ConfirmEmailScreen} />
-                <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-                <Stack.Screen name="NewPassword" component={NewPasswordScreen} />
-                <Stack.Screen name="Home" component={HomeScreen} />
-                <Stack.Screen name="CourseStats" component={CourseStatsScreen}/>
-                <Stack.Screen name="YourReports" component={YourReportsScreen}/>
-                
-                
+            <Stack.Screen name="StartCourses" component={CourseScreen}/>
+            <Stack.Screen name="Timer" component={TimerScreen}/>
+            <Stack.Screen name="SignIn" component={SignInScreen} />
+            <Stack.Screen name="SignUp" component={SignUpScreen} />
+            <Stack.Screen name="ConfirmEmail" component={ConfirmEmailScreen} />
+            <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+            <Stack.Screen name="NewPassword" component={NewPasswordScreen} />
+            <Stack.Screen name="CourseStats" component={CourseStatsScreen}/>
+            <Stack.Screen name="YourReports" component={YourReportsScreen}/>
+
                 
             </Stack.Navigator>
         </NavigationContainer>
