@@ -11,6 +11,10 @@ class User(AbstractUser):
     base_role = Role.ADMIN
 
     role = models.CharField(max_length=50, choices=Role.choices)
+    email = models.EmailField(verbose_name='email address', unique=True)
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+    
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -44,11 +48,11 @@ class StudentManager(BaseUserManager):
 
 class Student(User):
     base_role = User.Role.STUDENT
+    university = models.CharField(max_length=70)
+    #programme= models.ForeignKey(Programme, on_delete=models.CASCADE)
 
     student = StudentManager()
 
-    class Meta:
-        proxy = True
 
     def welcome(self):
         return "Only for students"
