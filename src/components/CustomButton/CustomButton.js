@@ -1,3 +1,5 @@
+//Button component to make it easier to implement the same styles. Implementing a "type" to have a few different styles
+
 import React from "react";
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 
@@ -21,7 +23,7 @@ const styles =StyleSheet.create({
     },
     container_PRIMARY: {
         backgroundColor: '#80CAFF',
-        marginTop: 25
+        // marginTop: 25
     },
 
     container_SECONDARY: {

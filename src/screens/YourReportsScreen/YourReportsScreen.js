@@ -7,41 +7,57 @@ import { useState } from "react";
 
 
 const YourReportsScreen = ({route}) => {
-    // const [courses, setCourses]= useState(route.params.paramKey)
+    const [legendCourses, setLegendCourses]= useState(route.params.paramKey)
     const [type, setType] = useState("SECONDARY")
+    const [data, setData] = useState([])
 
-    var courses = route.params.paramKey
+    const courses = route.params.paramKey
+    const length = courses.length
 
-    var data = {
+    var items = []
+    var types = []
+    // var barColors = []
+
+    //Data for stacked bar chart
+    var ourData = {
         labels: ['Mon', 'Tue', 'Wen', 'Thu', 'Fri'],
-        legend: courses,
-        data: [[5, 3, 0], [3, 2, 3], [1, 2, 5], [0, 0, 8], [2, 4, 1]],
+        legend: legendCourses,
+        data: data,
         barColors: ['#66C7FD', '#5987CC', '#AC7CE4'],
     }
 
+    //Choosing a course to see in the bar chart
     function coursePress(course) {
-        if (courses===course) {
-            courses = route.params.paramKey
-            console.log(courses)
-            setType("SECONDARY")
-
-        }
-        else {
-          
-            // setCourses(course)
-            courses = course
-            console.log(courses)
+        if (legendCourses===courses){
+            setLegendCourses([course])
+            console.log(legendCourses)
             setType("PRIMARY")
             console.log(type)
-
         }
-        
-
+        else {
+            setLegendCourses(route.params.paramKey)
+            console.log(legendCourses)
+            setType("SECONDARY")
+            console.log(type)
+        }
     }
+
+    for (let i=0; i<length; i++) {
+        items.push(
+            <CustomButton
+                text={courses[i]}
+                onPress={()=>coursePress(courses[i])}
+                type={types[i]}
+            />
+        )
+    } 
+
+
     return (
         <View>
+            {types}
             <StackedBarChart
-                data={data}
+                data={ourData}
                 width={Dimensions.get('window').width - 16}
                 height={220}
                 chartConfig={{
@@ -56,21 +72,19 @@ const YourReportsScreen = ({route}) => {
                 }}
                 style={styles.stackedBarChart}
             />
+
+            {/* Looping the courses to create buttons */}
             <View style={Styles.buttonContainer}>
-                {courses.map(course => (
+
+                {items}
+                {/* {courses.map(course => (
                     <CustomButton
                         text={course}
                         onPress={()=>coursePress(course)}
                         type={type}
                     />
-                ))}
-
-               
-            
+                ))} */}
             </View>
-
-
-
         </View>
     )
 }

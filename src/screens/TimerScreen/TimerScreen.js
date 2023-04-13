@@ -2,6 +2,7 @@ import {View, Text, StyleSheet } from 'react-native';
 import Timer from '../../components/Timer';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
+import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
 
 
 
@@ -9,57 +10,21 @@ const TimerScreen = ({route}) => {
 
   const {options} = route.params;
   const navigation = useNavigation();
-
-  const onYourReportsPress = data => {
-    console.log(data)
-    navigation.navigate('YourReports', {paramKey: options})
-  };
-
-
-
-//   const onTimetrackingPress = data => {
-//     console.log(data)
-//     navigation.navigate('Timer')
-// };
-
- const onCourseStatsPress = data => {
-    console.log(data)
-    navigation.navigate('CourseStats')
-  };
- 
   
   return (
       <View style={styles.test} >
           <Text> Track Your Time</Text>
+          {/* Looping the courses to create a timer for each course */}
           {options.map(option => (
                 <View key={option}>
                   
                   <Timer courseName={option} color="ONE"/>
                 </View>
                 ))}
-          <View style={styles.container}>
-            <View style={styles.buttonContainer}>
-            <CustomButton 
-                  text="Your reports"
-                  onPress={onYourReportsPress}
-                  type="SECONDARY"
-                />
-            </View>    
 
-            <View style={styles.buttonContainer}>
-              <CustomButton
-                text="Timetracking"
-              />
-            </View>
-            <View style={styles.buttonContainer}>
-                <CustomButton 
-                  text="Course stats"
-                  onPress={onCourseStatsPress}
-                  type="SECONDARY"
-                />
-              </View>
-            </View>
-
+          <ButtonMenu
+            options={options}
+          />
       </View>
   )
 
