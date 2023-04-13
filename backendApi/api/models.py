@@ -6,7 +6,7 @@ class User(AbstractUser):
     class Role(models.TextChoices):
         ADMIN = "ADMIN", "Admin"
         STUDENT = "STUDENT", "Student"
-        STAFF = "STAFF", "Staff"
+        PROGRAMMEHEAD = "PROGRAMMEHEAD", "ProgrammeHead"
 
     base_role = Role.ADMIN
 
@@ -22,22 +22,23 @@ class User(AbstractUser):
             return super().save(*args, **kwargs)
 
 
-class StaffManager(BaseUserManager):
+class ProgrammeHeadManager(BaseUserManager):
     def get_queryset(self, *args, **kwargs):
         results = super().get_queryset(*args, **kwargs)
-        return results.filter(role=User.Role.STAFF)
+        return results.filter(role=User.Role.PROGRAMMEHEAD)
 
 
-class Staff(User):
-    base_role = User.Role.STAFF
+class ProgrammeHead(User):
+    base_role = User.Role.PROGRAMMEHEAD
+    university = models.CharField(max_length=70)
+    #programme= models.ForeignKey(Programme, on_delete=models.CASCADE)
 
-    student = StaffManager()
+    programmeHead = ProgrammeHeadManager()
+    
 
-    class Meta:
-        proxy = True
 
     def welcome(self):
-        return "Only for staff"
+        return "Only for ProgrammeHead"
 
 
 class StudentManager(BaseUserManager):
