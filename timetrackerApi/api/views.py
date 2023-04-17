@@ -17,7 +17,7 @@ class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     authentication_classes = (TokenAuthentication, )
-    permission_classes = (AllowAny, )
+     
      
     @action(detail=True, methods=["POST"])
     def rateCourse(self, request, pk=None):
