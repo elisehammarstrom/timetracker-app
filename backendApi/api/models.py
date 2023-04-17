@@ -7,6 +7,7 @@ class User(AbstractUser):
         ADMIN = "ADMIN", "Admin"
         STUDENT = "STUDENT", "Student"
         PROGRAMMEHEAD = "PROGRAMMEHEAD", "ProgrammeHead"
+        TEACHER ="TEACHER", "Teacher"
 
     base_role = Role.ADMIN
 
@@ -36,9 +37,27 @@ class ProgrammeHead(User):
     programmeHead = ProgrammeHeadManager()
     
 
-
     def welcome(self):
         return "Only for ProgrammeHead"
+
+
+class TeacherManager(BaseUserManager):
+    def get_queryset(self, *args, **kwargs):
+        results = super().get_queryset(*args, **kwargs)
+        return results.filter(role=User.Role.TEACHER)
+
+
+class Teacher(User):
+    base_role = User.Role.TEACHER
+    university = models.CharField(max_length=70)
+    #course= models.ForeignKey(Course, on_delete=models.CASCADE)
+
+    teacher = TeacherManager()
+    
+
+    def welcome(self):
+        return "Only for Teacher"
+
 
 
 class StudentManager(BaseUserManager):
