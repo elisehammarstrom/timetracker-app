@@ -1,7 +1,7 @@
 //Button component to make it easier to implement the same styles. Implementing a "type" to have a few different styles
 
 import React from "react";
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { Text, StyleSheet, Pressable } from 'react-native';
 
 const CustomButton = ({onPress, text, type = "PRIMARY"}) => {
     return (
@@ -13,11 +13,9 @@ const CustomButton = ({onPress, text, type = "PRIMARY"}) => {
 
 const styles =StyleSheet.create({
     container: {
-
         width: '100%',
         padding: 15,
         marginVertical: 5,
-
         alignItems: 'center',
         borderRadius: 5
     },
@@ -30,8 +28,13 @@ const styles =StyleSheet.create({
         borderColor: '#80CAFF',
         borderWidth: 2,
     },
-    container_TERTIARY: {
 
+    container_TERTIARY: {
+        borderColor: 'transparent'
+    },
+
+    container_CURRENTPAGE: {
+        borderColor: 'transparent',
     },
 
     text: {
@@ -45,7 +48,11 @@ const styles =StyleSheet.create({
 
     text_TERTIARY: {
         color: '#EFEFEF',
-    }
+    },
+
+    text_CURRENTPAGE: {
+        color: '#80CAFF',
+    },
 })
 
 export default CustomButton
