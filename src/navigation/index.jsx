@@ -33,7 +33,7 @@ const Navigation = () => {
 
             <Stack.Screen name="SignIn" component={SignInScreen} />
             <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name="Evaluation" component={EvaluationScreen}/>
+            {/* <Stack.Screen name="Evaluation" component={EvaluationScreen}/> */}
             <Stack.Screen name="StartCourses" component={CourseScreen}/>
             <Stack.Screen name="Timer" component={TimerScreen}/>
             <Stack.Screen name="SignUp" component={SignUpScreen} />
