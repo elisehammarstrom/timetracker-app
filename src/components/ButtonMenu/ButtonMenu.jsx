@@ -22,7 +22,7 @@ const ButtonMenu = ({options}) => {
   
     const onCourseStatsPress = data => {
       console.log(data)
-      navigation.navigate('CourseStats')
+      navigation.navigate('Courses')
     };
 
     return(

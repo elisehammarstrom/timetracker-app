@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { RadioButton } from 'react-native-paper';
 
 const CustomRadioButton = ({question, firstOption, secondOption, thirdOption, fourthOption}) => {
@@ -7,9 +7,22 @@ const CustomRadioButton = ({question, firstOption, secondOption, thirdOption, fo
 
   return (
 
-    <View>
-      {question}
-      <View style={styles.container}>
+    <View style={styles.container}>
+      <Text style={styles.title}>{question}</Text>
+
+      <View style={styles.options}>
+        <Text style={styles.optionText}>{firstOption}</Text>
+
+        <Text style={styles.optionText}>{secondOption}</Text>
+        
+        <Text style={styles.optionText}>{thirdOption}</Text>
+
+        <Text style={styles.optionText}>{fourthOption}</Text>
+
+      </View>
+
+      <View style={styles.radioButtonContainer}>
+        
         <RadioButton
           value="first"
           status={ checked === 'first' ? 'checked' : 'unchecked' }
@@ -37,10 +50,32 @@ const CustomRadioButton = ({question, firstOption, secondOption, thirdOption, fo
 };
 
 const styles=StyleSheet.create({
-  container:{
+  container: {
+    flex: 1,
+    padding: 10,
+    justifyContent: 'center',
+    textAlign: 'center',
+  },
+  radioButtonContainer:{
     flexDirection: 'row',
     justifyContent: 'space-between',
-  }
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#EFEFEF',
+    margin: 10,
+  },
+  options: {
+    color: '#EFEFEF',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  optionText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#EFEFEF',
+  },
 })
 
 export default CustomRadioButton;

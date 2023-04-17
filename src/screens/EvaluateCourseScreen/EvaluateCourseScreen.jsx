@@ -1,51 +1,84 @@
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import react, {useState} from 'react';
+import {StyleSheet, View, ScrollView} from 'react-native';
+import React from 'react';
+import Star from '../../components/Star/Star';
+import CustomRadioButton from '../../components/CustomRadioButton/CustomRadioButton';
+import CustomButton from '../../components/CustomButton/CustomButton';
 import { useNavigation } from '@react-navigation/native';
-import CustomButton from '../../components/CustomButton';
 
-const EvaluateCourseScreen = () => {
+const EvaluationScreen = ({route}) => {
+    const {options} = route.params;
     const navigation = useNavigation();
-    const [courses, setCourses] = useState([])
-    const options = ["Mekanik", "Reglerteknik", "Envariabelanalys"]
 
-
-    const onEvaluateCoursePressed = () => {
-        navigation.navigate('Evaluation', {options: courses});
-    };
-    
-
-      function pickCourse(selectedCourse) {
-        if(courses.includes(selectedCourse)){
-          setCourses(courses.filter(Course => Course !== selectedCourse))
-          return;
-        }
-
-        setCourses(Courses => Courses.concat(selectedCourse))
-
-      }
+    const onSubmitPressed = () => {
+        navigation.navigate("CourseStats")
+    }
 
     return (
-        <View styles={styles.container}>
-            <Text styles={styles.title}>Select course to Evaluate</Text>
-            <View styles={styles.options}>
-              {options.map(option => (
-                <View key={option} style={styles.course}>
-                  <TouchableOpacity style={styles.checkBox} onPress={()=>pickCourse(option)}>
-                    {courses.includes(option) && <Text style={styles.check}>✓</Text>}
-                  </TouchableOpacity>
-                  <Text style={styles.courseName}>{option}</Text>
-                  </View>
-
-                ))}
-                 <CustomButton 
-                    text="Evaluate course" 
-                    onPress={onEvaluateCoursePressed}
+        
+        <View style={styles.container}>
+            <ScrollView>
+                <Star
+                    question="Difficulty level"
+                    leftText="Easy"
+                    rightText="Hard"
                 />
-            </View>
-        </View>
-    );
-};
 
+                <Star 
+                    question="How rewarding has this course been?"
+                    leftText="Not at all"
+                    rightText="Very"
+                />
+
+                <Star  
+                    question="Has this course had a reasonable workload?"
+                    leftText="Not at all"
+                    rightText="Fully agree"
+                />
+
+                <CustomRadioButton
+                    question="Did you attend any lectures?"
+                    firstOption="No"
+                    secondOption="A few"
+                    thirdOption="Most"
+                    fourthOption="All"
+                />
+
+                <CustomRadioButton
+                    question="Did you find the letures worthwhile?"
+                    firstOption="Don't know"
+                    secondOption="No"
+                    thirdOption="Somewhat"
+                    fourthOption="Very"
+                />
+
+                <CustomRadioButton
+                    question="Have you done any assignments?"
+                    firstOption="There was none"
+                    secondOption="No"
+                    thirdOption="Some"
+                    fourthOption="Most"
+                />
+
+                <CustomRadioButton
+                    question="Did you find the assingments worthwhile?"
+                    firstOption="Don't know"
+                    secondOption="No"
+                    thirdOption="Somewhat"
+                    fourthOption="Very"
+                />
+
+                <CustomButton
+                    text="Submit"
+                    onPress={onSubmitPressed}
+                />
+
+            </ScrollView>   
+
+
+        </View>
+ 
+    )
+}
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
@@ -54,35 +87,17 @@ const styles = StyleSheet.create({
         backgroundColor: '#313131',
         height: '100%'
     },
-    check: {
-        alignSelf: 'center',
-    },
-    courseName: {
-        textTransform: 'capitalize',
-        fontSize: 16,
-    },
-    checkBox: {
-        width: 25,
-        height: 25,
-        borderWidth: 2,
-        borderColor: 'green',
-        marginRight: 5,
-    },
-    course: {
-        flexDirection: 'row',
-        marginVertical: 7,
-    },
-    options: {
-        alignSelf: 'flex-start',
-        marginLeft: 50,
-    },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
         color: '#EFEFEF',
         margin: 10,
         marginBottom: 50,
+
     },
+
 })
 
-export default EvaluateCourseScreen;
+
+
+export default EvaluationScreen;

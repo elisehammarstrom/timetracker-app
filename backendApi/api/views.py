@@ -10,12 +10,17 @@ class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     authentication_classes = (TokenAuthentication, )
-    permission_classes = (AllowAny, )
+    permission_classes = (IsAuthenticated, )
 
 class ProgrammeViewset(viewsets.ModelViewSet):
     queryset = Programme.objects.all()
     serializer_class = ProgrammeSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes =(IsAuthenticated, )
+
 
 class UserViewset(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
