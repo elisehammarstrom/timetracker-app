@@ -10,7 +10,7 @@ const CourseScreen = () => {
 
 
     const onTimerPressed = () => {
-        navigation.navigate('Timer', {options: courses});
+        navigation.navigate('Home', {options: courses});
     };
     
 
