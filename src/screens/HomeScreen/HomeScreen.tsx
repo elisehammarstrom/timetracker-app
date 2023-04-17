@@ -7,13 +7,19 @@ import {addDays} from 'date-fns';
 import React, {useState} from 'react';
 import {Button, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 
-const CalendarScreen: React.FC = () => {
+const HomeScreen: React.FC = () => {
   const [date, setDate] = useState(new Date());
 
-  const onCoursePressed = () => {
+  const onTimePressed = () => {
         
-    navigation.navigate('StartCourses', {
+    navigation.navigate('AddTime', {
     });
+  }
+
+    const onStressPressed = () => {
+        
+      navigation.navigate('Stress', {
+      });
 };
 
 const navigation = useNavigation();
@@ -22,9 +28,14 @@ const navigation = useNavigation();
     <SafeAreaView style={styles.safe}>
       <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
 
-      <CustomButton 
-            text="Go to courses" 
-            onPress={onCoursePressed}
+          <CustomButton 
+            text="Add untracked time" 
+            onPress={onTimePressed}
+            />
+
+        <CustomButton 
+            text="Track stress level" 
+            onPress={onStressPressed}
             />
     </SafeAreaView>
   );
@@ -36,4 +47,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CalendarScreen;
+export default HomeScreen;
