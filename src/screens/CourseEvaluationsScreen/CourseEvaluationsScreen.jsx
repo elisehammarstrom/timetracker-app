@@ -1,13 +1,11 @@
-import { useState } from 'react';
-import React from 'react';
-import {StyleSheet, View, Text, Dimensions } from 'react-native';
+import React, {useState} from 'react';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list';
-import CustomButton from '../../components/CustomButton/CustomButton';
-import { useNavigation } from '@react-navigation/native';
 
 
-const CourseStatsScreen = () =>{
-    const navigation = useNavigation();
+const CourseEvaluationsScreen = ({route}) => {
+    const {course} = route.params;
+
     const [selected, setSelected] = useState("");
 
     const data = [
@@ -15,10 +13,6 @@ const CourseStatsScreen = () =>{
         {key:'2', value:'Reglerteknik'},
         {key:'3', value:'Envariabelanalys'}
     ]
-
-    const onReadCourseEvaluationsPressed = () => {
-        navigation.navigate('CourseEvaluations', {course: selected})
-    }
 
     return (
         <View style={styles.container}>
@@ -33,50 +27,15 @@ const CourseStatsScreen = () =>{
                     data={data}
                     save="value"
                     search={false}
-                    placeholder='Choose course to see statistics'
+                    placeholder='Choose course to see evaluations'
+                    defaultOption={{ key: course, value: course }}
                 />
 
             </View>
-
-            <View style={styles.header}>
-                
-                <View>
-
-                    <Text style={styles.title}>{selected}</Text>
-                    
-                </View>
-
-                <View style={styles.dateButton}>
-
-                    <CustomButton
-                        text="Select date"
-                    />
-
-                </View>
-            </View>
-
-            <View style={styles.timeContainer}>
-
-                <View style={[styles.time, styles.yourTime]}>
-                    <Text style={{fontWeight: 'bold'}}>Your time:</Text>
-                </View>  
-
-                <View style={[styles.time, styles.averageTime]}>
-                    <Text style={{fontWeight: 'bold'}}>Average time:</Text>
-                </View> 
-
-                <View style={styles.evaluationButton}>
-                    <CustomButton
-                        text="Read course evaluations"
-                        onPress={onReadCourseEvaluationsPressed}
-                    />
-                </View>
-
-            </View>
-
+            <Text style={styles.title}>{selected} evaluation</Text>
         </View>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -119,6 +78,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingLeft: '5%',
         margin: 4,
+        // borderRadius: 5,
     },
     yourTime: {
         backgroundColor:'#AC7CE4'
@@ -130,6 +90,7 @@ const styles = StyleSheet.create({
         width: 0.6 * Dimensions.get('window').width,
         justifyContent: 'center',
     }
-})
+});
 
-export default CourseStatsScreen;
+
+export default CourseEvaluationsScreen;

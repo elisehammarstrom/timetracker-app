@@ -35,7 +35,6 @@ const styles = StyleSheet.create({
   test: {
       height: '100%',
       
-
   },
   title: {
     textAlign: 'center',
