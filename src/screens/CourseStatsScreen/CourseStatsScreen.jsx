@@ -5,7 +5,6 @@ import { SelectList } from 'react-native-dropdown-select-list';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 
-
 const CourseStatsScreen = () =>{
     const navigation = useNavigation();
     const [selected, setSelected] = useState("");

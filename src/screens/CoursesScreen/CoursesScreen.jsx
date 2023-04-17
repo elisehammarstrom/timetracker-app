@@ -37,7 +37,9 @@ const CourseStatsScreen = () => {
             </View>
             <View>
 
-                <ButtonMenu/>
+                <ButtonMenu
+                    screen='courseStats'
+                />
 
             </View>
 

@@ -33,35 +33,28 @@ const HomeScreen: React.FC = ({route}) => {
     <SafeAreaView style={styles.root}>
       <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
 
-<View >
+      <View>
           {/* Looping the courses to create a timer for each course */}
           {options.map(option => (
                 <View key={option}>
-                  
                   <Timer courseName={option} color="ONE"/>
                 </View>
-                ))}
+          ))}
       </View>
 
+      <CustomButton 
+        text="Add untracked time" 
+        onPress={onTimePressed}
+      />
 
       <CustomButton 
-            text="Add untracked time" 
-            onPress={onTimePressed}
-            />
+        text="Track stress level" 
+        onPress={onStressPressed}
+      />
 
-        <CustomButton 
-            text="Track stress level" 
-            onPress={onStressPressed}
-            />
-
-<ButtonMenu
-            options={options}
-          />
-
-
-
-  
-
+      <ButtonMenu
+        screen='timeTracking'
+      />
 
     </SafeAreaView>
   );
