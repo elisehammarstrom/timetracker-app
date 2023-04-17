@@ -36,7 +36,6 @@ class ProgrammeHead(User):
     programmeHead = ProgrammeHeadManager()
     
 
-
     def welcome(self):
         return "Only for ProgrammeHead"
 
