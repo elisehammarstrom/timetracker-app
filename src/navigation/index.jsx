@@ -1,5 +1,4 @@
 import React from 'react';
-import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
 import SignInScreen from '../screens/SignInScreen';
@@ -27,27 +26,28 @@ const Navigation = () => {
         <NavigationContainer>
             
             <Stack.Navigator screenOptions={{headerShown: true}}>
-            <Stack.Screen name="CourseStats" component={CourseStatsScreen}/>
 
-            <Stack.Screen name="CourseEvaluations" component={CourseEvaluationsScreen}/>
-
-            <Stack.Screen name="SignIn" component={SignInScreen} />
-            <Stack.Screen name="Home" component={HomeScreen} />
-            {/* <Stack.Screen name="Evaluation" component={EvaluationScreen}/> */}
-            <Stack.Screen name="StartCourses" component={CourseScreen}/>
-            <Stack.Screen name="Timer" component={TimerScreen}/>
-            <Stack.Screen name="SignUp" component={SignUpScreen} />
-            <Stack.Screen name="ConfirmEmail" component={ConfirmEmailScreen} />
-            <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-            <Stack.Screen name="NewPassword" component={NewPasswordScreen} />
-            <Stack.Screen name="YourReports" component={YourReportsScreen}/>
-            <Stack.Screen name="ChooseEvaluateCourse" component={ChooseEvaluateCourseScreen}/>
-            <Stack.Screen name="EvaluateCourse" component={EvaluateCourseScreen}/>
-            <Stack.Screen name="AddTime" component={UntrackedScreen}/>
-            <Stack.Screen name="Test" component={TestScreen}/>
-            <Stack.Screen name="Stress" component={StressScreen}/>
-            <Stack.Screen name="Courses" component={CoursesScreen}/>    
+                <Stack.Screen name="SignIn" component={SignInScreen} />
+                <Stack.Screen name="Home" component={HomeScreen} />
+                {/* <Stack.Screen name="Evaluation" component={EvaluationScreen}/> */}
+                <Stack.Screen name="StartCourses" component={CourseScreen}/>
+                <Stack.Screen name="Timer" component={TimerScreen}/>
+                <Stack.Screen name="SignUp" component={SignUpScreen} />
+                <Stack.Screen name="ConfirmEmail" component={ConfirmEmailScreen} />
+                <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+                <Stack.Screen name="NewPassword" component={NewPasswordScreen} />
+                <Stack.Screen name="YourReports" component={YourReportsScreen}/>
+                <Stack.Screen name="ChooseEvaluateCourse" component={ChooseEvaluateCourseScreen}/>
+                <Stack.Screen name="EvaluateCourse" component={EvaluateCourseScreen}/>
+                <Stack.Screen name="AddTime" component={UntrackedScreen}/>
+                <Stack.Screen name="Test" component={TestScreen}/>
+                <Stack.Screen name="Stress" component={StressScreen}/>
+                <Stack.Screen name="Courses" component={CoursesScreen}/>    
+                <Stack.Screen name="CourseStats" component={CourseStatsScreen}/>
+                <Stack.Screen name="CourseEvaluations" component={CourseEvaluationsScreen}/>
+                
             </Stack.Navigator>
+
         </NavigationContainer>
     )
 }

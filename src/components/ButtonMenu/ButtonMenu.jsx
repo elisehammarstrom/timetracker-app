@@ -5,23 +5,23 @@ import CustomButton from "../CustomButton/CustomButton";
 import { View, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
-const ButtonMenu = ({options}) => {
+const ButtonMenu = ({screen}) => {
     const navigation = useNavigation();
 
 
     //Navigation when you press each button
-    const onYourReportsPress = data => {
-      console.log(data)
-      navigation.navigate('YourReports', {paramKey: options}) //Options is the courses youve picked
-    };
+    // const onYourReportsPress = data => {
+    //   console.log(data)
+    //   navigation.navigate('YourReports') //Options is the courses youve picked
+    // };
   
      //const onTimetrackingPress = data => {
        //console.log(data)
       //navigation.navigate('Timer')
     // };
   
-    const onCourseStatsPress = data => {
-      console.log(data)
+    const onCourseStatsPress = type => {
+      console.log(type)
       navigation.navigate('Courses')
     };
 
@@ -31,26 +31,27 @@ const ButtonMenu = ({options}) => {
             <View style={styles.buttonContainer}>
                 <CustomButton 
                     text="Your reports"
-                    onPress={onYourReportsPress}
-                    type="SECONDARY"
+                    // onPress={onYourReportsPress}
+                    type={screen==='yourReports' ? 'CURRENTPAGE' : 'TERTIARY'} //Depending on what page you are the buttons have a different style
                 />
             </View>    
-
-
 
             <View style={styles.buttonContainer}>
                 <CustomButton
                     text="Timetracking"
                     //onPress={onTimetrackingPress}
+                    type={screen==='timeTracking' ? 'CURRENTPAGE' : 'TERTIARY'}
                 />
             </View>
+
             <View style={styles.buttonContainer}>
                 <CustomButton 
                     text="Course stats"
                     onPress={onCourseStatsPress}
-                    type="SECONDARY"
+                    type={screen==='courseStats' ? 'CURRENTPAGE' : 'TERTIARY'}
                 />
             </View>
+
         </View>
     )
 }
