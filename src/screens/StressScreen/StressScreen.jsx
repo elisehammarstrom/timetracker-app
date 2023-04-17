@@ -1,7 +1,9 @@
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import React, {useState, useRef} from 'react';
-import {Text, View, TextInput, StyleSheet, FlatList} from 'react-native';
+import {Text, View, TextInput, StyleSheet, FlatList, Image} from 'react-native';
+import ett from '../../../assets/1.png'
+import ButtonMenu from '../../components/ButtonMenu';
 
 const data = [
     {id:1, name:"Mekanik"},
@@ -15,7 +17,7 @@ const StressScreen = () => {
 
     const item = ({item})=>{
         return(
-            <View style = {{backgroundColor:"green"}}> 
+            <View style = {{backgroundColor:"gray"}}> 
                 <Text style = {{fontSize:34}}> {item.name} </Text>
             </View>
         )
@@ -28,8 +30,15 @@ const searchName = (input)=>{
     setData(searchData)
 }
     return (
+
+        
         <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
             <Text>Stress Screen </Text>
+
+
+           
+
+            
 
             <View>
                 <TextInput 
@@ -48,10 +57,12 @@ const searchName = (input)=>{
             data={dataFromState}
             renderItem={item}
             keyExtractor={(item,index) => index.toString()} />
-
-    
-
+             <ButtonMenu> </ButtonMenu>
         </View>
+
+        
+
+        
     )
 }
 

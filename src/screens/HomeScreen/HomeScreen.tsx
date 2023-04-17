@@ -2,12 +2,17 @@
 import WeekCalendar from '../../components/WeekCalendar';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
-
+import Timer from '../../components/Timer';
 import {addDays} from 'date-fns';
 import React, {useState} from 'react';
 import {Button, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import ButtonMenu from '../../components/ButtonMenu';
 
-const HomeScreen: React.FC = () => {
+const HomeScreen: React.FC = ({route}) => {
+
+  const {options} = route.params;
+  const navigation = useNavigation();
+
   const [date, setDate] = useState(new Date());
 
   const onTimePressed = () => {
@@ -22,13 +27,24 @@ const HomeScreen: React.FC = () => {
       });
 };
 
-const navigation = useNavigation();
+
 
   return (
     <SafeAreaView style={styles.safe}>
       <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
 
-          <CustomButton 
+<View >
+          {/* Looping the courses to create a timer for each course */}
+          {options.map(option => (
+                <View key={option}>
+                  
+                  <Timer courseName={option} color="ONE"/>
+                </View>
+                ))}
+      </View>
+
+
+      <CustomButton 
             text="Add untracked time" 
             onPress={onTimePressed}
             />
@@ -37,6 +53,16 @@ const navigation = useNavigation();
             text="Track stress level" 
             onPress={onStressPressed}
             />
+
+<ButtonMenu
+            options={options}
+          />
+
+
+
+  
+
+
     </SafeAreaView>
   );
 };
