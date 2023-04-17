@@ -15,9 +15,9 @@ const ButtonMenu = ({options}) => {
       navigation.navigate('YourReports', {paramKey: options}) //Options is the courses youve picked
     };
   
-    // const onTimetrackingPress = data => {
-    //   console.log(data)
-    //   navigation.navigate('Timer')
+     //const onTimetrackingPress = data => {
+       //console.log(data)
+      //navigation.navigate('Timer')
     // };
   
     const onCourseStatsPress = data => {
@@ -36,10 +36,12 @@ const ButtonMenu = ({options}) => {
                 />
             </View>    
 
+
+
             <View style={styles.buttonContainer}>
                 <CustomButton
                     text="Timetracking"
-                    // onPress={onTimetrackingPress}
+                    //onPress={onTimetrackingPress}
                 />
             </View>
             <View style={styles.buttonContainer}>
