@@ -42,6 +42,7 @@ const Navigation = () => {
             <Stack.Screen name="Test" component={TestScreen}/>
             <Stack.Screen name="Stress" component={StressScreen}/>
             
+            
 
 
 

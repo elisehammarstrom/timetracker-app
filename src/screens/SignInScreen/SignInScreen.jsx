@@ -17,7 +17,7 @@ const SignInScreen = () => {
     const onSignInPressed = data => {
         console.log(data)
         // Validate user
-        navigation.navigate('Test');
+        navigation.navigate('StartCourses');
     };
     const onForgotPasswordPressed = () => {
         navigation.navigate('ForgotPassword')
