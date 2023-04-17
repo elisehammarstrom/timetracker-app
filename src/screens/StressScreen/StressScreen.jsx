@@ -11,11 +11,6 @@ import ett from '../../../assets/1.png';
 
 
 
-
-
-
-
-
 const StressScreen = () => {  
 
     const [selectedDate, setSelectedDate] = useState('');
