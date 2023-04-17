@@ -49,12 +49,12 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   weekDayText: {
-    color: 'gray',
+    color: '#D3D0D0',
     marginBottom: 5,
   },
   label: {
     fontSize: 14,
-    color: 'black',
+    color: '#6C6B6B',
     textAlign: 'center',
   },
   selectedLabel: {
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     width: 35,
   },
   selectedTouchable: {
-    backgroundColor: 'green',
+    backgroundColor: '#0376C2',
   },
   weekDayItem: {
     alignItems: 'center',

@@ -27,6 +27,7 @@ const Navigation = () => {
         <NavigationContainer>
             
             <Stack.Navigator screenOptions={{headerShown: true}}>
+           
             <Stack.Screen name="CourseStats" component={CourseStatsScreen}/>
 
             <Stack.Screen name="CourseEvaluations" component={CourseEvaluationsScreen}/>
