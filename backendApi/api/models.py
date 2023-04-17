@@ -33,6 +33,8 @@ class Programme(models.Model):
     def __str__(self):
         programmeInfoString =  self.programmeName + "(" + self.programmeID + ") "
         return programmeInfoString 
+    
+
 class User(AbstractUser):
     class Role(models.TextChoices):
         ADMIN = "ADMIN", "Admin"
