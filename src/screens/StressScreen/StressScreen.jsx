@@ -76,6 +76,7 @@ const StressScreen = () => {
             />
             <Text style={styles.text}> Today was not so stressfull </Text>
         </TouchableOpacity>
+
         <TouchableOpacity activeOpacity={0.5}>
             <Image 
                 source={Tre} 
@@ -93,6 +94,7 @@ const StressScreen = () => {
             />
             <Text style={styles.text}> Today was superstressful </Text>
         </TouchableOpacity>
+
         <TouchableOpacity activeOpacity={0.5}>
             <Image 
                 source={Fem} 
@@ -103,20 +105,18 @@ const StressScreen = () => {
         </TouchableOpacity>
 
               
-        <CustomButton 
-            text={"Submit"}
+             
+
+        <CustomButton
+            text="Submit"
             />
            
-       
+
             <ButtonMenu/>
 
-         </View>
+    </View>
 
-            
-
-        
-
-        
+                
     )
 }
 
@@ -182,6 +182,7 @@ const StressScreen = () => {
             maxWidth: 300,
             maxHeight: 200,  
             flexDirection:'row',
+            
         },
 
         text:{
