@@ -32,39 +32,47 @@ const StressScreen = () => {
     var date = new Date().getDate(); //To get the Current Date
     var month = new Date().getMonth() + 1; //To get the Current Month
     var year = new Date().getFullYear(); //To get the Current Year
+
+    var days = [,'Mon','Tue','Wed','Thu','Fri','Sat', 'Sun'];
+
+    Date.prototype.getDayName = function() {
+        return days[ this.getDay() ];
+    };
+
+    var now = new Date();
+
+    var day = now.getDayName();
  
     return (
 
     <View style={styles.container}>
-        <ProfileIcon> </ProfileIcon>
+        <Text style={styles.day}>{day}</Text>
         <View style={styles.layout}>
-        <View style={styles.circle}>
-            <Text style={styles.date}>{date}</Text>
-        </View>
-        <View style={styles.selectListContainer}>
-            <SelectList
-                dropdownTextStyles={styles.selectList}
-                inputStyles={styles.selectList}
-                boxStyles={styles.boxStyles}
-                setSelected={(val) => setSelected(val)}
-                data={data}
-                save="value"
-                search={false}
-                placeholder='Choose course to track stresslevel'
-                />
-        </View>
-      
-        </View>
-
-
-      
-
+        
+            <View style={styles.circle}>
+                <Text style={styles.date}>{date}</Text>
+            </View>
             
-         
-        <TouchableOpacity activeOpacity={0.5}>
+           
+            <View style={styles.selectListContainer}>
+                <SelectList
+                    dropdownTextStyles={styles.selectList}
+                    inputStyles={styles.selectList}
+                    setSelected={(val) => setSelected(val)}
+                    data={data}
+                    save="value"
+                    search={false}
+                    placeholder='Choose course'
+                />
+            </View>
+            <View><ProfileIcon> </ProfileIcon></View>
+        </View>
+ 
+         <View style={styles.smileys}>
+            <TouchableOpacity activeOpacity={0.5}>
             <Image 
                 source={Ett} 
-                style={[styles.logo, {height: 200 * 0.3}, {marginBottom:10}]} 
+                style={[ {height: 200 * 0.3}, {marginBottom:10}]} 
                 resizeMode="contain"
                 
             />
@@ -74,7 +82,7 @@ const StressScreen = () => {
         <TouchableOpacity activeOpacity={0.5}>
             <Image 
                 source={Två} 
-                style={[styles.logo, {height: 200 * 0.3},{marginBottom:10}]} 
+                style={[{height: 200 * 0.3},{marginBottom:10}]} 
                 resizeMode="contain"
             />
             <Text style={styles.text}> Today was not so stressfull </Text>
@@ -83,7 +91,7 @@ const StressScreen = () => {
         <TouchableOpacity activeOpacity={0.5}>
             <Image 
                 source={Tre} 
-                style={[styles.logo, {height: 200 * 0.3},{marginBottom:10}]} 
+                style={[ {height: 200 * 0.3},{marginBottom:10}]} 
                 resizeMode="contain"
             />
             <Text style={styles.text}> I felt a bit stressed today</Text>
@@ -92,7 +100,7 @@ const StressScreen = () => {
         <TouchableOpacity activeOpacity={0.5}>
             <Image 
                 source={Fyra} 
-                style={[styles.logo, {height: 200 * 0.3},{marginBottom:10}]} 
+                style={[{height: 200 * 0.3},{marginBottom:10}]} 
                 resizeMode="contain"
             />
             <Text style={styles.text}> Today was superstressful </Text>
@@ -101,21 +109,24 @@ const StressScreen = () => {
         <TouchableOpacity activeOpacity={0.5}>
             <Image 
                 source={Fem} 
-                style={[styles.logo, {height: 200 * 0.3}]} 
+                style={[{height: 200 * 0.3}]} 
                 resizeMode="contain"
             />
             <Text style={styles.text}> Stressfree day </Text>
         </TouchableOpacity>
 
-              
-             
+        </View>
 
+        <View style={styles.customButtonContainer}>
         <CustomButton
             text="Submit"
-            />
+            /></View>
+   
            
 
-            <ButtonMenu/>
+            <ButtonMenu
+             screen='timeTracking'/>
+            
 
     </View>
 
@@ -128,27 +139,26 @@ const StressScreen = () => {
         container: {
             backgroundColor: '#313131',
             height: '100%',
+            
         },
         layout: {
-            alignItems: 'center',
-            justifyContent: 'center',
+            flexDirection: 'row',
+            justifyContent: 'space-between'
+
+        },
+        smileys: {
+
         },
         selectListContainer: {
             alignItems: 'center',
             justifyContent: 'center',
-            marginTop: '3%',
+            
            
         },
         selectList: {
             fontWeight: 'bold',
             color: '#EFEFEF',
-        },
-        boxStyles: {
-            width: 0.9 * Dimensions.get('window').width,
-        },
-        header: {
-            flexDirection: 'row',
-            justifyContent: 'space-between',
+          
         },
         title: {
             fontSize: 24,
@@ -169,35 +179,37 @@ const StressScreen = () => {
             fontSize: 20,
         
         },
+        day: {
+            color: 'white',
+            marginLeft: 18,
+            marginBottom: -30,
+            marginTop: 5,
+        },
         circle: {
             height: 40,
             width: 40,
             borderRadius: 40 / PixelRatio.get(),
             backgroundColor: '#0376C2',
-            marginLeft: 10,
-            marginTop: 10,
+            marginTop: 30,
+            marginHorizontal: 10,
             justifyContent: 'center',
             alignItems: 'center',
-     
-        },
-        logo: {
-            width: '70%',
-            maxWidth: 300,
-            maxHeight: 200,  
-            flexDirection:'row',
             
+     
         },
 
         text:{
             marginLeft:220,
-            flexDirection:'row',
+       
             position: "absolute",
             marginTop:23,
             fontsize:20,
             fontWeight:'bold',
             color: 'white',
         },
-
+        customButtonContainer: {
+            paddingHorizontal: 50,
+          },
     
     })
 
