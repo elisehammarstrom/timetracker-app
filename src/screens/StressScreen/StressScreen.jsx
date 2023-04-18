@@ -67,22 +67,24 @@ const StressScreen = () => {
             </View>
             <View><ProfileIcon> </ProfileIcon></View>
         </View>
- 
-         <View style={styles.smileys}>
+
+        <View style={styles.smileys}>
+      
             <TouchableOpacity activeOpacity={0.5}>
             <Image 
                 source={Ett} 
-                style={[ {height: 200 * 0.3}, {marginBottom:10}]} 
+                style={[ {height: 200 * 0.3}, {width: 200*0.3}, {marginBottom:10}]} 
                 resizeMode="contain"
-                
             />
-            <Text style={styles.text}> Stressfree day </Text>
+                    <Text style={styles.text}> Stressfree day </Text>
+            
         </TouchableOpacity>
+
 
         <TouchableOpacity activeOpacity={0.5}>
             <Image 
                 source={Två} 
-                style={[{height: 200 * 0.3},{marginBottom:10}]} 
+                style={[{height: 200 * 0.3},{width: 200*0.3},{marginBottom:10}]} 
                 resizeMode="contain"
             />
             <Text style={styles.text}> Today was not so stressfull </Text>
@@ -91,7 +93,7 @@ const StressScreen = () => {
         <TouchableOpacity activeOpacity={0.5}>
             <Image 
                 source={Tre} 
-                style={[ {height: 200 * 0.3},{marginBottom:10}]} 
+                style={[ {height: 200 * 0.3},{width: 200*0.3}, {marginBottom:10}]} 
                 resizeMode="contain"
             />
             <Text style={styles.text}> I felt a bit stressed today</Text>
@@ -100,22 +102,23 @@ const StressScreen = () => {
         <TouchableOpacity activeOpacity={0.5}>
             <Image 
                 source={Fyra} 
-                style={[{height: 200 * 0.3},{marginBottom:10}]} 
+                style={[{height: 200 * 0.3},{width: 200*0.3},{marginBottom:10}]} 
                 resizeMode="contain"
+
             />
-            <Text style={styles.text}> Today was superstressful </Text>
+            <Text style={styles.text}> Today was very stressful </Text>
         </TouchableOpacity>
 
         <TouchableOpacity activeOpacity={0.5}>
             <Image 
                 source={Fem} 
-                style={[{height: 200 * 0.3}]} 
+                style={[{height: 200 * 0.3}, {width: 200*0.3}]} 
                 resizeMode="contain"
             />
-            <Text style={styles.text}> Stressfree day </Text>
+            <Text style={styles.text}> Extremely stressful day </Text>
         </TouchableOpacity>
 
-        </View>
+ </View>
 
         <View style={styles.customButtonContainer}>
         <CustomButton
@@ -143,10 +146,12 @@ const StressScreen = () => {
         },
         layout: {
             flexDirection: 'row',
-            justifyContent: 'space-between'
+            justifyContent: 'space-between',
 
         },
         smileys: {
+            flexDirection: 'column',
+            marginLeft: 7,
 
         },
         selectListContainer: {
@@ -199,13 +204,13 @@ const StressScreen = () => {
         },
 
         text:{
-            marginLeft:220,
-       
             position: "absolute",
+            marginLeft: 80,
             marginTop:23,
             fontsize:20,
             fontWeight:'bold',
             color: 'white',
+            alignItems: 'flex-start',
         },
         customButtonContainer: {
             paddingHorizontal: 50,
