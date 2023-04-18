@@ -12,6 +12,7 @@ import Tre from '../../../assets/3.png'
 import Fyra from '../../../assets/4.png'
 import Fem from '../../../assets/5.png'
 import { setDate } from 'date-fns/esm';
+import ProfileIcon from '../../components/ProfileIcon/ProfileIcon';
 
 const StressScreen = () => {  
     
@@ -33,7 +34,9 @@ const StressScreen = () => {
     var year = new Date().getFullYear(); //To get the Current Year
  
     return (
+
     <View style={styles.container}>
+        <ProfileIcon> </ProfileIcon>
         <View style={styles.layout}>
         <View style={styles.circle}>
             <Text style={styles.date}>{date}</Text>
