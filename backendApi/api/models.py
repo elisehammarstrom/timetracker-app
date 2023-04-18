@@ -1,9 +1,11 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractUser, BaseUserManager, User
+from rest_framework.decorators import action
 
 class Course(models.Model):
     courseCode = models.CharField(max_length=10)
     courseTitle = models.CharField(max_length=100)
+    #programmes = fields.ForeignKey(Programme, on_delete=models.CASCADE)
 
     # def no_of_evaluations(self):
     #     courseEvaluations = CourseEvaluation.objects.filter(course = self)
@@ -28,12 +30,22 @@ class Course(models.Model):
 class Programme(models.Model):
     programmeID = models.CharField(max_length=10)
     programmeName = models.CharField(max_length=100)
-    courses = models.ManyToManyField(Course, related_name="programmes")   
+    shortProgrammeName = models.CharField(max_length=10, null=True)
+    courses = models.ManyToManyField(Course, related_name="programmes", blank=True)   
 
     def __str__(self):
         programmeInfoString =  self.programmeName + "(" + self.programmeID + ") "
         return programmeInfoString 
     
+
+    """ @staticmethod
+    def addCourse(programmeID, programmeName, shortProgrammeName)
+        
+        new_student = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT)
+        user = new_student
+       
+       #user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=role) 
+       #user.save()"""
 
 class User(AbstractUser):
     class Role(models.TextChoices):
@@ -43,18 +55,27 @@ class User(AbstractUser):
         TEACHER ="TEACHER", "Teacher"
 
     base_role = Role.ADMIN
-
     role = models.CharField(max_length=50, choices=Role.choices)
     email = models.EmailField(verbose_name='email address', unique=True)
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
-    
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'username']
 
     def save(self, *args, **kwargs):
         if not self.pk:
             self.role = self.base_role
+            self.username = self.first_name + self.last_name
             return super().save(*args, **kwargs)
+        
 
+    @staticmethod
+    def createUser(email, username, first_name, last_name, password, role):
+
+       if role=="Student" or role=="STUDENT": 
+           new_student = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT)
+           user = new_student
+       
+       #user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=role) 
+       user.save()
 
 class ProgrammeHeadManager(BaseUserManager):
     def get_queryset(self, *args, **kwargs):
@@ -84,10 +105,8 @@ class Teacher(User):
     base_role = User.Role.TEACHER
     university = models.CharField(max_length=70)
     #course= models.ForeignKey(Course, on_delete=models.CASCADE)
-
     teacher = TeacherManager()
     
-
     def welcome(self):
         return "Only for Teacher"
 
@@ -102,10 +121,10 @@ class StudentManager(BaseUserManager):
 class Student(User):
     base_role = User.Role.STUDENT
     university = models.CharField(max_length=70)
-    #programme= models.ForeignKey(Programme, on_delete=models.CASCADE)
+    programme= models.ForeignKey(Programme, on_delete=models.CASCADE, null=True, blank=True)
+    courses = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True)
 
     student = StudentManager()
-
 
     def welcome(self):
         return "Only for students"
