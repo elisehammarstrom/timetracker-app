@@ -15,6 +15,8 @@ import { setDate } from 'date-fns/esm';
 import ProfileIcon from '../../components/ProfileIcon/ProfileIcon';
 
 const StressScreen = () => {  
+
+    const navigation = useNavigation();
     
     const [selectedDate, setSelectedDate] = useState('');
     const [selected, setSelected] = useState("");
@@ -42,6 +44,11 @@ const StressScreen = () => {
     var now = new Date();
 
     var day = now.getDayName();
+
+    const onProfileIconPressed = () => {
+        navigation.navigate('Profile')
+        console.log('pressed')
+    };
  
     return (
 
@@ -65,7 +72,7 @@ const StressScreen = () => {
                     placeholder='Choose course'
                 />
             </View>
-            <View><ProfileIcon> </ProfileIcon></View>
+            <View><ProfileIcon onPress={onProfileIconPressed}> </ProfileIcon></View>
         </View>
 
         <View style={styles.smileys}>
