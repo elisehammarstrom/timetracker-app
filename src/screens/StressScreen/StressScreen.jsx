@@ -89,7 +89,6 @@ const StressScreen = () => {
             />
             <Text style={styles.text}> Today was not so stressfull </Text>
         </TouchableOpacity>
-
         <TouchableOpacity activeOpacity={0.5}>
             <Image 
                 source={Tre} 
@@ -108,7 +107,6 @@ const StressScreen = () => {
             />
             <Text style={styles.text}> Today was very stressful </Text>
         </TouchableOpacity>
-
         <TouchableOpacity activeOpacity={0.5}>
             <Image 
                 source={Fem} 
@@ -118,7 +116,7 @@ const StressScreen = () => {
             <Text style={styles.text}> Extremely stressful day </Text>
         </TouchableOpacity>
 
- </View>
+        </View>
 
         <View style={styles.customButtonContainer}>
         <CustomButton
@@ -129,13 +127,10 @@ const StressScreen = () => {
 
             <ButtonMenu
              screen='timeTracking'/>
-            
 
-    </View>
-
-                
-    )
-}
+        </View>
+  
+)}
 
 
     const styles = StyleSheet.create({

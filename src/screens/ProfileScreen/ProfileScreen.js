@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Image, TextInput, StyleSheet, TouchableOpacity, CheckBox} from 'react-native';
 import CustomButton from '../../components/CustomButton';
-import { useNavigation } from '@react-navigation/native';
-
 
 
 const ProfileScreen = () => {
@@ -24,16 +22,6 @@ const ProfileScreen = () => {
     
       }
 
-      const navigation = useNavigation();
-
-      const onEditPressed = () => {
-        navigation.navigate('EditProfile', {
-        });
-      };
-
-            //make separate words bold
-            const B = (props) => <Text style={{fontWeight: 'bold'}}>{props.children}</Text>
-
     return (
     <View style={styles.container}>
       <View style={styles.pictureContainer}>
@@ -44,11 +32,14 @@ const ProfileScreen = () => {
       </View>
       <View style={styles.form}>
 
-      <Text style={styles.label}><B>Username:</B> {profile.username}</Text>
-        <Text style={styles.label}><B>Email:</B> {profile.email}</Text>
-        <Text style={styles.label}><B>University:</B> {profile.university}</Text>
-        <Text style={styles.label}><B>Notification:</B>
-        <CheckBox
+        <Text style={styles.label}> Username: {profile.username} </Text>
+      
+        <Text style={styles.label}> Email: {profile.email}</Text>
+       
+        <Text style={styles.label}> University: {profile.university} </Text>
+
+
+        <Text style={styles.label}> Notification: <CheckBox
           value={isSelected}
           onValueChange={setSelection}
           style={styles.checkbox}
@@ -57,8 +48,6 @@ const ProfileScreen = () => {
       
         <CustomButton
             text="Edit Profile"
-            onPress={onEditPressed}
-            type="HOMESCREEN"
             />
 
 
@@ -83,7 +72,6 @@ const ProfileScreen = () => {
         },
         label: {
           marginTop: 20,
-          color: 'white',
         },
        
         pictureContainer: {
@@ -94,11 +82,7 @@ const ProfileScreen = () => {
           width: 150,
           height: 150,
           borderRadius: 75,
-          border: 'solid',
-          borderColor: 'white'
         },
-
-
         checkbox:{
             marginLeft:30,
             backgroundColor:'gray'
