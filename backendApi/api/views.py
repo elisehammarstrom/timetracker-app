@@ -8,7 +8,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
 
-# Create your views here.
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
@@ -22,7 +21,6 @@ class ProgrammeViewset(viewsets.ModelViewSet):
     permission_classes =(IsAuthenticated, )
 
     @action(detail=False, methods=['POST'])
-    #def add_course(self, request, pk):
     def add_course(self, request, *args, **kwargs):
         pk = self.kwargs.get('pk')
         programmeID = request.POST.get('programmeID')
@@ -34,47 +32,9 @@ class ProgrammeViewset(viewsets.ModelViewSet):
             course = request.data['courseID']
             programmeObject.courses.add(course)
             return Response({'status': 'Courses assigned to Programme'})
-        
         else:
             response = {"message": "You need to provide a courseID"}
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
-        
-
-
-
-
-
-        """if 'courseID' in request.data: 
-            programme = Programme.objects.get(id=1)
-            print("Programme:", programme)
-            courseID = request.data['courseID']
-            try:
-                print("hej0")
-                print(Course.objects.get(id=courseID))
-                print("programme.courses:", programme.courses)
-                course= Course.objects.get(id=courseID)
-
-                if programme.courses == None: 
-                    programme.courses = []
-                programme.courses.append(course)
-                
-                print("hej1")
-                serializer = ProgrammeSerializer(programme, many=True)
-                print("hej2")
-
-                response = {"message": "Course added to programme", 'result': serializer.data}
-                print("hej3")
-                return Response(response, status = status.HTTP_200_OK)
-            except:
-                response ={"message": "That programe or course does not exist"}
-                return Response(response,  status = status.HTTP_400_BAD_REQUEST)
-        else:
-            response = {"message": "You need to provide a courseID"}
-            return Response(response, status = status.HTTP_400_BAD_REQUEST)"""
-
-        #Programme.addCourses(programmeID=programmeID, programmeName=programmeName, shortProgrammeName=shortProgrammeName)
-
-        #return Response({'status': 'Courses assigned to Programme'})
 
 
 class UserViewset(viewsets.ModelViewSet):
