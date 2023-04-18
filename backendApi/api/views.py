@@ -22,19 +22,21 @@ class ProgrammeViewset(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def add_course(self, request, *args, **kwargs):
-        pk = self.kwargs.get('pk')
-        programmeID = request.POST.get('programmeID')
-        programmeName = request.POST.get('programmeName')
-        shortProgrammeName = request.POST.get('shortProgrammeName')
-        if 'courseID' in request.data: 
-            programmeObject = Programme.objects.get(id=1)
-            print("Programme:", programmeObject)
-            course = request.data['courseID']
-            programmeObject.courses.add(course)
-            return Response({'status': 'Courses assigned to Programme'})
+        if 'pID' in request.data:
+            pk = self.kwargs.get('pk')
+            pID = request.data['pID']
+            if 'courseID' in request.data: 
+                programmeObject = Programme.objects.get(id=pID)
+                course = request.data['courseID']
+                programmeObject.courses.add(course)
+                return Response({'status': 'Courses assigned to Programme'})
+            else:
+                response = {"message": "You need to provide a system ID for the course (courseID)"}
+                return Response(response, status = status.HTTP_400_BAD_REQUEST)
         else:
-            response = {"message": "You need to provide a courseID"}
+            response = {"message": "You need to provide a the system ID for the program (pID)"}
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        
 
 
 class UserViewset(viewsets.ModelViewSet):

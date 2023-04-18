@@ -36,16 +36,6 @@ class Programme(models.Model):
     def __str__(self):
         programmeInfoString =  self.programmeName + "(" + self.programmeID + ") "
         return programmeInfoString 
-    
-
-    """ @staticmethod
-    def addCourse(programmeID, programmeName, shortProgrammeName)
-        
-        new_student = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT)
-        user = new_student
-       
-       #user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=role) 
-       #user.save()"""
 
 class User(AbstractUser):
     class Role(models.TextChoices):
@@ -53,7 +43,7 @@ class User(AbstractUser):
         STUDENT = "STUDENT", "Student"
         PROGRAMMEHEAD = "PROGRAMMEHEAD", "ProgrammeHead"
         TEACHER ="TEACHER", "Teacher"
-
+        
     base_role = Role.ADMIN
     role = models.CharField(max_length=50, choices=Role.choices)
     email = models.EmailField(verbose_name='email address', unique=True)
