@@ -38,7 +38,7 @@ const ButtonMenu = ({screen}) => {
 
             <View style={styles.buttonContainer}>
                 <CustomButton
-                    text="Timetracking"
+                    text="Tracking"
                     //onPress={onTimetrackingPress}
                     type={screen==='timeTracking' ? 'CURRENTPAGE' : 'TERTIARY'}
                 />
