@@ -29,56 +29,49 @@ const StressScreen = () => {
  
     return (
 
-        <View style={styles.container}>
+    <View style={styles.container}>
 
-    <View style={styles.selectListContainer}>
-
-<SelectList
-    dropdownTextStyles={styles.selectList}
-    inputStyles={styles.selectList}
-    boxStyles={styles.boxStyles}
-    setSelected={(val) => setSelected(val)}
-    data={data}
-    save="value"
-    search={false}
-    placeholder='Choose course to track stresslevel'
-/>
-
-</View>
-
-           
-{
-        isShowingImage ?
-        (
-            <View  style={styles.dateButton}> 
-            <DatePicker
-            onSelectedChange={date => setSelectedDate(date)}
-            current="2023-04-17"
-            selected="2023-04-17"
-             mode = 'calendar'
-            style={{ borderRadius: 5, height: 250, width: 250 , padding:10, margin: 50 }}  
-        /> 
-        
-        <CustomButton 
-            text="Hide calendar"
-            onPress={() => setShowingImage(false)}
-
-
-            />
-             </View>
-        
-       
-         ) : (
-            <View style={styles.dateButton}>
-
-            <CustomButton
-            text="Select date"
-            onPress={() => setShowingImage(true)}
-
-
+        <View style={styles.selectListContainer}>
+            <SelectList
+                dropdownTextStyles={styles.selectList}
+                inputStyles={styles.selectList}
+                boxStyles={styles.boxStyles}
+                setSelected={(val) => setSelected(val)}
+                data={data}
+                save="value"
+                search={false}
+                placeholder='Choose course to track stresslevel'
             />
         </View>
-         )}
+
+           
+        {
+                isShowingImage ?
+            (
+                <View  style={styles.dateButton}> 
+                    <DatePicker
+                        onSelectedChange={date => setSelectedDate(date)}
+                        current="2023-04-17"
+                        selected="2023-04-17"
+                         mode = 'calendar'
+                        style={{ borderRadius: 5, height: 250, width: 250 , padding:10, margin: 50 }}  
+                    /> 
+
+                    <CustomButton 
+                         text="Hide calendar"
+                            onPress={() => setShowingImage(false)}
+                    />
+                </View>
+       
+            ) : (
+                <View style={styles.dateButton}>
+                    <CustomButton
+                        text="Select date"
+                        onPress={() => setShowingImage(true)}
+                    />
+                 </View>
+             )
+        }
       
 
             
@@ -101,6 +94,7 @@ const StressScreen = () => {
             />
             <Text style={styles.text}> Today was not so stressfull </Text>
         </TouchableOpacity>
+
         <TouchableOpacity activeOpacity={0.5}>
             <Image 
                 source={Tre} 
@@ -118,6 +112,7 @@ const StressScreen = () => {
             />
             <Text style={styles.text}> Today was superstressful </Text>
         </TouchableOpacity>
+
         <TouchableOpacity activeOpacity={0.5}>
             <Image 
                 source={Fem} 
@@ -126,24 +121,16 @@ const StressScreen = () => {
             />
             <Text style={styles.text}> Stressfree day </Text>
         </TouchableOpacity>
-
-              
-             
-
+ 
         <CustomButton
             text="Submit"
-            />
-           
-
-            <ButtonMenu/>
-
-         </View>
-
-            
-
+        />
         
+        <ButtonMenu/>
 
-        
+    </View>
+
+                
     )
 }
 
@@ -188,6 +175,7 @@ const StressScreen = () => {
             maxWidth: 300,
             maxHeight: 200,  
             flexDirection:'row',
+            
         },
 
         text:{
