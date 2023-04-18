@@ -3,7 +3,7 @@ import { View, Text, Image, TextInput, StyleSheet, TouchableOpacity, CheckBox} f
 import CustomButton from '../../components/CustomButton';
 
 
-const ProfileScreen = () => {
+const EditProfileScreen = () => {
 
     const profile = {
         username: 'Lovisa123',
@@ -46,9 +46,7 @@ const ProfileScreen = () => {
           color='gray'
         /> </Text>  
       
-        <CustomButton
-            text="Edit Profile"
-            />
+        
 
 
 
@@ -90,5 +88,5 @@ const ProfileScreen = () => {
        
       });
 
-export default ProfileScreen
+export default EditProfileScreen
 
