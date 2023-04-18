@@ -12,6 +12,7 @@ const UntrackedScreen = () => {
     const [selectedDate, setSelectedDate] = useState('');
     const [selected, setSelected] = React.useState("");
     const [isShowingImage, setShowingImage] = React.useState(false)
+    const [time, setTime] = useState('');
   
     const data = [
     {key:'1', value:'Meknik'},
@@ -44,6 +45,15 @@ placeholder='Choose course to track stresslevel'
         (
             <View  style={styles.dateButton}> 
              <DatePicker
+              options={{
+                backgroundColor: '#090C08',
+                textHeaderColor: '#FFA25B',
+                textDefaultColor: '#F6E7C1',
+                selectedTextColor: '#fff',
+                mainColor: '#F4722B',
+                textSecondaryColor: '#D6C7A1',
+                borderColor: 'rgba(122, 146, 165, 0.1)',
+              }}
       onSelectedChange={date => setSelectedDate(date)}
       current="2023-04-17"
       selected="2023-04-17"
@@ -52,6 +62,7 @@ placeholder='Choose course to track stresslevel'
       onTimeChange={selectedTime => setTime(selectedTime)}
       
       />
+
 
 <CustomButton 
             text="Hide calendar"

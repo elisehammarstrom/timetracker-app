@@ -18,7 +18,8 @@ import CourseEvaluationsScreen from '../screens/CourseEvaluationsScreen/CourseEv
 import UntrackedScreen from '../screens/UntrackedScreen';
 import StressScreen from '../screens/StressScreen';
 import TestScreen from '../screens/TestScreen';
-import EditProfileScreen from '../screens/EditProfileScreen'
+import EditProfileScreen from '../screens/EditProfileScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -27,11 +28,13 @@ const Navigation = () => {
         <NavigationContainer>
             
             <Stack.Navigator screenOptions={{headerShown: true}}>
-           
+            
                 <Stack.Screen name="AddTime" component={UntrackedScreen}/>
                 <Stack.Screen name="SignIn" component={SignInScreen} />
                 <Stack.Screen name="Home" component={HomeScreen} />
                 {/* <Stack.Screen name="Evaluation" component={EvaluationScreen}/> */}
+                <Stack.Screen name="Profile" component={ProfileScreen}/>
+                <Stack.Screen name="EditProfile" component={EditProfileScreen}/>
                 <Stack.Screen name="StartCourses" component={CourseScreen}/>
                 <Stack.Screen name="Timer" component={TimerScreen}/>
                 <Stack.Screen name="SignUp" component={SignUpScreen} />
@@ -46,7 +49,8 @@ const Navigation = () => {
                 <Stack.Screen name="Courses" component={CoursesScreen}/>    
                 <Stack.Screen name="CourseStats" component={CourseStatsScreen}/>
                 <Stack.Screen name="CourseEvaluations" component={CourseEvaluationsScreen}/>
-                <Stack.Screen name="EditProfile" component={EditProfileScreen}/>
+
+              
                 
             </Stack.Navigator>
 
