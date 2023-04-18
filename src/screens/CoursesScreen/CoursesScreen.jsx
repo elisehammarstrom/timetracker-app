@@ -52,7 +52,6 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         height: '100%',
         backgroundColor: '#313131',
-        alignItems: 'center',
         justifyContent: 'space-between'
     },
     buttonContainer: {
