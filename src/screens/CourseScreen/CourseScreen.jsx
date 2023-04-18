@@ -1,12 +1,25 @@
 import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import react, {useState} from 'react';
+import React, {useState} from 'react';
 import { useNavigation } from '@react-navigation/native';
 import CustomButton from '../../components/CustomButton';
+import { MultipleSelectList } from 'react-native-dropdown-select-list'
 
 const CourseScreen = () => {
     const navigation = useNavigation();
     const [courses, setCourses] = useState([])
     const options = ["Mekanik", "Reglerteknik", "Envariabelanalys", "System- och operationsanalys"]
+
+    const [selected, setSelected] = React.useState([]);
+
+    const data = [
+      {key:'1', value:'Algoritmer och datastrukter'},
+      {key:'2', value:'Mekanik'},
+      {key:'3', value:'Miljöteknik'},
+      {key:'4', value:'Reglerteknik'},
+      {key:'5', value:'Sannolikhet och statistik'},
+      {key:'6', value:'System- och operationsanalys'},
+      {key:'7', value:'Transformmetoder'},
+  ]
 
 
     const onTimerPressed = () => {
@@ -25,8 +38,29 @@ const CourseScreen = () => {
       }
 
     return (
-        <View styles={styles.container}>
-            <Text styles={styles.title}>Select your preferred courses</Text>
+        <View style={styles.container}>
+ 
+          <View style={styles.selectListContainer}>
+            <MultipleSelectList 
+              setSelected={(val) => setSelected(val)} 
+              data={data} 
+              save="value"
+              label="Chosen courses"
+              search = {true}
+              placeholder = 'Search courses'
+              dropdownTextStyles={{color: 'white'}}
+              inputStyles={{color: 'white'}}
+              checkBoxStyles = {{backgroundColor: 'white'}}
+              boxStyles = {styles.selectBox}
+              labelStyles = {{color:'white'}}
+              notFoundText = 'No course found'
+              dropdownStyles={{backgroundColor: 'grey'}}
+              badgeStyles = {{backgroundColor: '#313131'}}
+           
+           
+              />
+          </View>
+          
             <View styles={styles.options}>
               {options.map(option => (
                 <View key={option} style={styles.course}>
@@ -34,19 +68,26 @@ const CourseScreen = () => {
                     {courses.includes(option) && <Text style={styles.check}>✓</Text>}
                   </TouchableOpacity>
                   <Text style={styles.courseName}>{option}</Text>
-                  </View>
-
+                </View>
                 ))}
-                 <CustomButton 
-                text="Go to timer" 
-                onPress={onTimerPressed}
-            />
+                <View style={styles.customButtonContainer}>
+                  <CustomButton 
+                    text="Go to timer" 
+                    onPress={onTimerPressed}
+                    />
+                </View>
             </View>
-            </View>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+/*     justifyContent: 'center',
+    alignItems: 'center', */
+    backgroundColor:  '#313131',
+  },
   check: {
     alignSelf: 'center',
   },
@@ -75,11 +116,22 @@ const styles = StyleSheet.create({
     margin: 10,
     marginBottom: 50,
   },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+ 
+  customButtonContainer: {
+    paddingHorizontal: 50,
   },
+  selectListContainer: {
+    marginTop: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'scroll' // kanske inte optimalt, det blir jäkligt fult just nu ska fixas!
+},
+selectBox: {
+  backgroundColor: 'grey',
+  color: 'white'
+}
+
+
 })
 
 export default CourseScreen;

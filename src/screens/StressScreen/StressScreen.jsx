@@ -159,8 +159,6 @@ const StressScreen = () => {
         selectListContainer: {
             alignItems: 'center',
             justifyContent: 'center',
-            
-           
         },
         selectList: {
             fontWeight: 'bold',
