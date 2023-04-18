@@ -30,7 +30,7 @@ const HomeScreen: React.FC = ({route}) => {
 
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={styles.root}>
       <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
 
       <View>
@@ -61,9 +61,12 @@ const HomeScreen: React.FC = ({route}) => {
 };
 
 const styles = StyleSheet.create({
-  safe: {
+  root: {
     flex: 1,
+    backgroundColor: '#313131',
+    height: '100%',
   },
+
 });
 
 export default HomeScreen;

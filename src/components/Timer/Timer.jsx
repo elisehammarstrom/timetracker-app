@@ -1,6 +1,7 @@
 import { Button,View, Text , TouchableHighlight,  StyleSheet,SafeAreaView, } from 'react-native';
 import React, {useState} from 'react';
 import {Stopwatch} from 'react-native-stopwatch-timer';
+import { BorderlessButton } from 'react-native-gesture-handler';
 
 const Timer = ({courseName, color}) => {
     const [isStopwatchStart, setIsStopwatchStart] = useState(false);
@@ -49,10 +50,12 @@ const Timer = ({courseName, color}) => {
 const styles = StyleSheet.create({
   title: {
     textAlign: 'center',
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
-    padding: 20,
+    padding: 13,
+    paddingLeft: 13,
   },
+
     container: {
       flex: 1,
       padding: 10,
@@ -65,8 +68,15 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       alignIems: 'center',
       justifyContent: 'center',
-      padding: 10,
+      alignContent: 'space-between',
+      rowGap: 10,
+      overflowWrap: 'break-word',
+      padding: 15,
       // backgroundColor: 'pink',
+      width: '90%',
+      marginVertical: 5,
+      borderRadius: 5,
+
     },
     sectionStyle_ONE:{
       backgroundColor: 'pink'
@@ -78,15 +88,17 @@ const styles = StyleSheet.create({
     },
     buttonText: {
       fontSize: 20,
-      padding: 20,
+      padding: 13,
+
     },
   });
   
   const options = {
     text: {
-      fontSize: 20,
-      color: '#FFF',
-      padding: 20,
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: 'black',
+      padding: 13,
       
     },
     

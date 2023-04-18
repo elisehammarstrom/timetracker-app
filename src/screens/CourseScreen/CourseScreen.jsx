@@ -6,7 +6,7 @@ import CustomButton from '../../components/CustomButton';
 const CourseScreen = () => {
     const navigation = useNavigation();
     const [courses, setCourses] = useState([])
-    const options = ["Mekanik", "Reglerteknik", "Envariabelanalys"]
+    const options = ["Mekanik", "Reglerteknik", "Envariabelanalys", "System- och operationsanalys"]
 
 
     const onTimerPressed = () => {
@@ -51,7 +51,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   courseName: {
-    textTransform: 'capitalize',
     fontSize: 16,
   },
   checkBox: {
