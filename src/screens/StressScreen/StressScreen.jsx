@@ -18,7 +18,7 @@ const StressScreen = () => {
     const [selectedDate, setSelectedDate] = useState('');
     const [selected, setSelected] = useState("");
     const [isShowingImage, setShowingImage] = React.useState(false)
-    const [isShowingButton, setButton] = React.useState(true)
+    
    
     const data = [
     {key:'1', value:'Meknik'},
@@ -56,10 +56,9 @@ const StressScreen = () => {
             current="2023-04-17"
             selected="2023-04-17"
              mode = 'calendar'
-            style={{ borderRadius: 5, height: 250, width: 250 , padding:10, margin: 50 }}
-            
-            
+            style={{ borderRadius: 5, height: 250, width: 250 , padding:10, margin: 50 }}  
         /> 
+        
         <CustomButton 
             text="Hide calendar"
             onPress={() => setShowingImage(false)}
