@@ -37,6 +37,10 @@ const styles =StyleSheet.create({
         borderColor: 'transparent',
     },
 
+    container_HOMESCREEN: {
+        backgroundColor: '#6B6B6B' 
+    },
+
     text: {
         fontWeight: 'bold',
         color: 'black'
@@ -52,6 +56,10 @@ const styles =StyleSheet.create({
 
     text_CURRENTPAGE: {
         color: '#80CAFF',
+    },
+
+    text_HOMESCREEN: {
+        color: '#EFEFEF',
     },
 })
 
