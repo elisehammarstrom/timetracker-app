@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
   },
 
   stopWatchContainer:{
+    justifyContent: 'center',
     flex: 3
   },
 

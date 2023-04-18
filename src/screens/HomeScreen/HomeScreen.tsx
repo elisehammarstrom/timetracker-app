@@ -65,10 +65,14 @@ const HomeScreen: React.FC = ({route}) => {
             type="HOMESCREEN"
           />
         </View>
+        
 
-        <ButtonMenu
-          screen='timeTracking'
-        />
+        <View>
+          <ButtonMenu
+            screen='timeTracking'
+          />
+        </View>
+        
 
       </View>
 
@@ -81,13 +85,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#313131',
     height: '100%',
+    justifyContent:'space-between',
   },
   buttonContainer: {
     backgroundColor: '#313131',
   },
   customButtonContainer: {
     paddingHorizontal: 50,
-  }
+  },
 
 });
 
