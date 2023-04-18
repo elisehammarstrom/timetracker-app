@@ -1,4 +1,4 @@
-import { Button,View, Text , TouchableHighlight,  StyleSheet,SafeAreaView, } from 'react-native';
+import { Button,View, Text , TouchableHighlight,  StyleSheet,SafeAreaView,Dimensions } from 'react-native';
 import React, {useState} from 'react';
 import {Stopwatch} from 'react-native-stopwatch-timer';
 import { BorderlessButton } from 'react-native-gesture-handler';
@@ -17,26 +17,35 @@ const Timer = ({courseName, color}) => {
 
             <View style={[styles.sectionStyle, styles[`sectionStyle_${color}`]]}>
 
-              <Text style={styles.title}>{courseName}</Text>
-              <Stopwatch
-                laps
-                secs
-                start={isStopwatchStart}// To start
-                options={options} // Options for the styling
-                getTime={(time) => {
-                  console.log(time);
-                }}
-              />
+              <View style={styles.titleContainer}>
+                <Text style={styles.title}>{courseName}</Text>
+
+              </View>
+              <View style={styles.stopWatchContainer}>
+                <Stopwatch
+                  laps
+                  secs
+                  start={isStopwatchStart}// To start
+                  options={options} // Options for the styling
+                  getTime={(time) => {
+                    console.log(time);
+                  }}
+                />
+              </View>
+              <View style={styles.playPauseContainer}>
+                <TouchableHighlight
+                  onPress={() => {
+                    setIsStopwatchStart(!isStopwatchStart);
+                    setResetStopwatch(false);
+                  }}>
+                  <Text style={styles.buttonText}>
+                    {!isStopwatchStart ? '▶️' : '⏸'}
+                  </Text>
+                </TouchableHighlight> 
+              </View>
+              
                 
-              <TouchableHighlight
-                onPress={() => {
-                  setIsStopwatchStart(!isStopwatchStart);
-                  setResetStopwatch(false);
-                }}>
-                <Text style={styles.buttonText}>
-                  {!isStopwatchStart ? '▶️' : '⏸'}
-                </Text>
-              </TouchableHighlight> 
+              
 
             </View>
 
@@ -48,7 +57,7 @@ const Timer = ({courseName, color}) => {
 const styles = StyleSheet.create({
   title: {
     textAlign: 'center',
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: 'bold',
     padding: 13,
     paddingLeft: 13,
@@ -57,7 +66,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
 
@@ -65,17 +74,30 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignIems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignContent: 'space-between',
     rowGap: 10,
     overflowWrap: 'break-word',
     padding: 15,
-    // backgroundColor: 'pink',
-    width: '90%',
+    width: 0.9 * Dimensions.get('window').width,
     marginVertical: 5,
     borderRadius: 5,
   },
 
+  titleContainer:{
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    flex: 5,
+  },
+
+  stopWatchContainer:{
+    flex: 3
+  },
+
+  playPauseContainer: {
+    flex: 2
+  },
+  
   sectionStyle_ONE:{
     backgroundColor: '#66C7FD'
   },
@@ -104,7 +126,7 @@ const styles = StyleSheet.create({
   
   const options = {
     text: {
-      fontSize: 18,
+      fontSize: 15,
       fontWeight: 'bold',
       color: 'black',
       padding: 13,
