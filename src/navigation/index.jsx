@@ -10,6 +10,7 @@ import HomeScreen from '../screens/HomeScreen';
 import TimerScreen from '../screens/TimerScreen';
 import CourseScreen from '../screens/CourseScreen';
 import CoursesScreen from '../screens/CoursesScreen/CoursesScreen';
+import OldYourReportsScreen from '../screens/OldYourReportsScreen/OldYourReportsScreen';
 import YourReportsScreen from '../screens/YourReportsScreen/YourReportsScreen';
 import ChooseEvaluateCourseScreen from '../screens/ChooseEvaluateCourseScreen/ChooseEvaluateCourseScreen';
 import EvaluateCourseScreen from '../screens/EvaluateCourseScreen/EvaluateCourseScreen';
@@ -18,8 +19,7 @@ import CourseEvaluationsScreen from '../screens/CourseEvaluationsScreen/CourseEv
 import UntrackedScreen from '../screens/UntrackedScreen';
 import StressScreen from '../screens/StressScreen';
 import TestScreen from '../screens/TestScreen';
-import EditProfileScreen from '../screens/EditProfileScreen';
-import ProfileScreen from '../screens/ProfileScreen';
+import EditProfileScreen from '../screens/EditProfileScreen'
 
 const Stack = createNativeStackNavigator();
 
@@ -28,20 +28,19 @@ const Navigation = () => {
         <NavigationContainer>
             
             <Stack.Navigator screenOptions={{headerShown: true}}>
-                 <Stack.Screen name="SignIn" component={SignInScreen} />
+
+
+                <Stack.Screen name="SignIn" component={SignInScreen} />
            
                 <Stack.Screen name="AddTime" component={UntrackedScreen}/>
                 <Stack.Screen name="Home" component={HomeScreen} />
                 {/* <Stack.Screen name="Evaluation" component={EvaluationScreen}/> */}
-                <Stack.Screen name="Profile" component={ProfileScreen}/>
-                <Stack.Screen name="EditProfile" component={EditProfileScreen}/>
                 <Stack.Screen name="StartCourses" component={CourseScreen}/>
                 <Stack.Screen name="Timer" component={TimerScreen}/>
                 <Stack.Screen name="SignUp" component={SignUpScreen} />
                 <Stack.Screen name="ConfirmEmail" component={ConfirmEmailScreen} />
                 <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
                 <Stack.Screen name="NewPassword" component={NewPasswordScreen} />
-                <Stack.Screen name="YourReports" component={YourReportsScreen}/>
                 <Stack.Screen name="ChooseEvaluateCourse" component={ChooseEvaluateCourseScreen}/>
                 <Stack.Screen name="EvaluateCourse" component={EvaluateCourseScreen}/>
                 <Stack.Screen name="Test" component={TestScreen}/>
@@ -49,8 +48,10 @@ const Navigation = () => {
                 <Stack.Screen name="Courses" component={CoursesScreen}/>    
                 <Stack.Screen name="CourseStats" component={CourseStatsScreen}/>
                 <Stack.Screen name="CourseEvaluations" component={CourseEvaluationsScreen}/>
+                <Stack.Screen name="EditProfile" component={EditProfileScreen}/>
+                <Stack.Screen name="OldYourReports" component={OldYourReportsScreen}/>
+                <Stack.Screen name="YourReports" component={YourReportsScreen} />
 
-              
                 
             </Stack.Navigator>
 
