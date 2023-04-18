@@ -1,7 +1,7 @@
 
 import { useNavigation } from '@react-navigation/native';
 import React, {useState, useRef, useEffect} from 'react';
-import {Text, View, TextInput, StyleSheet, FlatList, Image,TouchableOpacity,Dimensions,Button} from 'react-native';
+import {Text, View, TextInput, StyleSheet, FlatList, Image,TouchableOpacity,Dimensions,Button, Alert, PixelRatio} from 'react-native';
 import ButtonMenu from '../../components/ButtonMenu';
 import { SelectList } from 'react-native-dropdown-select-list'
 import DatePicker from 'react-native-modern-datepicker'
@@ -11,74 +11,49 @@ import Två from '../../../assets/2.png'
 import Tre from '../../../assets/3.png'
 import Fyra from '../../../assets/4.png'
 import Fem from '../../../assets/5.png'
-import { StatusBar } from 'expo-status-bar';
+import { setDate } from 'date-fns/esm';
 
 const StressScreen = () => {  
     
     const [selectedDate, setSelectedDate] = useState('');
     const [selected, setSelected] = useState("");
-    const [isShowingImage, setShowingImage] = React.useState(false)
+    const [isShowingImage, setShowingImage] = React.useState(false);
+ /*    const [date, setDate] = useState(null); */
     
    
     const data = [
-    {key:'1', value:'Meknik'},
+    {key:'1', value:'Mekanik'},
     {key:'2', value:'Reglerteknik'},
     {key:'3', value:'Envariabelanalys'},
  ]
- 
+
+    // get today's date
+    var date = new Date().getDate(); //To get the Current Date
+    var month = new Date().getMonth() + 1; //To get the Current Month
+    var year = new Date().getFullYear(); //To get the Current Year
  
     return (
-
-        <View style={styles.container}>
-
-    <View style={styles.selectListContainer}>
-
-<SelectList
-    dropdownTextStyles={styles.selectList}
-    inputStyles={styles.selectList}
-    boxStyles={styles.boxStyles}
-    setSelected={(val) => setSelected(val)}
-    data={data}
-    save="value"
-    search={false}
-    placeholder='Choose course to track stresslevel'
-/>
-
-</View>
-
-           
-{
-        isShowingImage ?
-        (
-            <View  style={styles.dateButton}> 
-            <DatePicker
-            onSelectedChange={date => setSelectedDate(date)}
-            current="2023-04-17"
-            selected="2023-04-17"
-             mode = 'calendar'
-            style={{ borderRadius: 5, height: 250, width: 250 , padding:10, margin: 50 }}  
-        /> 
-        
-        <CustomButton 
-            text="Hide calendar"
-            onPress={() => setShowingImage(false)}
-
-
-            />
-             </View>
-        
-       
-         ) : (
-            <View style={styles.dateButton}>
-
-            <CustomButton
-            text="Select date"
-            onPress={() => setShowingImage(true)}
-
-
-            />
+    <View style={styles.container}>
+        <View style={styles.layout}>
+        <View style={styles.circle}>
+            <Text style={styles.date}>{date}</Text>
         </View>
-         )}
+        <View style={styles.selectListContainer}>
+            <SelectList
+                dropdownTextStyles={styles.selectList}
+                inputStyles={styles.selectList}
+                boxStyles={styles.boxStyles}
+                setSelected={(val) => setSelected(val)}
+                data={data}
+                save="value"
+                search={false}
+                placeholder='Choose course to track stresslevel'
+                />
+        </View>
+      
+        </View>
+
+
       
 
             
@@ -128,13 +103,11 @@ const StressScreen = () => {
         </TouchableOpacity>
 
               
-             
-
-        <CustomButton
-            text="Submit"
+        <CustomButton 
+            text={"Submit"}
             />
            
-
+       
             <ButtonMenu/>
 
          </View>
@@ -152,6 +125,10 @@ const StressScreen = () => {
         container: {
             backgroundColor: '#313131',
             height: '100%',
+        },
+        layout: {
+            alignItems: 'center',
+            justifyContent: 'center',
         },
         selectListContainer: {
             alignItems: 'center',
@@ -182,6 +159,23 @@ const StressScreen = () => {
             marginRight: '2%',
             width:100,
             
+        },
+
+        date: {
+            color: 'white',
+            fontSize: 20,
+        
+        },
+        circle: {
+            height: 40,
+            width: 40,
+            borderRadius: 40 / PixelRatio.get(),
+            backgroundColor: '#0376C2',
+            marginLeft: 10,
+            marginTop: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
+     
         },
         logo: {
             width: '70%',
