@@ -57,7 +57,7 @@ const Timer = ({courseName, color}) => {
 const styles = StyleSheet.create({
   title: {
     textAlign: 'center',
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: 'bold',
     padding: 13,
     paddingLeft: 13,
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   
   const options = {
     text: {
-      fontSize: 15,
+      fontSize: 14,
       fontWeight: 'bold',
       color: 'black',
       padding: 13,

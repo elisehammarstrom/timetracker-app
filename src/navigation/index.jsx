@@ -30,9 +30,9 @@ const Navigation = () => {
             
             <Stack.Navigator screenOptions={{headerShown: true}}>
             
-
-                <Stack.Screen name="StartCourses" component={CourseScreen}/>
                 <Stack.Screen name="SignIn" component={SignInScreen} />
+                <Stack.Screen name="StartCourses" component={CourseScreen}/>
+                
                 <Stack.Screen name="Stress" component={StressScreen}/>
                 <Stack.Screen name="AddTime" component={UntrackedScreen}/>
                 <Stack.Screen name="Home" component={HomeScreen} />

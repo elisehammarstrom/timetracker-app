@@ -37,7 +37,7 @@ const HomeScreen: React.FC = ({route}) => {
     <SafeAreaView style={styles.root}>
       <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
 
-      <View>
+      <View style={styles.timeLoop}>
 
           {/* Looping the courses to create a timer for each course */}
           {options.map((option, i) => (
@@ -86,6 +86,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#313131',
     height: '100%',
     justifyContent:'space-between',
+    width: '100%'
   },
   buttonContainer: {
     backgroundColor: '#313131',
@@ -93,6 +94,10 @@ const styles = StyleSheet.create({
   customButtonContainer: {
     paddingHorizontal: 50,
   },
+  timeLoop: {
+    width: '100%'
+  }
+
 
 });
 
