@@ -1,7 +1,7 @@
 
 import { useNavigation } from '@react-navigation/native';
 import React, {useState, useRef, useEffect} from 'react';
-import {Text, View, TextInput, StyleSheet, FlatList, Image,TouchableOpacity,Dimensions,Button} from 'react-native';
+import {Text, View, TextInput, StyleSheet, FlatList, Image,TouchableOpacity,Dimensions,Button, Alert, PixelRatio} from 'react-native';
 import ButtonMenu from '../../components/ButtonMenu';
 import { SelectList } from 'react-native-dropdown-select-list'
 import DatePicker from 'react-native-modern-datepicker'
@@ -11,24 +11,41 @@ import Två from '../../../assets/2.png'
 import Tre from '../../../assets/3.png'
 import Fyra from '../../../assets/4.png'
 import Fem from '../../../assets/5.png'
-import { StatusBar } from 'expo-status-bar';
+import { setDate } from 'date-fns/esm';
+import ProfileIcon from '../../components/ProfileIcon/ProfileIcon';
 
 const StressScreen = () => {  
     
     const [selectedDate, setSelectedDate] = useState('');
     const [selected, setSelected] = useState("");
-    const [isShowingImage, setShowingImage] = React.useState(false)
+    const [isShowingImage, setShowingImage] = React.useState(false);
+ /*    const [date, setDate] = useState(null); */
     
    
     const data = [
-    {key:'1', value:'Meknik'},
+    {key:'1', value:'Mekanik'},
     {key:'2', value:'Reglerteknik'},
     {key:'3', value:'Envariabelanalys'},
  ]
- 
+
+    // get today's date
+    var date = new Date().getDate(); //To get the Current Date
+    var month = new Date().getMonth() + 1; //To get the Current Month
+    var year = new Date().getFullYear(); //To get the Current Year
+
+    var days = [,'Mon','Tue','Wed','Thu','Fri','Sat', 'Sun'];
+
+    Date.prototype.getDayName = function() {
+        return days[ this.getDay() ];
+    };
+
+    var now = new Date();
+
+    var day = now.getDayName();
  
     return (
 
+<<<<<<< HEAD
         <View style={styles.container}>
 
     <View style={styles.selectListContainer}>
@@ -81,12 +98,36 @@ const StressScreen = () => {
          )}
       
 
+=======
+    <View style={styles.container}>
+        <Text style={styles.day}>{day}</Text>
+        <View style={styles.layout}>
+        
+            <View style={styles.circle}>
+                <Text style={styles.date}>{date}</Text>
+            </View>
+>>>>>>> e86539e24c95b0d67a06fe36b01576f2d8414333
             
-         
-        <TouchableOpacity activeOpacity={0.5}>
+           
+            <View style={styles.selectListContainer}>
+                <SelectList
+                    dropdownTextStyles={styles.selectList}
+                    inputStyles={styles.selectList}
+                    setSelected={(val) => setSelected(val)}
+                    data={data}
+                    save="value"
+                    search={false}
+                    placeholder='Choose course'
+                />
+            </View>
+            <View><ProfileIcon> </ProfileIcon></View>
+        </View>
+ 
+         <View style={styles.smileys}>
+            <TouchableOpacity activeOpacity={0.5}>
             <Image 
                 source={Ett} 
-                style={[styles.logo, {height: 200 * 0.3}, {marginBottom:10}]} 
+                style={[ {height: 200 * 0.3}, {marginBottom:10}]} 
                 resizeMode="contain"
                 
             />
@@ -96,7 +137,7 @@ const StressScreen = () => {
         <TouchableOpacity activeOpacity={0.5}>
             <Image 
                 source={Två} 
-                style={[styles.logo, {height: 200 * 0.3},{marginBottom:10}]} 
+                style={[{height: 200 * 0.3},{marginBottom:10}]} 
                 resizeMode="contain"
             />
             <Text style={styles.text}> Today was not so stressfull </Text>
@@ -104,7 +145,7 @@ const StressScreen = () => {
         <TouchableOpacity activeOpacity={0.5}>
             <Image 
                 source={Tre} 
-                style={[styles.logo, {height: 200 * 0.3},{marginBottom:10}]} 
+                style={[ {height: 200 * 0.3},{marginBottom:10}]} 
                 resizeMode="contain"
             />
             <Text style={styles.text}> I felt a bit stressed today</Text>
@@ -113,7 +154,7 @@ const StressScreen = () => {
         <TouchableOpacity activeOpacity={0.5}>
             <Image 
                 source={Fyra} 
-                style={[styles.logo, {height: 200 * 0.3},{marginBottom:10}]} 
+                style={[{height: 200 * 0.3},{marginBottom:10}]} 
                 resizeMode="contain"
             />
             <Text style={styles.text}> Today was superstressful </Text>
@@ -121,12 +162,13 @@ const StressScreen = () => {
         <TouchableOpacity activeOpacity={0.5}>
             <Image 
                 source={Fem} 
-                style={[styles.logo, {height: 200 * 0.3}]} 
+                style={[{height: 200 * 0.3}]} 
                 resizeMode="contain"
             />
             <Text style={styles.text}> Stressfree day </Text>
         </TouchableOpacity>
 
+<<<<<<< HEAD
               
              
 
@@ -142,6 +184,20 @@ const StressScreen = () => {
             
 
         
+=======
+        </View>
+
+        <View style={styles.customButtonContainer}>
+        <CustomButton
+            text="Submit"
+            /></View>
+   
+           
+
+            <ButtonMenu
+             screen='timeTracking'/>
+            
+>>>>>>> e86539e24c95b0d67a06fe36b01576f2d8414333
 
         
     )
@@ -152,23 +208,26 @@ const StressScreen = () => {
         container: {
             backgroundColor: '#313131',
             height: '100%',
+            
+        },
+        layout: {
+            flexDirection: 'row',
+            justifyContent: 'space-between'
+
+        },
+        smileys: {
+
         },
         selectListContainer: {
             alignItems: 'center',
             justifyContent: 'center',
-            marginTop: '3%',
+            
            
         },
         selectList: {
             fontWeight: 'bold',
             color: '#EFEFEF',
-        },
-        boxStyles: {
-            width: 0.9 * Dimensions.get('window').width,
-        },
-        header: {
-            flexDirection: 'row',
-            justifyContent: 'space-between',
+          
         },
         title: {
             fontSize: 24,
@@ -183,23 +242,51 @@ const StressScreen = () => {
             width:100,
             
         },
+<<<<<<< HEAD
         logo: {
             width: '70%',
             maxWidth: 300,
             maxHeight: 200,  
             flexDirection:'row',
+=======
+
+        date: {
+            color: 'white',
+            fontSize: 20,
+        
+        },
+        day: {
+            color: 'white',
+            marginLeft: 18,
+            marginBottom: -30,
+            marginTop: 5,
+        },
+        circle: {
+            height: 40,
+            width: 40,
+            borderRadius: 40 / PixelRatio.get(),
+            backgroundColor: '#0376C2',
+            marginTop: 30,
+            marginHorizontal: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
+            
+     
+>>>>>>> e86539e24c95b0d67a06fe36b01576f2d8414333
         },
 
         text:{
             marginLeft:220,
-            flexDirection:'row',
+       
             position: "absolute",
             marginTop:23,
             fontsize:20,
             fontWeight:'bold',
             color: 'white',
         },
-
+        customButtonContainer: {
+            paddingHorizontal: 50,
+          },
     
     })
 
