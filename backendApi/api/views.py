@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer
-from .models import Course, Programme, User
+from .models import Course, Programme, User, Student, Teacher, ProgrammeHead
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -48,14 +48,32 @@ class UserViewset(viewsets.ModelViewSet):
     @action(detail=False, methods=['POST'])
     def create_user(self, request, **extra_fields):
         email = request.POST.get('email')
-        username = request.POST.get('username')
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
+        username = first_name + last_name
         password = request.POST.get('password')
         role = request.POST.get('role')
+        university = request.POST.get('university')
 
-        User.createUser(email=email, username=username, first_name=first_name, last_name=last_name, password=password, role=role)
+        if role=="Student" or role=="STUDENT": 
+           user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=Programme.objects.get(id=request.POST.get('pID')), courses=Course.objects.get(id=request.POST.get('courseID')))
+           user.save()
+           return Response({'status': 'Student added'})
+        elif role=="Teacher" or role=="TEACHER":
+            courses= Course.objects.get(request.POST.get('courseID'))
+            user= Teacher.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.TEACHER, university=university, courses=courses)
+            user.save()
+            return Response({'status': 'Teacher added'})
+        elif role=="ProgrammeHead" or role=="PROGRAMMEHEAD":
+            pID = request.POST.get('pID')
+            user= ProgrammeHead.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.PROGRAMMEHEAD, programme=Programme.objects.get(id=pID), university=university)
+            user.save()
+            return Response({'status': 'ProgrammeHead added'})
+        else:
+           print("Role does not exist")
+           return Response({'status': 'user set'})
+        
 
-        return Response({'status': 'user set'})
+        
     
     

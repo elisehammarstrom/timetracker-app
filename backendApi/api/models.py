@@ -43,7 +43,7 @@ class User(AbstractUser):
         STUDENT = "STUDENT", "Student"
         PROGRAMMEHEAD = "PROGRAMMEHEAD", "ProgrammeHead"
         TEACHER ="TEACHER", "Teacher"
-        
+
     base_role = Role.ADMIN
     role = models.CharField(max_length=50, choices=Role.choices)
     email = models.EmailField(verbose_name='email address', unique=True)
@@ -57,16 +57,6 @@ class User(AbstractUser):
             return super().save(*args, **kwargs)
         
 
-    @staticmethod
-    def createUser(email, username, first_name, last_name, password, role):
-
-       if role=="Student" or role=="STUDENT": 
-           new_student = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT)
-           user = new_student
-       
-       #user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=role) 
-       user.save()
-
 class ProgrammeHeadManager(BaseUserManager):
     def get_queryset(self, *args, **kwargs):
         results = super().get_queryset(*args, **kwargs)
@@ -76,7 +66,7 @@ class ProgrammeHeadManager(BaseUserManager):
 class ProgrammeHead(User):
     base_role = User.Role.PROGRAMMEHEAD
     university = models.CharField(max_length=70)
-    #programme= models.ForeignKey(Programme, on_delete=models.CASCADE)
+    programme= models.ForeignKey(Programme, on_delete=models.CASCADE, null=True)
 
     programmeHead = ProgrammeHeadManager()
     
@@ -94,7 +84,7 @@ class TeacherManager(BaseUserManager):
 class Teacher(User):
     base_role = User.Role.TEACHER
     university = models.CharField(max_length=70)
-    #course= models.ForeignKey(Course, on_delete=models.CASCADE)
+    courses= models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     teacher = TeacherManager()
     
     def welcome(self):
