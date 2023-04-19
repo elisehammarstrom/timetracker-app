@@ -2,29 +2,49 @@
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import React, {useState} from 'react';
-import {Text, View,Dimensions,StyleSheet} from 'react-native';
+import {Text, View,Dimensions,StyleSheet, Button} from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list'
 import DatePicker from 'react-native-modern-datepicker';
 import ButtonMenu from '../../components/ButtonMenu';
+import WeekCalendar from '../../components/WeekCalendar';
 
 const UntrackedScreen = () => {
 
     const [selectedDate, setSelectedDate] = useState('');
     const [selected, setSelected] = React.useState("");
     const [isShowingImage, setShowingImage] = React.useState(false)
-  
+
+    const [date, setDate] = useState(new Date());
+
+    var numberOfWeeks = 1;
+    var bajs = new Date();
+
+    var ourDate = new Date();
+    //Change it so that it is 7 days in the past.
+    var pastDate = ourDate.getDate() - 7*(numberOfWeeks);
+    ourDate.setDate(pastDate);      
+
     const data = [
     {key:'1', value:'Meknik'},
     {key:'2', value:'Reglerteknik'},
     {key:'3', value:'Envariabelanalys'},
     ]
-    
 
+    const onCalendarPressed = () => {       
+        setDate(ourDate)
+      }
+
+      const onCurrentDatePressed = () => {       
+        setDate(new Date())
+      }
 
     return (
     
 
 <View style={styles.container}>
+    <Button onPress={onCalendarPressed}></Button>
+<WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
+<Button onPress={onCurrentDatePressed}></Button>
 <View style={styles.selectListContainer}>
 
 <SelectList
@@ -35,7 +55,7 @@ setSelected={(val) => setSelected(val)}
 data={data}
 save="value"
 search={false}
-placeholder='Choose course to track stresslevel'
+placeholder='Choose course'
 />
 
 
@@ -74,7 +94,8 @@ placeholder='Choose course to track stresslevel'
             </View>
          )}
 
-             <ButtonMenu/>
+             <ButtonMenu 
+             screen='timeTracking'/>
             
         
 

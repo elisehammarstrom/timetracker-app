@@ -20,15 +20,17 @@ import React, { useState } from 'react';
  const navigation = useNavigation();
 
      const profile = {
-         username: 'Lovisa123',
+         fullName: 'Lovisa123',
         email: 'lovisanilsson58@gmail.com',
         picture: 'https://example.com/jane-doe-avatar.png',
-        university: 'Uppsala'
+        programme: 'STS',
+        language: 'English'
       }
-      const [username, setuserName] = useState(profile.username);
+      const [username, setFullName] = useState(profile.fullName);
       const [email, setEmail] = useState(profile.email);
-      const [university, setUniversity] = useState(profile.university);
+      const [programme, setUniversity] = useState(profile.programme);
       const [picture, setpicture] = useState(profile.picture);
+      const [language, setLanguage] = useState(profile.picture);
 
        const [isSelected, setSelection] = useState(false);
 
@@ -45,12 +47,12 @@ import React, { useState } from 'react';
        </View>
        <View style={styles.form}>
 
-         <Text style={styles.label}><B>Username:</B>
+         <Text style={styles.label}><B>Full name:</B>
            <CustomInput 
-               name="username"
-               placeholder={profile.username}
+               name="fullName"
+               placeholder={profile.fullName}
                control={control}
-               rules={{required: 'Username is required', minLength: {value: 3, message: 'Username should be at least 3 characters long'}}}
+               rules={{required: 'Full name is required', minLength: {value: 3, message: 'Username should be at least 3 characters long'}}}
              /> 
          </Text>
 
@@ -61,13 +63,16 @@ import React, { useState } from 'react';
                control={control}
                rules={{ required: 'Email is required', pattern: {value: EMAIL_REGEX, message: 'Email is invalid'}}}
              /></Text>
-         <Text style={styles.label}><B>University:</B> 
+         <Text style={styles.label}><B>Programme:</B> 
          <CustomInput 
-               name="university"
-               placeholder={profile.university}
+               name="programme"
+               placeholder={profile.programme}
                control={control}
-               rules={{required: 'University is required',}}
+               rules={{required: 'Programme is required',}}
              /></Text>
+             <Text style={styles.label}><B>Language:</B> </Text> 
+        
+        
 
  <CustomButton 
                  text="Save changes" 

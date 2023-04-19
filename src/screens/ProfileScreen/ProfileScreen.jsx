@@ -7,14 +7,16 @@
 
  const ProfileScreen = () => {
     const profile = {
-        username: 'Lovisa123',
+        fullName: 'Lovisa Nilsson',
         email: 'lovisanilsson58@gmail.com',
         picture: 'https://example.com/jane-doe-avatar.png',
-        university: 'Uppsala'
+        programme: 'STS',
+        language: 'English'
       }
-      const [username, setuserName] = useState(profile.username);
+      const [fullName, setFullName] = useState(profile.fullName);
       const [email, setEmail] = useState(profile.email);
-      const [university, setUniversity] = useState(profile.university);
+      const [programme, setProgramme] = useState(profile.programme);
+      const [language, setLanguage] = useState(profile.language);
       const [picture, setpicture] = useState(profile.picture);
       const [isSelected, setSelection] = useState(false);
     
@@ -46,9 +48,10 @@
        </View>
        <View style={styles.form}>
 
-       <Text style={styles.label}><B>Username:</B> {profile.username}</Text>
+       <Text style={styles.label}><B>Full name:</B> {profile.fullName}</Text>
          <Text style={styles.label}><B>Email:</B> {profile.email}</Text>
-         <Text style={styles.label}><B>University:</B> {profile.university}</Text>
+         <Text style={styles.label}><B>Programme:</B> {profile.programme}</Text>
+         <Text style={styles.label}><B>Language</B> {profile.language}</Text>
          <Text style={styles.label}><B>Notification:</B>
          <CheckBox
          value={isSelected}
