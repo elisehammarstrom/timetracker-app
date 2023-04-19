@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list';
+import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
 
 
 const CourseEvaluationsScreen = ({route}) => {
@@ -33,6 +34,12 @@ const CourseEvaluationsScreen = ({route}) => {
 
             </View>
             <Text style={styles.title}>{selected} evaluation</Text>
+
+            <View>
+                <ButtonMenu
+                    screen="courseStats"
+                />
+            </View>
         </View>
     );
 };
@@ -41,6 +48,7 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: '#313131',
         height: '100%',
+        justifyContent: 'space-between'
     },
     selectListContainer: {
         alignItems: 'center',

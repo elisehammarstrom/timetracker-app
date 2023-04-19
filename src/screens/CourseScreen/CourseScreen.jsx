@@ -4,41 +4,46 @@ import { useNavigation } from '@react-navigation/native';
 import CustomButton from '../../components/CustomButton';
 import { MultipleSelectList } from 'react-native-dropdown-select-list'
 
-const CourseScreen = () => {
-    const navigation = useNavigation();
-    const [courses, setCourses] = useState([])
-    const options = ["Mekanik", "Reglerteknik", "Envariabelanalys", "System- och operationsanalys"]
-
-    const [selected, setSelected] = React.useState([]);
-
-    const data = [
-      {key:'1', value:'Algoritmer och datastrukter'},
-      {key:'2', value:'Mekanik'},
-      {key:'3', value:'Miljöteknik'},
-      {key:'4', value:'Reglerteknik'},
-      {key:'5', value:'Sannolikhet och statistik'},
-      {key:'6', value:'System- och operationsanalys'},
-      {key:'7', value:'Transformmetoder'},
-  ]
+const CourseScreen = ({route}) => {
+  const {user} = route.params;
 
 
-    const onTimerPressed = () => {
-        navigation.navigate('Home', {options: courses});
-    };
+  const navigation = useNavigation();
+  const [courses, setCourses] = useState([])
+  const options = ["Mekanik", "Reglerteknik", "Envariabelanalys", "System- och operationsanalys"]
+
+  const [selected, setSelected] = React.useState([]);
+
+  const data = [
+    {key:'1', value:'Algoritmer och datastrukter'},
+    {key:'2', value:'Mekanik'},
+    {key:'3', value:'Miljöteknik'},
+    {key:'4', value:'Reglerteknik'},
+    {key:'5', value:'Sannolikhet och statistik'},
+    {key:'6', value:'System- och operationsanalys'},
+    {key:'7', value:'Transformmetoder'},
+]
+
+
+  const onTimerPressed = () => {
+      navigation.navigate('Home', {options: courses});
+      console.log(user)
+  };
     
 
-      function pickCourse(selectedCourse) {
-        if(courses.includes(selectedCourse)){
-          setCourses(courses.filter(Course => Course !== selectedCourse))
-          return;
-        }
+  function pickCourse(selectedCourse) {
+    if(courses.includes(selectedCourse)){
+      setCourses(courses.filter(Course => Course !== selectedCourse))
+      return;
+    }
 
-        setCourses(Courses => Courses.concat(selectedCourse))
+    setCourses(Courses => Courses.concat(selectedCourse))
 
-      }
+  }
 
     return (
         <View style={styles.container}>
+         
  
           <View style={styles.selectListContainer}>
             <MultipleSelectList 

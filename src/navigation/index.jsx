@@ -28,7 +28,22 @@ const Navigation = () => {
     return (
         <NavigationContainer>
             
-            <Stack.Navigator screenOptions={{headerShown: true}}>
+            <Stack.Navigator screenOptions={{headerShown: false}}>
+            <Stack.Screen name="CourseStats" component={CourseStatsScreen}/>
+
+            <Stack.Screen name="YourReports" component={YourReportsScreen} />
+
+            <Stack.Screen name="SignUp" component={SignUpScreen} />
+
+            <Stack.Screen name="Courses" component={CoursesScreen}/> 
+
+            <Stack.Screen name="EvaluateCourse" component={EvaluateCourseScreen}/>    
+
+
+
+
+
+
             
                 <Stack.Screen name="SignIn" component={SignInScreen} />
                 <Stack.Screen name="StartCourses" component={CourseScreen}/>
@@ -39,21 +54,16 @@ const Navigation = () => {
                 {/* <Stack.Screen name="Evaluation" component={EvaluationScreen}/> */}
                 
                 <Stack.Screen name="Timer" component={TimerScreen}/>
-                <Stack.Screen name="SignUp" component={SignUpScreen} />
                 <Stack.Screen name="ConfirmEmail" component={ConfirmEmailScreen} />
                 <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
                 <Stack.Screen name="NewPassword" component={NewPasswordScreen} />
                 <Stack.Screen name="ChooseEvaluateCourse" component={ChooseEvaluateCourseScreen}/>
-                <Stack.Screen name="EvaluateCourse" component={EvaluateCourseScreen}/>
                 <Stack.Screen name="Test" component={TestScreen}/>
                 
-                <Stack.Screen name="Courses" component={CoursesScreen}/>    
-                <Stack.Screen name="CourseStats" component={CourseStatsScreen}/>
                 <Stack.Screen name="CourseEvaluations" component={CourseEvaluationsScreen}/>
                 <Stack.Screen name="EditProfile" component={EditProfileScreen}/>
                 <Stack.Screen name="Profile" component={ProfileScreen}/>
                 <Stack.Screen name="OldYourReports" component={OldYourReportsScreen}/>
-                <Stack.Screen name="YourReports" component={YourReportsScreen} />
 
                 
             </Stack.Navigator>

@@ -1,9 +1,10 @@
-import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import React, {useState} from 'react'
+import { View, Text, StyleSheet, Dimensions } from 'react-native'
 import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
+import { SelectList } from 'react-native-dropdown-select-list';
 
 const EMAIL_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
 
@@ -12,11 +13,20 @@ const SignUpScreen = () => {
     const pwd = watch('password');
     console.log(errors);
 
+    const [selected, setSelected] = useState("");
+
+    const data = [
+        {key:'1', value:'Mekanik'},
+        {key:'2', value:'Reglerteknik'},
+        {key:'3', value:'Envariabelanalys'}
+    ]
+
     const navigation = useNavigation();
 
     const onRegisterPressed = data => {
+        data.push({programme: selected})
         console.log(data)
-        navigation.navigate('StartCourses')
+        navigation.navigate('StartCourses', {user: data})
     };
 
     const onSignInPress = () => {
@@ -29,11 +39,19 @@ const SignUpScreen = () => {
             <Text style={styles.title}>Create an account</Text>
 
             <CustomInput 
-                name="username"
-                placeholder="Username" 
+                name="firstname"
+                placeholder="First name" 
                 control={control}
-                rules={{required: 'Username is required', minLength: {value: 3, message: 'Username should be at least 3 characters long'}}}
+                rules={{required: 'First name is required'}}
             />
+
+            <CustomInput 
+                name="lastname"
+                placeholder="Last name" 
+                control={control}
+                rules={{required: 'Last name is required'}}
+            />
+
             <CustomInput 
                 name="email"
                 placeholder="Email" 
@@ -54,6 +72,24 @@ const SignUpScreen = () => {
                 control={control}
                 rules={{validate: value => value === pwd || 'Password do not match'}}
                 secureTextEntry
+            />
+
+            {/* <CustomInput 
+                name="programme"
+                placeholder={"Your university programme"} 
+                control={control}
+                rules={{required: 'Programme is required'}}
+                text={false}
+            /> */}
+            <SelectList
+                    dropdownTextStyles={styles.selectList}
+                    inputStyles={styles.selectList}
+                    boxStyles={styles.boxStyles}
+                    setSelected={(val) => setSelected(val)}
+                    data={data}
+                    save="value"
+                    search={false}
+                    placeholder='Choose course to see statistics'
             />
 
             <CustomButton 
@@ -88,6 +124,18 @@ const styles = StyleSheet.create({
         margin: 10,
         marginBottom: 50,
 
+    },
+    selectListContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: '3%',
+    },
+    selectList: {
+        fontWeight: 'bold',
+        color: '#EFEFEF',
+    },
+    boxStyles: {
+        width: 0.9 * Dimensions.get('window').width,
     },
     
 });

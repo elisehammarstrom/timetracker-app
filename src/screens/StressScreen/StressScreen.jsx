@@ -128,12 +128,15 @@ const StressScreen = () => {
         <View style={styles.customButtonContainer}>
         <CustomButton
             text="Submit"
-            /></View>
+        />
+        </View>
    
-           
+        <View>
 
             <ButtonMenu
-             screen='timeTracking'/>
+                screen='timeTracking'
+            />
+            </View>
 
         </View>
   
@@ -144,6 +147,7 @@ const StressScreen = () => {
         container: {
             backgroundColor: '#313131',
             height: '100%',
+            justifyContent: 'space-between'
             
         },
         layout: {
