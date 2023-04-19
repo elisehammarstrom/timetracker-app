@@ -1,106 +1,90 @@
 
-import CustomButton from '../../components/CustomButton';
-import { useNavigation } from '@react-navigation/native';
 import React, {useState} from 'react';
-import {Text, View,Dimensions,StyleSheet, Button} from 'react-native';
+import {Text, View,Dimensions,StyleSheet, Button, TouchableHighlight} from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list'
-import DatePicker from 'react-native-modern-datepicker';
 import ButtonMenu from '../../components/ButtonMenu';
 import WeekCalendar from '../../components/WeekCalendar';
+import {ArrowLeftOutlined, ArrowRightOutlined} from '@ant-design/icons';
 
 const UntrackedScreen = () => {
 
-    const [selectedDate, setSelectedDate] = useState('');
     const [selected, setSelected] = React.useState("");
-    const [isShowingImage, setShowingImage] = React.useState(false)
+    const [isShowingArrow, setShowingArrow] = React.useState(false)
+
+    const data = [
+        {key:'1', value:'Meknik'},
+        {key:'2', value:'Reglerteknik'},
+        {key:'3', value:'Envariabelanalys'},
+        ]
 
     const [date, setDate] = useState(new Date());
 
-    var numberOfWeeks = 1;
-    var bajs = new Date();
-
     var ourDate = new Date();
+
     //Change it so that it is 7 days in the past.
-    var pastDate = ourDate.getDate() - 7*(numberOfWeeks);
+    var pastDate = ourDate.getDate() - 7;
     ourDate.setDate(pastDate);      
 
-    const data = [
-    {key:'1', value:'Meknik'},
-    {key:'2', value:'Reglerteknik'},
-    {key:'3', value:'Envariabelanalys'},
-    ]
+   
 
     const onCalendarPressed = () => {       
         setDate(ourDate)
+        console.log('pressed')
+        
       }
 
       const onCurrentDatePressed = () => {       
         setDate(new Date())
+        console.log('pressed again')
       }
 
     return (
-    
-
-<View style={styles.container}>
-    <Button onPress={onCalendarPressed}></Button>
-<WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
-<Button onPress={onCurrentDatePressed}></Button>
-<View style={styles.selectListContainer}>
-
-<SelectList
-dropdownTextStyles={styles.selectList}
-inputStyles={styles.selectList}
-boxStyles={styles.boxStyles}
-setSelected={(val) => setSelected(val)}
-data={data}
-save="value"
-search={false}
-placeholder='Choose course'
-/>
-
-
+    <View style={styles.container}>
+ 
 {
-        isShowingImage ?
+        isShowingArrow ?
         (
-            <View  style={styles.dateButton}> 
-             <DatePicker
-      onSelectedChange={date => setSelectedDate(date)}
-      current="2023-04-17"
-      selected="2023-04-17"
-      minuteInterval={15}
-      style={{ borderRadius: 2, height: 250, width: 250 }}
-      onTimeChange={selectedTime => setTime(selectedTime)}
-      
-      />
-
-<CustomButton 
-            text="Hide calendar"
-            onPress={() => setShowingImage(false)}
-
-
-            />
-             </View>
-        
-       
+            <View style={styles.layout}>
+                <TouchableHighlight onPress={() => {onCalendarPressed(true); setShowingArrow(false);}}> 
+                <View>
+                    <ArrowLeftOutlined style={styles.leftArrow} />
+                    </View>
+                    </TouchableHighlight>
+                    <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
+                    <View>
+                        <ArrowLeftOutlined style={styles.invisibleArrow} />
+                    </View>
+                </View>
          ) : (
-            <View style={styles.dateButton}>
-
-            <CustomButton
-            text="Select date"
-            onPress={() => setShowingImage(true)}
-
-
+            <View style={styles.layout}>
+                <View>
+                    <ArrowLeftOutlined style={styles.invisibleArrow} />
+                    </View>
+                    <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
+                    <TouchableHighlight onPress={() => {onCurrentDatePressed(true); setShowingArrow(true);}}> 
+                    <View>
+                        <ArrowRightOutlined style={styles.rightArrow} />
+                    </View>
+                    </TouchableHighlight>
+                </View>
+         )} 
+    
+        <View style={styles.selectListContainer}>
+            <SelectList
+                dropdownTextStyles={styles.selectList}
+                inputStyles={styles.selectList}
+                boxStyles={styles.boxStyles}
+                setSelected={(val) => setSelected(val)}
+                data={data}
+                save="value"
+                search={false}
+                placeholder='Choose course'
             />
-            </View>
-         )}
-
              <ButtonMenu 
              screen='timeTracking'/>
-            
         
-
         </View>
-        </View>
+    </View>
         
 )
 }
@@ -147,7 +131,6 @@ const styles = StyleSheet.create({
         maxHeight: 200,  
         flexDirection:'row',
     },
-
     text:{
         marginLeft:220,
         flexDirection:'row',
@@ -157,11 +140,33 @@ const styles = StyleSheet.create({
         fontWeight:'bold',
         color: 'white',
     },
-
+    layout: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    rightArrow: {
+        color: 'white', 
+        height: 20, 
+        width: 20,
+        marginTop: 20,
+        padding: 20,
+    },
+    leftArrow: {
+        color: 'white', 
+        height: 20, 
+        width: 20,
+        marginTop: 20,
+        padding: 20,
+    },
+    invisibleArrow: {
+        color: '#313131', 
+        height: 20, 
+        width: 20,
+        marginTop: 20,
+        padding: 20,
+    }
 
 })
-
-
-
 
 export default UntrackedScreen
