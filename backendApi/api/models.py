@@ -1,10 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager, User
 from rest_framework.decorators import action
+from rest_framework.response import Response
 
 class Course(models.Model):
     courseCode = models.CharField(max_length=10)
     courseTitle = models.CharField(max_length=100)
+
+
     #programmes = fields.ForeignKey(Programme, on_delete=models.CASCADE)
 
     # def no_of_evaluations(self):
@@ -55,6 +58,21 @@ class User(AbstractUser):
             self.role = self.base_role
             self.username = self.first_name + self.last_name
             return super().save(*args, **kwargs)
+    """ 
+    def get_system_id_from_email(self, identifier, *args, **kwargs):
+        results = self.get_queryset(self, *args, **kwargs)
+
+        for user in results:
+            if identifier == self.email:
+                return self.id
+        
+        response = {"message": "No user with that email"}
+        return response
+    
+    def get_queryset(self, *args, **kwargs):
+        results = super().get_queryset(*args, **kwargs)
+        return results
+    """
         
 
 class ProgrammeHeadManager(BaseUserManager):
@@ -66,11 +84,9 @@ class ProgrammeHeadManager(BaseUserManager):
 class ProgrammeHead(User):
     base_role = User.Role.PROGRAMMEHEAD
     university = models.CharField(max_length=70)
-    programme= models.ForeignKey(Programme, on_delete=models.CASCADE, null=True)
-
+    programme= models.ForeignKey(Programme, on_delete=models.CASCADE, blank=True, null=True)
     programmeHead = ProgrammeHeadManager()
     
-
     def welcome(self):
         return "Only for ProgrammeHead"
 
@@ -84,12 +100,11 @@ class TeacherManager(BaseUserManager):
 class Teacher(User):
     base_role = User.Role.TEACHER
     university = models.CharField(max_length=70)
-    courses= models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+    courses= models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
     teacher = TeacherManager()
     
     def welcome(self):
         return "Only for Teacher"
-
 
 
 class StudentManager(BaseUserManager):

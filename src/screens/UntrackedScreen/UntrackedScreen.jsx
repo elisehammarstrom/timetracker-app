@@ -1,85 +1,154 @@
 
-import CustomButton from '../../components/CustomButton';
-import { useNavigation } from '@react-navigation/native';
 import React, {useState} from 'react';
-import {Text, View,Dimensions,StyleSheet} from 'react-native';
+import {Text, View,Dimensions,StyleSheet, Button, TouchableHighlight, TouchableOpacity} from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list'
-import DatePicker from 'react-native-modern-datepicker';
 import ButtonMenu from '../../components/ButtonMenu';
+import WeekCalendar from '../../components/WeekCalendar';
+import {ArrowLeftOutlined, ArrowRightOutlined} from '@ant-design/icons';
+import CustomButton from '../../components/CustomButton';
+
 
 const UntrackedScreen = () => {
 
-    const [selectedDate, setSelectedDate] = useState('');
     const [selected, setSelected] = React.useState("");
-    const [isShowingImage, setShowingImage] = React.useState(false)
-  
-    const data = [
-    {key:'1', value:'Meknik'},
-    {key:'2', value:'Reglerteknik'},
-    {key:'3', value:'Envariabelanalys'},
-    ]
-    
+    const [isShowingArrow, setShowingArrow] = React.useState(true)
 
+    const data = [
+        {key:'1', value:'Meknik'},
+        {key:'2', value:'Reglerteknik'},
+        {key:'3', value:'Envariabelanalys'},
+        ]
+
+    const hourData = [
+        {key:'1', value:'00'},
+        {key:'2', value:'01'},
+        {key:'3', value:'02'},
+        {key:'4', value:'03'},
+        {key:'5', value:'04'},
+        {key:'6', value:'05'},
+        {key:'7', value:'06'},
+        {key:'8', value:'07'},
+        {key:'9', value:'08'},
+        {key:'10', value:'09'},
+        {key:'11', value:'10'},
+    ]
+
+    const minuteData = [
+        {key:'1', value:'00'},
+        {key:'2', value:'15'},
+        {key:'3', value:'30'},
+        {key:'4', value:'45'},
+    ]
+
+    const [date, setDate] = useState(new Date());
+
+    var ourDate = new Date();
+
+    //Change it so that it is 7 days in the past.
+    var pastDate = ourDate.getDate() - 7;
+    ourDate.setDate(pastDate);      
+
+   
+
+    const onCalendarPressed = () => {       
+        setDate(ourDate)
+        
+      }
+
+      const onCurrentDatePressed = () => {       
+        setDate(new Date())
+      }
 
     return (
-    
-
-<View style={styles.container}>
-<View style={styles.selectListContainer}>
-
-<SelectList
-dropdownTextStyles={styles.selectList}
-inputStyles={styles.selectList}
-boxStyles={styles.boxStyles}
-setSelected={(val) => setSelected(val)}
-data={data}
-save="value"
-search={false}
-placeholder='Choose course to track stresslevel'
-/>
-
-
+    <View style={styles.container}>
+ 
 {
-        isShowingImage ?
+        isShowingArrow ?
         (
-            <View  style={styles.dateButton}> 
-             <DatePicker
-      onSelectedChange={date => setSelectedDate(date)}
-      current="2023-04-17"
-      selected="2023-04-17"
-      minuteInterval={15}
-      style={{ borderRadius: 2, height: 250, width: 250 }}
-      onTimeChange={selectedTime => setTime(selectedTime)}
-      
-      />
-
-<CustomButton 
-            text="Hide calendar"
-            onPress={() => setShowingImage(false)}
-
-
-            />
-             </View>
-        
-       
+            <View style={styles.layout}>
+                <TouchableHighlight onPress={() => {onCalendarPressed(true); setShowingArrow(false);}}> 
+                <View>
+                    <ArrowLeftOutlined style={styles.leftArrow} />
+                    </View>
+                    </TouchableHighlight>
+                    <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
+                    <View>
+                        <ArrowLeftOutlined style={styles.invisibleArrow} />
+                    </View>
+                </View>
          ) : (
-            <View style={styles.dateButton}>
+            <View style={styles.layout}>
+                <View>
+                    <ArrowLeftOutlined style={styles.invisibleArrow} />
+                    </View>
+                    <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
+                    <TouchableHighlight onPress={() => {onCurrentDatePressed(true); setShowingArrow(true);}}> 
+                    <View>
+                        <ArrowRightOutlined style={styles.rightArrow} />
+                    </View>
+                    </TouchableHighlight>
+                </View>
+         )} 
 
-            <CustomButton
-            text="Select date"
-            onPress={() => setShowingImage(true)}
+        <View style={styles.selectListContainer}>
+            <SelectList
+                dropdownTextStyles={styles.selectList}
+                inputStyles={styles.selectList}
+                boxStyles={styles.boxStyles}
+                setSelected={(val) => setSelected(val)}
+                data={data}
+                save="value"
+                search={false}
+                placeholder='Choose course'
+            />
+        </View>
+        <View style={styles.timeLayout}>
+        <View style={styles.selectListTimeContainer}>
+       <Text style={styles.addTime}>Add time:</Text>
+            <View>
+               
+            
+            </View>
+    
+            <SelectList
+                dropdownTextStyles={styles.selectList}
+                inputStyles={styles.selectList}
+                boxStyles={styles.boxTimeStyles}
+                setSelected={(val) => setSelected(val)}
+                data={hourData}
+                save="value"
+                search={false}
+                placeholder='00'
+                dropdownStyles={{width: 0.18 * Dimensions.get('window').width, border: 'none'}}
+                
+            />
+            <Text style={{color: 'white', fontSize: 30}}>:</Text>
 
+             <SelectList
+                dropdownTextStyles={styles.selectList}
+                inputStyles={styles.selectList}
+                boxStyles={styles.boxTimeStyles}
+                setSelected={(val) => setSelected(val)}
+                data={minuteData}
+                save="value"
+                search={false}
+                placeholder='00'
+                dropdownStyles={{width: 0.18 * Dimensions.get('window').width, border: 'none'}}
+            />
+        </View>
+        </View>
 
+            <View style={styles.customButtonContainer}>
+        <CustomButton
+            text="Add time"
             />
             </View>
-         )}
-
-             <ButtonMenu/>
-            
-        
-
-        </View>
-        </View>
+         
+    
+       
+        <ButtonMenu 
+             screen='timeTracking'/>
+    </View>
         
 )
 }
@@ -89,12 +158,28 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: '#313131',
         height: '100%',
+        alignitems: 'center',
+        justifyContent_: 'center',
     },
     selectListContainer: {
-        alignItems: 'center',
+     
         justifyContent: 'center',
         marginTop: '3%',
+        flexDirection: 'row'
        
+    },
+    selectListTimeContainer: {
+     
+        justifyContent: 'center',
+        marginTop: '3%',
+        flexDirection: 'row',
+      /*   height: 40,
+        width: 40, */
+        borderRadius: 20,
+        border: 'solid',
+        borderColor: 'red',
+        width: '60%',
+        
     },
     selectList: {
         fontWeight: 'bold',
@@ -102,6 +187,10 @@ const styles = StyleSheet.create({
     },
     boxStyles: {
         width: 0.9 * Dimensions.get('window').width,
+    },
+    boxTimeStyles: {
+        width: 0.18 * Dimensions.get('window').width,
+        borderStyle: 'none'
     },
     header: {
         flexDirection: 'row',
@@ -126,7 +215,6 @@ const styles = StyleSheet.create({
         maxHeight: 200,  
         flexDirection:'row',
     },
-
     text:{
         marginLeft:220,
         flexDirection:'row',
@@ -136,11 +224,55 @@ const styles = StyleSheet.create({
         fontWeight:'bold',
         color: 'white',
     },
-
+    layout: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    rightArrow: {
+        color: 'white', 
+        height: 20, 
+        width: 20,
+        marginTop: 20,
+        padding: 20,
+    },
+    leftArrow: {
+        color: 'white', 
+        height: 20, 
+        width: 20,
+        marginTop: 20,
+        padding: 20,
+    },
+    invisibleArrow: {
+        color: '#313131', 
+        height: 20, 
+        width: 20,
+        marginTop: 20,
+        padding: 20,
+    },
+    plusIcon: {
+        color: 'white',
+        padding: 20,
+    },
+    minusIcon: {
+        color: 'white',
+        padding: 20,
+    },
+    addTime: {
+        color: 'white',
+        fontWeight: 'bold',
+        marginTop: 12,
+        paddingLeft: 13,
+    },
+    timeLayout: {
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    customButtonContainer: {
+        paddingHorizontal: 50,
+        marginTop: 30,
+      },
 
 })
-
-
-
 
 export default UntrackedScreen

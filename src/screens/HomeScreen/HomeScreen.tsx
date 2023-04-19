@@ -10,6 +10,7 @@ import React, {useState} from 'react';
 import {Button, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import ButtonMenu from '../../components/ButtonMenu';
 
+
 const HomeScreen: React.FC = ({route}) => {
 
   const {options} = route.params;
