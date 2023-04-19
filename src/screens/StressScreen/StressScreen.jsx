@@ -199,8 +199,6 @@ const StressScreen = () => {
             marginHorizontal: 10,
             justifyContent: 'center',
             alignItems: 'center',
-            
-     
         },
 
         text:{
