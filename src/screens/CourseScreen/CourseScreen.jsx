@@ -72,7 +72,7 @@ const CourseScreen = () => {
                 ))}
                 <View style={styles.customButtonContainer}>
                   <CustomButton 
-                    text="Go to timer" 
+                    text="Start tracking" 
                     onPress={onTimerPressed}
                     />
                 </View>

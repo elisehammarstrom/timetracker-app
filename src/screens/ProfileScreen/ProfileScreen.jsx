@@ -29,6 +29,10 @@
          });
        };
 
+       const onEditCoursePressed = () => {
+        navigation.navigate('StartCourses', {
+        });
+      };
              //make separate words bold
              const B = (props) => <Text style={{fontWeight: 'bold'}}>{props.children}</Text>
 
@@ -56,6 +60,12 @@
          <CustomButton
              text="Edit Profile"
              onPress={onEditPressed}
+             type="HOMESCREEN"
+             />
+
+          <CustomButton
+             text="Edit Courses" 
+             onPress={onEditCoursePressed}
              type="HOMESCREEN"
              />
 
