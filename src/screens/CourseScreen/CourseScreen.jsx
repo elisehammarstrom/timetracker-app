@@ -49,12 +49,12 @@ const CourseScreen = () => {
               search = {true}
               placeholder = 'Search courses'
               dropdownTextStyles={{color: 'white'}}
-              inputStyles={{color: 'white'}}
+              inputStyles={{color: 'white', width: 200}}
               checkBoxStyles = {{backgroundColor: 'white'}}
               boxStyles = {styles.selectBox}
               labelStyles = {{color:'white'}}
               notFoundText = 'No course found'
-              dropdownStyles={{backgroundColor: 'grey'}}
+              dropdownStyles={{backgroundColor: 'grey', width: 300}}
               badgeStyles = {{backgroundColor: '#313131'}}
            
            
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'scroll' // kanske inte optimalt, det blir jäkligt fult just nu ska fixas!
+    overflow: 'scroll' // behövs bara för webben, på mobilen med expo appen funkar allt som det ska
 },
 selectBox: {
   backgroundColor: 'grey',
