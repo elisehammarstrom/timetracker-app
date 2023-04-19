@@ -35,7 +35,7 @@ setSelected={(val) => setSelected(val)}
 data={data}
 save="value"
 search={false}
-placeholder='Choose course to track stresslevel'
+placeholder='Choose course'
 />
 
 
@@ -74,7 +74,8 @@ placeholder='Choose course to track stresslevel'
             </View>
          )}
 
-             <ButtonMenu/>
+             <ButtonMenu 
+             screen='timeTracking'/>
             
         
 
