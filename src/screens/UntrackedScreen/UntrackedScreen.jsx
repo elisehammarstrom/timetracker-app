@@ -9,7 +9,7 @@ import {ArrowLeftOutlined, ArrowRightOutlined} from '@ant-design/icons';
 const UntrackedScreen = () => {
 
     const [selected, setSelected] = React.useState("");
-    const [isShowingArrow, setShowingArrow] = React.useState(false)
+    const [isShowingArrow, setShowingArrow] = React.useState(true)
 
     const data = [
         {key:'1', value:'Meknik'},
