@@ -153,12 +153,13 @@ const StressScreen = () => {
         },
         smileys: {
             flexDirection: 'column',
-            marginLeft: 7,
+            marginLeft: 40,
 
         },
         selectListContainer: {
             alignItems: 'center',
             justifyContent: 'center',
+          
         },
         selectList: {
             fontWeight: 'bold',
@@ -212,6 +213,7 @@ const StressScreen = () => {
         },
         customButtonContainer: {
             paddingHorizontal: 50,
+            marginTop: 10,
           },
     
     })

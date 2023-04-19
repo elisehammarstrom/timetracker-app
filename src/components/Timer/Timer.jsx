@@ -2,6 +2,7 @@ import { Button,View, Text , TouchableHighlight,  StyleSheet,SafeAreaView,Dimens
 import React, {useState} from 'react';
 import {Stopwatch} from 'react-native-stopwatch-timer';
 import { BorderlessButton } from 'react-native-gesture-handler';
+import {PlayCircleOutlined, PauseCircleOutlined} from '@ant-design/icons';
 
 const Timer = ({courseName, color}) => {
     const [isStopwatchStart, setIsStopwatchStart] = useState(false);
@@ -39,7 +40,7 @@ const Timer = ({courseName, color}) => {
                     setResetStopwatch(false);
                   }}>
                   <Text style={styles.buttonText}>
-                    {!isStopwatchStart ? '▶️' : '⏸'}
+                    {!isStopwatchStart ? <PlayCircleOutlined/> : <PauseCircleOutlined/>}
                   </Text>
                 </TouchableHighlight> 
               </View>
