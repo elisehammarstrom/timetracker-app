@@ -6,6 +6,8 @@ from rest_framework.response import Response
 class Course(models.Model):
     courseCode = models.CharField(max_length=10)
     courseTitle = models.CharField(max_length=100)
+
+
     #programmes = fields.ForeignKey(Programme, on_delete=models.CASCADE)
 
     # def no_of_evaluations(self):
