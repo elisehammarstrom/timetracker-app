@@ -10,6 +10,7 @@ from rest_framework.decorators import action
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.request import Request
+from django.contrib.auth import authenticate
 
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -21,7 +22,8 @@ class ProgrammeViewset(viewsets.ModelViewSet):
     queryset = Programme.objects.all()
     serializer_class = ProgrammeSerializer
     authentication_classes = (TokenAuthentication, )
-    permission_classes =(IsAuthenticated, )
+    #permission_classes =(IsAuthenticated, )
+    permission_classes =[IsAuthenticated, ]
 
     @action(detail=False, methods=['POST'])
     def add_course(self, request, *args, **kwargs):
@@ -42,7 +44,19 @@ class ProgrammeViewset(viewsets.ModelViewSet):
 
 class LoginView(APIView):
     def post(self, request:Request):
-        pass
+        email = request.data.get('email')
+        password = request.data.get('password')
+
+        user = request.user
+
+        user.authenticate(email=email, password=password)
+
+        if user is not None:
+            response = {
+                "message": "Login was successful", 
+                "token": user.auth_token.key
+            } 
+            return Response(data=response, status=status.HTTP_200_OK)
 
     def get(self, request:Request):
         content = {
