@@ -36,8 +36,6 @@ class ProgrammeViewset(viewsets.ModelViewSet):
         else:
             response = {"message": "You need to provide a the system ID for the program (pID)"}
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
-        
-
 
 class UserViewset(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -54,26 +52,114 @@ class UserViewset(viewsets.ModelViewSet):
         password = request.POST.get('password')
         role = request.POST.get('role')
         university = request.POST.get('university')
+        pID = None
+        courseID = None
+
+        if 'pID' in request.data:
+            pID = request.POST.get('pID')
+        if 'courseID' in request.data:
+            courseID = request.POST.get('courseID')
 
         if role=="Student" or role=="STUDENT": 
-           user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=Programme.objects.get(id=request.POST.get('pID')), courses=Course.objects.get(id=request.POST.get('courseID')))
+           #create with programme 
+           if pID != None:
+            pID = request.POST.get('pID')
+            user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=Programme.objects.get(id=request.POST.get('pID')), courses=courseID)
+           else:
+               #create with no programme or course
+               user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=pID, courses=courseID)
            user.save()
            return Response({'status': 'Student added'})
         elif role=="Teacher" or role=="TEACHER":
-            courses= Course.objects.get(request.POST.get('courseID'))
-            user= Teacher.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.TEACHER, university=university, courses=courses)
+            #vi skapar teacher utan kurser först
+            if courseID is None:
+                user= Teacher.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.TEACHER, university=university, courses=None)
+            else:
+                courses= Course.objects.get(id=courseID)
+                user= Teacher.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.TEACHER, university=university, courses=courses)
             user.save()
             return Response({'status': 'Teacher added'})
         elif role=="ProgrammeHead" or role=="PROGRAMMEHEAD":
-            pID = request.POST.get('pID')
-            user= ProgrammeHead.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.PROGRAMMEHEAD, programme=Programme.objects.get(id=pID), university=university)
+            #create programmehead without programme
+            if pID is None:
+                user= ProgrammeHead.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.PROGRAMMEHEAD, programme=None, university=university)
+            else:
+                user= ProgrammeHead.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.PROGRAMMEHEAD, programme=Programme.objects.get(id=pID), university=university)
             user.save()
             return Response({'status': 'ProgrammeHead added'})
         else:
-           print("Role does not exist")
-           return Response({'status': 'user set'})
+           return Response({'status': 'Role does not exist'})
         
 
+
         
+    """
+    @action(detail=False, methods=['GET'])
+    def get_current_user(self, request, *args, **kwargs): 
+        current_user = request.user
+        response = {"message": "User returned"}
+        #return Response(response, status = status.HTTP_200_OK)  
+        return (current_user, Response(response, status = status.HTTP_200_OK))
+        
+    @action(detail=False, methods=['POST'])
+    def add_course_to_student(self, request, *args, **kwargs):
+        print("in method")
+        #metoden antar att vi har ett 
+        #front-end skapar användare, och hämtar systemId:et från deras användarobject
+        current_user = request.user
+        print (current_user.id)
+        print(current_user)
     
-    
+        if 'courseID' in request.data:
+                studentObject = Student.objects.get(id=current_user.id) 
+                print("studentObject: ", studentObject)
+                
+                courseID = request.data['courseID']
+                courseObject = Course.objects.get(id=courseID)
+                print("current_user.role: ", current_user.role)
+                print("studentObject.courses:", studentObject.courses)
+                #studentObject.add(courseObject)
+
+                
+
+                #if hasattr(current_user, 'STUDENT'):
+                #    print("är student")
+                    
+
+
+                #current_user.courses.add(courseObject)
+            
+                print("courseObject: ", courseObject)
+                response = {"message": "Course added to user"}
+                return Response(response, status = status.HTTP_200_OK)
+        else:
+            response = {"message": "You need to provide a ID for the course (courseID)"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST) 
+        if 'email' in request.data:
+            print("in if")
+            pk = self.kwargs.get('pk')
+            print("pk:", pk)
+            user_email = request.data['email'] 
+            print("user_email: ", user_email)
+            user_id = request.user.id
+            print("user_id:", user_id)
+            print("DONE")
+            if 'courseID' in request.data:
+                userObject = User.objects.get(id=user_id) 
+                #figure out instance
+                print("userObject: ", userObject)
+                #print(userObject.)
+                
+                courseID = request.data['courseID']
+                courseObject = Course.objects.get(id=courseID)
+                #userObject.courses.add(courseObject)
+                print("courseObject: ", courseObject)
+                response = {"message": "Course added to user"}
+                return Response(response, status = status.HTTP_200_OK)
+            else:
+                response = {"message": "You need to provide a ID for the course (courseID)"}
+                return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        else: 
+            response = {"message": "You need to provide the email-adress of user"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+"""
