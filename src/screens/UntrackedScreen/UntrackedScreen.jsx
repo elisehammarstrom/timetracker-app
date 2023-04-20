@@ -62,33 +62,36 @@ const UntrackedScreen = () => {
     return (
     <View style={styles.container}>
  
-{
-        isShowingArrow ?
-        (
-            <View style={styles.layout}>
-                <TouchableHighlight onPress={() => {onCalendarPressed(true); setShowingArrow(false);}}> 
-                <View>
-                    <ArrowLeftOutlined style={styles.leftArrow} />
-                    </View>
+        {
+            isShowingArrow ?
+            (
+                <View style={styles.layout}>
+                    <TouchableHighlight onPress={() => {onCalendarPressed(true); setShowingArrow(false);}}> 
+                        <View>
+                            <ArrowLeftOutlined style={styles.leftArrow} />
+                        </View>
                     </TouchableHighlight>
                     <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
                     <View>
                         <ArrowLeftOutlined style={styles.invisibleArrow} />
                     </View>
                 </View>
-         ) : (
-            <View style={styles.layout}>
-                <View>
-                    <ArrowLeftOutlined style={styles.invisibleArrow} />
+            ) 
+            : 
+            (
+                <View style={styles.layout}>
+                    <View>
+                        <ArrowLeftOutlined style={styles.invisibleArrow} />
                     </View>
                     <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
                     <TouchableHighlight onPress={() => {onCurrentDatePressed(true); setShowingArrow(true);}}> 
-                    <View>
-                        <ArrowRightOutlined style={styles.rightArrow} />
-                    </View>
+                        <View>
+                            <ArrowRightOutlined style={styles.rightArrow} />
+                        </View>
                     </TouchableHighlight>
                 </View>
-         )} 
+            )
+        } 
 
         <View style={styles.selectListContainer}>
             <SelectList
@@ -103,51 +106,52 @@ const UntrackedScreen = () => {
             />
         </View>
         <View style={styles.timeLayout}>
-        <View style={styles.selectListTimeContainer}>
-       <Text style={styles.addTime}>Add time:</Text>
-            <View>
+            <View style={styles.selectListTimeContainer}>
+                <Text style={styles.addTime}>Add time:</Text>
+                <View>
                
             
-            </View>
+                </View>
     
-            <SelectList
-                dropdownTextStyles={styles.selectList}
-                inputStyles={styles.selectList}
-                boxStyles={styles.boxTimeStyles}
-                setSelected={(val) => setSelected(val)}
-                data={hourData}
-                save="value"
-                search={false}
-                placeholder='00'
-                dropdownStyles={{width: 0.18 * Dimensions.get('window').width, border: 'none'}}
-                
-            />
-            <Text style={{color: 'white', fontSize: 30}}>:</Text>
+                <SelectList
+                    dropdownTextStyles={styles.selectList}
+                    inputStyles={styles.selectList}
+                    boxStyles={styles.boxTimeStyles}
+                    setSelected={(val) => setSelected(val)}
+                    data={hourData}
+                    save="value"
+                    search={false}
+                    placeholder='00'
+                    dropdownStyles={{width: 0.18 * Dimensions.get('window').width, border: 'none'}}
+                    
+                />
+                <Text style={{color: 'white', fontSize: 30}}>:</Text>
 
-             <SelectList
-                dropdownTextStyles={styles.selectList}
-                inputStyles={styles.selectList}
-                boxStyles={styles.boxTimeStyles}
-                setSelected={(val) => setSelected(val)}
-                data={minuteData}
-                save="value"
-                search={false}
-                placeholder='00'
-                dropdownStyles={{width: 0.18 * Dimensions.get('window').width, border: 'none'}}
+                <SelectList
+                    dropdownTextStyles={styles.selectList}
+                    inputStyles={styles.selectList}
+                    boxStyles={styles.boxTimeStyles}
+                    setSelected={(val) => setSelected(val)}
+                    data={minuteData}
+                    save="value"
+                    search={false}
+                    placeholder='00'
+                    dropdownStyles={{width: 0.18 * Dimensions.get('window').width, border: 'none'}}
+                />
+            </View>
+        </View>
+
+        <View style={styles.customButtonContainer}>
+            <CustomButton
+                text="Add time"
             />
         </View>
-        </View>
-
-            <View style={styles.customButtonContainer}>
-        <CustomButton
-            text="Add time"
+        <View>
+            <ButtonMenu 
+                screen='timeTracking'
             />
-            </View>
-         
-    
-       
-        <ButtonMenu 
-             screen='timeTracking'/>
+        </View>
+        
     </View>
         
 )
@@ -159,34 +163,28 @@ const styles = StyleSheet.create({
         backgroundColor: '#313131',
         height: '100%',
         alignitems: 'center',
-        justifyContent_: 'center',
+        justifyContent: 'space-between',
     },
     selectListContainer: {
-     
         justifyContent: 'center',
         marginTop: '3%',
-        flexDirection: 'row'
-       
+        flexDirection: 'row',       
     },
     selectListTimeContainer: {
-     
         justifyContent: 'center',
         marginTop: '3%',
         flexDirection: 'row',
-      /*   height: 40,
-        width: 40, */
         borderRadius: 20,
         border: 'solid',
         borderColor: 'red',
         width: '60%',
-        
     },
     selectList: {
         fontWeight: 'bold',
         color: '#EFEFEF',
     },
     boxStyles: {
-        width: 0.9 * Dimensions.get('window').width,
+        width: 0.75 * Dimensions.get('window').width,
     },
     boxTimeStyles: {
         width: 0.18 * Dimensions.get('window').width,

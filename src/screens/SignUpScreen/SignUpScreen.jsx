@@ -11,7 +11,7 @@ const EMAIL_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
 const SignUpScreen = () => {
     const {control, handleSubmit, formState: {errors}, watch} = useForm();
     const pwd = watch('password');
-    console.log(errors);
+    // console.log(errors);
 
     const [selected, setSelected] = useState("");
 
@@ -21,11 +21,14 @@ const SignUpScreen = () => {
         {key:'3', value:'Envariabelanalys'}
     ]
 
+    var info = [];
     const navigation = useNavigation();
 
     const onRegisterPressed = data => {
-        data.push({programme: selected})
-        console.log(data)
+        // data.push({programme: selected})
+        info.push(data)
+        info.push({programme: selected})
+        console.log(info)
         navigation.navigate('StartCourses', {user: data})
     };
 
@@ -74,13 +77,6 @@ const SignUpScreen = () => {
                 secureTextEntry
             />
 
-            {/* <CustomInput 
-                name="programme"
-                placeholder={"Your university programme"} 
-                control={control}
-                rules={{required: 'Programme is required'}}
-                text={false}
-            /> */}
             <SelectList
                     dropdownTextStyles={styles.selectList}
                     inputStyles={styles.selectList}
@@ -135,7 +131,7 @@ const styles = StyleSheet.create({
         color: '#EFEFEF',
     },
     boxStyles: {
-        width: 0.9 * Dimensions.get('window').width,
+        width: 0.75 * Dimensions.get('window').width,
     },
     
 });
