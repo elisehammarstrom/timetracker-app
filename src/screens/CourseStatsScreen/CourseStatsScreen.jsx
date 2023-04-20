@@ -109,9 +109,6 @@ const CourseStatsScreen = () =>{
     }
 
     const onSelectListPressed = () => {
-        console.log(selected)
-
-        console.log(courses[1].course)
         
         for (let i=0; i<length; i++) {
             if (selected === courses[i].course) {
@@ -120,7 +117,6 @@ const CourseStatsScreen = () =>{
         }
 
     }
-
 
 
     return (
