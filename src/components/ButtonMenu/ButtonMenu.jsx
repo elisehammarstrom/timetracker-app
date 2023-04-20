@@ -9,16 +9,16 @@ const ButtonMenu = ({screen}) => {
     const navigation = useNavigation();
 
 
-    //Navigation when you press each button
-    // const onYourReportsPress = data => {
-    //   console.log(data)
-    //   navigation.navigate('YourReports') //Options is the courses youve picked
-    // };
+    // Navigation when you press each button
+    const onYourReportsPress = data => {
+      console.log(data)
+      navigation.navigate('YourReports') //Options is the courses youve picked
+    };
   
-     //const onTimetrackingPress = data => {
-       //console.log(data)
-      //navigation.navigate('Timer')
-    // };
+     const onTimetrackingPress = data => {
+       console.log(data)
+      navigation.navigate('Home')
+    };
   
     const onCourseStatsPress = type => {
       console.log(type)
@@ -31,7 +31,7 @@ const ButtonMenu = ({screen}) => {
             <View style={styles.buttonContainer}>
                 <CustomButton 
                     text="Your reports"
-                    // onPress={onYourReportsPress}
+                    onPress={onYourReportsPress}
                     type={screen==='yourReports' ? 'CURRENTPAGE' : 'TERTIARY'} //Depending on what page you are the buttons have a different style
                 />
             </View>    
@@ -39,7 +39,7 @@ const ButtonMenu = ({screen}) => {
             <View style={styles.buttonContainer}>
                 <CustomButton
                     text="Tracking"
-                    //onPress={onTimetrackingPress}
+                    onPress={onTimetrackingPress}
                     type={screen==='timeTracking' ? 'CURRENTPAGE' : 'TERTIARY'}
                 />
             </View>

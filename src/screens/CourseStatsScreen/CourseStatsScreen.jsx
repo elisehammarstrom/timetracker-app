@@ -150,7 +150,7 @@ const CourseStatsScreen = () =>{
                 <View style={styles.dateButton}>
 
                     <CustomButton
-                        text="Select date"
+                        text="Select week"
                     />
 
                 </View>
