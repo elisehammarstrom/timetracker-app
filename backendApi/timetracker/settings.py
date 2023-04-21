@@ -31,6 +31,11 @@ AUTH_USER_MODEL = "api.User"
 
 CORS_ORIGIN_ALLOW_ALL = True
 
+DATETIME_FORMAT="%Y-%m-%d%H:%M:%S"
+L10N=False #to make sore localization data doesn't 
+#take precedent when it comes to dates format
+USE_TZ=False
+
 
 # Application definition
 

@@ -34,6 +34,16 @@ class CourseViewset(viewsets.ModelViewSet):
         else:
             response = {"message": "You need to provide a courseCode for the course (courseCode)"}
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        
+        def get_course_from_courseCode(courseCode):
+            print("hej")
+
+            ###for entry in queryset:
+             #   if courseCode = entry.Course.
+
+
+            
+
 
 class ProgrammeViewset(viewsets.ModelViewSet):
     queryset = Programme.objects.all()
@@ -71,7 +81,8 @@ class LoginView(APIView):
         if user is not None:
             response = {
                 "message": "Login was successful", 
-                "token": user.auth_token.key
+                "token": user.auth_token.key,
+                "userSystemID" : user.pk
             } 
             return Response(data=response, status=status.HTTP_200_OK)
         else: 
@@ -150,5 +161,35 @@ class UserViewset(viewsets.ModelViewSet):
             return Response({'status': 'ProgrammeHead added'})
         else:
            return Response({'status': 'Role does not exist'})
+    
+    @action(detail=False, methods=['POST'])
+    def add_courses(self, request, **extra_fields):
+        #markera en kurs i FrontEnd
+        #skicka kurskod (ex 1FA104 för Mekanik) till databasen
+        #databasen kollar om det finns flera inputs av kurser 
+        # med olika datum för kursstart och kursavslut
+        #och/eller om det finns ta det datumet som är nyast. 
+        #assignar den kurs med nyast datum till användaren
+
+        if 'courseCode' in request.data: 
+            courseCode = request.POST.get('courseCode')
+            #run method to get pk of course with coursecode with the newest start & enddate
+            message = 'Courses assigned to user'
+            print(CourseViewset.queryset)
+            list_w_same_courseCode = []
+
+            for item in CourseViewset.queryset:
+                if courseCode == item.courseCode:
+                    print("kurs:", item.courseTitle)
+                    list_w_same_courseCode.append(item)
+            if len(list_w_same_courseCode) > 1:
+                print("Many entries with same courseCode exists, taking the newest")
+
+            
+            return Response({'status': message})
+        else:
+            response = {"message": "You need to provide a courseCode for the course (e.g. '1FA104' for the course Mechanics)"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        
         
     

@@ -4,12 +4,10 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 class Course(models.Model):
-    courseCode = models.CharField(max_length=10, blank=True, null=True)
-    courseTitle = models.CharField(max_length=100, blank=True, null=True)
-    courseStartDateTime = models.DateTimeField(blank=True, null=True)
-    courseEndDateTime = models.DateTimeField(blank=True, null=True)
-
-
+    courseCode = models.CharField(max_length=10)
+    courseTitle = models.CharField(max_length=100)
+    courseStartDateTime = models.DateTimeField()
+    courseEndDateTime = models.DateTimeField()
 
     #programmes = fields.ForeignKey(Programme, on_delete=models.CASCADE)
 
@@ -32,6 +30,15 @@ class Course(models.Model):
         courseInfoString = self.courseTitle + " (" + self.courseCode + ")"
         return courseInfoString
 
+"""
+class userHourCourseTrackingTable(models.Model):
+    userID = models.ForeignKey(User.pk, on_delete=models.CASCADE, blank=True, null=True)
+    courseID = models.ForeignKey(Course.pk, related_name="courses", blank=True, null=True) 
+    #event =  
+    #dateTimeEnd =  
+    #dateTimeStart = 
+    # 
+"""
 
 class Programme(models.Model):
     programmeID = models.CharField(max_length=10)
@@ -111,4 +118,6 @@ class Student(User):
 
     def welcome(self):
         return "Only for students"
+    
+
 
