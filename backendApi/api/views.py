@@ -173,7 +173,6 @@ class UserViewset(viewsets.ModelViewSet):
 
         if 'courseCode' in request.data: 
             courseCode = request.POST.get('courseCode')
-            #run method to get pk of course with coursecode with the newest start & enddate
             message = 'Courses assigned to user'
             print(CourseViewset.queryset)
             list_w_same_courseCode = []
@@ -184,7 +183,20 @@ class UserViewset(viewsets.ModelViewSet):
                     list_w_same_courseCode.append(item)
             if len(list_w_same_courseCode) > 1:
                 print("Many entries with same courseCode exists, taking the newest")
+                #go through list and take the oldest object
+                newestCourse = list_w_same_courseCode[0]
+                for object in list_w_same_courseCode:
+                    print("hej")
+                    print("object.courseStartDateTime: ", object.courseStartDateTime)
+                    print("newest.courseStartDateTime: ", newestCourse.courseStartDateTime)
+                    if object.courseStartDateTime > newestCourse.courseStartDateTime:
+                        newestCourse = object
+                print("this object id is the newest: ", newestCourse.id)
+                #asssign this course to user
+                user = request.user
+                print("user: ", user)
 
+                user.courses.append(newestCourse)
             
             return Response({'status': message})
         else:

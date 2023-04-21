@@ -4,10 +4,10 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 class Course(models.Model):
-    courseCode = models.CharField(max_length=10)
-    courseTitle = models.CharField(max_length=100)
-    courseStartDateTime = models.DateTimeField()
-    courseEndDateTime = models.DateTimeField()
+    courseCode = models.CharField(max_length=10, null=True, blank=True)
+    courseTitle = models.CharField(max_length=100, null=True, blank=True)
+    courseStartDateTime = models.DateTimeField(null=True, blank=True)
+    courseEndDateTime = models.DateTimeField(null=True, blank=True)
 
     #programmes = fields.ForeignKey(Programme, on_delete=models.CASCADE)
 
@@ -62,6 +62,7 @@ class User(AbstractUser):
     email = models.EmailField(verbose_name='email address', unique=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'username']
+
 
     def save(self, *args, **kwargs):
         if not self.pk:
