@@ -120,11 +120,9 @@ class UserViewset(viewsets.ModelViewSet):
            if pID != None:
             pID = request.POST.get('pID')
             user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=Programme.objects.get(id=request.POST.get('pID')), courses=courseID)
-            #user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, programme=Programme.objects.get(id=request.POST.get('pID')), courses=courseID)
            else:
                #create with no programme or course
                user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=pID, courses=courseID)
-               #user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, programme=pID, courses=courseID)
            user.save()
 
            #create token

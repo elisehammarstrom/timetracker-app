@@ -61,21 +61,6 @@ class User(AbstractUser):
             self.role = self.base_role
             self.username = self.first_name + self.last_name
             return super().save(*args, **kwargs)
-    """ 
-    def get_system_id_from_email(self, identifier, *args, **kwargs):
-        results = self.get_queryset(self, *args, **kwargs)
-
-        for user in results:
-            if identifier == self.email:
-                return self.id
-        
-        response = {"message": "No user with that email"}
-        return response
-    
-    def get_queryset(self, *args, **kwargs):
-        results = super().get_queryset(*args, **kwargs)
-        return results
-    """
         
 
 class ProgrammeHeadManager(BaseUserManager):
