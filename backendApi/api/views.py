@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer
+from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer
 from .models import Course, Programme, User, Student, Teacher, ProgrammeHead
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
@@ -100,6 +100,12 @@ class LoginView(APIView):
 
         return Response(data=content, status=status.HTTP_200_OK)
 
+class StudentViewset(viewsets.ModelViewSet):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+    authentication_classes = (TokenAuthentication, )
+    #permission_classes = (IsAuthenticated, )
+    permission_classes = []
 
 
 class UserViewset(viewsets.ModelViewSet):
@@ -163,42 +169,35 @@ class UserViewset(viewsets.ModelViewSet):
            return Response({'status': 'Role does not exist'})
     
     @action(detail=False, methods=['POST'])
-    def add_courses(self, request, **extra_fields):
-        #markera en kurs i FrontEnd
-        #skicka kurskod (ex 1FA104 för Mekanik) till databasen
-        #databasen kollar om det finns flera inputs av kurser 
-        # med olika datum för kursstart och kursavslut
-        #och/eller om det finns ta det datumet som är nyast. 
-        #assignar den kurs med nyast datum till användaren
+    def add_course(self, request, **extra_fields):
+        user = request.user
+        if user.role != 'STUDENT':
+            response = {"message": "You need to be a STUDENT to enrol in a course"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
 
         if 'courseCode' in request.data: 
             courseCode = request.POST.get('courseCode')
-            message = 'Courses assigned to user'
-            print(CourseViewset.queryset)
             list_w_same_courseCode = []
 
             for item in CourseViewset.queryset:
                 if courseCode == item.courseCode:
-                    print("kurs:", item.courseTitle)
                     list_w_same_courseCode.append(item)
             if len(list_w_same_courseCode) > 1:
                 print("Many entries with same courseCode exists, taking the newest")
-                #go through list and take the oldest object
                 newestCourse = list_w_same_courseCode[0]
                 for object in list_w_same_courseCode:
-                    print("hej")
-                    print("object.courseStartDateTime: ", object.courseStartDateTime)
-                    print("newest.courseStartDateTime: ", newestCourse.courseStartDateTime)
                     if object.courseStartDateTime > newestCourse.courseStartDateTime:
                         newestCourse = object
-                print("this object id is the newest: ", newestCourse.id)
-                #asssign this course to user
-                user = request.user
-                print("user: ", user)
-
-                user.courses.append(newestCourse)
+                self.request.user.student.courses = newestCourse
+                #user.student.add_course_to_user(newestCourse)
+                Student.objects.filter(pk=user.id).update(courses=newestCourse)
+            else:
+                self.request.user.student.courses = list_w_same_courseCode[0]
+                #user.student.add_course_to_user(list_w_same_courseCode[0])
+                Student.objects.filter(pk=user.id).update(courses=list_w_same_courseCode[0])
             
-            return Response({'status': message})
+            response = ('Courses assigned to user: ', str(self.request.user), str(self.request.user.student.courses))
+            return Response(response, status = status.HTTP_200_OK)
         else:
             response = {"message": "You need to provide a courseCode for the course (e.g. '1FA104' for the course Mechanics)"}
             return Response(response, status = status.HTTP_400_BAD_REQUEST)

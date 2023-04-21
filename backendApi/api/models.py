@@ -120,5 +120,22 @@ class Student(User):
     def welcome(self):
         return "Only for students"
     
+    def __str__(self):
+        studentInfoString =  self.email + ", Courses: " + self.courses
+        return studentInfoString
+"""
+    def add_course_to_user(self, courseObject):
+        print("Är i add_course_to_user()")
+        print("self.courses: ", self.courses)
+        self.courses = courseObject  
+        self.save()
+
+        self.courses.save()
+
+        print("self: ", self.email)
+
+        print("self.courses:", self.courses)
+
+"""
 
 
