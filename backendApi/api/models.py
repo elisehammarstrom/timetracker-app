@@ -4,8 +4,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 class Course(models.Model):
-    courseCode = models.CharField(max_length=10)
-    courseTitle = models.CharField(max_length=100)
+    courseCode = models.CharField(max_length=10, blank=True, null=True)
+    courseTitle = models.CharField(max_length=100, blank=True, null=True)
+    courseStartDateTime = models.DateTimeField(blank=True, null=True)
+    courseEndDateTime = models.DateTimeField(blank=True, null=True)
+
 
 
     #programmes = fields.ForeignKey(Programme, on_delete=models.CASCADE)
@@ -115,7 +118,7 @@ class StudentManager(BaseUserManager):
 
 class Student(User):
     base_role = User.Role.STUDENT
-    university = models.CharField(max_length=70)
+    university = models.CharField(max_length=70, blank=True, null=True)
     programme= models.ForeignKey(Programme, on_delete=models.CASCADE, null=True, blank=True)
     courses = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True)
 

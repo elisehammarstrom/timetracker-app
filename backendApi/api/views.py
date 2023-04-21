@@ -18,6 +18,23 @@ class CourseViewset(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAuthenticated, )
 
+    @action(detail=False, methods=['POST'])
+    def create_course(self, request, *args, **kwargs):
+        if 'courseCode' in request.data:
+            pk = self.kwargs.get('pk')
+            pID = request.data['pID']
+            if 'courseID' in request.data: 
+                programmeObject = Programme.objects.get(id=pID)
+                course = request.data['courseID']
+                programmeObject.courses.add(course)
+                return Response({'status': 'Courses assigned to Programme'})
+            else:
+                response = {"message": "You need to provide a system ID for the course (courseID)"}
+                return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            response = {"message": "You need to provide a courseCode for the course (courseCode)"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+
 class ProgrammeViewset(viewsets.ModelViewSet):
     queryset = Programme.objects.all()
     serializer_class = ProgrammeSerializer
