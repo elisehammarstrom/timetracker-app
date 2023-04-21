@@ -43,13 +43,13 @@ class ProgrammeViewset(viewsets.ModelViewSet):
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
 
 class LoginView(APIView):
+    permission_classes = []
+
     def post(self, request:Request):
         email = request.data.get('email')
         password = request.data.get('password')
-
         user = request.user
-
-        user.authenticate(email=email, password=password)
+        user = authenticate(email=email, password=password)
 
         if user is not None:
             response = {
@@ -57,6 +57,12 @@ class LoginView(APIView):
                 "token": user.auth_token.key
             } 
             return Response(data=response, status=status.HTTP_200_OK)
+        else: 
+            response = {
+                "message": "Login was unsuccessful. User does not exist"
+            } 
+            return Response(data=response, status=status.HTTP_200_OK)
+
 
     def get(self, request:Request):
         content = {
@@ -72,7 +78,8 @@ class UserViewset(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     authentication_classes = (TokenAuthentication, )
-    permission_classes = (IsAuthenticated, )
+    #permission_classes = (IsAuthenticated, )
+    permission_classes = []
     
     @action(detail=False, methods=['POST'])
     def create_user(self, request, **extra_fields):
@@ -96,9 +103,11 @@ class UserViewset(viewsets.ModelViewSet):
            if pID != None:
             pID = request.POST.get('pID')
             user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=Programme.objects.get(id=request.POST.get('pID')), courses=courseID)
+            #user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, programme=Programme.objects.get(id=request.POST.get('pID')), courses=courseID)
            else:
                #create with no programme or course
                user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=pID, courses=courseID)
+               #user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, programme=pID, courses=courseID)
            user.save()
 
            #create token
@@ -126,3 +135,5 @@ class UserViewset(viewsets.ModelViewSet):
             return Response({'status': 'ProgrammeHead added'})
         else:
            return Response({'status': 'Role does not exist'})
+        
+    

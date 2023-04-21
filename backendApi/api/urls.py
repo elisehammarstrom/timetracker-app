@@ -8,6 +8,7 @@ router.register("courses", CourseViewset)
 router.register("programmes", ProgrammeViewset)
 # router.register("courseEvaluations", CourseEvaluationViewset)
 router.register("users", UserViewset)
+#router.register("login", LoginView)
 
 
 urlpatterns = [
