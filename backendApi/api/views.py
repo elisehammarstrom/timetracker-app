@@ -146,6 +146,8 @@ class UserViewset(viewsets.ModelViewSet):
 
         if 'pID' in request.data:
             pID = request.POST.get('pID')
+
+        print("role: ", role)
         #if 'courseID' in request.data:
         #    courseID = request.POST.get('courseID')
 
