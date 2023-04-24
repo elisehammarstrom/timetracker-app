@@ -5,6 +5,7 @@ import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import { useForm, Controller } from 'react-hook-form';
+import axios from 'axios';
 
 const SignInScreen = () => {
     const {height} = useWindowDimensions();
@@ -16,7 +17,9 @@ const SignInScreen = () => {
 
     const onSignInPressed = data => {
         console.log(data)
+   /*      info.push(data) */
         // Validate user
+        
         navigation.navigate('StartCourses', {user: data});
     };
     const onForgotPasswordPressed = () => {
@@ -26,6 +29,23 @@ const SignInScreen = () => {
     const onSignUpPress = () => {
         navigation.navigate('SignUp')
     };
+
+/*     var info = []; */
+
+    /* const requestData = {
+        email: 'simon.sjo@gmail.com',
+        password: '123456',
+      };
+      
+      // Send a POST request with the request data in the request body
+      axios.post('http://127.0.0.1:8000/auth/login/', requestData)
+        .then(response => {
+          // Handle response data here
+        })
+       /*  .catch(error => {
+          // Handle error here
+        }); */
+      
 
     return (
         <View style={styles.root}>

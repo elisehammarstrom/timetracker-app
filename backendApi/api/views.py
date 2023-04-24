@@ -130,6 +130,7 @@ class UserViewset(viewsets.ModelViewSet):
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
         username = email
+
         
         
         """ if (first_name != None) and (last_name != None):
@@ -147,9 +148,7 @@ class UserViewset(viewsets.ModelViewSet):
         if 'pID' in request.data:
             pID = request.POST.get('pID')
 
-        print("role: ", role)
-        print("first_name: ", first_name)
-        print("last_name: ", last_name)
+
         #if 'courseID' in request.data:
         #    courseID = request.POST.get('courseID')
 
