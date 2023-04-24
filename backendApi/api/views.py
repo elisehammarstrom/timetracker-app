@@ -129,10 +129,13 @@ class UserViewset(viewsets.ModelViewSet):
         email = request.POST.get('email')
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
-        if (first_name != None) and (last_name != None):
+        
+        
+        """ if (first_name != None) and (last_name != None):
             username = first_name + last_name
         else:
             return Response({'status': 'You need to provide first_name and last_name'})
+            """
 
         password = request.POST.get('password')
         role = request.POST.get('role')
@@ -144,8 +147,6 @@ class UserViewset(viewsets.ModelViewSet):
             pID = request.POST.get('pID')
         #if 'courseID' in request.data:
         #    courseID = request.POST.get('courseID')
-
-
 
         #GÖR OM SÅ COURSES CAN ADDERA COURSE
         #ELLER GÖR SÅ ATT MAN I USER CREATION INTE KAN HA COURSES MED ALLS
@@ -230,12 +231,27 @@ class UserViewset(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'])
     def get_courses(self, request, **extra_fields):
         user = request.user
+
+
         print("HEJ")
 
         print("self: ", self)
 
         print("user: ", user)
         print("user.courses: ", user.courses)
+
+        print(self)
+
+        print(self.request.user.courses)
+
+        self.save()
+
+        pk = self.kwargs.get('pk')
+            pID = request.data['pID']
+            if 'courseID' in request.data: 
+                programmeObject = Programme.objects.get(id=pID)
+
+
 
         #print("user.courses:", user.courses)
 
