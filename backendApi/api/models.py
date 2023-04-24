@@ -4,9 +4,10 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 class Course(models.Model):
-    courseCode = models.CharField(max_length=10)
-    courseTitle = models.CharField(max_length=100)
-
+    courseCode = models.CharField(max_length=10, null=True, blank=True)
+    courseTitle = models.CharField(max_length=100, null=True, blank=True)
+    courseStartDateTime = models.DateTimeField(null=True, blank=True)
+    courseEndDateTime = models.DateTimeField(null=True, blank=True)
 
     #programmes = fields.ForeignKey(Programme, on_delete=models.CASCADE)
 
@@ -29,6 +30,15 @@ class Course(models.Model):
         courseInfoString = self.courseTitle + " (" + self.courseCode + ")"
         return courseInfoString
 
+"""
+class userHourCourseTrackingTable(models.Model):
+    userID = models.ForeignKey(User.pk, on_delete=models.CASCADE, blank=True, null=True)
+    courseID = models.ForeignKey(Course.pk, related_name="courses", blank=True, null=True) 
+    #event =  
+    #dateTimeEnd =  
+    #dateTimeStart = 
+    # 
+"""
 
 class Programme(models.Model):
     programmeID = models.CharField(max_length=10)
@@ -50,29 +60,21 @@ class User(AbstractUser):
     base_role = Role.ADMIN
     role = models.CharField(max_length=50, choices=Role.choices)
     email = models.EmailField(verbose_name='email address', unique=True)
+
+    #addera courses on user och i lista
+    #courses = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True)
+    #courses = models.ManyToManyField(Course, through='Course')
+    courses = models.ManyToManyField(Course, related_name="courses", blank=True, null=True) 
+    
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'username']
+
 
     def save(self, *args, **kwargs):
         if not self.pk:
             self.role = self.base_role
             self.username = self.first_name + self.last_name
             return super().save(*args, **kwargs)
-    """ 
-    def get_system_id_from_email(self, identifier, *args, **kwargs):
-        results = self.get_queryset(self, *args, **kwargs)
-
-        for user in results:
-            if identifier == self.email:
-                return self.id
-        
-        response = {"message": "No user with that email"}
-        return response
-    
-    def get_queryset(self, *args, **kwargs):
-        results = super().get_queryset(*args, **kwargs)
-        return results
-    """
         
 
 class ProgrammeHeadManager(BaseUserManager):
@@ -100,7 +102,7 @@ class TeacherManager(BaseUserManager):
 class Teacher(User):
     base_role = User.Role.TEACHER
     university = models.CharField(max_length=70)
-    courses= models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
+    #courses= models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
     teacher = TeacherManager()
     
     def welcome(self):
@@ -115,12 +117,34 @@ class StudentManager(BaseUserManager):
 
 class Student(User):
     base_role = User.Role.STUDENT
-    university = models.CharField(max_length=70)
+    university = models.CharField(max_length=70, blank=True, null=True)
     programme= models.ForeignKey(Programme, on_delete=models.CASCADE, null=True, blank=True)
-    courses = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True)
+    #courses = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True)
 
     student = StudentManager()
 
     def welcome(self):
         return "Only for students"
+    
+    def __str__(self):
+        studentInfoString =  self.email + ", Courses: " + self.courses
+        return studentInfoString
+
+
+
+"""
+    def add_course_to_user(self, courseObject):
+        print("Är i add_course_to_user()")
+        print("self.courses: ", self.courses)
+        self.courses = courseObject  
+        self.save()
+
+        self.courses.save()
+
+        print("self: ", self.email)
+
+        print("self.courses:", self.courses)
+
+"""
+
 

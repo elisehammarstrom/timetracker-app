@@ -31,6 +31,11 @@ AUTH_USER_MODEL = "api.User"
 
 CORS_ORIGIN_ALLOW_ALL = True
 
+DATETIME_FORMAT="%Y-%m-%d%H:%M:%S"
+L10N=False #to make sore localization data doesn't 
+#take precedent when it comes to dates format
+USE_TZ=False
+
 
 # Application definition
 
@@ -41,6 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    
     #third-party apps
     'rest_framework',
     'rest_framework.authtoken',
@@ -98,6 +104,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         "rest_framework.permissions.IsAuthenticated",
         "rest_framework.permissions.IsAdminUser", 
+        #"rest_framework.permissions.AllowAny",
     )
 }
 

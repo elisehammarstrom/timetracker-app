@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer
+from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer
 from .models import Course, Programme, User, Student, Teacher, ProgrammeHead
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
@@ -17,6 +17,33 @@ class CourseViewset(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAuthenticated, )
+
+    @action(detail=False, methods=['POST'])
+    def create_course(self, request, *args, **kwargs):
+        if 'courseCode' in request.data:
+            pk = self.kwargs.get('pk')
+            pID = request.data['pID']
+            if 'courseID' in request.data: 
+                programmeObject = Programme.objects.get(id=pID)
+                course = request.data['courseID']
+                programmeObject.courses.add(course)
+                return Response({'status': 'Courses assigned to Programme'})
+            else:
+                response = {"message": "You need to provide a system ID for the course (courseID)"}
+                return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            response = {"message": "You need to provide a courseCode for the course (courseCode)"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        
+        def get_course_from_courseCode(courseCode):
+            print("hej")
+
+            ###for entry in queryset:
+             #   if courseCode = entry.Course.
+
+
+            
+
 
 class ProgrammeViewset(viewsets.ModelViewSet):
     queryset = Programme.objects.all()
@@ -43,20 +70,36 @@ class ProgrammeViewset(viewsets.ModelViewSet):
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
 
 class LoginView(APIView):
+    permission_classes = []
+
     def post(self, request:Request):
         email = request.data.get('email')
         password = request.data.get('password')
 
+        
+        print("Email: ", email)
+        print("password: ", password)
         user = request.user
-
-        user.authenticate(email=email, password=password)
+        user.password = password
+        user.is_active = True
+        print("User: ", user)
+        print("user.is_active:", user.is_active)
+        user = authenticate(email=email, password=password)
+        print("user2: ", user)
 
         if user is not None:
             response = {
                 "message": "Login was successful", 
-                "token": user.auth_token.key
+                "token": user.auth_token.key,
+                "userSystemID" : user.pk
             } 
             return Response(data=response, status=status.HTTP_200_OK)
+        else: 
+            response = {
+                "message": "Login was unsuccessful. User does not exist"
+            } 
+            return Response(data=response, status=status.HTTP_200_OK)
+
 
     def get(self, request:Request):
         content = {
@@ -66,20 +109,31 @@ class LoginView(APIView):
 
         return Response(data=content, status=status.HTTP_200_OK)
 
+class StudentViewset(viewsets.ModelViewSet):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+    authentication_classes = (TokenAuthentication, )
+    #permission_classes = (IsAuthenticated, )
+    permission_classes = []
 
 
 class UserViewset(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     authentication_classes = (TokenAuthentication, )
-    permission_classes = (IsAuthenticated, )
+    #permission_classes = (IsAuthenticated, )
+    permission_classes = []
     
     @action(detail=False, methods=['POST'])
     def create_user(self, request, **extra_fields):
         email = request.POST.get('email')
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
-        username = first_name + last_name
+        if (first_name != None) and (last_name != None):
+            username = first_name + last_name
+        else:
+            return Response({'status': 'You need to provide first_name and last_name'})
+
         password = request.POST.get('password')
         role = request.POST.get('role')
         university = request.POST.get('university')
@@ -99,6 +153,7 @@ class UserViewset(viewsets.ModelViewSet):
            else:
                #create with no programme or course
                user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=pID, courses=courseID)
+           user.is_active = True
            user.save()
 
            #create token
@@ -112,6 +167,7 @@ class UserViewset(viewsets.ModelViewSet):
             else:
                 courses= Course.objects.get(id=courseID)
                 user= Teacher.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.TEACHER, university=university, courses=courses)
+            user.is_active = True
             user.save()
             Token.objects.create(user=user)
             return Response({'status': 'Teacher added'})
@@ -121,8 +177,67 @@ class UserViewset(viewsets.ModelViewSet):
                 user= ProgrammeHead.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.PROGRAMMEHEAD, programme=None, university=university)
             else:
                 user= ProgrammeHead.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.PROGRAMMEHEAD, programme=Programme.objects.get(id=pID), university=university)
+            user.is_active = True
             user.save()
             Token.objects.create(user=user)
             return Response({'status': 'ProgrammeHead added'})
         else:
            return Response({'status': 'Role does not exist'})
+    
+    @action(detail=False, methods=['POST'])
+    def add_course(self, request, **extra_fields):
+        user = request.user
+        if user.role != 'STUDENT':
+            response = {"message": "You need to be a STUDENT to enrol in a course"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+
+        if 'courseCode' in request.data: 
+            courseCode = request.POST.get('courseCode')
+            list_w_same_courseCode = []
+            print("list_w_same_courseCode: ", list_w_same_courseCode)
+
+            for item in CourseViewset.queryset:
+                print("item: ", item)
+                if courseCode == item.courseCode:
+                    list_w_same_courseCode.append(item)
+            if len(list_w_same_courseCode) > 1:
+                print("Many entries with same courseCode exists, taking the newest")
+                newestCourse = list_w_same_courseCode[0]
+                for object in list_w_same_courseCode:
+                    if object.courseStartDateTime > newestCourse.courseStartDateTime:
+                        newestCourse = object
+                self.request.user.student.courses = newestCourse
+                #user.student.add_course_to_user(newestCourse)
+                Student.objects.filter(pk=user.id).update(courses=newestCourse)
+            else:
+                self.request.user.student.courses = list_w_same_courseCode[0]
+                #user.student.add_course_to_user(list_w_same_courseCode[0])
+                Student.objects.filter(pk=user.id).update(courses=list_w_same_courseCode[0])
+            print("courses for user: ", self.request.user.student.courses)
+            print("list_w_same_courseCode: ", list_w_same_courseCode[0])
+
+            #vi sparar id:et på användaren
+            
+            response = ('Courses assigned to user: ', str(self.request.user), str(self.request.user.student.courses))
+            return Response(response, status = status.HTTP_200_OK)
+        else:
+            response = {"message": "You need to provide a courseCode for the course (e.g. '1FA104' for the course Mechanics)"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+    
+    @action(detail=False, methods=['GET'])
+    def get_courses(self, request, **extra_fields):
+        user = request.user
+        if user.id is not None:
+            print("här ska en loop över användarens kurser samt kurserna i queryset finnas")
+            
+        else:
+            response = {"message": "You need to provide a user ID to see courses (id) "}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+            
+
+        
+
+        
+        
+        
+    
