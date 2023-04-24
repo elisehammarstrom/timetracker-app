@@ -187,38 +187,36 @@ class UserViewset(viewsets.ModelViewSet):
     @action(detail=False, methods=['POST'])
     def add_course(self, request, **extra_fields):
         user = request.user
-        if user.role != 'STUDENT':
-            response = {"message": "You need to be a STUDENT to enrol in a course"}
-            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        #if user.role != 'STUDENT' or :
+        #    response = {"message": "You need to be a STUDENT to enrol in a course"}
+        #   return Response(response, status = status.HTTP_400_BAD_REQUEST)
 
         if 'courseCode' in request.data: 
             courseCode = request.POST.get('courseCode')
             list_w_same_courseCode = []
-            print("list_w_same_courseCode: ", list_w_same_courseCode)
 
             for item in CourseViewset.queryset:
                 print("item: ", item)
                 if courseCode == item.courseCode:
                     list_w_same_courseCode.append(item)
+                    #courseInstance = item
             if len(list_w_same_courseCode) > 1:
                 print("Many entries with same courseCode exists, taking the newest")
                 newestCourse = list_w_same_courseCode[0]
                 for object in list_w_same_courseCode:
                     if object.courseStartDateTime > newestCourse.courseStartDateTime:
-                        newestCourse = object
-                self.request.user.student.courses = newestCourse
-                #user.student.add_course_to_user(newestCourse)
-                Student.objects.filter(pk=user.id).update(courses=newestCourse)
+                        newestCourse = object        
+                courseInstance = newestCourse
             else:
-                self.request.user.student.courses = list_w_same_courseCode[0]
-                #user.student.add_course_to_user(list_w_same_courseCode[0])
-                Student.objects.filter(pk=user.id).update(courses=list_w_same_courseCode[0])
-            print("courses for user: ", self.request.user.student.courses)
-            print("list_w_same_courseCode: ", list_w_same_courseCode[0])
+                print("TVÅ")
+                courseInstance = list_w_same_courseCode[0]
+
+            user.courses.add(courseInstance)
+            user.save()
 
             #vi sparar id:et på användaren
-            
-            response = ('Courses assigned to user: ', str(self.request.user), str(self.request.user.student.courses))
+            #Lägg till så att kursID:et också syns i response
+            response = ('Courses assigned to user: ', str(user.email))
             return Response(response, status = status.HTTP_200_OK)
         else:
             response = {"message": "You need to provide a courseCode for the course (e.g. '1FA104' for the course Mechanics)"}
