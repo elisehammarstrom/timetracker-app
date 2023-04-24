@@ -60,6 +60,12 @@ class User(AbstractUser):
     base_role = Role.ADMIN
     role = models.CharField(max_length=50, choices=Role.choices)
     email = models.EmailField(verbose_name='email address', unique=True)
+
+    #addera courses on user och i lista
+    #courses = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True)
+    #courses = models.ManyToManyField(Course, through='Course')
+    courses = models.ManyToManyField(Course, related_name="courses", blank=True, null=True) 
+    
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'username']
 
@@ -96,7 +102,7 @@ class TeacherManager(BaseUserManager):
 class Teacher(User):
     base_role = User.Role.TEACHER
     university = models.CharField(max_length=70)
-    courses= models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
+    #courses= models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
     teacher = TeacherManager()
     
     def welcome(self):
@@ -113,7 +119,7 @@ class Student(User):
     base_role = User.Role.STUDENT
     university = models.CharField(max_length=70, blank=True, null=True)
     programme= models.ForeignKey(Programme, on_delete=models.CASCADE, null=True, blank=True)
-    courses = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True)
+    #courses = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True)
 
     student = StudentManager()
 
