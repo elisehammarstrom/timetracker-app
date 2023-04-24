@@ -129,10 +129,11 @@ class UserViewset(viewsets.ModelViewSet):
         email = request.POST.get('email')
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
+        username = first_name + last_name
         
         
         """ if (first_name != None) and (last_name != None):
-            username = first_name + last_name
+            
         else:
             return Response({'status': 'You need to provide first_name and last_name'})
             """
