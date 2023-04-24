@@ -142,17 +142,22 @@ class UserViewset(viewsets.ModelViewSet):
 
         if 'pID' in request.data:
             pID = request.POST.get('pID')
-        if 'courseID' in request.data:
-            courseID = request.POST.get('courseID')
+        #if 'courseID' in request.data:
+        #    courseID = request.POST.get('courseID')
 
+
+
+        #GÖR OM SÅ COURSES CAN ADDERA COURSE
+        #ELLER GÖR SÅ ATT MAN I USER CREATION INTE KAN HA COURSES MED ALLS
         if role=="Student" or role=="STUDENT": 
            #create with programme 
            if pID != None:
             pID = request.POST.get('pID')
-            user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=Programme.objects.get(id=request.POST.get('pID')), courses=courseID)
+            print("HEJ I IF PID")
+            user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=Programme.objects.get(id=request.POST.get('pID')))
            else:
                #create with no programme or course
-               user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=pID, courses=courseID)
+               user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=pID)
            user.is_active = True
            user.save()
 
@@ -225,12 +230,30 @@ class UserViewset(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'])
     def get_courses(self, request, **extra_fields):
         user = request.user
-        if user.id is not None:
-            print("här ska en loop över användarens kurser samt kurserna i queryset finnas")
+        print("HEJ")
+
+        print("self: ", self)
+
+        print("user: ", user)
+        print("user.courses: ", user.courses)
+
+        #print("user.courses:", user.courses)
+
+        #if user.id is not None:
+            #for courseObject in user.courses: 
+             #   print("Hej igen")
+
+        
+        
+        
+        response = {"message": "success "}
+        return Response(response, status = status.HTTP_200_OK)
+        #if user.id is not None:
+        #    print("här ska en loop över användarens kurser samt kurserna i queryset finnas")
             
-        else:
-            response = {"message": "You need to provide a user ID to see courses (id) "}
-            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        #else:
+        #    response = {"message": "You need to provide a user ID to see courses (id) "}
+        #    return Response(response, status = status.HTTP_400_BAD_REQUEST)
             
 
         
