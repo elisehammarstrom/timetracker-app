@@ -64,7 +64,7 @@ class User(AbstractUser):
     #addera courses on user och i lista
     #courses = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True)
     #courses = models.ManyToManyField(Course, through='Course')
-    courses = models.ManyToManyField(Course, related_name="courses", blank=True, null=True) 
+    courses = models.ManyToManyField(Course, related_name="courses", blank=True) 
     
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'username']
