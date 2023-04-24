@@ -234,7 +234,7 @@ class UserViewset(viewsets.ModelViewSet):
 
 
         print("HEJ")
-
+        """
         print("self: ", self)
 
         print("user: ", user)
@@ -250,6 +250,7 @@ class UserViewset(viewsets.ModelViewSet):
             pID = request.data['pID']
             if 'courseID' in request.data: 
                 programmeObject = Programme.objects.get(id=pID)
+        """
 
 
 
