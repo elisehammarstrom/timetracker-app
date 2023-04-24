@@ -169,6 +169,7 @@ class UserViewset(viewsets.ModelViewSet):
            #create token
            Token.objects.create(user=user)
 
+        
            return Response({'status': 'Student added'})
         elif role=="Teacher" or role=="TEACHER":
             #vi skapar teacher utan kurser först
