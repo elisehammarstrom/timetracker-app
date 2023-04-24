@@ -16,8 +16,32 @@ const SignInScreen = () => {
 
 
     const onSignInPressed = data => {
+
+        const info = {
+            email: data.email,
+            password: data.password,
+        } 
+
+        const headers = {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data',
+        }
+
+        const formData = new FormData();
+        formData.append('email', info.email);
+        formData.append('password', info.password);
+
+        axios 
+        .post('http://127.0.0.1:8000/auth/login/', formData, headers, {
+            timeout: 3000,
+        })
+        .then(async response => {
+            console.log(response.data);
+        })
+        .catch(error=> {
+            console.log("error from image :");
+   })
         console.log(data)
-   /*      info.push(data) */
         // Validate user
         
         navigation.navigate('StartCourses', {user: data});
@@ -56,10 +80,10 @@ const SignInScreen = () => {
             />
 
             <CustomInput 
-                name="username"
-                placeholder="Username" 
+                name="email"
+                placeholder="Email" 
                 control={control} 
-                rules={{required: 'Username is required'}}
+                rules={{required: 'Email is required'}}
             />
             <CustomInput 
                 name="password"

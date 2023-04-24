@@ -58,7 +58,7 @@ const SignUpScreen = () => {
         formData.append('password', info.password);
         formData.append('role', info.role);
         formData.append('university', info.university);
-        formData.append('pID', info.pID);
+        formData.append('pID', '1');
 
         axios 
         .post('http://127.0.0.1:8000/api/users/create_user/', formData, headers, {
