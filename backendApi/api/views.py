@@ -130,6 +130,11 @@ class UserViewset(viewsets.ModelViewSet):
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
         username = email
+
+        print("self: ", self)
+        print("request: ", request)
+        print("**extra_fields: ", **extra_fields)
+
         
         
         """ if (first_name != None) and (last_name != None):
@@ -170,6 +175,7 @@ class UserViewset(viewsets.ModelViewSet):
            #create token
            Token.objects.create(user=user)
 
+        
            return Response({'status': 'Student added'})
         elif role=="Teacher" or role=="TEACHER":
             #vi skapar teacher utan kurser först
