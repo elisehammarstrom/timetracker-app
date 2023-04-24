@@ -26,10 +26,10 @@ const ForgotPasswordScreen = () => {
             <Text style={styles.title}>Reset your password</Text>
 
             <CustomInput
-                name="Username" 
-                placeholder="Username" 
+                name="email" 
+                placeholder="Email" 
                 control={control}
-                rules={{required: 'Username required'}}
+                rules={{required: 'Email required'}}
             />
 
             <CustomButton 

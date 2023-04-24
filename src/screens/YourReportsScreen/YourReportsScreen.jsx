@@ -11,6 +11,8 @@ const YourReportsScreen = ({route}) => {
   console.log("route.params=", route.params)
 
   var date = new Date().getDate();
+  const test = new Date().getMonth()+1;
+  const [month, setMonth] = useState("/" + test); 
   var createLabels = [];
   for (let i=0; i<7; i++) {
     createLabels.push(date+i)
@@ -22,23 +24,18 @@ const YourReportsScreen = ({route}) => {
     const {firstDate} = route.params;
     const {lastDate} = route.params;
     let newLabels = [];
+
+    if (month != "/" + firstDate.month) {
+      setMonth("/" +  firstDate.month);
+    }
     for (let i=firstDate.day; i<=lastDate.day; i++) {
-      newLabels.push(i)
-      
+      newLabels.push(i) 
     }
     console.log("newlabels=", newLabels)
     if (`${labels}` != `${newLabels}`) {
       setLabels(newLabels)
     }
-
   }
-    
-
-
-  console.log("labels=", labels)
-
-
-
     
   const navigation = useNavigation();
   const screenWidth = Dimensions.get("window").width;
@@ -132,6 +129,7 @@ const YourReportsScreen = ({route}) => {
                 width={screenWidth}
                 height={220}
                 chartConfig={chartConfig}
+                xAxisLabel={month}
               />
             </View>
 
