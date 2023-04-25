@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer
-from .models import Course, Programme, User, Student, Teacher, ProgrammeHead
+from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer
+from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -34,14 +34,6 @@ class CourseViewset(viewsets.ModelViewSet):
         else:
             response = {"message": "You need to provide a courseCode for the course (courseCode)"}
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
-        
-        def get_course_from_courseCode(courseCode):
-            print("hej")
-
-            ###for entry in queryset:
-             #   if courseCode = entry.Course.
-
-
             
 
 
@@ -75,17 +67,10 @@ class LoginView(APIView):
     def post(self, request:Request):
         email = request.data.get('email')
         password = request.data.get('password')
-
-        
-        print("Email: ", email)
-        print("password: ", password)
         user = request.user
         user.password = password
         user.is_active = True
-        print("User: ", user)
-        print("user.is_active:", user.is_active)
         user = authenticate(email=email, password=password)
-        print("user2: ", user)
 
         if user is not None:
             response = {
@@ -99,7 +84,6 @@ class LoginView(APIView):
                 "message": "Login was unsuccessful. User does not exist"
             } 
             return Response(data=response, status=status.HTTP_200_OK)
-
 
     def get(self, request:Request):
         content = {
@@ -115,6 +99,30 @@ class StudentViewset(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, )
     #permission_classes = (IsAuthenticated, )
     permission_classes = []
+
+class UserCourseTrackingViewset(viewsets.ModelViewSet):
+    queryset = UserCourseTracking.objects.all()
+    serializer_class = UserCourseTrackingSerializer
+    authentication_classes = (TokenAuthentication, )
+    #permission_classes = (IsAuthenticated, )
+    permission_classes = []
+
+    @action(detail=False, methods=['POST'])
+    def track_time(self, request, **extra_fields):
+
+        user = request.user
+        this_user = User.objects.get(id=user.id)
+
+        courseID = request.POST.get('courseID')
+        date = request.POST.get('date')
+        timeTracked = request.POST.get('timeTracked')
+
+        #record = UserCourseTracking.objects.create(user=user, course=Course.objects.get(id=courseID), date=date, timeTracked=timeTracked)
+        record = UserCourseTracking.objects.create(user=this_user, course=Course.objects.get(id=courseID), date=date, timeTracked=timeTracked)
+        
+        record.save()
+
+        return Response({'status': 'Record added'})
 
 
 class UserViewset(viewsets.ModelViewSet):
@@ -166,11 +174,9 @@ class UserViewset(viewsets.ModelViewSet):
            user.is_active = True
            user.save()
 
-           #create token
            Token.objects.create(user=user)
-
-        
            return Response({'status': 'Student added'})
+        
         elif role=="Teacher" or role=="TEACHER":
             #vi skapar teacher utan kurser först
             if courseID is None:
@@ -300,6 +306,8 @@ class UserViewset(viewsets.ModelViewSet):
                     }
                 } 
             return Response(data=response, status=status.HTTP_200_OK)
+
+
 
 
         

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Course, Programme, User, Student
+from .models import Course, Programme, User, Student, UserCourseTracking
 from rest_framework.authtoken.models import Token
 
 class UserSerializer(serializers.ModelSerializer):
@@ -14,6 +14,16 @@ class UserSerializer(serializers.ModelSerializer):
 
         #def create(self, validated_data):
         #    user = User.objects.create_user
+
+class UserCourseTrackingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserCourseTracking
+        #fields = ("userID", "course", "date", "timeTracked", "stress")
+        fields = ("id", "user", "course", "date", "timeTracked", "stress")
+        extra_kwargs = {
+            "course": {"required": True}, 
+            "date": {"required": True},
+            }
 
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
