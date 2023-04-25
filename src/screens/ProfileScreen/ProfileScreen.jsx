@@ -2,6 +2,9 @@
  import { View, Text, Image, TextInput, StyleSheet, TouchableOpacity, CheckBox} from 'react-native';
  import CustomButton from '../../components/CustomButton';
  import { useNavigation } from '@react-navigation/native';
+ import {CloseOutlined} from '@ant-design/icons';
+import { TouchableHighlight } from 'react-native-gesture-handler';
+import {SettingOutlined} from '@ant-design/icons';
 
 
 
@@ -31,21 +34,33 @@
          });
        };
 
+       // fungerar ej än, eftersom kurserna inte skickas med
+   /*   const onClosePressed = () => {
+        navigation.navigate('Home', {});
+      };  */
+
        const onEditCoursePressed = () => {
         navigation.navigate('StartCourses', {
         });
+
+        
       };
              //make separate words bold
              const B = (props) => <Text style={{fontWeight: 'bold'}}>{props.children}</Text>
 
      return (
-     <View style={styles.container}>
-       <View style={styles.pictureContainer}>
-        <Image
-          style={styles.picture}
-          source={{uri: 'https://www.bootdey.com/img/Content/avatar/avatar3.png'}}
-        />
-       </View>
+     <View style={styles.topContainer}>
+      <View>
+      <TouchableHighlight style={styles.closeContainer} >
+          <View>
+            <CloseOutlined style={styles.close}/>
+          </View>
+        </TouchableHighlight>
+
+      </View>
+
+       <View style={styles.bottomContainer}>
+        <SettingOutlined style={styles.settingIcon}/>
        <View style={styles.form}>
 
        <Text style={styles.label}><B>Full name:</B> {profile.fullName}</Text>
@@ -74,15 +89,21 @@
 
 
       </View>
+      </View>
     </View>
   );
 };
     const styles = StyleSheet.create({
-        container: {
+        bottomContainer: {
           flex: 1,
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: '#313131',
+
+        },
+        topContainer: {
+            flex: 1,
+            backgroundColor: '#313131',
         },
         form: {
           width: '80%',
@@ -109,6 +130,20 @@
              marginLeft:30,
              backgroundColor:'gray'
         },
+        close: {
+          color: 'white',
+          fontSize: 20,
+          padding: 10,
+
+        },
+        closeContainer: {
+          alignItems: 'flex-start',
+        },
+        settingIcon: {
+          color: 'white',
+          fontSize: 60,
+          paddingBottom: 10,
+        }
        
       });
 export default ProfileScreen
