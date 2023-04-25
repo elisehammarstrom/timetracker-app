@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     },
     notPressed: {
         backgroundColor: 'transparent'
-    }
+    },
         settings: {
             color: 'white',
             height: 40,
