@@ -30,7 +30,7 @@ const Navigation = () => {
         <NavigationContainer>
             
             <Stack.Navigator screenOptions={{headerShown: true}}>
-            <Stack.Screen name="CalendarOp" component={CalendarOpScreen}/>
+           
           
            
 
@@ -64,6 +64,7 @@ const Navigation = () => {
                 
                 <Stack.Screen name="Timer" component={TimerScreen}/>
                 <Stack.Screen name="Test" component={TestScreen}/>
+                <Stack.Screen name="CalendarOp" component={CalendarOpScreen}/>
             </Stack.Navigator>
 
         </NavigationContainer>
