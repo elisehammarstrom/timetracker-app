@@ -45,7 +45,7 @@ const CourseScreen = ({route}) => {
         <View style={styles.container}>
          
  
-          <View style={styles.selectListContainer}>
+          {/* <View style={styles.selectListContainer}>
             <MultipleSelectList 
               setSelected={(val) => setSelected(val)} 
               data={data} 
@@ -64,7 +64,7 @@ const CourseScreen = ({route}) => {
            
            
               />
-          </View>
+          </View> */}
           
             <View styles={styles.options}>
               {options.map(option => (
@@ -89,8 +89,8 @@ const CourseScreen = ({route}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-/*     justifyContent: 'center',
-    alignItems: 'center', */
+    justifyContent: 'center',
+    alignItems: 'center', 
     backgroundColor:  '#313131',
   },
   check: {
@@ -98,12 +98,13 @@ const styles = StyleSheet.create({
   },
   courseName: {
     fontSize: 16,
+    color: '#EFEFEF'
   },
   checkBox: {
     width: 25,
     height: 25,
     borderWidth: 2,
-    borderColor: 'green',
+    borderColor: '#EFEFEF',
     marginRight: 5,
   },
   course: {

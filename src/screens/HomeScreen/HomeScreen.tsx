@@ -39,8 +39,6 @@ const HomeScreen: React.FC = ({route}) => {
     console.log('pressed')
 };
 
-
-
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.layout}>
@@ -96,14 +94,12 @@ const HomeScreen: React.FC = ({route}) => {
           />
         </View>
         
-
         <View>
           <ButtonMenu
             screen='timeTracking'
           />
         </View>
         
-
       </View>
 
     </SafeAreaView>
