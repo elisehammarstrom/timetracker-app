@@ -13,7 +13,11 @@ const EvaluateCourseScreen = () => {
     const [checked, setChecked] = React.useState('');
 
     const onEvaluateCoursePressed = () => {
-        navigation.navigate('EvaluateCourse', {options: checked});
+        if (checked === '') {
+            alert("Please choose a course to evaluate")
+        } else {
+            navigation.navigate('EvaluateCourse', {course: checked});
+        }
     };
     
     return (

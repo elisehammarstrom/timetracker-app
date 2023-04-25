@@ -8,6 +8,9 @@ import { useNavigation } from '@react-navigation/native';
 
 
 const YourReportsScreen = ({route}) => {
+  const fakeTime = ["10h", "12h", "11h"]
+
+
   console.log("route.params=", route.params)
 
   var date = new Date().getDate();
@@ -141,7 +144,15 @@ const YourReportsScreen = ({route}) => {
               
               {courses.map((course,i) => (
                 <TouchableOpacity style={[styles.colors, {backgroundColor: colorsConst[i]}]} key={course} onPress={() => onCoursePressed(course)}>
-                  <Text style={{fontWeight: 'bold'}}>{course}</Text>
+                  
+                  <View>
+                    <Text style={{fontWeight: 'bold'}}>{course}</Text>
+                  </View>
+
+                  <View>
+                    <Text style={{fontWeight: 'bold'}}>{fakeTime[i]}</Text>
+                  </View>
+
                 </TouchableOpacity> 
               ))}
                
@@ -181,9 +192,11 @@ const styles=StyleSheet.create({
   colors: {
     width: '90%',
     height: 0.1 * Dimensions.get('window').height,
-    justifyContent: 'center',
-    paddingLeft: '5%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: '5%',
     margin: 4,
+    alignItems: 'center'
   },
   dataContainer: {
     alignItems: 'center',
