@@ -19,7 +19,7 @@ class UserCourseTrackingSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserCourseTracking
         #fields = ("userID", "course", "date", "timeTracked", "stress")
-        fields = ("id", "user", "course", "date", "timeTracked", "stress")
+        fields = ("id", "user", "course", "date", "timeTrackedEnd", "timeTrackedStart", "stress")
         extra_kwargs = {
             "course": {"required": True}, 
             "date": {"required": True},

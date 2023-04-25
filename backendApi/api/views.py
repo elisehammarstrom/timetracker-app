@@ -11,6 +11,8 @@ from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.request import Request
 from django.contrib.auth import authenticate
+from datetime import datetime, timedelta
+from django.utils.dateparse import parse_datetime
 
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -115,14 +117,35 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
 
         courseID = request.POST.get('courseID')
         date = request.POST.get('date')
-        timeTracked = request.POST.get('timeTracked')
+        timeTrackedEnd = request.POST.get('timeTrackedEnd')
+        timeTrackedStart = request.POST.get('timeTrackedStart')
 
-        #record = UserCourseTracking.objects.create(user=user, course=Course.objects.get(id=courseID), date=date, timeTracked=timeTracked)
-        record = UserCourseTracking.objects.create(user=this_user, course=Course.objects.get(id=courseID), date=date, timeTracked=timeTracked)
-        
-        record.save()
+        if timeTrackedEnd is None:
+            response = {"message": "You must provide a timeTrackedEnd in format DateTime 'YYYY-MM-DD HH:MM:SS' (timeTrackedEnd)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        if timeTrackedStart is None:
+            response = {"message": "You must provide a time duration in format Time 'HH:MM:SS' (duration)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        else:
 
-        return Response({'status': 'Record added'})
+            #record = UserCourseTracking.objects.create(user=user, course=Course.objects.get(id=courseID), date=date, timeTracked=timeTracked)
+            record = UserCourseTracking.objects.create(user=this_user, course=Course.objects.get(id=courseID), date=date, timeTrackedEnd=timeTrackedEnd, timeTrackedStart = timeTrackedStart)
+            
+            record.save()
+
+            response = {
+                "message": "Record added",
+                "trackedData": 
+                        {
+                            "userID": user.id, 
+                            "courseID": courseID, 
+                            "date": date,
+                            "timeTrackedStart": timeTrackedStart,
+                            "timeTrackedEnd": timeTrackedEnd,
+                        }
+                        
+                }
+            return Response(data=response, status=status.HTTP_200_OK)
 
 
 class UserViewset(viewsets.ModelViewSet):
