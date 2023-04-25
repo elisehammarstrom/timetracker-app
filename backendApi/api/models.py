@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager, User
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from django.conf import settings
 
 class Course(models.Model):
     courseCode = models.CharField(max_length=10, null=True, blank=True)
@@ -30,15 +31,29 @@ class Course(models.Model):
         courseInfoString = self.courseTitle + " (" + self.courseCode + ")"
         return courseInfoString
 
-"""
-class userHourCourseTrackingTable(models.Model):
-    userID = models.ForeignKey(User.pk, on_delete=models.CASCADE, blank=True, null=True)
-    courseID = models.ForeignKey(Course.pk, related_name="courses", blank=True, null=True) 
-    #event =  
-    #dateTimeEnd =  
-    #dateTimeStart = 
-    # 
-"""
+class UserCourseTracking(models.Model):
+    #user = settings.AUTH_USER_MODEL
+    #user = models.ForeignKey(User, on_delete=models.CASCADE)
+    #userID = models.OneToOneField(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
+    #user = models.OneToOneField(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
+    user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
+
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    date = models.DateField()
+    timeTracked = models.DateTimeField(blank=True, null=True)
+    stress = models.IntegerField(blank=True, null=True)
+
+    def __str__(self):
+        return self
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'course'], name='unique_user_course_combination'
+            )
+        ]
+    
+
 
 
 class Programme(models.Model):
@@ -61,10 +76,6 @@ class User(AbstractUser):
     base_role = Role.ADMIN
     role = models.CharField(max_length=50, choices=Role.choices)
     email = models.EmailField(verbose_name='email address', unique=True)
-
-    #addera courses on user och i lista
-    #courses = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True)
-    #courses = models.ManyToManyField(Course, through='Course')
     courses = models.ManyToManyField(Course, related_name="courses", blank=True) 
     
     USERNAME_FIELD = 'email'
