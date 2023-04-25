@@ -40,6 +40,7 @@ class userHourCourseTrackingTable(models.Model):
     # 
 """
 
+
 class Programme(models.Model):
     programmeID = models.CharField(max_length=10)
     programmeName = models.CharField(max_length=100)
@@ -129,22 +130,3 @@ class Student(User):
     def __str__(self):
         studentInfoString =  self.email + ", Courses: " + self.courses
         return studentInfoString
-
-
-
-"""
-    def add_course_to_user(self, courseObject):
-        print("Är i add_course_to_user()")
-        print("self.courses: ", self.courses)
-        self.courses = courseObject  
-        self.save()
-
-        self.courses.save()
-
-        print("self: ", self.email)
-
-        print("self.courses:", self.courses)
-
-"""
-
-
