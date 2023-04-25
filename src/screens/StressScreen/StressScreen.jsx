@@ -13,6 +13,8 @@ import Fyra from '../../../assets/4.png'
 import Fem from '../../../assets/5.png'
 import { setDate } from 'date-fns/esm';
 import ProfileIcon from '../../components/ProfileIcon/ProfileIcon';
+import {SettingOutlined} from '@ant-design/icons';
+import { TouchableHighlight } from 'react-native-gesture-handler';
 
 const StressScreen = () => {  
 
@@ -45,7 +47,7 @@ const StressScreen = () => {
 
     var day = now.getDayName();
 
-    const onProfileIconPressed = () => {
+    const onSettingsPressed = () => {
         navigation.navigate('Profile')
         console.log('pressed')
     };
@@ -105,9 +107,11 @@ const StressScreen = () => {
                     placeholder='Choose course'
                 />
             </View>
-            <View>
-                <ProfileIcon onPress={onProfileIconPressed}> </ProfileIcon>
-            </View>
+            <TouchableHighlight onPress={onSettingsPressed}>
+                <View>
+                <SettingOutlined style={styles.settings}/> 
+                </View>
+            </TouchableHighlight>
         </View>
 
         <View style={styles.smileys}>
@@ -262,6 +266,11 @@ const styles = StyleSheet.create({
     notPressed: {
         backgroundColor: 'transparent'
     }
+        settings: {
+            color: 'white',
+            height: 40,
+            width: 40,
+        }
 
 })
 
