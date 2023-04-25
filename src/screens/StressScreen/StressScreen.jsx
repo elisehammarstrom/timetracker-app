@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
             width: 40,
         }
 =======
-    },,
+    },
     settings: {
         color: 'white',
         height: 40,
