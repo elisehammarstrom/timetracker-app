@@ -8,7 +8,7 @@ import { useNavigation } from "@react-navigation/native";
 const ButtonMenu = ({screen}) => {
     const navigation = useNavigation();
 
-
+    const courses = ["Mekanik", "Reglerteknik", "Envariabelanalys"];
     // Navigation when you press each button
     const onYourReportsPress = data => {
       console.log(data)
@@ -17,7 +17,7 @@ const ButtonMenu = ({screen}) => {
   
      const onTimetrackingPress = data => {
        console.log(data)
-      navigation.navigate('Home')
+      navigation.navigate('Home', {options: courses})
     };
   
     const onCourseStatsPress = type => {

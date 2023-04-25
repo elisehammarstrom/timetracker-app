@@ -18,6 +18,7 @@ const HomeScreen: React.FC = ({route}) => {
   const navigation = useNavigation();
 
   const [date, setDate] = useState(new Date());
+  console.log(date)
 
   // const colors = ['#66C7FD','#5987CC','#AC7CE4','#FFB5E2','#FFA9A3','#FFC977']
   const colors = ['ONE','TWO','THREE','FOUR','FIVE','SIX']
@@ -73,6 +74,7 @@ const HomeScreen: React.FC = ({route}) => {
                   <Timer 
                     courseName={option} 
                     color={colors[i]}
+                    date={date}
                   />
                 </View>
           ))}
@@ -141,7 +143,7 @@ const styles = StyleSheet.create({
   layout: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: -100
+    // marginBottom: -100
 
   },
   image: {

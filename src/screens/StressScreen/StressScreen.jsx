@@ -265,12 +265,12 @@ const styles = StyleSheet.create({
     },
     notPressed: {
         backgroundColor: 'transparent'
+    },
+    settings: {
+        color: 'white',
+        height: 40,
+        width: 40,
     }
-        settings: {
-            color: 'white',
-            height: 40,
-            width: 40,
-        }
 
 })
 
