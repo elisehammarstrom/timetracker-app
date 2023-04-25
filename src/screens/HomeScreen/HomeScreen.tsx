@@ -5,10 +5,11 @@ import WeekCalendar from '../../components/WeekCalendar';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import Timer from '../../components/Timer';
-import {addDays} from 'date-fns';
 import React, {useState} from 'react';
-import {Button, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {Button, SafeAreaView, StyleSheet, Text, View, Image, TouchableHighlight} from 'react-native';
 import ButtonMenu from '../../components/ButtonMenu';
+import {CalendarOutlined, SettingOutlined} from '@ant-design/icons';
+import Logo from '../../../assets/icon.png'
 
 
 const HomeScreen: React.FC = ({route}) => {
@@ -32,11 +33,37 @@ const HomeScreen: React.FC = ({route}) => {
     });
   };
 
+  const onSettingsPressed = () => {
+    navigation.navigate('Profile', {});
+    console.log('pressed')
+};
+
 
 
   return (
     <SafeAreaView style={styles.root}>
+      <View style={styles.layout}>
+        <View>
+          <CalendarOutlined style={styles.settings}/>
+        </View>
+        <View style={styles.image}>
+          <Image 
+            source={Logo} 
+            style={[styles.logo, {height: 200 * 0.3}]} 
+            ResizeMode="contain"
+          />
+        </View>
+        
+          <TouchableHighlight onPress={onSettingsPressed}>
+          <View>
+          <SettingOutlined style={styles.settings}/>
+          </View>
+          </TouchableHighlight>
+        
+      </View>
+
       <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
+
 
       <View style={styles.timeLoop}>
 
@@ -97,7 +124,34 @@ const styles = StyleSheet.create({
   },
   timeLoop: {
     width: '100%'
-  }
+  },
+  settings: {
+    color: 'white',
+    fontSize: 30,
+    padding: 10,
+    paddingTop: 20,
+
+  },
+  logo: {
+    width: '100%',
+    maxWidth: 150,
+    maxHeight: 200,
+
+  },
+  layout: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: -100
+
+  },
+  image: {
+    height: '100%',
+    justifyContent:'center',
+    alighItems: 'center',
+    width: 150 ,
+    padding: 10,
+
+  },
 
 
 });
