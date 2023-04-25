@@ -219,11 +219,17 @@ class UserViewset(viewsets.ModelViewSet):
                         newestCourse = object        
                 courseInstance = newestCourse
             else:
-                print("TVÅ")
                 courseInstance = list_w_same_courseCode[0]
 
             user.courses.add(courseInstance)
             user.save()
+
+            userInstance = User.objects.get(id=25)
+            userInstance.save()
+
+            serializer = self.serializer_class(request.user, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
 
             #vi sparar id:et på användaren
             #Lägg till så att kursID:et också syns i response
@@ -235,47 +241,71 @@ class UserViewset(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['GET'])
     def get_courses(self, request, **extra_fields):
-        user = request.user
+        user_courses_qs = User.objects.get(id=request.user.pk).courses.all()
 
+        user_courses = []
+        for course in user_courses_qs:
+            print(course)
+            user_courses.append(course.id)
 
-        print("HEJ")
-        """
-        print("self: ", self)
+        response = {
+                "message": "Success. Courses retrieved. ", 
+                "courses": user_courses
+            } 
+        return Response(data=response, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=['GET'])
+    def get_course_title(self, request, **extra_fields):
+        if 'courseID' not in request.data: 
+            response = {"message": "You must provide a courseID to get course data (courseID)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        else: 
+            courseID = request.POST.get('courseID')
+            user_courses_qs = User.objects.get(id=request.user.pk).courses.all()
+            courses_qs = Course.objects.get(id=courseID)
 
-        print("user: ", user)
-        print("user.courses: ", user.courses)
+            response = {
+                    "message": "Success. Course title retrieved.", 
+                    "courseData": {
+                        "courseID": courses_qs.id, 
+                        "course title": courses_qs.courseTitle, 
+                        "course code": courses_qs.courseCode
+                    }
+                } 
+            return Response(data=response, status=status.HTTP_200_OK)
+        
+    @action(detail=False, methods=['POST'])
+    def remove_course(self, request, **extra_fields):
+        if 'courseID' not in request.data: 
+            response = {"message": "You must provide a courseID to get remove a course (courseID)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        else: 
+            courseID = request.POST.get('courseID')
+            userInstance = User.objects.get(id=request.user.pk)
+            user_courses_qs = User.objects.get(id=request.user.pk).courses.all()
+            courseInstance = Course.objects.get(id=courseID)
+            userInstance.courses.remove(courseInstance)
 
-        print(self)
+            user_courses = []
+            for course in user_courses_qs:
+                user_courses.append(course.id)
 
-        print(self.request.user.courses)
+            response = {
+                    "message": "Success. Course removed.", 
+                    "courseID to remove": courseInstance.id,
+                    "userObject": {
+                        "user.id": userInstance.id,
+                        "user.email": userInstance.email,
+                        "user.courses": user_courses
+                    }
+                } 
+            return Response(data=response, status=status.HTTP_200_OK)
 
-        self.save()
-
-        pk = self.kwargs.get('pk')
-            pID = request.data['pID']
-            if 'courseID' in request.data: 
-                programmeObject = Programme.objects.get(id=pID)
-        """
-
-
-
-        #print("user.courses:", user.courses)
-
-        #if user.id is not None:
-            #for courseObject in user.courses: 
-             #   print("Hej igen")
 
         
-        
-        
-        response = {"message": "success "}
-        return Response(response, status = status.HTTP_200_OK)
-        #if user.id is not None:
-        #    print("här ska en loop över användarens kurser samt kurserna i queryset finnas")
-            
-        #else:
-        #    response = {"message": "You need to provide a user ID to see courses (id) "}
-        #    return Response(response, status = status.HTTP_400_BAD_REQUEST)
+    
+
+
             
 
         

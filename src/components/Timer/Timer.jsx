@@ -4,13 +4,34 @@ import {Stopwatch} from 'react-native-stopwatch-timer';
 import { BorderlessButton } from 'react-native-gesture-handler';
 import {PlayCircleOutlined, PauseCircleOutlined} from '@ant-design/icons';
 
-const Timer = ({courseName, color}) => {
+const Timer = ({courseName, color, date}) => {
     const [isStopwatchStart, setIsStopwatchStart] = useState(false);
     const [resetStopwatch, setResetStopwatch] = useState(false);
     const [isTimerStart, setIsTimerStart] = useState(false);
  
     const [timerDuration, setTimerDuration] = useState(90000);
     const [resetTimer, setResetTimer] = useState(false);
+    const [active, setActive] = useState(false);
+
+
+    const getTime = (time) => {
+      if (isStopwatchStart != true){
+        let data = {
+          course: courseName,
+          date: date,
+          time: time,
+        };
+        setActive(false)
+        console.log(data)
+      } else {
+        if (active != true){
+          setActive(true)
+        }
+      }
+      if (active === false){
+        console.log("active=", active)
+      }
+    }
 
     return (
         <SafeAreaView>
@@ -20,8 +41,8 @@ const Timer = ({courseName, color}) => {
 
               <View style={styles.titleContainer}>
                 <Text style={styles.title}>{courseName}</Text>
-
               </View>
+
               <View style={styles.stopWatchContainer}>
                 <Stopwatch
                   laps
@@ -29,7 +50,7 @@ const Timer = ({courseName, color}) => {
                   start={isStopwatchStart}// To start
                   options={options} // Options for the styling
                   getTime={(time) => {
-                    console.log(time);
+                    getTime(time);
                   }}
                 />
               </View>
@@ -45,9 +66,6 @@ const Timer = ({courseName, color}) => {
                 </TouchableHighlight> 
               </View>
               
-                
-              
-
             </View>
 
           </View>

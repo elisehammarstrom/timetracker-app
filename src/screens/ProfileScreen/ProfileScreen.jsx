@@ -28,6 +28,8 @@ import {SettingOutlined} from '@ant-design/icons';
        }
 
        const navigation = useNavigation();
+    const courses = ["Mekanik", "Reglerteknik", "Envariabelanalys"];
+
 
        const onEditPressed = () => {
          navigation.navigate('EditProfile', {
@@ -46,14 +48,18 @@ import {SettingOutlined} from '@ant-design/icons';
         
       };
              //make separate words bold
-             const B = (props) => <Text style={{fontWeight: 'bold'}}>{props.children}</Text>
+      const B = (props) => <Text style={{fontWeight: 'bold'}}>{props.children}</Text>
+
+      const onClosedPress = () => {
+        navigation.navigate('Home', {options: courses})
+      }
 
      return (
      <View style={styles.topContainer}>
       <View>
-      <TouchableHighlight style={styles.closeContainer} >
+      <TouchableHighlight style={styles.closeContainer} onPress={onClosedPress} >
           <View>
-            <CloseOutlined style={styles.close}/>
+            <CloseOutlined style={styles.close} />
           </View>
         </TouchableHighlight>
 

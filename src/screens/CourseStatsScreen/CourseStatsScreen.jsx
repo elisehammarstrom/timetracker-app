@@ -45,12 +45,12 @@ const CourseStatsScreen = () =>{
             labels: ["Mon", "Tue", "Wen", "Thu", "Fri", "Sat", "Sun"],
             datasets: [
                 {
-                data: [20, 45, 28, 80, 99, 43, 45],
+                data: [2, 1, 2, 3, 4, 0, 0],
                 color: (opacity = 1) => `#AC7CE4`, // optional
                 strokeWidth: 2 // optional
                 },
                 {
-                data: [27, 40, 50, 70, 66, 12, 23],
+                data: [2, 2, 0, 2, 1, 1, 1],
                 color: (opacity = 1) => `#5987CC`, // optional
                 strokeWidth: 2 // optional
                 }
@@ -63,12 +63,12 @@ const CourseStatsScreen = () =>{
             labels: ["Mon", "Tue", "Wen", "Thu", "Fri", "Sat", "Sun"],
             datasets: [
                 {
-                data: [2, 5, 2, 0, 9, 3, 5],
+                data: [4, 3, 1, 3, 2, 0, 2],
                 color: (opacity = 1) => `#AC7CE4`, // optional
                 strokeWidth: 2 // optional
                 },
                 {
-                data: [7, 4, 5, 7, 6, 2, 3],
+                data: [2, 2, 3, 3, 2, 0, 0],
                 color: (opacity = 1) => `#5987CC`, // optional
                 strokeWidth: 2 // optional
                 }
@@ -81,12 +81,12 @@ const CourseStatsScreen = () =>{
             labels: ["Mon", "Tue", "Wen", "Thu", "Fri", "Sat", "Sun"],
             datasets: [
                 {
-                data: [20, 45, 28, 80, 99, 43, 45],
+                data: [1, 1, 0, 0, 3, 3, 0],
                 color: (opacity = 1) => `#AC7CE4`, // optional
                 strokeWidth: 2 // optional
                 },
                 {
-                data: [27, 40, 50, 70, 66, 12, 23],
+                data: [2, 4, 1, 1, 2, 0, 0],
                 color: (opacity = 1) => `#5987CC`, // optional
                 strokeWidth: 2 // optional
                 }
@@ -118,6 +118,27 @@ const CourseStatsScreen = () =>{
 
     }
 
+    const [avgTime, setAvgTime] = useState('');
+    const [time, setTime] = useState('');
+
+    if (selected === "Mekanik") {
+        if (time != "12h"){
+            setAvgTime("9h")
+            setTime('12h')
+        }
+    }
+    if (selected === "Reglerteknik") {
+        if (time != "15h"){
+            setAvgTime("12h")
+            setTime('15h')
+        }
+    }
+    if (selected === "Envariabelanalys") {
+        if (time != "8h"){
+            setAvgTime("10h")
+            setTime('8h')
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -163,6 +184,7 @@ const CourseStatsScreen = () =>{
                     height={220}
                     chartConfig={chartConfig}
                     withDots={false}
+                    fromZero={true}
                 />
             </View>
             
@@ -170,11 +192,20 @@ const CourseStatsScreen = () =>{
             <View style={styles.timeContainer}>
 
                 <View style={[styles.time, styles.yourTime]}>
-                    <Text style={{fontWeight: 'bold'}}>Your time:</Text>
+                    <View>
+                        <Text style={{fontWeight: 'bold'}}>Your time:</Text>
+
+                    </View>
+                    <View> 
+                        <Text style={{fontWeight: 'bold'}}> {time} </Text> 
+
+                    </View>
+
                 </View>  
 
                 <View style={[styles.time, styles.averageTime]}>
                     <Text style={{fontWeight: 'bold'}}>Average time:</Text>
+                    <Text style={{fontWeight: 'bold'}}> {avgTime} </Text> 
                 </View> 
 
                 <View style={styles.evaluationButton}>
@@ -186,7 +217,7 @@ const CourseStatsScreen = () =>{
 
             </View>
 
-            <View>
+            <View style={styles.ButtonMenu}>
                 <ButtonMenu
                     screen="courseStats"
                 />
@@ -235,9 +266,11 @@ const styles = StyleSheet.create({
     time: {
         width: '90%',
         height: 0.1 * Dimensions.get('window').height,
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         paddingLeft: '5%',
         margin: 4,
+        flexDirection: 'row',
+        alignItems: 'center'
     },
     yourTime: {
         backgroundColor:'#AC7CE4'
@@ -248,7 +281,7 @@ const styles = StyleSheet.create({
     evaluationButton: {
         width: 0.6 * Dimensions.get('window').width,
         justifyContent: 'center',
-    }
+    },
 })
 
 export default CourseStatsScreen;

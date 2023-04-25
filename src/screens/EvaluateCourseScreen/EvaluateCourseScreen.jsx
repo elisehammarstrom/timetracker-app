@@ -6,11 +6,11 @@ import CustomButton from '../../components/CustomButton/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 
 const EvaluationScreen = ({route}) => {
-    const {options} = route.params;
+    const {course} = route.params;
     const navigation = useNavigation();
 
     const onSubmitPressed = () => {
-        navigation.navigate("CourseStats")
+        navigation.navigate("ChooseEvaluateCourse")
     }
 
     return (

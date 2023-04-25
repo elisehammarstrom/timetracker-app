@@ -33,7 +33,16 @@ const CourseEvaluationsScreen = ({route}) => {
                 />
 
             </View>
-            <Text style={styles.title}>{selected} evaluation</Text>
+
+            <View>
+                <Text style={styles.title}>{selected} evaluation</Text>
+
+                <Text style={styles.breadtext}>80% of students recommend going to lectures</Text>
+
+                <Text style={styles.breadtext}>25% of students recommend doing voluntary assignments ...</Text>
+
+            </View>
+            
 
             <View>
                 <ButtonMenu
@@ -97,6 +106,10 @@ const styles = StyleSheet.create({
     evaluationButton: {
         width: 0.6 * Dimensions.get('window').width,
         justifyContent: 'center',
+    },
+    breadtext: {
+        fontSize: 20,
+        color: "#EFEFEF"
     }
 });
 
