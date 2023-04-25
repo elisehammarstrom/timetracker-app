@@ -72,56 +72,73 @@ const SignInScreen = () => {
       
 
     return (
-        <View style={styles.root}>
-            <Image 
-                source={Logo} 
-                style={[styles.logo, {height: height * 0.3}]} 
-                resizeMode="contain"
-            />
+        <View style={styles.container}>
 
-            <CustomInput 
-                name="email"
-                placeholder="Email" 
-                control={control} 
-                rules={{required: 'Email is required'}}
-            />
-            <CustomInput 
-                name="password"
-                placeholder={"Password"} 
-                secureTextEntry
-                control={control} 
-                rules={{required: 'Password is required'}}
-            />
+            <View style={styles.languageContainer}>
+                <View style={styles.languageButton}>
+                    <CustomButton
+                        text="Language"
+                        type="TERTIARY"
+                    />
+                </View>
+            </View>
+                
+            <View style={styles.root}>
+
+                <Image 
+                    source={Logo} 
+                    style={[styles.logo, {height: height * 0.3}]} 
+                    resizeMode="contain"
+                />
+
+                <CustomInput 
+                    name="email"
+                    placeholder="Email" 
+                    control={control} 
+                    rules={{required: 'Email is required'}}
+                />
+                <CustomInput 
+                    name="password"
+                    placeholder={"Password"} 
+                    secureTextEntry
+                    control={control} 
+                    rules={{required: 'Password is required'}}
+                />
 
 
-            <CustomButton 
-                text="Sign in" 
-                onPress={handleSubmit(onSignInPressed)}
-            />
+                <CustomButton 
+                    text="Sign in" 
+                    onPress={handleSubmit(onSignInPressed)}
+                />
 
-            <CustomButton    
-                text="Forgot password?" 
-                onPress={onForgotPasswordPressed}
-                type="TERTIARY"
-            />
-            <CustomButton    
-                text="Don't have an account? Create one" 
-                onPress={onSignUpPress}
-                type="TERTIARY"
-            />
+                <CustomButton    
+                    text="Forgot password?" 
+                    onPress={onForgotPasswordPressed}
+                    type="TERTIARY"
+                />
+                <CustomButton    
+                    text="Don't have an account? Create one" 
+                    onPress={onSignUpPress}
+                    type="TERTIARY"
+                />
 
+
+            </View>
 
         </View>
     )
 };
 
 const styles = StyleSheet.create({
+    container: {
+        height: '100%',
+        backgroundColor: '#313131',
+
+    },
     root: {
         alignItems: 'center',
-        justifyContent: 'center',
-        padding: 50,
-        backgroundColor: '#313131',
-        height: '100%',
+        // justifyContent: 'center',
+        paddingHorizontal: 50,
 
     },
     logo: {
@@ -129,6 +146,15 @@ const styles = StyleSheet.create({
         maxWidth: 300,
         maxHeight: 200,
     },
+    languageContainer: {
+        width: '100%',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start'
+    },
+    languageButton: {
+        width: '40%'
+    }
+
 });
 
 export default SignInScreen

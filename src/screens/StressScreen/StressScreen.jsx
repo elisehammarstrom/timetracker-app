@@ -49,7 +49,40 @@ const StressScreen = () => {
         navigation.navigate('Profile')
         console.log('pressed')
     };
- 
+
+    const [selectedValue, setSelectedValue] = useState("");
+    const [pressed1, setPressed1] = useState(false);
+    const [pressed2, setPressed2] = useState(false);
+    const [pressed3, setPressed3] = useState(false);
+    const [pressed4, setPressed4] = useState(false);
+    const [pressed5, setPressed5] = useState(false);
+
+    
+
+    
+    const onSubmitPressed = () => {
+        let stressTracked = {
+            course: selected,
+            date: date + "-" + month +"-" + year,
+            stress: selectedValue
+        }
+        if (stressTracked.course === ''){
+            alert('Please choose a course')
+        }
+        if (stressTracked.stress === ''){
+            alert('Please track your stress before submitting')
+        }
+        if (stressTracked.course != '' & stressTracked.stress != ''){
+            alert('Stress tracked!')
+            console.log(stressTracked)
+            setPressed1(false)
+            setPressed2(false)
+            setPressed3(false)
+            setPressed4(false)
+            setPressed5(false)
+            setSelectedValue('')
+        }
+    }
     return (
 
     <View style={styles.container}>
@@ -72,63 +105,66 @@ const StressScreen = () => {
                     placeholder='Choose course'
                 />
             </View>
-            <View><ProfileIcon onPress={onProfileIconPressed}> </ProfileIcon></View>
+            <View>
+                <ProfileIcon onPress={onProfileIconPressed}> </ProfileIcon>
+            </View>
         </View>
 
         <View style={styles.smileys}>
       
-            <TouchableOpacity activeOpacity={0.5}>
-            <Image 
-                source={Ett} 
-                style={[ {height: 200 * 0.3}, {width: 200*0.3}, {marginBottom:10}]} 
-                resizeMode="contain"
-            />
-                    <Text style={styles.text}> Stressfree day </Text>
+            <TouchableOpacity activeOpacity={0.5} onPress={() => {setSelectedValue("1"), setPressed1(true), setPressed2(false),setPressed3(false),setPressed4(false), setPressed5(false)}} style={pressed1 ? styles.pressed : styles.notPressed} >
+                <Image 
+                    source={Ett} 
+                    style={[ {height: 200 * 0.3}, {width: 200*0.3}, {marginBottom:10}]} 
+                    resizeMode="contain"
+                />
+                <Text style={styles.text}> Stressfree day </Text>
             
-        </TouchableOpacity>
+            </TouchableOpacity>
 
 
-        <TouchableOpacity activeOpacity={0.5}>
-            <Image 
-                source={Två} 
-                style={[{height: 200 * 0.3},{width: 200*0.3},{marginBottom:10}]} 
-                resizeMode="contain"
-            />
-            <Text style={styles.text}> Today was not so stressfull </Text>
-        </TouchableOpacity>
-        <TouchableOpacity activeOpacity={0.5}>
-            <Image 
-                source={Tre} 
-                style={[ {height: 200 * 0.3},{width: 200*0.3}, {marginBottom:10}]} 
-                resizeMode="contain"
-            />
-            <Text style={styles.text}> I felt a bit stressed today</Text>
-        </TouchableOpacity>
+            <TouchableOpacity activeOpacity={0.5} onPress={() => {setSelectedValue("2"), setPressed1(false), setPressed2(true),setPressed3(false),setPressed4(false), setPressed5(false)}} style={pressed2 ? styles.pressed : styles.notPressed} >
+                <Image 
+                    source={Två} 
+                    style={[{height: 200 * 0.3},{width: 200*0.3},{marginBottom:10}]} 
+                    resizeMode="contain"
+                />
+                <Text style={styles.text}> Today was not so stressful </Text>
+            </TouchableOpacity>
+            <TouchableOpacity activeOpacity={0.5} onPress={() => {setSelectedValue("3"), setPressed1(false), setPressed2(false),setPressed3(true),setPressed4(false), setPressed5(false)}} style={pressed3 ? styles.pressed : styles.notPressed}>
+                <Image 
+                    source={Tre} 
+                    style={[ {height: 200 * 0.3},{width: 200*0.3}, {marginBottom:10}]} 
+                    resizeMode="contain"
+                />
+                <Text style={styles.text}> I felt a bit stressed today</Text>
+            </TouchableOpacity>
 
-        <TouchableOpacity activeOpacity={0.5}>
-            <Image 
-                source={Fyra} 
-                style={[{height: 200 * 0.3},{width: 200*0.3},{marginBottom:10}]} 
-                resizeMode="contain"
+            <TouchableOpacity activeOpacity={0.5} onPress={() => {setSelectedValue("4"), setPressed1(false), setPressed2(false),setPressed3(false),setPressed4(true), setPressed5(false)}} style={pressed4 ? styles.pressed : styles.notPressed}>
+                <Image 
+                    source={Fyra} 
+                    style={[{height: 200 * 0.3},{width: 200*0.3},{marginBottom:10}]} 
+                    resizeMode="contain"
 
-            />
-            <Text style={styles.text}> Today was very stressful </Text>
-        </TouchableOpacity>
-        <TouchableOpacity activeOpacity={0.5}>
-            <Image 
-                source={Fem} 
-                style={[{height: 200 * 0.3}, {width: 200*0.3}]} 
-                resizeMode="contain"
-            />
-            <Text style={styles.text}> Extremely stressful day </Text>
-        </TouchableOpacity>
+                />
+                <Text style={styles.text}> Today was very stressful </Text>
+            </TouchableOpacity>
+            <TouchableOpacity activeOpacity={0.5} onPress={() => {setSelectedValue("5"), setPressed1(false), setPressed2(false),setPressed3(false),setPressed4(false), setPressed5(true)}} style={pressed5 ? styles.pressed : styles.notPressed}>
+                <Image 
+                    source={Fem} 
+                    style={[{height: 200 * 0.3}, {width: 200*0.3}]} 
+                    resizeMode="contain"
+                />
+                <Text style={styles.text}> Extremely stressful day </Text>
+            </TouchableOpacity>
 
         </View>
 
         <View style={styles.customButtonContainer}>
-        <CustomButton
-            text="Submit"
-        />
+            <CustomButton
+                text="Submit"
+                onPress={onSubmitPressed}
+            />
         </View>
    
         <View>
@@ -143,84 +179,91 @@ const StressScreen = () => {
 )}
 
 
-    const styles = StyleSheet.create({
-        container: {
-            backgroundColor: '#313131',
-            height: '100%',
-            justifyContent: 'space-between'
-            
-        },
-        layout: {
-            flexDirection: 'row',
-            justifyContent: 'space-between',
+const styles = StyleSheet.create({
+    container: {
+        backgroundColor: '#313131',
+        height: '100%',
+        justifyContent: 'space-between',
+    },
+    layout: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
 
-        },
-        smileys: {
-            flexDirection: 'column',
-            marginLeft: 40,
+    },
+    smileys: {
+        flexDirection: 'column',
+        // marginLeft: 40,
+        paddingHorizontal: 50
 
-        },
-        selectListContainer: {
-            alignItems: 'center',
-            justifyContent: 'center',
-          
-        },
-        selectList: {
-            fontWeight: 'bold',
-            color: '#EFEFEF',
-          
-        },
-        title: {
-            fontSize: 24,
-            fontWeight: 'bold',
-            color: '#EFEFEF',
-            margin: 10,
-            marginBottom: 50,
-            justifyContent: 'flex-start'
-        },
-        dateButton: {
-            marginRight: '2%',
-            width:100,
-            
-        },
-
-        date: {
-            color: 'white',
-            fontSize: 20,
+    },
+    selectListContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
         
-        },
-        day: {
-            color: 'white',
-            marginLeft: 18,
-            marginBottom: -30,
-            marginTop: 5,
-        },
-        circle: {
-            height: 40,
-            width: 40,
-            borderRadius: 40 / PixelRatio.get(),
-            backgroundColor: '#0376C2',
-            marginTop: 30,
-            marginHorizontal: 10,
-            justifyContent: 'center',
-            alignItems: 'center',
-        },
+    },
+    selectList: {
+        fontWeight: 'bold',
+        color: '#EFEFEF',
+        
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#EFEFEF',
+        margin: 10,
+        marginBottom: 50,
+        justifyContent: 'flex-start'
+    },
+    dateButton: {
+        marginRight: '2%',
+        width:100,
+        
+    },
 
-        text:{
-            position: "absolute",
-            marginLeft: 80,
-            marginTop:23,
-            fontsize:20,
-            fontWeight:'bold',
-            color: 'white',
-            alignItems: 'flex-start',
-        },
-        customButtonContainer: {
-            paddingHorizontal: 50,
-            marginTop: 10,
-          },
+    date: {
+        color: 'white',
+        fontSize: 20,
     
-    })
+    },
+    day: {
+        color: 'white',
+        marginLeft: 18,
+        marginBottom: -30,
+        marginTop: 5,
+    },
+    circle: {
+        height: 40,
+        width: 40,
+        borderRadius: 40 / PixelRatio.get(),
+        backgroundColor: '#0376C2',
+        marginTop: 30,
+        marginHorizontal: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    text:{
+        position: "absolute",
+        marginLeft: 80,
+        marginTop:23,
+        fontsize:20,
+        fontWeight:'bold',
+        color: 'white',
+        alignItems: 'flex-start',
+    },
+    customButtonContainer: {
+        paddingHorizontal: 50,
+        marginTop: 10,
+    },
+    pressed: {
+        backgroundColor: '#606060',
+        borderRadius: 10,
+    },
+    notPressed: {
+        backgroundColor: 'transparent'
+    }
+
+})
 
 
 
