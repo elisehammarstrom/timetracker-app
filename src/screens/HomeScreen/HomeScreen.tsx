@@ -36,20 +36,25 @@ const HomeScreen: React.FC = ({route}) => {
 
   const onSettingsPressed = () => {
     navigation.navigate('Profile', {});
-    console.log('pressed')
+};
+
+const onCalendarPressed = () => {
+  navigation.navigate('CalendarOpScreen', {});
 };
 
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.layout}>
-        <View>
-          <CalendarOutlined style={styles.settings}/>
-        </View>
+        <TouchableHighlight onPress={onCalendarPressed}>
+          <View>
+            <CalendarOutlined style={styles.settings}/>
+          </View>
+        </TouchableHighlight>
         <View style={styles.image}>
           <Image 
             source={Logo} 
             style={[styles.logo, {height: 200 * 0.3}]} 
-            ResizeMode="contain"
+            resizeMode="contain"
           />
         </View>
         

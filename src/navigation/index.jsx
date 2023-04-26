@@ -31,7 +31,7 @@ const Navigation = () => {
             <Stack.Navigator screenOptions={{headerShown: false}}>
 
 
-            <Stack.Screen name="CalendarOpScreen" component={CalendarOpScreen} />
+            
                 <Stack.Screen name="SignIn" component={SignInScreen} />
                 <Stack.Screen name="SignUp" component={SignUpScreen} />
                 <Stack.Screen name="ConfirmEmail" component={ConfirmEmailScreen} />
@@ -56,7 +56,7 @@ const Navigation = () => {
                 <Stack.Screen name="Profile" component={ProfileScreen}/>
 
                 <Stack.Screen name="EditProfile" component={EditProfileScreen}/>
-                
+                <Stack.Screen name="CalendarOpScreen" component={CalendarOpScreen} />
                 <Stack.Screen name="Timer" component={TimerScreen}/>
                 <Stack.Screen name="Test" component={TestScreen}/>
             </Stack.Navigator>
