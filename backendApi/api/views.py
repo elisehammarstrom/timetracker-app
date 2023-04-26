@@ -13,6 +13,7 @@ from rest_framework.request import Request
 from django.contrib.auth import authenticate
 from datetime import datetime, timedelta
 from django.utils.dateparse import parse_datetime
+from django.db import IntegrityError
 
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -111,27 +112,34 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def track_time(self, request, **extra_fields):
-
         user = request.user
         this_user = User.objects.get(id=user.id)
-
         courseID = request.POST.get('courseID')
         date = request.POST.get('date')
-        timeTrackedEnd = request.POST.get('timeTrackedEnd')
-        timeTrackedStart = request.POST.get('timeTrackedStart')
+        duration = request.POST.get('duration')
 
-        if timeTrackedEnd is None:
-            response = {"message": "You must provide a timeTrackedEnd in format DateTime 'YYYY-MM-DD HH:MM:SS' (timeTrackedEnd)"}
-            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-        if timeTrackedStart is None:
-            response = {"message": "You must provide a time duration in format Time 'HH:MM:SS' (duration)"}
+
+        #check if date redan finns
+        
+        #LÄGG IN SÅ ATT DATE OCKSÅ ÄR PK
+        #LÄGG IN SÅ ATT OM MAN FÖRSÖKER LÄGGA TILL PÅ DATUMET UPDATE TIMES
+
+        #UserCourseTracking.objects.get(id=)
+        #kolla om record med date, kurs och user redan finns, isf update
+        #annars skapa en ny rad
+
+        #existing_record = UserCourseTracking.objects.get(user=this_user, course=Course.objects.get(id=courseID))
+
+        if duration is None:
+            response = {"message": "You must provide a duratiom in format Time 'HH:MM:SS' (duration)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else:
+            record = UserCourseTracking.objects.create(user=this_user, course=Course.objects.get(id=courseID), date=date, duration=duration)
 
-            #record = UserCourseTracking.objects.create(user=user, course=Course.objects.get(id=courseID), date=date, timeTracked=timeTracked)
-            record = UserCourseTracking.objects.create(user=this_user, course=Course.objects.get(id=courseID), date=date, timeTrackedEnd=timeTrackedEnd, timeTrackedStart = timeTrackedStart)
+            record.save(update_fields=['duration'])
+            #record.save()
+
             
-            record.save()
 
             response = {
                 "message": "Record added",
@@ -140,8 +148,7 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                             "userID": user.id, 
                             "courseID": courseID, 
                             "date": date,
-                            "timeTrackedStart": timeTrackedStart,
-                            "timeTrackedEnd": timeTrackedEnd,
+                            "duration": duration,
                         }
                         
                 }
