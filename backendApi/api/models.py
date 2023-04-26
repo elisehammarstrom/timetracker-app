@@ -32,26 +32,21 @@ class Course(models.Model):
         return courseInfoString
 
 class UserCourseTracking(models.Model):
-    #user = settings.AUTH_USER_MODEL
-    #user = models.ForeignKey(User, on_delete=models.CASCADE)
-    #userID = models.OneToOneField(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
-    #user = models.OneToOneField(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
     user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
 
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     date = models.DateField()
-    timeTrackedEnd = models.DateTimeField(blank=True, null=True)
-    timeTrackedStart = models.DateTimeField(blank=True, null=True)
+    duration = models.TimeField(blank=True, null=True)
 
     stress = models.IntegerField(blank=True, null=True)
 
-    def __str__(self):
-        return self
+    #def __str__(self):
+    #   return self
     
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'course'], name='unique_user_course_combination'
+                fields=['user', 'course', 'date'], name='unique_user_course_date_combination'
             )
         ]
     

@@ -1,21 +1,44 @@
-import { StyleSheet, Text, View , SafeAreaView, FlatList} from 'react-native';
+import { StyleSheet, Text, View , SafeAreaView, FlatList, TouchableHighlight, Image} from 'react-native';
 import React , {useState} from 'react';
 import WeekCalendar from '../../components/WeekCalendar';
 import Line from '../../components/Line';
 import LineV from '../../components/LineV';
+import { useNavigation } from '@react-navigation/native';
+import CloseIcon from '../../../assets/close.png'
+
 
 
 
 const CalendarOpScreen = () => {
     const [date, setDate] = useState(new Date());
+
+    const navigation = useNavigation();
+
+    const courses = ["Mekanik", "Reglerteknik", "Envariabelanalys"];
     
+    const onClosedPress = () => {
+        navigation.navigate('Home', {options: courses})
+      }
  
   return (
     <View style={styles.container}> 
+
+         <TouchableHighlight style={styles.closeContainer} onPress={onClosedPress} >
+            <Image 
+              source={CloseIcon} 
+              style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
+              resizeMode="contain"
+            />
+        </TouchableHighlight>
+
+    
       <View style={styles.week}> 
+ 
        <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
         <LineV> </LineV>
       </View>
+
+{/*       OBS!!!!! Flatlisten funkar inte med iOS */}
 
       <FlatList
         data={[
@@ -60,18 +83,24 @@ const styles = StyleSheet.create({
         height: 44,
         color:'white',
       },
-
       week:{
         width:'95%',
         paddingLeft:40,
       },
-  
-   verticleLine: {
-    height:'100%',
+      verticleLine: {
+        height:'100%',
         width: 1.5,
         backgroundColor: '#909090',
-      
-       
+      },
+      close: {
+        color: 'white',
+        fontSize: 20,
+        padding: 10,
+        alignItems: 'flex-start'
+      },
+      closeContainer: {
+        alignItems: 'flex-start',
+        padding: 10,
       },
    
 })

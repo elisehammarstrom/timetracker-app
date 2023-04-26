@@ -1,8 +1,11 @@
-import { Button,View, Text , TouchableHighlight,  StyleSheet,SafeAreaView,Dimensions } from 'react-native';
+import { Button,View, Text , TouchableHighlight,  StyleSheet,SafeAreaView,Dimensions, Image } from 'react-native';
 import React, {useState} from 'react';
 import {Stopwatch} from 'react-native-stopwatch-timer';
-import { BorderlessButton } from 'react-native-gesture-handler';
-import {PlayCircleOutlined, PauseCircleOutlined} from '@ant-design/icons';
+import Play from '../../../assets/play.png'
+import Pause from '../../../assets/pause.png'
+
+
+/* import {PlayCircleOutlined, PauseCircleOutlined} from '@ant-design/icons'; */
 
 const Timer = ({courseName, color}) => {
     const [isStopwatchStart, setIsStopwatchStart] = useState(false);
@@ -59,13 +62,22 @@ const Timer = ({courseName, color}) => {
                 />
               </View>
               <View style={styles.playPauseContainer}>
-                <TouchableHighlight
+                <TouchableHighlight 
                   onPress={() => {
                     setIsStopwatchStart(!isStopwatchStart);
                     setResetStopwatch(false);
                   }}>
                   <Text style={styles.buttonText}>
-                    {!isStopwatchStart ? <PlayCircleOutlined/> : <PauseCircleOutlined/>}
+                    {!isStopwatchStart ? 
+                      <Image 
+                        source={Play} 
+                        style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
+                        resizeMode="contain" 
+                        />: 
+                      <Image 
+                        source={Pause}
+                        style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
+                        resizeMode="contain"/>}
                   </Text>
                 </TouchableHighlight> 
               </View>
@@ -87,19 +99,19 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    flex: 1,
+/*     flex: 1, */
     padding: 10,
     justifyContent: 'space-between',
     alignItems: 'center',
   },
 
   sectionStyle: {
-    flex: 1,
+ /*    flex: 5, */
     flexDirection: 'row',
     alignIems: 'center',
     justifyContent: 'space-between',
     alignContent: 'space-between',
-    rowGap: 10,
+    rowGap: 20,
     overflowWrap: 'break-word',
     padding: 15,
     width: 0.9 * Dimensions.get('window').width,
@@ -119,7 +131,11 @@ const styles = StyleSheet.create({
   },
 
   playPauseContainer: {
-    flex: 2
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+ /*    paddingTop: 25, */
+
   },
   
   sectionStyle_ONE:{

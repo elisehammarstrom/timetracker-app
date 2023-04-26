@@ -13,6 +13,8 @@ from rest_framework.request import Request
 from django.contrib.auth import authenticate
 from datetime import datetime, timedelta
 from django.utils.dateparse import parse_datetime
+from django.db import IntegrityError
+from django.http import JsonResponse
 
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -62,6 +64,23 @@ class ProgrammeViewset(viewsets.ModelViewSet):
         else:
             response = {"message": "You need to provide a the system ID for the program (pID)"}
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        
+    @action(detail=False, methods=['GET'])
+    def get_programme_data_from_id(self, request, *args, **kwargs):
+        if 'id' in request.data:
+            id = request.data.get('id')
+            programmeObject = Programme.objects.get(id=id)
+            #response = {
+             #   "message": "You need to provide a system ID for the programme (id)", 
+             #   "programmeObject": programmeObject
+             #   }
+            #return Response(response, status = status.HTTP_200_OK)
+            return JsonResponse(programmeObject, safe=False)
+        else:
+            response = {"message": "You need to provide a the system ID for the program (pID)"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        
+
 
 class LoginView(APIView):
     permission_classes = []
@@ -111,40 +130,90 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def track_time(self, request, **extra_fields):
-
         user = request.user
         this_user = User.objects.get(id=user.id)
-
         courseID = request.POST.get('courseID')
-        date = request.POST.get('date')
-        timeTrackedEnd = request.POST.get('timeTrackedEnd')
-        timeTrackedStart = request.POST.get('timeTrackedStart')
+        duration = request.POST.get('duration')
+        date = datetime.strptime(request.POST.get('date'),"%Y-%m-%d").date()
 
-        if timeTrackedEnd is None:
-            response = {"message": "You must provide a timeTrackedEnd in format DateTime 'YYYY-MM-DD HH:MM:SS' (timeTrackedEnd)"}
-            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-        if timeTrackedStart is None:
-            response = {"message": "You must provide a time duration in format Time 'HH:MM:SS' (duration)"}
+        if duration is None:
+            response = {"message": "You must provide a duratiom in format Time 'HH:MM:SS' (duration)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else:
-
-            #record = UserCourseTracking.objects.create(user=user, course=Course.objects.get(id=courseID), date=date, timeTracked=timeTracked)
-            record = UserCourseTracking.objects.create(user=this_user, course=Course.objects.get(id=courseID), date=date, timeTrackedEnd=timeTrackedEnd, timeTrackedStart = timeTrackedStart)
-            
-            record.save()
-
-            response = {
-                "message": "Record added",
+            try:
+                existing_record_object = UserCourseTracking.objects.get(user=User.objects.get(id=user.id), course=Course.objects.get(id=courseID), date=date)
+                existing_record_object.duration = duration
+                existing_record_object.save(update_fields=['duration'])
+                record = existing_record_object
+                
+                response = {
+                "message": "Record updated",
                 "trackedData": 
                         {
-                            "userID": user.id, 
-                            "courseID": courseID, 
-                            "date": date,
-                            "timeTrackedStart": timeTrackedStart,
-                            "timeTrackedEnd": timeTrackedEnd,
-                        }
-                        
+                            "userID": record.user.id, 
+                            "courseID": record.course.id, 
+                            "date": record.date,
+                            "duration": record.duration,
+                        }       
                 }
+            except:
+                record = UserCourseTracking.objects.create(user=this_user, course=Course.objects.get(id=courseID), date=date, duration=duration)
+                record.save()
+
+                response = {
+                    "message": "Record added",
+                    "trackedData": 
+                            {
+                                "userID": record.user.id, 
+                                "courseID": record.course.id, 
+                                "date": record.date,
+                                "duration": record.duration,
+                            }     
+                    }
+            return Response(data=response, status=status.HTTP_200_OK)
+        
+    @action(detail=False, methods=['POST'])
+    def track_stress(self, request, **extra_fields):
+        user = request.user
+        this_user = User.objects.get(id=user.id)
+        courseID = request.POST.get('courseID')
+        stress = request.POST.get('stress')
+        date = datetime.strptime(request.POST.get('date'),"%Y-%m-%d").date()
+
+        if stress is None:
+            response = {"message": "You must provide a stress number (stress)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            try:
+                existing_record_object = UserCourseTracking.objects.get(user=User.objects.get(id=user.id), course=Course.objects.get(id=courseID), date=date)
+                existing_record_object.stress = stress
+                existing_record_object.save(update_fields=['stress'])
+                record = existing_record_object
+                
+                response = {
+                "message": "Record updated",
+                "trackedData": 
+                        {
+                            "userID": record.user.id, 
+                            "courseID": record.course.id, 
+                            "date": record.date,
+                            "stress": record.stress,
+                        }       
+                }
+            except:
+                record = UserCourseTracking.objects.create(user=this_user, course=Course.objects.get(id=courseID), date=date, stress=stress)
+                record.save()
+
+                response = {
+                    "message": "Record added",
+                    "trackedData": 
+                            {
+                                "userID": record.user.id, 
+                                "courseID": record.course.id, 
+                                "date": record.date,
+                                "stress": record.stress,
+                            }     
+                    }
             return Response(data=response, status=status.HTTP_200_OK)
 
 
@@ -152,8 +221,8 @@ class UserViewset(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     authentication_classes = (TokenAuthentication, )
-    #permission_classes = (IsAuthenticated, )
-    permission_classes = []
+    permission_classes = (IsAuthenticated, )
+    #permission_classes = ()
     
     @action(detail=False, methods=['POST'])
     def create_user(self, request, **extra_fields):
@@ -161,15 +230,6 @@ class UserViewset(viewsets.ModelViewSet):
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
         username = email
-
-        
-        
-        """ if (first_name != None) and (last_name != None):
-            
-        else:
-            return Response({'status': 'You need to provide first_name and last_name'})
-            """
-
         password = request.POST.get('password')
         role = request.POST.get('role')
         university = request.POST.get('university')
@@ -179,7 +239,7 @@ class UserViewset(viewsets.ModelViewSet):
         if 'pID' in request.data:
             pID = request.POST.get('pID')
 
-
+        #användare skapas utan kurser
         #if 'courseID' in request.data:
         #    courseID = request.POST.get('courseID')
 
@@ -189,7 +249,6 @@ class UserViewset(viewsets.ModelViewSet):
            #create with programme 
            if pID != None:
             pID = request.POST.get('pID')
-            print("HEJ I IF PID")
             user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=Programme.objects.get(id=request.POST.get('pID')))
            else:
                #create with no programme or course
@@ -226,17 +285,18 @@ class UserViewset(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['POST'])
     def add_course(self, request, **extra_fields):
+        print("--------------------ÄR I METOD -------------------")
         user = request.user
         #if user.role != 'STUDENT' or :
         #    response = {"message": "You need to be a STUDENT to enrol in a course"}
         #   return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        print("HEJ ÄR USER: ", user)
 
         if 'courseCode' in request.data: 
             courseCode = request.POST.get('courseCode')
             list_w_same_courseCode = []
 
             for item in CourseViewset.queryset:
-                print("item: ", item)
                 if courseCode == item.courseCode:
                     list_w_same_courseCode.append(item)
                     #courseInstance = item
@@ -274,7 +334,6 @@ class UserViewset(viewsets.ModelViewSet):
 
         user_courses = []
         for course in user_courses_qs:
-            print(course)
             user_courses.append(course.id)
 
         response = {
@@ -284,7 +343,7 @@ class UserViewset(viewsets.ModelViewSet):
         return Response(data=response, status=status.HTTP_200_OK)
     
     @action(detail=False, methods=['GET'])
-    def get_course_title(self, request, **extra_fields):
+    def get_course_data(self, request, **extra_fields):
         if 'courseID' not in request.data: 
             response = {"message": "You must provide a courseID to get course data (courseID)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
