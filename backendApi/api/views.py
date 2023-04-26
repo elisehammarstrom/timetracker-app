@@ -14,6 +14,7 @@ from django.contrib.auth import authenticate
 from datetime import datetime, timedelta
 from django.utils.dateparse import parse_datetime
 from django.db import IntegrityError
+from django.http import JsonResponse
 
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -63,6 +64,23 @@ class ProgrammeViewset(viewsets.ModelViewSet):
         else:
             response = {"message": "You need to provide a the system ID for the program (pID)"}
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        
+    @action(detail=False, methods=['GET'])
+    def get_programme_data_from_id(self, request, *args, **kwargs):
+        if 'id' in request.data:
+            id = request.data.get('id')
+            programmeObject = Programme.objects.get(id=id)
+            #response = {
+             #   "message": "You need to provide a system ID for the programme (id)", 
+             #   "programmeObject": programmeObject
+             #   }
+            #return Response(response, status = status.HTTP_200_OK)
+            return JsonResponse(programmeObject, safe=False)
+        else:
+            response = {"message": "You need to provide a the system ID for the program (pID)"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        
+
 
 class LoginView(APIView):
     permission_classes = []
@@ -203,8 +221,8 @@ class UserViewset(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     authentication_classes = (TokenAuthentication, )
-    #permission_classes = (IsAuthenticated, )
-    permission_classes = []
+    permission_classes = (IsAuthenticated, )
+    #permission_classes = ()
     
     @action(detail=False, methods=['POST'])
     def create_user(self, request, **extra_fields):
@@ -231,7 +249,6 @@ class UserViewset(viewsets.ModelViewSet):
            #create with programme 
            if pID != None:
             pID = request.POST.get('pID')
-            print("HEJ I IF PID")
             user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=Programme.objects.get(id=request.POST.get('pID')))
            else:
                #create with no programme or course
@@ -268,17 +285,18 @@ class UserViewset(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['POST'])
     def add_course(self, request, **extra_fields):
+        print("--------------------ÄR I METOD -------------------")
         user = request.user
         #if user.role != 'STUDENT' or :
         #    response = {"message": "You need to be a STUDENT to enrol in a course"}
         #   return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        print("HEJ ÄR USER: ", user)
 
         if 'courseCode' in request.data: 
             courseCode = request.POST.get('courseCode')
             list_w_same_courseCode = []
 
             for item in CourseViewset.queryset:
-                print("item: ", item)
                 if courseCode == item.courseCode:
                     list_w_same_courseCode.append(item)
                     #courseInstance = item
