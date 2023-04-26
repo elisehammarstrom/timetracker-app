@@ -28,7 +28,7 @@ import {SettingOutlined} from '@ant-design/icons';
        }
 
        const navigation = useNavigation();
-    const courses = ["Mekanik", "Reglerteknik", "Envariabelanalys"];
+      const courses = ["Mekanik", "Reglerteknik", "Envariabelanalys"];
 
 
        const onEditPressed = () => {
