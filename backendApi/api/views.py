@@ -115,7 +115,7 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
         user = request.user
         this_user = User.objects.get(id=user.id)
         courseID = request.POST.get('courseID')
-        date = request.POST.get('date')
+        #date_string = request.POST.get('date')
         duration = request.POST.get('duration')
 
 
@@ -128,30 +128,44 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
         #kolla om record med date, kurs och user redan finns, isf update
         #annars skapa en ny rad
 
-        #existing_record = UserCourseTracking.objects.get(user=this_user, course=Course.objects.get(id=courseID))
+        #print("type(date): ", type(date))
+        date = datetime.strptime(request.POST.get('date'),"%Y-%m-%d").date()
 
         if duration is None:
             response = {"message": "You must provide a duratiom in format Time 'HH:MM:SS' (duration)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else:
-            record = UserCourseTracking.objects.create(user=this_user, course=Course.objects.get(id=courseID), date=date, duration=duration)
-
-            record.save(update_fields=['duration'])
-            #record.save()
-
-            
-
-            response = {
-                "message": "Record added",
+            try:
+                existing_record_object = UserCourseTracking.objects.get(user=User.objects.get(id=user.id), course=Course.objects.get(id=courseID), date=date)
+                existing_record_object.duration = duration
+                existing_record_object.save(update_fields=['duration'])
+                record = existing_record_object
+                
+                response = {
+                "message": "Record updated",
                 "trackedData": 
                         {
-                            "userID": user.id, 
-                            "courseID": courseID, 
-                            "date": date,
-                            "duration": duration,
-                        }
-                        
+                            "userID": record.user.id, 
+                            "courseID": record.course.id, 
+                            "date": record.date,
+                            "duration": record.duration,
+                        }       
                 }
+            except:
+                record = UserCourseTracking.objects.create(user=this_user, course=Course.objects.get(id=courseID), date=date, duration=duration)
+                record.save()
+
+                response = {
+                    "message": "Record added",
+                    "trackedData": 
+                            {
+                                "userID": record.user.id, 
+                                "courseID": record.course.id, 
+                                "date": record.date,
+                                "duration": record.duration,
+                            }
+                            
+                    }
             return Response(data=response, status=status.HTTP_200_OK)
 
 

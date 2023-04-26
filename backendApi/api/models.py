@@ -40,8 +40,8 @@ class UserCourseTracking(models.Model):
 
     stress = models.IntegerField(blank=True, null=True)
 
-    def __str__(self):
-        return self
+    #def __str__(self):
+    #   return self
     
     class Meta:
         constraints = [
