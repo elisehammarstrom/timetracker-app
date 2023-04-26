@@ -72,7 +72,7 @@ const HomeScreen: React.FC = ({route}) => {
                   <Timer 
                     courseName={option} 
                     color={colors[i]}
-                    date={date}
+                    // date={date}
                   />
                 </View>
           ))}

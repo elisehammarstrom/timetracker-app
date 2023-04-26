@@ -29,8 +29,7 @@ const Navigation = () => {
         <NavigationContainer>
             
             <Stack.Navigator screenOptions={{headerShown: false}}>
-
-
+            <Stack.Screen name="Profile" component={ProfileScreen}/>
 
                 <Stack.Screen name="SignIn" component={SignInScreen} />
                 <Stack.Screen name="SignUp" component={SignUpScreen} />
@@ -53,7 +52,7 @@ const Navigation = () => {
                 <Stack.Screen name="CourseStats" component={CourseStatsScreen}/>
                 <Stack.Screen name="CourseEvaluations" component={CourseEvaluationsScreen}/>
 
-                <Stack.Screen name="Profile" component={ProfileScreen}/>
+                {/* <Stack.Screen name="Profile" component={ProfileScreen}/> */}
 
                 <Stack.Screen name="EditProfile" component={EditProfileScreen}/>
                 

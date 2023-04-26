@@ -4,7 +4,7 @@ import {Stopwatch} from 'react-native-stopwatch-timer';
 import { BorderlessButton } from 'react-native-gesture-handler';
 import {PlayCircleOutlined, PauseCircleOutlined} from '@ant-design/icons';
 
-const Timer = ({courseName, color, date}) => {
+const Timer = ({courseName, color}) => {
     const [isStopwatchStart, setIsStopwatchStart] = useState(false);
     const [resetStopwatch, setResetStopwatch] = useState(false);
     const [isTimerStart, setIsTimerStart] = useState(false);
@@ -12,14 +12,18 @@ const Timer = ({courseName, color, date}) => {
     const [timerDuration, setTimerDuration] = useState(90000);
     const [resetTimer, setResetTimer] = useState(false);
     const [active, setActive] = useState(false);
-
+    
+    var day = new Date().getDate();
+    var month = new Date().getMonth()+1;
+    var year = new Date().getFullYear();
+    var date = day + '-' + month + '-' + year;
 
     const getTime = (time) => {
       if (isStopwatchStart != true){
         let data = {
           course: courseName,
           date: date,
-          time: time,
+          duration: time,
         };
         setActive(false)
         console.log(data)
