@@ -63,17 +63,23 @@ const CourseScreen = ({route}) => {
       // axios.post('http://127.0.0.1:8000/api/users/add_course/', formData, headers, {
       //   timeout: 3000,
       // })
-      axios.post('http://127.0.0.1:8000/api/users/add_course/', {
+      axios({
+        method: "post",
+        url: "http://127.0.0.1:8000/api/users/add_course/",
+        data: formData,
         headers: {
-      'Authorization': `token 53ba76420d512d53c7cca599cbda42c950d37996`
-      }, data:formData
+          'Content-Type': 'multipart/form-data',
+          'Authorization':`token 53ba76420d512d53c7cca599cbda42c950d37996`
+        }
       })
-      .then(async response => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.error(error)
-      })
+        .then(function (response) {
+          //handle success
+          console.log(response.data);
+        })
+        .catch(function (response) {
+          //handle error
+          console.log(response);
+        });
 
     // }
 
