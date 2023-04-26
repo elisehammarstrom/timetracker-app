@@ -221,8 +221,8 @@ class UserViewset(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     authentication_classes = (TokenAuthentication, )
-    #permission_classes = (IsAuthenticated, )
-    permission_classes = []
+    permission_classes = (IsAuthenticated, )
+    #permission_classes = ()
     
     @action(detail=False, methods=['POST'])
     def create_user(self, request, **extra_fields):
@@ -249,7 +249,6 @@ class UserViewset(viewsets.ModelViewSet):
            #create with programme 
            if pID != None:
             pID = request.POST.get('pID')
-            print("HEJ I IF PID")
             user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=Programme.objects.get(id=request.POST.get('pID')))
            else:
                #create with no programme or course
