@@ -115,20 +115,7 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
         user = request.user
         this_user = User.objects.get(id=user.id)
         courseID = request.POST.get('courseID')
-        #date_string = request.POST.get('date')
         duration = request.POST.get('duration')
-
-
-        #check if date redan finns
-        
-        #LÄGG IN SÅ ATT DATE OCKSÅ ÄR PK
-        #LÄGG IN SÅ ATT OM MAN FÖRSÖKER LÄGGA TILL PÅ DATUMET UPDATE TIMES
-
-        #UserCourseTracking.objects.get(id=)
-        #kolla om record med date, kurs och user redan finns, isf update
-        #annars skapa en ny rad
-
-        #print("type(date): ", type(date))
         date = datetime.strptime(request.POST.get('date'),"%Y-%m-%d").date()
 
         if duration is None:
