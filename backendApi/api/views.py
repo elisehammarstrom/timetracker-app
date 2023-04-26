@@ -286,6 +286,7 @@ class UserViewset(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['POST'])
     def add_course(self, request, **extra_fields):
+        print("--------------------ÄR I METOD -------------------")
         user = request.user
         #if user.role != 'STUDENT' or :
         #    response = {"message": "You need to be a STUDENT to enrol in a course"}
@@ -297,7 +298,6 @@ class UserViewset(viewsets.ModelViewSet):
             list_w_same_courseCode = []
 
             for item in CourseViewset.queryset:
-                print("item: ", item)
                 if courseCode == item.courseCode:
                     list_w_same_courseCode.append(item)
                     #courseInstance = item
