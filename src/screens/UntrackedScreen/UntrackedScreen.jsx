@@ -1,11 +1,16 @@
 
 import React, {useState} from 'react';
-import {Text, View,Dimensions,StyleSheet, Button, TouchableHighlight, TouchableOpacity} from 'react-native';
+import {Text, View,Dimensions,StyleSheet, Button, TouchableHighlight, TouchableOpacity, Image} from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list'
 import ButtonMenu from '../../components/ButtonMenu';
 import WeekCalendar from '../../components/WeekCalendar';
-import {ArrowLeftOutlined, ArrowRightOutlined} from '@ant-design/icons';
+/* import {ArrowLeftOutlined, ArrowRightOutlined} from '@ant-design/icons'; */
 import CustomButton from '../../components/CustomButton';
+import LeftArrow from '../../../assets/left-arrow.png'
+import RightArrow from '../../../assets/right-arrow.png'
+import Invisible from '../../../assets/invisible-box.png'
+
+
 
 
 const UntrackedScreen = () => {
@@ -67,13 +72,20 @@ const UntrackedScreen = () => {
             (
                 <View style={styles.layout}>
                     <TouchableHighlight onPress={() => {onCalendarPressed(true); setShowingArrow(false);}}> 
-                        <View>
-                            <ArrowLeftOutlined style={styles.leftArrow} />
-                        </View>
+                        <Image 
+                            source={LeftArrow} 
+                            style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
+                            resizeMode="contain"
+                        />
                     </TouchableHighlight>
+
                     <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
                     <View>
-                        <ArrowLeftOutlined style={styles.invisibleArrow} />
+                        <Image 
+                            source={Invisible} 
+                            style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
+                            resizeMode="contain"
+                        />
                     </View>
                 </View>
             ) 
@@ -81,13 +93,21 @@ const UntrackedScreen = () => {
             (
                 <View style={styles.layout}>
                     <View>
-                        <ArrowLeftOutlined style={styles.invisibleArrow} />
+                        <Image 
+                            source={Invisible} 
+                            style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
+                            resizeMode="contain"
+                        />
                     </View>
+
                     <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
+
                     <TouchableHighlight onPress={() => {onCurrentDatePressed(true); setShowingArrow(true);}}> 
-                        <View>
-                            <ArrowRightOutlined style={styles.rightArrow} />
-                        </View>
+                        <Image 
+                            source={RightArrow} 
+                            style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
+                            resizeMode="contain"
+                        />
                     </TouchableHighlight>
                 </View>
             )
@@ -204,8 +224,7 @@ const styles = StyleSheet.create({
     },
     dateButton: {
         marginRight: '2%',
-        width:100,
-        
+        width:100, 
     },
     logo: {
         width: '70%',

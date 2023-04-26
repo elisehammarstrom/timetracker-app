@@ -4,17 +4,12 @@ import React, {useState, useRef, useEffect} from 'react';
 import {Text, View, TextInput, StyleSheet, FlatList, Image,TouchableOpacity,Dimensions,Button, Alert, PixelRatio} from 'react-native';
 import ButtonMenu from '../../components/ButtonMenu';
 import { SelectList } from 'react-native-dropdown-select-list'
-import DatePicker from 'react-native-modern-datepicker'
 import CustomButton from '../../components/CustomButton';
 import Ett from '../../../assets/ett.png'
 import Två from '../../../assets/2.png'
 import Tre from '../../../assets/3.png'
 import Fyra from '../../../assets/4.png'
 import Fem from '../../../assets/5.png'
-import { setDate } from 'date-fns/esm';
-import ProfileIcon from '../../components/ProfileIcon/ProfileIcon';
-import {SettingOutlined} from '@ant-design/icons';
-import { TouchableHighlight } from 'react-native-gesture-handler';
 
 const StressScreen = () => {  
 
@@ -107,11 +102,6 @@ const StressScreen = () => {
                     placeholder='Choose course'
                 />
             </View>
-            <TouchableHighlight onPress={onSettingsPressed}>
-                <View>
-                <SettingOutlined style={styles.settings}/> 
-                </View>
-            </TouchableHighlight>
         </View>
 
         <View style={styles.smileys}>

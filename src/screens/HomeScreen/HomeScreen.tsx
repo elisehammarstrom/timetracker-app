@@ -8,8 +8,11 @@ import Timer from '../../components/Timer';
 import React, {useState} from 'react';
 import {Button, SafeAreaView, StyleSheet, Text, View, Image, TouchableHighlight} from 'react-native';
 import ButtonMenu from '../../components/ButtonMenu';
-import {CalendarOutlined, SettingOutlined} from '@ant-design/icons';
+/* import {CalendarOutlined, SettingOutlined} from '@ant-design/icons'; */
 import Logo from '../../../assets/icon.png'
+import CalendarIcon from '../../../assets/calendar.png'
+import SettingIcon from '../../../assets/settings.png'
+
 
 
 const HomeScreen: React.FC = ({route}) => {
@@ -44,31 +47,33 @@ const onCalendarPressed = () => {
 
   return (
     <SafeAreaView style={styles.root}>
-      <View style={styles.layout}>
-        <TouchableHighlight onPress={onCalendarPressed}>
-          <View>
-            <CalendarOutlined style={styles.settings}/>
-          </View>
+      <View style={styles.layout} >
+        <TouchableHighlight style={{padding: 10}} onPress={onCalendarPressed}>
+          <Image 
+            source={CalendarIcon} 
+            style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
+            resizeMode="contain"
+          />
+  
         </TouchableHighlight>
-        <View style={styles.image}>
           <Image 
             source={Logo} 
             style={[styles.logo, {height: 200 * 0.3}]} 
             resizeMode="contain"
           />
-        </View>
         
-          <TouchableHighlight onPress={onSettingsPressed}>
-          <View>
-          <SettingOutlined style={styles.settings}/>
-          </View>
+          <TouchableHighlight style={{padding: 10}}onPress={onSettingsPressed}>
+            <Image 
+              source={SettingIcon} 
+              style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
+              resizeMode="contain"
+            />
           </TouchableHighlight>
         
       </View>
-
+      
       <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
-
-
+      
       <View style={styles.timeLoop}>
 
           {/* Looping the courses to create a timer for each course */}
@@ -78,10 +83,11 @@ const onCalendarPressed = () => {
                     courseName={option} 
                     color={colors[i]}
                     // date={date}
-                  />
+                  /> 
                 </View>
           ))}
       </View>
+      
 
       {/* Buttons for adding untracked time and for tracking stress level */}
       <View style={styles.buttonContainer}>
@@ -91,22 +97,21 @@ const onCalendarPressed = () => {
             onPress={onTimePressed}
             type="HOMESCREEN"
           />
+        
 
           <CustomButton 
             text="Track stress level" 
             onPress={onStressPressed}
             type="HOMESCREEN"
           />
+       
         </View>
-        
-        <View>
-          <ButtonMenu
-            screen='timeTracking'
-          />
+      <View>
+        <ButtonMenu
+          screen='timeTracking'
+        />
         </View>
-        
       </View>
-
     </SafeAreaView>
   );
 };
@@ -117,7 +122,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#313131',
     height: '100%',
     justifyContent:'space-between',
-    width: '100%'
+    width: '100%',
   },
   buttonContainer: {
     backgroundColor: '#313131',
@@ -126,26 +131,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 50,
   },
   timeLoop: {
-    width: '100%'
+    width: '100%',
   },
   settings: {
     color: 'white',
     fontSize: 30,
     padding: 10,
     paddingTop: 20,
-
   },
   logo: {
     width: '100%',
     maxWidth: 150,
     maxHeight: 200,
-
   },
   layout: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    // marginBottom: -100
-
   },
   image: {
     height: '100%',
@@ -153,10 +154,7 @@ const styles = StyleSheet.create({
     alighItems: 'center',
     width: 150 ,
     padding: 10,
-
   },
-
-
 });
 
 export default HomeScreen;
