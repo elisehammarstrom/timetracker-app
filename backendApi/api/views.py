@@ -150,8 +150,51 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                                 "courseID": record.course.id, 
                                 "date": record.date,
                                 "duration": record.duration,
-                            }
-                            
+                            }     
+                    }
+            return Response(data=response, status=status.HTTP_200_OK)
+        
+    @action(detail=False, methods=['POST'])
+    def track_stress(self, request, **extra_fields):
+        user = request.user
+        this_user = User.objects.get(id=user.id)
+        courseID = request.POST.get('courseID')
+        stress = request.POST.get('stress')
+        date = datetime.strptime(request.POST.get('date'),"%Y-%m-%d").date()
+
+        if stress is None:
+            response = {"message": "You must provide a stress number (stress)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            try:
+                existing_record_object = UserCourseTracking.objects.get(user=User.objects.get(id=user.id), course=Course.objects.get(id=courseID), date=date)
+                existing_record_object.stress = stress
+                existing_record_object.save(update_fields=['stress'])
+                record = existing_record_object
+                
+                response = {
+                "message": "Record updated",
+                "trackedData": 
+                        {
+                            "userID": record.user.id, 
+                            "courseID": record.course.id, 
+                            "date": record.date,
+                            "stress": record.stress,
+                        }       
+                }
+            except:
+                record = UserCourseTracking.objects.create(user=this_user, course=Course.objects.get(id=courseID), date=date, stress=stress)
+                record.save()
+
+                response = {
+                    "message": "Record added",
+                    "trackedData": 
+                            {
+                                "userID": record.user.id, 
+                                "courseID": record.course.id, 
+                                "date": record.date,
+                                "stress": record.stress,
+                            }     
                     }
             return Response(data=response, status=status.HTTP_200_OK)
 
@@ -169,15 +212,6 @@ class UserViewset(viewsets.ModelViewSet):
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
         username = email
-
-        
-        
-        """ if (first_name != None) and (last_name != None):
-            
-        else:
-            return Response({'status': 'You need to provide first_name and last_name'})
-            """
-
         password = request.POST.get('password')
         role = request.POST.get('role')
         university = request.POST.get('university')
@@ -187,7 +221,7 @@ class UserViewset(viewsets.ModelViewSet):
         if 'pID' in request.data:
             pID = request.POST.get('pID')
 
-
+        #användare skapas utan kurser
         #if 'courseID' in request.data:
         #    courseID = request.POST.get('courseID')
 
@@ -282,7 +316,6 @@ class UserViewset(viewsets.ModelViewSet):
 
         user_courses = []
         for course in user_courses_qs:
-            print(course)
             user_courses.append(course.id)
 
         response = {
@@ -292,7 +325,7 @@ class UserViewset(viewsets.ModelViewSet):
         return Response(data=response, status=status.HTTP_200_OK)
     
     @action(detail=False, methods=['GET'])
-    def get_course_title(self, request, **extra_fields):
+    def get_course_data(self, request, **extra_fields):
         if 'courseID' not in request.data: 
             response = {"message": "You must provide a courseID to get course data (courseID)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
