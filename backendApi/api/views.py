@@ -290,6 +290,7 @@ class UserViewset(viewsets.ModelViewSet):
         #if user.role != 'STUDENT' or :
         #    response = {"message": "You need to be a STUDENT to enrol in a course"}
         #   return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        print("HEJ ÄR USER: ", user)
 
         if 'courseCode' in request.data: 
             courseCode = request.POST.get('courseCode')
