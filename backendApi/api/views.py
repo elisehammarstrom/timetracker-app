@@ -14,6 +14,7 @@ from django.contrib.auth import authenticate
 from datetime import datetime, timedelta
 from django.utils.dateparse import parse_datetime
 from django.db import IntegrityError
+from django.http import JsonResponse
 
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -63,6 +64,23 @@ class ProgrammeViewset(viewsets.ModelViewSet):
         else:
             response = {"message": "You need to provide a the system ID for the program (pID)"}
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        
+    @action(detail=False, methods=['GET'])
+    def get_programme_data_from_id(self, request, *args, **kwargs):
+        if 'id' in request.data:
+            id = request.data.get('id')
+            programmeObject = Programme.objects.get(id=id)
+            #response = {
+             #   "message": "You need to provide a system ID for the programme (id)", 
+             #   "programmeObject": programmeObject
+             #   }
+            #return Response(response, status = status.HTTP_200_OK)
+            return JsonResponse(programmeObject, safe=False)
+        else:
+            response = {"message": "You need to provide a the system ID for the program (pID)"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        
+
 
 class LoginView(APIView):
     permission_classes = []
