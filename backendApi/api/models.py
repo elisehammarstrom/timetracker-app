@@ -40,7 +40,9 @@ class UserCourseTracking(models.Model):
 
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     date = models.DateField()
-    timeTracked = models.DateTimeField(blank=True, null=True)
+    timeTrackedEnd = models.DateTimeField(blank=True, null=True)
+    timeTrackedStart = models.DateTimeField(blank=True, null=True)
+
     stress = models.IntegerField(blank=True, null=True)
 
     def __str__(self):

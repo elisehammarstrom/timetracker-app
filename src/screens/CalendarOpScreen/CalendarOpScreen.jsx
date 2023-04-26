@@ -6,29 +6,18 @@ import LineV from '../../components/LineV';
 
 
 
-
-
 const CalendarOpScreen = () => {
     const [date, setDate] = useState(new Date());
     
-   
+ 
+  return (
+    <View style={styles.container}> 
+      <View style={styles.week}> 
+       <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
+        <LineV> </LineV>
+      </View>
 
-
-    
-    return (
-
-<View style={styles.container}> 
-
-<View style={styles.week}> 
-<WeekCalendar  date={date} onChange={(newDate) => setDate(newDate)} />
-
-</View>
-
-
-
-
-
-<FlatList
+      <FlatList
         data={[
           {key: '07'},
           {key: '08'},
@@ -47,29 +36,16 @@ const CalendarOpScreen = () => {
           {key: '21'},
           {key: '22'},
         ]}
-        renderItem={({item}) =>  <View> <Line></Line> <Text style={styles.item}>{item.key}</Text> </View>}
-        
-
+        renderItem={({item}) =>  <View>  <Line ></Line> <Text style={styles.item}>{item.key}</Text> </View>}
       />
-
-
-
-        
-
         </View>
     
-    );
+  );
 };
 
-
-
-
-   
-   
-
-
-
 export default CalendarOpScreen;
+
+
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#313131',
@@ -89,10 +65,13 @@ const styles = StyleSheet.create({
         width:'95%',
         paddingLeft:40,
       },
-   LineVe:{
-    backgroundColor:'red'
-   }
-
-     
+  
+   verticleLine: {
+    height:'100%',
+        width: 1.5,
+        backgroundColor: '#909090',
+      
+       
+      },
    
 })

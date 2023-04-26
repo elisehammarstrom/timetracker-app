@@ -266,11 +266,19 @@ const styles = StyleSheet.create({
     notPressed: {
         backgroundColor: 'transparent'
     },
+<<<<<<< HEAD
         settings: {
             color: 'white',
             height: 40,
             width: 40,
         }
+=======
+    settings: {
+        color: 'white',
+        height: 40,
+        width: 40,
+    }
+>>>>>>> 6355098d0d074ddb81794e02619aa01a88b57d9c
 
 })
 
