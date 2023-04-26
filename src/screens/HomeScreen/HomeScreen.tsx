@@ -77,7 +77,7 @@ const onCalendarPressed = () => {
                   <Timer 
                     courseName={option} 
                     color={colors[i]}
-                    date={date}
+                    // date={date}
                   />
                 </View>
           ))}

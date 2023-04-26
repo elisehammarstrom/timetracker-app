@@ -1,130 +1,153 @@
 import React, { useState } from 'react';
- import { View, Text, Image, TextInput, StyleSheet, TouchableOpacity, CheckBox} from 'react-native';
- import CustomButton from '../../components/CustomButton';
- import CustomInput from '../../components/CustomInput';
- import { useForm } from 'react-hook-form';
- import { useNavigation } from '@react-navigation/native';
+import { View, Text, StyleSheet, Dimensions} from 'react-native';
+import CustomButton from '../../components/CustomButton';
+import CustomInput from '../../components/CustomInput';
+import { useForm } from 'react-hook-form';
+import { useNavigation } from '@react-navigation/native';
+import { SelectList } from 'react-native-dropdown-select-list';
 
 
- const EditProfileScreen = () => {
-   const EMAIL_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
-   const {control, handleSubmit, formState: {errors}, watch} = useForm();
+
+const EditProfileScreen = () => {
+  const {control, handleSubmit, formState: {errors}, watch} = useForm();
+  const pwd = watch('password');
+
+
+  const programmes = [
+    {key:'1', value:'STS'},
+    {key:'2', value:'Industriell ekonomi'}
+  ]
 
 
    //här ska sedan den nya infon skickas till databasen och ersätta det gamla i ProfileScreen
-   const onSavePressed = data => {
-     console.log(data)
-     navigation.navigate('Profile')
- };
+  const onSavePressed = data => {
+    navigation.navigate('Profile')
+    const info = {
+      password: data.password,
+      pID: selectedProgramme,
+      lang: selectedLang,
+    } 
+    console.log(info)
+  };
 
- const navigation = useNavigation();
+  const navigation = useNavigation();
 
-     const profile = {
-         fullName: 'Lovisa123',
-        email: 'lovisanilsson58@gmail.com',
-        picture: 'https://example.com/jane-doe-avatar.png',
-        programme: 'STS',
-        language: 'English'
-      }
-      const [username, setFullName] = useState(profile.fullName);
-      const [email, setEmail] = useState(profile.email);
-      const [programme, setUniversity] = useState(profile.programme);
-      const [picture, setpicture] = useState(profile.picture);
-      const [language, setLanguage] = useState(profile.picture);
+  const lang = ['English', 'Svenska']
 
-       const [isSelected, setSelection] = useState(false);
+  const [selectedLang,setSelectedLang] = useState('');
+  const [selectedProgramme, setSelectedProgramme] = useState("");
 
-       //make separate words bold
-       const B = (props) => <Text style={{fontWeight: 'bold'}}>{props.children}</Text>
+  //make separate words bold
+  const B = (props) => <Text style={{fontWeight: 'bold'}}>{props.children}</Text>
 
-     return (
+  return (
      <View style={styles.container}>
-      <View style={styles.pictureContainer}>
-        <Image
-          style={styles.picture}
-          source={{uri: 'https://www.bootdey.com/img/Content/avatar/avatar3.png'}}
-        />
-       </View>
        <View style={styles.form}>
 
-         <Text style={styles.label}><B>Full name:</B>
-           <CustomInput 
-               name="fullName"
-               placeholder={profile.fullName}
-               control={control}
-               rules={{required: 'Full name is required', minLength: {value: 3, message: 'Username should be at least 3 characters long'}}}
-             /> 
-         </Text>
+          <Text style={styles.label}><B>Change password:</B>
+            <CustomInput 
+              name="password"
+              control={control}
+              rules={{minLength: {value: 8, message: 'Password should be at least 8 characters long'}}}
+              secureTextEntry
+            /> 
+          </Text>
 
-         <Text style={styles.label}><B>Email:</B> 
-         <CustomInput 
-               name="email"
-               placeholder={profile.email}
-               control={control}
-               rules={{ required: 'Email is required', pattern: {value: EMAIL_REGEX, message: 'Email is invalid'}}}
-             /></Text>
-         <Text style={styles.label}><B>Programme:</B> 
-         <CustomInput 
-               name="programme"
-               placeholder={profile.programme}
-               control={control}
-               rules={{required: 'Programme is required',}}
-             /></Text>
-             <Text style={styles.label}><B>Language:</B> </Text> 
-        
-        
+          <Text style={styles.label}><B>Repeat password:</B>
+            <CustomInput 
+              name="passwordrepeat"
+              control={control}
+              rules={{validate: value => value === pwd || 'Password do not match'}}
+              secureTextEntry
+            /> 
+          </Text>
 
- <CustomButton 
-                 text="Save changes" 
-                 onPress={handleSubmit(onSavePressed)}
-             />
-
+          <Text style={styles.label}><B>Programme:</B> 
+            <SelectList
+              dropdownTextStyles={styles.selectList}
+              inputStyles={styles.selectList}
+              boxStyles={styles.boxStyles}
+              setSelected={(val) => setSelectedProgramme(val)}
+              data={programmes}
+              save="value"
+              search={false}
+              placeholder='Choose programme'
+            />
+          </Text>
+          <Text style={styles.label}><B>Language:</B> 
+            <SelectList
+              dropdownTextStyles={styles.selectList}
+              inputStyles={styles.selectList}
+              boxStyles={styles.boxStyles}
+              setSelected={(val) => setSelectedLang(val)}
+              data={lang}
+              save="value"
+              search={false}
+              placeholder='Choose language'
+            />
+          </Text> 
+  
+          <CustomButton 
+            text="Save changes" 
+            onPress={handleSubmit(onSavePressed)}
+          />
        </View>
 
      </View>
   );
 };
-    const styles = StyleSheet.create({
-        container: {
-          flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: '#313131',
-         },
-         form: {
-           width: '80%',
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#313131',
+  },
+    form: {
+      padding: 50,
+    },
+    label: {
+      marginTop: 20,
+      color: 'white',
 
-         },
-         label: {
-           marginTop: 20,
-           color: 'white',
+    },
+    info: {
+      marginTop: 20,
+      color: 'white',
+      fontWeight: 'light'
 
-         },
-         info: {
-           marginTop: 20,
-           color: 'white',
-           fontWeight: 'light'
+    },
 
-         },
+    pictureContainer: {
+      marginTop: 20,
+      alignItems: 'center',
+      backgroundColor: '#313131',
+    },
+    picture: {
+      width: 150,
+      height: 150,
+      borderRadius: 75,
+      border: 'solid',
+      borderColor: 'white',
+      opacity: '50%',
 
-         pictureContainer: {
-           marginTop: 20,
-           alignItems: 'center',
-           backgroundColor: '#313131',
-         },
-         picture: {
-           width: 150,
-           height: 150,
-           borderRadius: 75,
-           border: 'solid',
-           borderColor: 'white',
-           opacity: '50%',
+    },
+    checkbox:{
+        marginLeft:30,
+      backgroundColor:'gray'
+  },
+  selectListContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: '3%',
+  },
+  selectList: {
+      fontWeight: 'bold',
+      color: '#EFEFEF',
+  },
+  boxStyles: {
+      width: 0.75 * Dimensions.get('window').width,
+  },
 
-         },
-         checkbox:{
-             marginLeft:30,
-            backgroundColor:'gray'
-        }
-       
-      });
+});
 export default EditProfileScreen

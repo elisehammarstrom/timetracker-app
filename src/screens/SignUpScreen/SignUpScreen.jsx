@@ -80,11 +80,6 @@ const SignUpScreen = () => {
         navigation.navigate('SignIn')
 
     };
-
-    
-
-   
-
   
     return (
         <View style={styles.root}>
