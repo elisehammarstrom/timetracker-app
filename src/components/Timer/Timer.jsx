@@ -3,6 +3,8 @@ import React, {useState} from 'react';
 import {Stopwatch} from 'react-native-stopwatch-timer';
 import Play from '../../../assets/play.png'
 import Pause from '../../../assets/pause.png'
+import { secondsToMinutes } from 'date-fns';
+import axios from 'axios';
 
 
 /* import {PlayCircleOutlined, PauseCircleOutlined} from '@ant-design/icons'; */
@@ -19,7 +21,12 @@ const Timer = ({courseName, color}) => {
     var day = new Date().getDate();
     var month = new Date().getMonth()+1;
     var year = new Date().getFullYear();
-    var date = day + '-' + month + '-' + year;
+    var date = year + '-' + month + '-' + day;
+
+
+
+
+
 
     const getTime = (time) => {
       if (isStopwatchStart != true){
@@ -28,6 +35,30 @@ const Timer = ({courseName, color}) => {
           date: date,
           duration: time,
         };
+        console.log(courseName)
+        const formData = new FormData();
+        formData.append('courseID', courseName);
+        formData.append('date', date);
+        formData.append('duration', time);
+        
+        axios({
+          method: "post",
+          url: "http://127.0.0.1:8000/api/tracking/track_time/",
+          data: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization':`token 53ba76420d512d53c7cca599cbda42c950d37996`
+          }
+        })
+          .then(function (response) {
+            //handle success
+            console.log(response.data);
+          })
+          .catch(function (response) {
+            //handle error
+            console.log(response);
+          });
+
         setActive(false)
         console.log(data)
       } else {
