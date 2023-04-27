@@ -15,9 +15,10 @@ import SettingIcon from '../../../assets/settings.png'
 
 
 
-const HomeScreen: React.FC = ({route}) => {
+const HomeScreen: React.FC = () => {
 
-  const {options} = route.params;
+  // const {options} = route.params;
+  const options = ['Mekanik', 'Miljöteknik', 'Envariabelanalys'];
   const navigation = useNavigation();
 
   const [date, setDate] = useState(new Date());

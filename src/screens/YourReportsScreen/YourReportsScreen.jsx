@@ -17,7 +17,7 @@ const YourReportsScreen = ({route}) => {
   const test = new Date().getMonth()+1;
   const [month, setMonth] = useState("/" + test); 
   var createLabels = [];
-  for (let i=0; i<7; i++) {
+  for (let i=-4; i<=0; i++) {
     createLabels.push(date+i)
   }
   const [labels, setLabels] = useState(createLabels)

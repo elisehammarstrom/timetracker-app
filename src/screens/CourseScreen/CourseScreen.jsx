@@ -1,14 +1,36 @@
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import React, {useState} from 'react';
+import {StyleSheet, Text, View, TouchableOpacity, FlatList} from 'react-native';
+import React, {useState, useEffect} from 'react';
 import { useNavigation } from '@react-navigation/native';
 import CustomButton from '../../components/CustomButton';
 import { MultipleSelectList } from 'react-native-dropdown-select-list'
 import axios from 'axios';
+import { TextInput } from 'react-native-paper';
+// import { FlatList } from 'react-native-gesture-handler/lib/typescript/components/GestureComponents';
 
 const CourseScreen = ({route}) => {
 
   const [testCourses, setTestCourses] = useState('');
-  
+  const [filteredData, setFilteredData] = useState([]);
+  var day = new Date().getDate();
+  var month = new Date().getMonth()+1;
+  var year = new Date().getFullYear();
+
+  const [date, setDate] = useState('');
+
+  if (date.length < 1) {
+  if (`${day}`.length === 1 & `${month}`.length === 1) {
+    setDate(year + '-0' + month + '-0' + day + 'T00:00:00Z')
+  }
+  else if (`${day}`.length === 1) {
+    setDate(year + '-' + month + '-0' + day + 'T00:00:00Z')
+  }
+  else if (`${month}`.length === 1) {
+    setDate(year + '-0' + month + '-' + day + 'T00:00:00Z')
+  }
+  else {
+    setDate(year + '-' + month + '-' + day + 'T00:00:00Z')
+
+  }}  
 
   axios.get('http://127.0.0.1:8000/api/courses/', {
     headers: {
@@ -16,9 +38,10 @@ const CourseScreen = ({route}) => {
     }
   })
   .then((res) => {
-    // console.log(res.data)
     if (testCourses.length != res.data.length){
       setTestCourses(res.data);
+      setFilteredData(res.data);
+
     }
     
   })
@@ -26,22 +49,24 @@ const CourseScreen = ({route}) => {
     console.error(error)
   })
 
-  console.log("testcourses=", testCourses)
   let data = [];
   for (let i=0; i<testCourses.length; i++){
-    data.push({
-      id: testCourses[i].id,
-      courseTitle: testCourses[i].courseTitle,
-      courseCode: testCourses[i].courseCode,
-    })
+    // if (testCourses[i].courseEndDateTime >= date) {
+      data.push({
+        id: testCourses[i].id,
+        courseTitle: testCourses[i].courseTitle,
+        courseCode: testCourses[i].courseCode,
+      })
+    // }
   }
 
   const {user} = route.params;
 
 
   const navigation = useNavigation();
-  const [courses, setCourses] = useState([])
-  const [courseCodes, setCourseCodes] = useState([])
+  const [courses, setCourses] = useState([]);
+  const [courseCodes, setCourseCodes] = useState([]);
+  const [search, setSearch] = useState('');
 
   const [selected, setSelected] = React.useState([]);
 
@@ -50,8 +75,6 @@ const CourseScreen = ({route}) => {
     'Content-Type': 'multipart/form-data',
     'Authorization':`token 53ba76420d512d53c7cca599cbda42c950d37996`
   }
-
-
 
 
   const onTimerPressed = () => {
@@ -78,7 +101,7 @@ const CourseScreen = ({route}) => {
     // }
 
 
-      navigation.navigate('Home', {options: courses});
+      navigation.navigate('Home');
       // console.log(user)
       // console.log("courses=", courses)
       // console.log('courseCodes=', courseCodes)
@@ -100,30 +123,66 @@ const CourseScreen = ({route}) => {
     setCourseCodes(CourseCode => CourseCode.concat(courseCode) )
 
     setCourses(Courses => Courses.concat(selectedCourse))
-    
-
-
-
+  
   }
+
+  const searchFilter = (text) => {
+    if (text) {
+      const newData = data.filter((item) => {
+        const itemData = item.courseTitle ? item.courseTitle.toUpperCase()
+                      : ''.toUpperCase();
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      setFilteredData(newData);
+      setSearch(text);
+    } else {
+      setFilteredData(data);
+      setSearch(text);
+    }
+  }
+  const ItemSeparatorView = () => {
+    return (
+      // Flat List Item Separator
+      <View
+        style={{
+          height: 0.5,
+          width: '100%',
+          backgroundColor: '#C8C8C8',
+        }}
+      />
+    );
+  };
   
     return (
         <View style={styles.container}>
           
-            <View styles={styles.options}>
-              
+            <View style={styles.options}>
+                
+                  <TextInput
+                    value={search}
+                    placeholder='Search courses'
+                    onChangeText={(text) => searchFilter(text)}
+                  />
 
-              {data.map((item,index) => (
-                <View key={index} style={styles.course}>
+                
+                <FlatList
+                  data={filteredData}
+                  renderItem={({item}) => (
+                    <View style={styles.course}>
 
-                  <TouchableOpacity style={styles.checkBox} onPress={()=>pickCourse(item.id, item.courseCode)}>
-                    {courses.includes(item.id) && <Text style={styles.check}>✓</Text>}
-                  </TouchableOpacity>
+                      <TouchableOpacity style={styles.checkBox} onPress={()=>pickCourse(item.id, item.courseCode)}>
+                        {courses.includes(item.id) && <Text style={styles.check}>✓</Text>}
+                      </TouchableOpacity>
 
-                  <Text style={styles.courseName}>{item.courseTitle}  {item.courseCode}</Text>
+                      <Text style={styles.courseName}>{item.courseTitle}  {item.courseCode}</Text>
 
-                </View>
-                ))}
+                    </View>
 
+                    )}
+                    ItemSeparatorComponent={ItemSeparatorView}
+                  />
+                  
                 <View style={styles.customButtonContainer}>
                   <CustomButton 
                     text="Start tracking" 
@@ -137,7 +196,7 @@ const CourseScreen = ({route}) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center', 
     backgroundColor:  '#313131',
@@ -161,31 +220,13 @@ const styles = StyleSheet.create({
     marginVertical: 7,
   },
   options: {
-    alignSelf: 'flex-start',
-    marginLeft: 50,
+    width: '90%',
+    height: '90%',
+   
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#EFEFEF',
-    margin: 10,
-    marginBottom: 50,
-  },
- 
   customButtonContainer: {
     paddingHorizontal: 50,
   },
-  selectListContainer: {
-    marginTop: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'scroll' // behövs bara för webben, på mobilen med expo appen funkar allt som det ska
-},
-selectBox: {
-  backgroundColor: 'grey',
-  color: 'white'
-}
-
 
 })
 
