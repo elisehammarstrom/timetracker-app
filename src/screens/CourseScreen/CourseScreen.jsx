@@ -2,10 +2,10 @@ import {StyleSheet, Text, View, TouchableOpacity, FlatList} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import { useNavigation } from '@react-navigation/native';
 import CustomButton from '../../components/CustomButton';
-import { MultipleSelectList } from 'react-native-dropdown-select-list'
 import axios from 'axios';
 import { TextInput } from 'react-native-paper';
 // import { FlatList } from 'react-native-gesture-handler/lib/typescript/components/GestureComponents';
+
 
 const CourseScreen = ({route}) => {
 
@@ -220,6 +220,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#EFEFEF',
     marginRight: 5,
+    backgroundColor: 'white'
   },
   course: {
     flexDirection: 'row',
