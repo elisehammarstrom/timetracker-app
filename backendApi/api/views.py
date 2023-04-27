@@ -221,8 +221,8 @@ class UserViewset(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     authentication_classes = (TokenAuthentication, )
-    permission_classes = (IsAuthenticated, )
-    #permission_classes = ()
+    #permission_classes = (IsAuthenticated, )
+    permission_classes = ()
     
     @action(detail=False, methods=['POST'])
     def create_user(self, request, **extra_fields):
@@ -285,12 +285,12 @@ class UserViewset(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['POST'])
     def add_course(self, request, **extra_fields):
-        print("--------------------ÄR I METOD -------------------")
+        print("--------------------ÄR I METOD-------------------")
         user = request.user
         #if user.role != 'STUDENT' or :
         #    response = {"message": "You need to be a STUDENT to enrol in a course"}
         #   return Response(response, status = status.HTTP_400_BAD_REQUEST)
-        print("HEJ ÄR USER: ", user)
+        #print("HEJ ÄR USER: ", user.email)
 
         if 'courseCode' in request.data: 
             courseCode = request.POST.get('courseCode')

@@ -45,7 +45,7 @@ import SettingIcon from '../../../assets/settings.png'
              //make separate words bold
       const B = (props) => <Text style={{fontWeight: 'bold'}}>{props.children}</Text>
 
-      const courses = ["Mekanik", "Reglerteknik", "Envariabelanalys"];
+      const courses = ["Mekanik", "Miljöteknik", "Envariabelanalys"];
       const onClosedPress = () => {
         navigation.navigate('Home', {options: courses})
       }

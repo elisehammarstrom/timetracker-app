@@ -53,12 +53,12 @@ const YourReportsScreen = ({route}) => {
       useShadowColorFromDataset: false // optional
     };
   
-  const courses = ["Mekanik", "Reglerteknik", "Envariabelanalys"]; 
+  const courses = ["Mekanik", "Miljöteknik", "Envariabelanalys"]; 
   const colorsConst = ['#66C7FD', '#5987CC', '#AC7CE4', '#FFB5E2', '#FFA9A3', '#FFC977'];
   // const weakColorsConst = ['rgba(102, 199, 253, 0.5)','rgba(89, 135, 204, 0.5)','rgba(172, 124, 228, 0.5)', 'rgba(255, 181, 226, 0.5)','rgba(255, 169, 163, 0.5)','rgba(255, 201, 119, 0.5)' ];
   const testTime = [[6,3,0,1,0], [1,3,2,2,4], [1,1,4,5,0]];
 
-  const [legend, setLegend] = useState(["Mekanik", "Reglerteknik", "Envariabelanalys"]);
+  const [legend, setLegend] = useState(["Mekanik", "Miljöteknik", "Envariabelanalys"]);
   const [colors, setColors] = useState(['#66C7FD', '#5987CC', '#AC7CE4', '#FFB5E2', '#FFA9A3', '#FFC977']);
   
   var time = [];

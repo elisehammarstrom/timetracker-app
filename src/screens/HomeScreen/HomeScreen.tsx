@@ -9,9 +9,10 @@ import React, {useState} from 'react';
 import {Button, SafeAreaView, StyleSheet, Text, View, Image, TouchableHighlight} from 'react-native';
 import ButtonMenu from '../../components/ButtonMenu';
 /* import {CalendarOutlined, SettingOutlined} from '@ant-design/icons'; */
-import Logo from '../../../assets/icon.png'
-import CalendarIcon from '../../../assets/calendar.png'
-import SettingIcon from '../../../assets/settings.png'
+import Logo from '../../../assets/icon.png';
+import CalendarIcon from '../../../assets/calendar.png';
+import SettingIcon from '../../../assets/settings.png';
+import axios from 'axios';
 
 
 
@@ -45,6 +46,8 @@ const HomeScreen: React.FC = () => {
 const onCalendarPressed = () => {
   navigation.navigate('CalendarOpScreen', {});
 };
+
+
 
   return (
     <SafeAreaView style={styles.root}>
