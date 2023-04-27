@@ -83,14 +83,16 @@ const StressScreen = () => {
     return (
 
     <View style={styles.container}>
-        <Text style={styles.day}>{day}</Text>
-        <View style={styles.layout}>
         
+        <Text style={styles.day}>{day}</Text>
+        <View style={styles.dateContainer}>
             <View style={styles.circle}>
                 <Text style={styles.date}>{date}</Text>
             </View>
+            </View>
+        <View style={styles.layout}>
             
-           
+            
             <View style={styles.selectListContainer}>
                 <SelectList
                     dropdownTextStyles={styles.selectList}
@@ -181,7 +183,7 @@ const styles = StyleSheet.create({
     },
     layout: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
 
     },
     smileys: {
@@ -193,6 +195,8 @@ const styles = StyleSheet.create({
     selectListContainer: {
         alignItems: 'center',
         justifyContent: 'center',
+        flex: 5,
+        marginTop: 10
         
     },
     selectList: {
@@ -223,7 +227,7 @@ const styles = StyleSheet.create({
         color: 'white',
         marginLeft: 18,
         marginBottom: -30,
-        marginTop: 5,
+        marginTop: 10,
     },
     circle: {
         height: 40,
@@ -256,12 +260,15 @@ const styles = StyleSheet.create({
     notPressed: {
         backgroundColor: 'transparent'
     },
-        settings: {
-            color: 'white',
-            height: 40,
-            width: 40,
-        }
-
+    settings: {
+        color: 'white',
+        height: 40,
+        width: 40,
+    },
+    dateContainer: {
+        flex: 0.5,
+    },
+        
 })
 
 
