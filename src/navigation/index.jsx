@@ -57,7 +57,6 @@ const Navigation = () => {
                 
 
                 <Stack.Screen name="EditProfile" component={EditProfileScreen}/>
-                <Stack.Screen name="CalendarOpScreen" component={CalendarOpScreen} />
                 <Stack.Screen name="Timer" component={TimerScreen}/>
                 <Stack.Screen name="Test" component={TestScreen}/>
                 <Stack.Screen name="CalendarOpScreen" component={CalendarOpScreen} />
