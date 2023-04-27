@@ -14,7 +14,7 @@ const CalendarOpScreen = () => {
 
     const navigation = useNavigation();
 
-    const courses = ["Mekanik", "Reglerteknik", "Envariabelanalys"];
+    const courses = ["Mekanik", "Miljöteknik", "Envariabelanalys"];
     
     const onClosedPress = () => {
         navigation.navigate('Home', {options: courses})

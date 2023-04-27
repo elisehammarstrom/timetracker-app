@@ -58,7 +58,7 @@ const CourseStatsScreen = () =>{
             legend: ["Your time", "Average time"] // optional
             }
         },
-        { course: 'Reglerteknik', data:
+        { course: 'Miljöteknik', data:
         {
             labels: ["Mon", "Tue", "Wen", "Thu", "Fri", "Sat", "Sun"],
             datasets: [
@@ -98,7 +98,7 @@ const CourseStatsScreen = () =>{
 
     const data = [
         {key:'1', value:'Mekanik'},
-        {key:'2', value:'Reglerteknik'},
+        {key:'2', value:'Miljöteknik'},
         {key:'3', value:'Envariabelanalys'}
     ]
 
@@ -127,7 +127,7 @@ const CourseStatsScreen = () =>{
             setTime('12h')
         }
     }
-    if (selected === "Reglerteknik") {
+    if (selected === "Miljöteknik") {
         if (time != "15h"){
             setAvgTime("12h")
             setTime('15h')

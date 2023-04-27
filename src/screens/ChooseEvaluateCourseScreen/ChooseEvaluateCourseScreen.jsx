@@ -8,7 +8,7 @@ import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
 
 const EvaluateCourseScreen = () => {
     const navigation = useNavigation();
-    const options = ["Mekanik", "Reglerteknik", "Envariabelanalys"]
+    const options = ["Mekanik", "Miljöteknik", "Envariabelanalys"]
 
     const [checked, setChecked] = React.useState('');
 

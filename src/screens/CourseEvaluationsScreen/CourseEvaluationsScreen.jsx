@@ -11,7 +11,7 @@ const CourseEvaluationsScreen = ({route}) => {
 
     const data = [
         {key:'1', value:'Mekanik'},
-        {key:'2', value:'Reglerteknik'},
+        {key:'2', value:'Miljöteknik'},
         {key:'3', value:'Envariabelanalys'}
     ]
 
