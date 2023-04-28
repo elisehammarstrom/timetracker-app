@@ -19,7 +19,7 @@ const UntrackedScreen = () => {
     const [isShowingArrow, setShowingArrow] = React.useState(true)
 
     const data = [
-        {key:'1', value:'Meknik'},
+        {key:'1', value:'Mekanik'},
         {key:'2', value:'Miljöteknik'},
         {key:'3', value:'Envariabelanalys'},
         ]
