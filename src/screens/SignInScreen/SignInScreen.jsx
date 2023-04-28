@@ -12,7 +12,7 @@ const SignInScreen = () => {
     const navigation = useNavigation();
 
     const {control, handleSubmit, formState: {errors}} = useForm();
-    console.log(errors);
+    // console.log(errors);
 
 
     const onSignInPressed = data => {
@@ -36,15 +36,20 @@ const SignInScreen = () => {
             timeout: 3000,
         })
         .then(async response => {
-            console.log(response.data);
+
+            if (response.data.token) {
+                navigation.navigate('Home')
+            }
+            else {
+                alert('Wrong email or password')
+            }
+
         })
         .catch(error=> {
             console.log("error from image :");
    })
-        console.log(data)
-        // Validate user
+  
         
-        navigation.navigate('StartCourses', {user: data});
     };
     const onForgotPasswordPressed = () => {
         navigation.navigate('ForgotPassword')
