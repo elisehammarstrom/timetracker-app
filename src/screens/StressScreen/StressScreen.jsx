@@ -11,8 +11,9 @@ import Tre from '../../../assets/3.png'
 import Fyra from '../../../assets/4.png'
 import Fem from '../../../assets/5.png'
 
-const StressScreen = () => {  
-
+const StressScreen = ({route}) => {  
+    const {courses} = route.params;
+ 
     const navigation = useNavigation();
     
     const [selectedDate, setSelectedDate] = useState('');
@@ -21,12 +22,6 @@ const StressScreen = () => {
  /*    const [date, setDate] = useState(null); */
     
    
-    const data = [
-    {key:'1', value:'Mekanik'},
-    {key:'2', value:'Miljöteknik'},
-    {key:'3', value:'Envariabelanalys'},
- ]
-
     // get today's date
     var date = new Date().getDate(); //To get the Current Date
     var month = new Date().getMonth() + 1; //To get the Current Month
@@ -98,7 +93,7 @@ const StressScreen = () => {
                     dropdownTextStyles={styles.selectList}
                     inputStyles={styles.selectList}
                     setSelected={(val) => setSelected(val)}
-                    data={data}
+                    data={courses}
                     save="value"
                     search={false}
                     placeholder='Choose course'

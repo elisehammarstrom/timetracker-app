@@ -9,9 +9,8 @@ import { useNavigation } from '@react-navigation/native';
 
 const YourReportsScreen = ({route}) => {
   const fakeTime = ["10h", "12h", "11h"]
+  const {courses} = route.params;
 
-
-  console.log("route.params=", route.params)
 
   var date = new Date().getDate();
   const test = new Date().getMonth()+1;
@@ -21,24 +20,6 @@ const YourReportsScreen = ({route}) => {
     createLabels.push(date+i)
   }
   const [labels, setLabels] = useState(createLabels)
-
-  if (route.params !== undefined) {
-    console.log("route.params=", route.params)
-    const {firstDate} = route.params;
-    const {lastDate} = route.params;
-    let newLabels = [];
-
-    if (month != "/" + firstDate.month) {
-      setMonth("/" +  firstDate.month);
-    }
-    for (let i=firstDate.day; i<=lastDate.day; i++) {
-      newLabels.push(i) 
-    }
-    console.log("newlabels=", newLabels)
-    if (`${labels}` != `${newLabels}`) {
-      setLabels(newLabels)
-    }
-  }
     
   const navigation = useNavigation();
   const screenWidth = Dimensions.get("window").width;
@@ -53,12 +34,12 @@ const YourReportsScreen = ({route}) => {
       useShadowColorFromDataset: false // optional
     };
   
-  const courses = ["Mekanik", "Miljöteknik", "Envariabelanalys"]; 
+  // const courses = ["Mekanik", "Miljöteknik", "Envariabelanalys"]; 
   const colorsConst = ['#66C7FD', '#5987CC', '#AC7CE4', '#FFB5E2', '#FFA9A3', '#FFC977'];
   // const weakColorsConst = ['rgba(102, 199, 253, 0.5)','rgba(89, 135, 204, 0.5)','rgba(172, 124, 228, 0.5)', 'rgba(255, 181, 226, 0.5)','rgba(255, 169, 163, 0.5)','rgba(255, 201, 119, 0.5)' ];
   const testTime = [[6,3,0,1,0], [1,3,2,2,4], [1,1,4,5,0]];
 
-  const [legend, setLegend] = useState(["Mekanik", "Miljöteknik", "Envariabelanalys"]);
+  const [legend, setLegend] = useState(courses);
   const [colors, setColors] = useState(['#66C7FD', '#5987CC', '#AC7CE4', '#FFB5E2', '#FFA9A3', '#FFC977']);
   
   var time = [];

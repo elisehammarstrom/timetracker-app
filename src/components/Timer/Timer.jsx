@@ -35,7 +35,7 @@ const Timer = ({courseName, color}) => {
           date: date,
           duration: time,
         };
-        console.log(courseName)
+        // console.log(courseName)
         const formData = new FormData();
         formData.append('courseID', courseName);
         formData.append('date', date);
@@ -59,16 +59,9 @@ const Timer = ({courseName, color}) => {
             console.log(response);
           });
 
-        setActive(false)
-        console.log(data)
-      } else {
-        if (active != true){
-          setActive(true)
-        }
-      }
-      if (active === false){
-        console.log("active=", active)
-      }
+        // console.log(data)
+      } 
+     
     }
 
     return (

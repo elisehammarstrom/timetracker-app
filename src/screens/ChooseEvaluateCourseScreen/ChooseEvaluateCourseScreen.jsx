@@ -6,9 +6,9 @@ import { RadioButton } from 'react-native-paper';
 import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
 
 
-const EvaluateCourseScreen = () => {
+const EvaluateCourseScreen = ({route}) => {
     const navigation = useNavigation();
-    const options = ["Mekanik", "Miljöteknik", "Envariabelanalys"]
+    const {courses} = route.params;
 
     const [checked, setChecked] = React.useState('');
 
@@ -27,7 +27,7 @@ const EvaluateCourseScreen = () => {
                 <Text style={styles.title}>Select course to Evaluate</Text>
 
                 <View>
-                    {options.map(option => (
+                    {courses.map(option => (
                         <View style={styles.button} key={option}>
                             <RadioButton
                                 text={option}

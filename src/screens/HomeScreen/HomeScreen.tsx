@@ -16,27 +16,66 @@ import axios from 'axios';
 
 
 
-const HomeScreen: React.FC = () => {
+const HomeScreen: React.FC = ({route}) => {
 
-  // const {options} = route.params;
-  const options = ['Mekanik', 'Miljöteknik', 'Envariabelanalys'];
+  const {token} = route.params;
+  const [courseIDs, setCourseIDs] = useState('');
+  const [courses, setCourses] = useState([]);
+
+  axios.get('http://127.0.0.1:8000/api/users/get_courses/', {
+    headers: {
+      'Authorization': `token ` + token
+    }
+  })
+  .then((res) => {
+  
+    if (courseIDs.length === 0) {
+      setCourseIDs(res.data.courses)
+    }
+
+    axios.get('http://127.0.0.1:8000/api/courses/', {
+    headers: {
+      'Authorization': `token ` + token
+    }
+    })
+    .then((res) => {
+      let newCourses = [];
+      for (let j=0; j<courseIDs.length; j++)
+
+        for (let i=0; i<res.data.length; i++) {
+          if (`${res.data[i].id}` === `${courseIDs[j]}`) {
+            newCourses.push(`${res.data[i].courseTitle}`)
+          }
+      }
+      if (courses.length === 0) {
+        setCourses(newCourses)
+      }
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+
+  })
+  .catch((error) => {
+    console.error(error)
+  })
+
+
+  // const options = ['Mekanik', 'Miljöteknik', 'Envariabelanalys'];
   const navigation = useNavigation();
 
   const [date, setDate] = useState(new Date());
-  console.log(date)
+  // console.log(date)
 
-  // const colors = ['#66C7FD','#5987CC','#AC7CE4','#FFB5E2','#FFA9A3','#FFC977']
   const colors = ['ONE','TWO','THREE','FOUR','FIVE','SIX']
 
 
   const onTimePressed = () => {       
-    navigation.navigate('AddTime', {
-    });
+    navigation.navigate('AddTime', {courses: courses});
   }
 
   const onStressPressed = () => {
-    navigation.navigate('Stress', {
-    });
+    navigation.navigate('Stress', {courses: courses});
   };
 
   const onSettingsPressed = () => {
@@ -81,7 +120,7 @@ const onCalendarPressed = () => {
       <View style={styles.timeLoop}>
 
           {/* Looping the courses to create a timer for each course */}
-          {options.map((option, i) => (
+          {courses.map((option, i) => (
                 <View key={option}>
                   <Timer 
                     courseName={option} 
@@ -113,6 +152,7 @@ const onCalendarPressed = () => {
       <View>
         <ButtonMenu
           screen='timeTracking'
+          token={token}
         />
         </View>
       </View>

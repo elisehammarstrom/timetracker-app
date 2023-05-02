@@ -1,18 +1,63 @@
 // Component for the buttons in the bottom of many screens
 
-import React from "react";
+import React, {useState} from "react";
 import CustomButton from "../CustomButton/CustomButton";
 import { View, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import axios from 'axios';
 
-const ButtonMenu = ({screen}) => {
+
+const ButtonMenu = ({screen, token}) => {
+    const [courseIDs, setCourseIDs] = useState('');
+    const [courses, setCourses] = useState([]);
+
+    axios.get('http://127.0.0.1:8000/api/users/get_courses/', {
+        headers: {
+          'Authorization': `token ` + token
+        }
+      })
+      .then((res) => {
+      
+        if (courseIDs.length === 0) {
+          setCourseIDs(res.data.courses)
+        }
+    
+        axios.get('http://127.0.0.1:8000/api/courses/', {
+        headers: {
+          'Authorization': `token ` + token
+        }
+        })
+        .then((res) => {
+          let newCourses = [];
+          for (let j=0; j<courseIDs.length; j++)
+    
+            for (let i=0; i<res.data.length; i++) {
+              if (`${res.data[i].id}` === `${courseIDs[j]}`) {
+                newCourses.push(`${res.data[i].courseTitle}`)
+              }
+          }
+          if (courses.length === 0) {
+            setCourses(newCourses)
+          }
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+    
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+
+
+    
     const navigation = useNavigation();
 
-    const courses = ["Mekanik", "Reglerteknik", "Envariabelanalys"];
+    // const courses = ["Mekanik", "Reglerteknik", "Envariabelanalys"];
     // Navigation when you press each button
     const onYourReportsPress = data => {
       console.log(data)
-      navigation.navigate('YourReports') //Options is the courses youve picked
+      navigation.navigate('YourReports', {courses: courses}) //Options is the courses youve picked
     };
   
      const onTimetrackingPress = data => {
@@ -22,7 +67,7 @@ const ButtonMenu = ({screen}) => {
   
     const onCourseStatsPress = type => {
       console.log(type)
-      navigation.navigate('Courses')
+      navigation.navigate('Courses', {courses: courses})
     };
 
     return(

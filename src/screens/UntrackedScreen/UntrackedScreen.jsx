@@ -13,16 +13,12 @@ import Invisible from '../../../assets/invisible-box.png'
 
 
 
-const UntrackedScreen = () => {
+const UntrackedScreen = ({route}) => {
+    const {courses} = route.params;
 
     const [selected, setSelected] = React.useState("");
     const [isShowingArrow, setShowingArrow] = React.useState(true)
 
-    const data = [
-        {key:'1', value:'Mekanik'},
-        {key:'2', value:'Miljöteknik'},
-        {key:'3', value:'Envariabelanalys'},
-        ]
 
     const hourData = [
         {key:'1', value:'00'},
@@ -119,7 +115,7 @@ const UntrackedScreen = () => {
                 inputStyles={styles.selectList}
                 boxStyles={styles.boxStyles}
                 setSelected={(val) => setSelected(val)}
-                data={data}
+                data={courses}
                 save="value"
                 search={false}
                 placeholder='Choose course'

@@ -6,14 +6,9 @@ import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
 
 const CourseEvaluationsScreen = ({route}) => {
     const {course} = route.params;
+    const {courses} = route.params;
 
     const [selected, setSelected] = useState("");
-
-    const data = [
-        {key:'1', value:'Mekanik'},
-        {key:'2', value:'Miljöteknik'},
-        {key:'3', value:'Envariabelanalys'}
-    ]
 
     return (
         <View style={styles.container}>
@@ -25,7 +20,7 @@ const CourseEvaluationsScreen = ({route}) => {
                     inputStyles={styles.selectList}
                     boxStyles={styles.boxStyles}
                     setSelected={(val) => setSelected(val)}
-                    data={data}
+                    data={courses}
                     save="value"
                     search={false}
                     placeholder='Choose course to see evaluations'

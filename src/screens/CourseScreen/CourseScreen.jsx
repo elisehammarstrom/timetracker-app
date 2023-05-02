@@ -59,9 +59,8 @@ const CourseScreen = ({route}) => {
       })
     // }
   }
-
+  const {token} = route.params;
   const {user} = route.params;
-
 
   const navigation = useNavigation();
   const [courses, setCourses] = useState([]);
@@ -70,29 +69,18 @@ const CourseScreen = ({route}) => {
 
   const [selected, setSelected] = React.useState([]);
 
-  const headers = {
-    Accept: 'application/json',
-    'Content-Type': 'multipart/form-data',
-    'Authorization':`token 53ba76420d512d53c7cca599cbda42c950d37996`
-  }
-
-
   const onTimerPressed = () => {
-    // for (let i=0; i<courseCodes.length; i++) {
-      // courseCodes[i]
+    for (let i=0; i<courseCodes.length; i++) {
       const formData = new FormData();
-      formData.append('courseCode', '1TE702');
+      formData.append('courseCode', courseCodes[i]);
 
-      // axios.post('http://127.0.0.1:8000/api/users/add_course/', formData, headers, {
-      //   timeout: 3000,
-      // })
       axios({
         method: "post",
         url: "http://127.0.0.1:8000/api/users/add_course/",
         data: formData,
         headers: {
           'Content-Type': 'multipart/form-data',
-          'Authorization':`token 53ba76420d512d53c7cca599cbda42c950d37996`
+          'Authorization':`token ` + token
         }
       })
         .then(function (response) {
@@ -104,10 +92,10 @@ const CourseScreen = ({route}) => {
           console.log(response);
         });
 
-    // }
+    }
 
 
-      navigation.navigate('Home');
+      navigation.navigate('Home', {token: token});
       // console.log(user)
       // console.log("courses=", courses)
       // console.log('courseCodes=', courseCodes)
@@ -115,21 +103,27 @@ const CourseScreen = ({route}) => {
     
 
   function pickCourse(selectedCourse, courseCode) {
-    
-    if(courses.includes(selectedCourse)){
-      setCourses(courses.filter(Course => Course !== selectedCourse))
-      return;
-    }
-
-    if(courseCodes.includes(courseCode)){
-      setCourseCodes(courseCodes.filter(CourseCode => CourseCode !== courseCode))
-      return;
-    }
-
-    setCourseCodes(CourseCode => CourseCode.concat(courseCode) )
-
-    setCourses(Courses => Courses.concat(selectedCourse))
+      if(courses.includes(selectedCourse)){
+        setCourses(courses.filter(Course => Course !== selectedCourse))
+        return;
+      }
+    if (courses.length < 6 ){
   
+      if(courseCodes.includes(courseCode)){
+        setCourseCodes(courseCodes.filter(CourseCode => CourseCode !== courseCode))
+        return;
+      }
+  
+      setCourseCodes(CourseCode => CourseCode.concat(courseCode) )
+  
+      setCourses(Courses => Courses.concat(selectedCourse))
+    
+    }
+    else {
+      alert('You cannot track more than six courses at a time, please deselect a course to select another one')
+    }
+    
+    
   }
 
   const searchFilter = (text) => {
