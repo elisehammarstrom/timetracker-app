@@ -84,7 +84,10 @@ class User(AbstractUser):
             self.role = self.base_role
             self.username = self.first_name + self.last_name
             return super().save(*args, **kwargs)
-        
+    
+    @classmethod 
+    def get_courses(self):
+        return self.courses
 
 class ProgrammeHeadManager(BaseUserManager):
     def get_queryset(self, *args, **kwargs):
