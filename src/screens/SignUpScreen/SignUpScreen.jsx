@@ -11,8 +11,7 @@ const EMAIL_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
 
 const SignUpScreen = () => {
 
-    const [courses, setCourses] = useState ( [ ] ) ;
-    
+    const [courses, setCourses] = useState ( [ ] ) ;    
     
     const {control, handleSubmit, formState: {errors}, watch} = useForm();
     const pwd = watch('password');
@@ -34,7 +33,6 @@ const SignUpScreen = () => {
     const navigation = useNavigation();
 
     const onRegisterPressed = data => {
-
         const info = {
             first_name: data.firstname,
             last_name: data.lastname,
@@ -48,7 +46,6 @@ const SignUpScreen = () => {
         const headers = {
             Accept: 'application/json',
             'Content-Type': 'multipart/form-data',
-            'Authorization':'Basic YnJva2VyOmJyb2tlcl8xMjM='
         }
 
         const formData = new FormData();
@@ -66,12 +63,24 @@ const SignUpScreen = () => {
         })
         .then(async response => {
             console.log(response.data);
+            axios.post('http://127.0.0.1:8000/auth/login/', formData)
+            .then((res) => {
+                // console.log(res.data.token)
+                // setToken(res.data.token)
+                navigation.navigate('StartCourses', {token: res.data.token, user: info})
+
+                
+            })
+            .catch((error) => {
+                console.error(error)
+            })
         })
         .catch(error=> {
             console.log("error from image :");
-   })
+        })
 
-        navigation.navigate('StartCourses', {user: data})
+        
+
 
 
     };

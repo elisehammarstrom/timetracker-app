@@ -38,7 +38,7 @@ const SignInScreen = () => {
         .then(async response => {
 
             if (response.data.token) {
-                navigation.navigate('Home')
+                navigation.navigate('Home', {token: response.data.token})
             }
             else {
                 alert('Wrong email or password')
@@ -59,21 +59,6 @@ const SignInScreen = () => {
         navigation.navigate('SignUp')
     };
 
-/*     var info = []; */
-
-    /* const requestData = {
-        email: 'simon.sjo@gmail.com',
-        password: '123456',
-      };
-      
-      // Send a POST request with the request data in the request body
-      axios.post('http://127.0.0.1:8000/auth/login/', requestData)
-        .then(response => {
-          // Handle response data here
-        })
-       /*  .catch(error => {
-          // Handle error here
-        }); */
       
 
     return (

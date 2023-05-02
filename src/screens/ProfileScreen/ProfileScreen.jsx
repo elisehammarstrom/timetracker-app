@@ -1,7 +1,7 @@
- import React, { useState } from 'react';
- import { View, Text, Image, TextInput, StyleSheet, TouchableOpacity, CheckBox} from 'react-native';
- import CustomButton from '../../components/CustomButton';
- import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
+import { View, Text, Image, StyleSheet, Dimensions} from 'react-native';
+import CustomButton from '../../components/CustomButton';
+import { useNavigation } from '@react-navigation/native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import CloseIcon from '../../../assets/close.png'
 import SettingIcon from '../../../assets/settings.png'
@@ -27,20 +27,18 @@ import SettingIcon from '../../../assets/settings.png'
 
        }
 
-       const navigation = useNavigation();
+      const navigation = useNavigation();
       
 
 
-       const onEditPressed = () => {
-         navigation.navigate('EditProfile', {
-         });
-       };
-
-       const onEditCoursePressed = () => {
-        navigation.navigate('StartCourses', {
+      const onEditPressed = () => {
+        navigation.navigate('EditProfile', {
         });
+      };
 
-        
+      const onEditCoursePressed = () => {
+        navigation.navigate('StartCourses', {
+      });  
       };
              //make separate words bold
       const B = (props) => <Text style={{fontWeight: 'bold'}}>{props.children}</Text>
@@ -68,7 +66,7 @@ import SettingIcon from '../../../assets/settings.png'
        <View style={styles.bottomContainer}>
           <Image 
               source={SettingIcon} 
-              style={[ {height: 200 * 0.3},{width: 200*0.3}]} 
+              style={[ {height: 200 * 0.3}, {width: Dimensions.get('window').width}]} 
               resizeMode="contain"
           />
        <View style={styles.form}>
