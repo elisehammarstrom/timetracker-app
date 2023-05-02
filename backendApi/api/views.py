@@ -173,6 +173,12 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             return Response(data=response, status=status.HTTP_200_OK)
         
     @action(detail=False, methods=['POST'])
+    def get_course_time(self, request, **extra_fields):
+        user = request.user
+        this_user = User.objects.get(id=user.id)
+        courseID = request.POST.get('courseID')
+        
+    @action(detail=False, methods=['POST'])
     def track_stress(self, request, **extra_fields):
         user = request.user
         this_user = User.objects.get(id=user.id)
@@ -285,7 +291,6 @@ class UserViewset(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['POST'])
     def add_course(self, request, **extra_fields):
-        print("--------------------ÄR I METOD-------------------")
         user = request.user
         #if user.role != 'STUDENT' or :
         #    response = {"message": "You need to be a STUDENT to enrol in a course"}
@@ -322,7 +327,15 @@ class UserViewset(viewsets.ModelViewSet):
 
             #vi sparar id:et på användaren
             #Lägg till så att kursID:et också syns i response
-            response = ('Courses assigned to user: ', str(user.email))
+            response = {'Courses assigned to user: ': str(user.email),
+                        "course: ": {
+                            "systemID: ": courseInstance.id,
+                            "courseTitle: ": courseInstance.courseTitle,
+                            "courseCode: ": courseInstance.courseCode,
+                            "courseStartDateTime: ":courseInstance.courseStartDateTime,
+                            "courseEndDateTime: ": courseInstance.courseEndDateTime
+                            }
+            }
             return Response(response, status = status.HTTP_200_OK)
         else:
             response = {"message": "You need to provide a courseCode for the course (e.g. '1FA104' for the course Mechanics)"}
