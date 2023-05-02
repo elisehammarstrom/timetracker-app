@@ -15,6 +15,8 @@ from datetime import datetime, timedelta
 from django.utils.dateparse import parse_datetime
 from django.db import IntegrityError
 from django.http import JsonResponse
+from django.db.models import Avg
+import time
 
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -172,11 +174,47 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                     }
             return Response(data=response, status=status.HTTP_200_OK)
         
-    @action(detail=False, methods=['POST'])
-    def get_course_time(self, request, **extra_fields):
+    @action(detail=False, methods=['GET'])
+    def get_user_course_avg_time(self, request, **extra_fields):
+        #get courseID:s earlier?
         user = request.user
         this_user = User.objects.get(id=user.id)
         courseID = request.POST.get('courseID')
+        startDate = request.POST.get('startDate')
+        endDate = request.POST.get('endDate')
+
+        if courseID is None:
+            response = {"message": "You need to provide a courseID (courseID)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif startDate is None:
+            response = {"message": "You need to provide a startDate (startDate). E.g. 2023-01-01"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif endDate is None: 
+            response = {"message": "You need to provide an endDate (endDate). E.g. 2023-01-01"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            queryresult = self.queryset.filter(user_id=this_user.id, course_id = courseID, date__range=[startDate, endDate] )
+
+            if len(queryresult) == 0:
+                response = {"message": "No results for those dates"}
+                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+
+            durations = queryresult.values_list('duration', flat=True)
+            seconds = map(lambda time: (time.hour * 60 * 60 ) + (time.minute * 60.0) + time.second, durations)
+            total_seconds = sum(seconds)
+            no_of_instances = len(queryresult)
+
+            avg_time = total_seconds / no_of_instances
+            avg_timestamp = time.strftime('%H:%M:%S', time.gmtime(avg_time))
+
+            response = {
+                        "message": "Average time",  
+                        "userID: ": this_user.id,
+                        "user: " : this_user.email,
+                        "avg_time": avg_timestamp 
+                        }
+            
+            return Response(data=response, status=status.HTTP_200_OK)
         
     @action(detail=False, methods=['POST'])
     def track_stress(self, request, **extra_fields):
