@@ -181,22 +181,26 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
         user = request.user
         this_user = User.objects.get(id=user.id)
         startDateRequest = request.POST.get('startDate')
-        print("-------type(startDateRequest)------", type(startDateRequest))
-        print("-------startDateRequest------", startDateRequest)
+        endDateRequest = request.POST.get('endDate')
+        if startDateRequest is None:
+            response = {"message": "You need to provide a startDate (startDate). E.g. 2023-01-01"}
+            print("-------type(startDateRequest)------", type(startDateRequest))
+            print("-------startDateRequest------", startDateRequest)
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif endDateRequest is None: 
+            response = {"message": "You need to provide an endDate (endDate). E.g. 2023-01-01"}
+            print("-------type(endDateRequest)------", type(endDateRequest))
+            print("-------endDateRequest------", endDateRequest)
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         startDate = datetime.strptime(startDateRequest,"%Y-%m-%d").date()
         #startDate = datetime.strptime(request.POST.get('startDate'),"%Y-%m-%d").date()
-        endDate = datetime.strptime(request.POST.get('endDate'),"%Y-%m-%d").date()
+        endDate = datetime.strptime(endDateRequest,"%Y-%m-%d").date()
         courseAndDuration = []
         results = []
 
         #courseID = request.POST.get('courseID')
         
-        if startDate is None:
-            response = {"message": "You need to provide a startDate (startDate). E.g. 2023-01-01"}
-            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-        elif endDate is None: 
-            response = {"message": "You need to provide an endDate (endDate). E.g. 2023-01-01"}
-            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        
         else:
             for course in this_user.courses.all():
                 print("course: ", course)
