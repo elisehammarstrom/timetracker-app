@@ -262,9 +262,9 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
 
         response = {
                             "message": "Dates",  
-                            "dates: " : dates_for_frontend,
+                            "dates" : dates_for_frontend,
                             "startDate": dates[0][0],
-                            "endDate: ": dates[0][-1]
+                            "endDate": dates[0][-1]
                             }
                 
         return Response(data=response, status=status.HTTP_200_OK)
