@@ -15,6 +15,7 @@ import Invisible from '../../../assets/invisible-box.png'
 
 const UntrackedScreen = ({route}) => {
     const {courses} = route.params;
+    const {token} = route.params;
 
     const [selected, setSelected] = React.useState("");
     const [isShowingArrow, setShowingArrow] = React.useState(true)
@@ -165,6 +166,7 @@ const UntrackedScreen = ({route}) => {
         <View>
             <ButtonMenu 
                 screen='timeTracking'
+                token={token}
             />
         </View>
         

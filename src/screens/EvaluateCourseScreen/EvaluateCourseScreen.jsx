@@ -7,10 +7,11 @@ import { useNavigation } from '@react-navigation/native';
 
 const EvaluationScreen = ({route}) => {
     const {course} = route.params;
+    const {courses} = route.params;
     const navigation = useNavigation();
 
     const onSubmitPressed = () => {
-        navigation.navigate("ChooseEvaluateCourse")
+        navigation.navigate("ChooseEvaluateCourse", {courses: courses})
     }
 
     return (

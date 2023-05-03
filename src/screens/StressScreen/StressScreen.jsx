@@ -13,6 +13,7 @@ import Fem from '../../../assets/5.png'
 
 const StressScreen = ({route}) => {  
     const {courses} = route.params;
+    const {token} = route.params;
  
     const navigation = useNavigation();
     
@@ -162,6 +163,7 @@ const StressScreen = ({route}) => {
 
             <ButtonMenu
                 screen='timeTracking'
+                token={token}
             />
             </View>
 
