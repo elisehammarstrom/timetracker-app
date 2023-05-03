@@ -13,53 +13,54 @@ const YourReportsScreen = ({route}) => {
   const {courses} = route.params;
   const {firstDate} = route.params;
   const {lastDate} = route.params;
-  console.log(firstDate)
 
-  const day = new Date().getDate();
-  const month = new Date().getMonth()+1;
-  const year = new Date().getFullYear();
-
-  const [date, setDate] = useState('');
+  const [initialLabels, setInitialLabels] = useState([]);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
-  if (date.length < 1) {
-    if (`${day}`.length === 1 & `${month}`.length === 1) {
-      setDate(year + '-0' + month + '-0' + day )
-    }
-    else if (`${day}`.length === 1) {
-      setDate(year + '-' + month + '-0' + day)
-    }
-    else if (`${month}`.length === 1) {
-      setDate(year + '-0' + month + '-' + day )
-    }
-    else {
-      setDate(year + '-' + month + '-' + day )
-    }} 
-    
-  
-    if (firstDate ) {
-      if (startDate.length <1) {
-        setStartDate(firstDate.dateString)
-        setEndDate(lastDate.dateString)
-      }
-    } else {
-      if (endDate.length <1) {
-        setEndDate(date)
-      }
-
-    }
-    
-    console.log('startDate= ', startDate, "endDate= ", endDate)
-  // console.log('token= ', token)
-
-  // const formData = new FormData();
-  // formData.append('startDate', firstDate.dateString)
-  // formData.append('endDate', lastDate.dateString)
-
-
-  axios.get('http://127.0.0.1:8000/api/tracking/get_user_course_study_time/', {
+  axios.get('http://127.0.0.1:8000/api/tracking/get_dates_in_week/', {
     headers: {
+      'Authorization': `token ` + token
+    }
+  })
+  .then((res) => {
+    
+    if (initialLabels.length < 1 ) {
+      setInitialLabels(res.data.dates)
+      setStartDate(res.data.startDate);
+      setEndDate(res.data.endDate);
+
+    }
+
+
+  })
+  .catch((error) => {
+    console.error(error)
+  })
+
+  if (firstDate) {
+    if (startDate !== firstDate.dateString) {
+      setStartDate(firstDate.dateString)
+      setEndDate(lastDate.dateString)
+    }
+  }
+  
+  // console.log("startDate= ", startDate)
+
+  const formData = new FormData();
+  formData.append('startDate', startDate)
+  formData.append('endDate', endDate)
+
+  for (var pair of formData.entries()) {
+    console.log(pair[0]+ ',' + pair[1]);
+  }
+  
+  axios({
+    method: "post",
+    url: "http://127.0.0.1:8000/api/tracking/get_user_course_study_time/",
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
       'Authorization': `token ` + token
     }
   })
@@ -70,33 +71,35 @@ const YourReportsScreen = ({route}) => {
   .catch((error) => {
     console.error(error)
   })
+ 
+  
 
   const fakeTime = ["10h", "12h", "11h"]
-  let newLabels = [];
+  // let newLabels = [];
 
   
 
-    // console.log(date)
+  //   // console.log(date)
 
-  var createLabels = [];
-  for (let i=-4; i<=0; i++) {
-    createLabels.push(day+i)
-  }
-  const [labels, setLabels] = useState(createLabels)
+  // var createLabels = [];
+  // for (let i=-4; i<=0; i++) {
+  //   createLabels.push(day+i)
+  // }
+  // const [labels, setLabels] = useState(createLabels)
 
-  if (firstDate) {
-    let newLabels = [];
+  // if (firstDate) {
+  //   let newLabels = [];
 
    
-    for (let i=firstDate.day; i<=lastDate.day; i++) {
-      newLabels.push(i + '/' + firstDate.month) 
-    }
-    // console.log("newlabels=", newLabels)
-    if (`${labels}` != `${newLabels}`) {
-      setLabels(newLabels)
-    }
-  }
-  console.log(labels)
+  //   for (let i=firstDate.day; i<=lastDate.day; i++) {
+  //     newLabels.push(i + '/' + firstDate.month) 
+  //   }
+  //   // console.log("newlabels=", newLabels)
+  //   if (`${labels}` != `${newLabels}`) {
+  //     setLabels(newLabels)
+  //   }
+  // }
+  // console.log(labels)
   
     
   const navigation = useNavigation();
@@ -135,10 +138,10 @@ const YourReportsScreen = ({route}) => {
     
   };
 
-  console.log(time)
+  // console.log(time)
 
   const data = {
-    labels: labels,
+    labels: initialLabels,
     legend: [],
     data: timeVar,
     barColors: colors

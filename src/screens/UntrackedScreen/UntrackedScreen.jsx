@@ -67,8 +67,6 @@ const UntrackedScreen = ({route}) => {
     const onAddTimePressed = () => {
         console.log(selectedHour,':', selectedMinute)
         alert('Time tracked')
-        setSelectedHour('')
-        setSelectedMinute('')
         
     }
 
