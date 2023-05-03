@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager, User
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.conf import settings
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Course(models.Model):
     courseCode = models.CharField(max_length=10, null=True, blank=True)
@@ -11,25 +12,6 @@ class Course(models.Model):
     courseEndDateTime = models.DateTimeField(null=True, blank=True)
 
     #programmes = fields.ForeignKey(Programme, on_delete=models.CASCADE)
-
-    # def no_of_evaluations(self):
-    #     courseEvaluations = CourseEvaluation.objects.filter(course = self)
-    #     return len(courseEvaluations)
-    
-    # def avg_of_evaluations(self):
-    #     sum = 0
-    #     courseEvaluations = CourseEvaluation.objects.filter(course = self)
-
-    #     for evaluation in courseEvaluations:
-    #         sum += evaluation.stresslevel
-    #     if len(courseEvaluations) > 0:
-    #         return sum / len(courseEvaluations)
-    #     else:
-    #         return 0 
-    
-    def __str__(self):
-        courseInfoString = self.courseTitle + " (" + self.courseCode + ")"
-        return courseInfoString
 
 class UserCourseTracking(models.Model):
     user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
@@ -49,9 +31,6 @@ class UserCourseTracking(models.Model):
                 fields=['user', 'course', 'date'], name='unique_user_course_date_combination'
             )
         ]
-    
-
-
 
 class Programme(models.Model):
     programmeID = models.CharField(max_length=10)

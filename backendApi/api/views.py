@@ -175,7 +175,7 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             return Response(data=response, status=status.HTTP_200_OK)
         
     @action(detail=False, methods=['GET'])
-    def get_user_course_avg_time(self, request, **extra_fields):
+    def get_user_course_study_time(self, request, **extra_fields):
         user = request.user
         this_user = User.objects.get(id=user.id)
         startDate = datetime.strptime(request.POST.get('startDate'),"%Y-%m-%d").date()
@@ -198,40 +198,35 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
 
                 if len(queryresult) == 0:
                     print("No results for those dates for that course. Course: ", course.courseTitle )
-                    
                 else:
-                    durations = queryresult.values_list('duration', flat=True)
-                    seconds = map(lambda time: (time.hour * 60 * 60 ) + (time.minute * 60.0) + time.second, durations)
-                    total_seconds = sum(seconds)
-                    no_of_instances = len(queryresult)
-
-                    avg_time = total_seconds / no_of_instances
-                    avg_timestamp = time.strftime('%H:%M:%S', time.gmtime(avg_time))
-
-                    #gets time studied per day
+                    #för varje datum ta fram durations
+                    durationArray = []
+                    results = []
                     no_of_dates = abs((endDate-startDate).days)
                     i = 0 
-                    dateArray = []
-                    dateHoursDict = {}
 
                     while i < no_of_dates:
-                        dateArray.append(startDate + timedelta(days=i))
                         futureDate = str(startDate + timedelta(days=i))
-                        i += 1
-                        timeStudied = self.queryset.filter(user_id=this_user.id, course_id=courseID, date=futureDate).values_list('duration', flat=True)
-                        dateHoursDict.update({futureDate: timeStudied})
-                    
-                    courseAndDuration.append({"course: " : course.courseTitle,
-                                              "avg_time: ": avg_timestamp,
-                                        "duration_per_date: ": dateHoursDict})
-
-                #return average for the dateselection
-                #as well as duration studied for each date
+                        dateDuration =  self.queryset.filter(user_id=this_user.id, course_id=courseID, date=futureDate).values_list('duration', flat=True)
+                        if len(dateDuration) == 0:
+                            durationArray.append(0)
+                        else: 
+                            totalSeconds = timedelta(hours=dateDuration[0].hour, minutes=dateDuration[0].minute).total_seconds()
+                            totalHours = round(totalSeconds/(60*60), 2)
+                            durationArray.append(totalHours)
+                        i+=1
+                    #print("durationArray: ", durationArray)
+                    results.append({
+                                    "Course: " : course.courseTitle, 
+                                    "courseID: " : course.id, 
+                                   "timeStudied: " : durationArray})
+                    #results.append({"timeStudied: " : durationArray})
+            
             response = {
-                            "message": "Average time",  
+                            "message": "Time studied per day",  
                             "userID: ": this_user.id,
                             "user: " : this_user.email,
-                            "course_duration_obj: ": courseAndDuration
+                            "results: " : results
                             }
                 
             return Response(data=response, status=status.HTTP_200_OK)
