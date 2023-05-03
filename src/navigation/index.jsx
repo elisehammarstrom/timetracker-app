@@ -28,7 +28,7 @@ const Navigation = () => {
     return (
         <NavigationContainer>
             
-            <Stack.Navigator screenOptions={{headerShown: true}}>
+            <Stack.Navigator screenOptions={{headerShown: false}}>
 
 
                 

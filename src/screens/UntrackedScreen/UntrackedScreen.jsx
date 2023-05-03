@@ -17,7 +17,10 @@ const UntrackedScreen = ({route}) => {
     const {courses} = route.params;
     const {token} = route.params;
 
-    const [selected, setSelected] = React.useState("");
+    const [selectedCourse, setSelectedCourse] = React.useState("");
+    const [selectedHour, setSelectedHour] = React.useState("");
+    const [selectedMinute, setSelectedMinute] = React.useState("");
+
     const [isShowingArrow, setShowingArrow] = React.useState(true)
 
 
@@ -57,9 +60,17 @@ const UntrackedScreen = ({route}) => {
         
       }
 
-      const onCurrentDatePressed = () => {       
-        setDate(new Date())
-      }
+    const onCurrentDatePressed = () => {       
+    setDate(new Date())
+    }
+
+    const onAddTimePressed = () => {
+        console.log(selectedHour,':', selectedMinute)
+        alert('Time tracked')
+        setSelectedHour('')
+        setSelectedMinute('')
+        
+    }
 
     return (
     <View style={styles.container}>
@@ -115,7 +126,7 @@ const UntrackedScreen = ({route}) => {
                 dropdownTextStyles={styles.selectList}
                 inputStyles={styles.selectList}
                 boxStyles={styles.boxStyles}
-                setSelected={(val) => setSelected(val)}
+                setSelected={(val) => setSelectedCourse(val)}
                 data={courses}
                 save="value"
                 search={false}
@@ -134,7 +145,7 @@ const UntrackedScreen = ({route}) => {
                     dropdownTextStyles={styles.selectList}
                     inputStyles={styles.selectList}
                     boxStyles={styles.boxTimeStyles}
-                    setSelected={(val) => setSelected(val)}
+                    setSelected={(val) => setSelectedHour(val)}
                     data={hourData}
                     save="value"
                     search={false}
@@ -148,7 +159,7 @@ const UntrackedScreen = ({route}) => {
                     dropdownTextStyles={styles.selectList}
                     inputStyles={styles.selectList}
                     boxStyles={styles.boxTimeStyles}
-                    setSelected={(val) => setSelected(val)}
+                    setSelected={(val) => setSelectedMinute(val)}
                     data={minuteData}
                     save="value"
                     search={false}
@@ -161,6 +172,7 @@ const UntrackedScreen = ({route}) => {
         <View style={styles.customButtonContainer}>
             <CustomButton
                 text="Add time"
+                onPress={onAddTimePressed}
             />
         </View>
         <View>

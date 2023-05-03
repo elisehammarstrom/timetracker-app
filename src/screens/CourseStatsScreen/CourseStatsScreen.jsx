@@ -139,19 +139,8 @@ const CourseStatsScreen = ({route}) =>{
 
             <View style={styles.header}>
                 
-                <View>
-
                     <Text style={styles.title}>{selected}</Text>
-                    
-                </View>
-
-                <View style={styles.dateButton}>
-
-                    <CustomButton
-                        text="Select week"
-                    />
-
-                </View>
+                
             </View>
 
             <View>
@@ -225,10 +214,9 @@ const styles = StyleSheet.create({
     },
     header: {
         overflowWrap: 'break-word',
-
         width: Dimensions.get('window').width,
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'centers',
     },
     title: {
         fontSize: 24,
