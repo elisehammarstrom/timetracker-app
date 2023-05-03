@@ -16,7 +16,7 @@ const EvaluateCourseScreen = ({route}) => {
         if (checked === '') {
             alert("Please choose a course to evaluate")
         } else {
-            navigation.navigate('EvaluateCourse', {course: checked});
+            navigation.navigate('EvaluateCourse', {course: checked, courses:courses});
         }
     };
     

@@ -46,7 +46,7 @@ const ButtonMenu = ({screen, token}) => {
     
       })
       .catch((error) => {
-        console.error(error)
+        // console.error(error)
       })
 
 
@@ -56,18 +56,15 @@ const ButtonMenu = ({screen, token}) => {
     // const courses = ["Mekanik", "Reglerteknik", "Envariabelanalys"];
     // Navigation when you press each button
     const onYourReportsPress = data => {
-      console.log(data)
-      navigation.navigate('YourReports', {courses: courses}) //Options is the courses youve picked
+      navigation.navigate('YourReports', {courses: courses, token: token}) //Options is the courses youve picked
     };
   
      const onTimetrackingPress = data => {
-       console.log(data)
       navigation.navigate('Home', {options: courses})
     };
   
     const onCourseStatsPress = type => {
-      console.log(type)
-      navigation.navigate('Courses', {courses: courses})
+      navigation.navigate('Courses', {courses: courses, token: token})
     };
 
     return(

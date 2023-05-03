@@ -6,7 +6,10 @@ import Navigation from "../../navigation";
 import { useNavigation } from "@react-navigation/native";
 
 
-const CalendarScreen = () => {
+const CalendarScreen = ({route}) => {
+    const {courses} = route.params;
+    const {token} = route.params;
+
     const navigation = useNavigation();
     var [firstDate, setFirstDate] = useState('');
     var [lastDate, setLastDate] = useState('');
@@ -83,7 +86,7 @@ const CalendarScreen = () => {
     };
 
     const onSelectPressed = () => {
-        navigation.navigate('YourReports', {firstDate: firstDate, lastDate: lastDate})
+        navigation.navigate('YourReports', {firstDate: firstDate, lastDate: lastDate, courses: courses, token: token})
     }
     
     return (

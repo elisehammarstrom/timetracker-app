@@ -8,14 +8,15 @@ import ButtonMenu from "../../components/ButtonMenu/ButtonMenu";
 
 const CourseStatsScreen = ({route}) => {
     const {courses} = route.params;
+    const {token} = route.params;
     const navigation = useNavigation();
 
     const onEvaluateCoursesPressed = () => {
-        navigation.navigate("ChooseEvaluateCourse", {courses: courses})
+        navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token})
     }
 
     const onSeeCourseStatisticsPressed = () => {
-        navigation.navigate("CourseStats", {chosenCourses: courses})
+        navigation.navigate("CourseStats", {chosenCourses: courses, token: token})
     }
 
     return (
@@ -38,6 +39,7 @@ const CourseStatsScreen = ({route}) => {
 
                 <ButtonMenu
                     screen='courseStats'
+                    token={token}
                 />
 
             </View>

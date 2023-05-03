@@ -56,7 +56,7 @@ const Timer = ({courseName, color}) => {
           })
           .catch(function (response) {
             //handle error
-            console.log(response);
+            // console.log(response);
           });
 
         // console.log(data)

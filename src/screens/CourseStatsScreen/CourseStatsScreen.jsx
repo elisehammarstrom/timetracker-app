@@ -10,6 +10,8 @@ import { LineChart } from 'react-native-chart-kit';
 const CourseStatsScreen = ({route}) =>{
 
     const {chosenCourses} = route.params;
+    const {token} = route.params;
+
     const navigation = useNavigation();
     const [selected, setSelected] = useState("");
     const legend = ["Your time", "Average time"];
@@ -195,6 +197,7 @@ const CourseStatsScreen = ({route}) =>{
             <View style={styles.ButtonMenu}>
                 <ButtonMenu
                     screen="courseStats"
+                    token={token}
                 />
             </View>
 

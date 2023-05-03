@@ -71,11 +71,11 @@ const HomeScreen: React.FC = ({route}) => {
 
 
   const onTimePressed = () => {       
-    navigation.navigate('AddTime', {courses: courses});
+    navigation.navigate('AddTime', {courses: courses, token: token});
   }
 
   const onStressPressed = () => {
-    navigation.navigate('Stress', {courses: courses});
+    navigation.navigate('Stress', {courses: courses, token: token});
   };
 
   const onSettingsPressed = () => {
