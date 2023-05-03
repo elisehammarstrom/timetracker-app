@@ -13,9 +13,52 @@ const YourReportsScreen = ({route}) => {
   const {courses} = route.params;
   const {firstDate} = route.params;
   const {lastDate} = route.params;
-  console.log('token= ', token)
+  console.log(firstDate)
 
-  axios.get('http://127.0.0.1:8000/api/tracking/get_user_course_avg_time/', {
+  const day = new Date().getDate();
+  const month = new Date().getMonth()+1;
+  const year = new Date().getFullYear();
+
+  const [date, setDate] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+
+  if (date.length < 1) {
+    if (`${day}`.length === 1 & `${month}`.length === 1) {
+      setDate(year + '-0' + month + '-0' + day )
+    }
+    else if (`${day}`.length === 1) {
+      setDate(year + '-' + month + '-0' + day)
+    }
+    else if (`${month}`.length === 1) {
+      setDate(year + '-0' + month + '-' + day )
+    }
+    else {
+      setDate(year + '-' + month + '-' + day )
+    }} 
+    
+  
+    if (firstDate ) {
+      if (startDate.length <1) {
+        setStartDate(firstDate.dateString)
+        setEndDate(lastDate.dateString)
+      }
+    } else {
+      if (endDate.length <1) {
+        setEndDate(date)
+      }
+
+    }
+    
+    console.log('startDate= ', startDate, "endDate= ", endDate)
+  // console.log('token= ', token)
+
+  // const formData = new FormData();
+  // formData.append('startDate', firstDate.dateString)
+  // formData.append('endDate', lastDate.dateString)
+
+
+  axios.get('http://127.0.0.1:8000/api/tracking/get_user_course_study_time/', {
     headers: {
       'Authorization': `token ` + token
     }
@@ -31,30 +74,29 @@ const YourReportsScreen = ({route}) => {
   const fakeTime = ["10h", "12h", "11h"]
   let newLabels = [];
 
-  var date = new Date().getDate();
-  const test = new Date().getMonth()+1;
-  const [month, setMonth] = useState("/" + test); 
+  
+
+    // console.log(date)
+
   var createLabels = [];
   for (let i=-4; i<=0; i++) {
-    createLabels.push(date+i)
+    createLabels.push(day+i)
   }
   const [labels, setLabels] = useState(createLabels)
 
   if (firstDate) {
     let newLabels = [];
 
-    if (month != "/" + firstDate.month) {
-      setMonth("/" +  firstDate.month);
-    }
+   
     for (let i=firstDate.day; i<=lastDate.day; i++) {
-      newLabels.push(i) 
+      newLabels.push(i + '/' + firstDate.month) 
     }
-    console.log("newlabels=", newLabels)
+    // console.log("newlabels=", newLabels)
     if (`${labels}` != `${newLabels}`) {
       setLabels(newLabels)
     }
   }
-  
+  console.log(labels)
   
     
   const navigation = useNavigation();
@@ -151,7 +193,6 @@ const YourReportsScreen = ({route}) => {
                 width={screenWidth}
                 height={220}
                 chartConfig={chartConfig}
-                xAxisLabel={month}
                 yAxisLabel="h "
 
                 decimalPlaces={1}
