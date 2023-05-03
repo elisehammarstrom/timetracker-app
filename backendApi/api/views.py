@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer
-from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking
+from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer, CourseEvaluationSerializer
+from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking, CourseEvaluation
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -11,12 +11,12 @@ from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.request import Request
 from django.contrib.auth import authenticate
-from datetime import datetime, timedelta
 from django.utils.dateparse import parse_datetime
 from django.db import IntegrityError
 from django.http import JsonResponse
 from django.db.models import Avg
 import time
+from datetime import date, datetime, timedelta
 
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -72,18 +72,11 @@ class ProgrammeViewset(viewsets.ModelViewSet):
         if 'id' in request.data:
             id = request.data.get('id')
             programmeObject = Programme.objects.get(id=id)
-            #response = {
-             #   "message": "You need to provide a system ID for the programme (id)", 
-             #   "programmeObject": programmeObject
-             #   }
-            #return Response(response, status = status.HTTP_200_OK)
             return JsonResponse(programmeObject, safe=False)
         else:
             response = {"message": "You need to provide a the system ID for the program (pID)"}
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
         
-
-
 class LoginView(APIView):
     permission_classes = []
 
@@ -215,12 +208,10 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                             totalHours = round(totalSeconds/(60*60), 2)
                             durationArray.append(totalHours)
                         i+=1
-                    #print("durationArray: ", durationArray)
                     results.append({
                                     "Course: " : course.courseTitle, 
                                     "courseID: " : course.id, 
                                    "timeStudied: " : durationArray})
-                    #results.append({"timeStudied: " : durationArray})
             
             response = {
                             "message": "Time studied per day",  
@@ -230,6 +221,54 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                             }
                 
             return Response(data=response, status=status.HTTP_200_OK)
+    @action(detail=False, methods=['GET'])
+    def get_dates_in_week(self, request, **extra_fields):
+        today = date.today()
+        dates = []
+
+        if today.isoweekday() == 1:
+            #monday
+            monday = today
+        elif today.isoweekday() == 2:
+            #tuesday
+            monday = today - timedelta(days=1)
+        elif today.isoweekday() == 3:
+            #wednesday
+            monday = today - timedelta(days=2)
+        elif today.isoweekday() == 4:
+            #thursday
+            monday = today - timedelta(days=3)
+        elif today.isoweekday() == 5:
+            #friday
+            monday = today - timedelta(days=4)
+        elif today.isoweekday() == 6:
+            #saturday
+            monday = today - timedelta(days=5)
+        elif today.isoweekday() == 7:
+            #sunday
+            monday = today - timedelta(days=6)
+        else:
+            print("error")
+        dates.append([monday + timedelta(days=x) for x in range(7)])
+        print(dates)
+
+        #remaking dates to format for frontEnd
+        dates_for_frontend = []
+
+        for item in dates[0]: 
+            date_string = item.strftime("%d/%m").replace("0", "")
+            dates_for_frontend.append(date_string)  
+
+        response = {
+                            "message": "Dates",  
+                            "dates: " : dates_for_frontend,
+                            "startDate": dates[0][0],
+                            "endDate: ": dates[0][-1]
+                            }
+                
+        return Response(data=response, status=status.HTTP_200_OK)
+
+        
     
     @action(detail=False, methods=['GET'])
     def get_course_avg_time(self, request, **extra_fields):
@@ -499,6 +538,22 @@ class UserViewset(viewsets.ModelViewSet):
                     }
                 } 
             return Response(data=response, status=status.HTTP_200_OK)
+
+class CourseEvaluationViewset(viewsets.ModelViewSet):
+    queryset = CourseEvaluation.objects.all()
+    serializer_class = CourseEvaluationSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
+
+    print("queryset CourseEvalViewset: ", queryset)
+
+    def update(self, request, *args, **kwargs):
+        response = {"message": "You can't update a course evaluation like that"}
+        return Response(response, status = status.HTTP_400_BAD_REQUEST)
+    
+    def create(self, request, *args, **kwargs):
+        response = {"message": "You can't create a course evaluation like that"}
+        return Response(response, status = status.HTTP_400_BAD_REQUEST)
 
 
 
