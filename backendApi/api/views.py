@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer, CourseEvaluationSerializer
-from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking, CourseEvaluation
+from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking, CourseEvaluation, Question, Answer
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -129,11 +129,20 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
         this_user = User.objects.get(id=user.id)
         courseID = request.POST.get('courseID')
         duration = request.POST.get('duration')
+
+        if request.POST.get('date') is None:
+            response = {"message": "You must provide a date in format DateFormat '2023-05-01' (date)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif courseID is None: 
+            response = {"message": "You must provide a courseID, e.g. 2 (courseID)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+
         date = datetime.strptime(request.POST.get('date'),"%Y-%m-%d").date()
 
         if duration is None:
             response = {"message": "You must provide a duratiom in format Time 'HH:MM:SS' (duration)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        
         else:
             try:
                 existing_record_object = UserCourseTracking.objects.get(user=User.objects.get(id=user.id), course=Course.objects.get(id=courseID), date=date)
@@ -174,6 +183,7 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
         startDate = datetime.strptime(request.POST.get('startDate'),"%Y-%m-%d").date()
         endDate = datetime.strptime(request.POST.get('endDate'),"%Y-%m-%d").date()
         courseAndDuration = []
+        results = []
 
         #courseID = request.POST.get('courseID')
         
@@ -194,7 +204,7 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                 else:
                     #för varje datum ta fram durations
                     durationArray = []
-                    results = []
+            
                     no_of_dates = abs((endDate-startDate).days)
                     i = 0 
 
@@ -212,6 +222,7 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                                     "Course: " : course.courseTitle, 
                                     "courseID: " : course.id, 
                                    "timeStudied: " : durationArray})
+                    print("results: ", results)
             
             response = {
                             "message": "Time studied per day",  
@@ -548,13 +559,27 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
 
     print("queryset CourseEvalViewset: ", queryset)
 
-    def update(self, request, *args, **kwargs):
-        response = {"message": "You can't update a course evaluation like that"}
-        return Response(response, status = status.HTTP_400_BAD_REQUEST)
+    #def update(self, request, *args, **kwargs):
+        #response = {"message": "You can't update a course evaluation like that"}
+        #return Response(response, status = status.HTTP_400_BAD_REQUEST)
     
-    def create(self, request, *args, **kwargs):
-        response = {"message": "You can't create a course evaluation like that"}
-        return Response(response, status = status.HTTP_400_BAD_REQUEST)
+   #def create(self, request, *args, **kwargs):
+        #response = {"message": "You can't create a course evaluation like that"}
+        #return Response(response, status = status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=['POST'])
+    def create_evaluation(self, request, **extra_fields):
+        userInstance = User.objects.get(id=request.user.pk)
+
+
+        response = {
+                    "message": "Success. Course Evaluation added.", 
+                    "userObject": {
+                        "user.id": userInstance.id,
+                        "user.email": userInstance.email,
+                    }
+                } 
+        return Response(data=response, status=status.HTTP_200_OK)
 
 
 

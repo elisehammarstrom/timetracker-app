@@ -36,13 +36,17 @@ class Course(models.Model):
 class CourseEvaluation(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
-    stresslevel = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(10)])
-
-
+    #stresslevel = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(10)])
+    
     #questions 
-    #0-4 som input
-    #questions and answers
+    # "fråga1" : svar1
 
+    """
+    def __init__(self, param1, param2):
+        self.param1 = param1
+        self.param2 = param2
+    """
+    
     class Meta: 
         unique_together = (("user", "course" ), ) #vi behöver kolla att man 
         #kan ändra sin kursutvärdering och stresslevel
@@ -51,7 +55,26 @@ class CourseEvaluation(models.Model):
     def __str__(self):
         courseEvaluationInfoString = "Course:" + self.course.courseTitle + ";" + "User:" + self.user.username + ";"
         return courseEvaluationInfoString 
+    
 
+class Question(models.Model):
+    text = models.CharField(max_length=200)
+    courseEvaluation = models.ForeignKey(CourseEvaluation, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.text
+    
+    def get_answers(self):
+         return self.answer_set.all()
+
+class Answer(models.Model):
+    text = models.CharField(max_length=200)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return "Question: "+self.question.text+", answer: "+self.text
+    
+    
 
 class UserCourseTracking(models.Model):
     user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)

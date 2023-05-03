@@ -51,4 +51,4 @@ class CourseSerializer(serializers.ModelSerializer):
 class CourseEvaluationSerializer(serializers.ModelSerializer):
     class Meta:
         model = CourseEvaluation
-        fields = ("id", "course", "user", "stresslevel")
+        fields = ("id", "course", "user")
