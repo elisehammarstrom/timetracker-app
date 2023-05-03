@@ -13,6 +13,46 @@ class Course(models.Model):
 
     #programmes = fields.ForeignKey(Programme, on_delete=models.CASCADE)
 
+    def no_of_evaluations(self):
+        courseEvaluations = CourseEvaluation.objects.filter(course = self)
+        return len(courseEvaluations)
+    
+    def avg_of_evaluations(self):
+        sum = 0
+        courseEvaluations = CourseEvaluation.objects.filter(course = self)
+
+        for evaluation in courseEvaluations:
+            sum += evaluation.stresslevel
+        if len(courseEvaluations) > 0:
+            return sum / len(courseEvaluations)
+        else:
+            return 0 
+    
+    def __str__(self):
+        courseInfoString = self.courseTitle + " (" + self.courseCode + ")"
+        return (courseInfoString)
+
+
+class CourseEvaluation(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
+    stresslevel = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(10)])
+
+
+    #questions 
+    #0-4 som input
+    #questions and answers
+
+    class Meta: 
+        unique_together = (("user", "course" ), ) #vi behöver kolla att man 
+        #kan ändra sin kursutvärdering och stresslevel
+        index_together = (("user", "course" ), )
+
+    def __str__(self):
+        courseEvaluationInfoString = "Course:" + self.course.courseTitle + ";" + "User:" + self.user.username + ";"
+        return courseEvaluationInfoString 
+
+
 class UserCourseTracking(models.Model):
     user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
 
