@@ -176,12 +176,12 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                     }
             return Response(data=response, status=status.HTTP_200_OK)
         
-    @action(detail=False, methods=['GET'])
+    @action(detail=False, methods=['POST'])
     def get_user_course_study_time(self, request, **extra_fields):
         user = request.user
         this_user = User.objects.get(id=user.id)
-        startDateRequest = request.GET.get('startDate')
-        endDateRequest = request.GET.get('endDate')
+        startDateRequest = request.POST.get('startDate')
+        endDateRequest = request.POST.get('endDate')
         if startDateRequest is None:
             response = {"message": "You need to provide a startDate (startDate). E.g. 2023-01-01"}
             print("-------type(startDateRequest)------", type(startDateRequest))
@@ -577,6 +577,10 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
     @action(detail=False, methods=['POST'])
     def create_evaluation(self, request, **extra_fields):
         userInstance = User.objects.get(id=request.user.pk)
+
+        #record = CourseEvaluation.objects.create(user=this_user, course=Course.objects.get(id=courseID), date=date, stress=stress)
+
+
 
 
         response = {
