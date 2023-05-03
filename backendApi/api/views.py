@@ -248,7 +248,8 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             #sunday
             monday = today - timedelta(days=6)
         else:
-            print("error")
+            response = {"message": "That date isn't in a week"}    
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         dates.append([monday + timedelta(days=x) for x in range(7)])
         print(dates)
 
