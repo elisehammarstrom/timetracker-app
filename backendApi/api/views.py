@@ -180,8 +180,8 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
     def get_user_course_study_time(self, request, **extra_fields):
         user = request.user
         this_user = User.objects.get(id=user.id)
-        startDateRequest = request.POST.get('startDate')
-        endDateRequest = request.POST.get('endDate')
+        startDateRequest = request.GET.get('startDate')
+        endDateRequest = request.GET.get('endDate')
         if startDateRequest is None:
             response = {"message": "You need to provide a startDate (startDate). E.g. 2023-01-01"}
             print("-------type(startDateRequest)------", type(startDateRequest))
