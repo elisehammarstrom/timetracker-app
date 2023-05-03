@@ -175,10 +175,65 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             return Response(data=response, status=status.HTTP_200_OK)
         
     @action(detail=False, methods=['GET'])
-    def get_user_course_avg_time(self, request, **extra_fields):
-        #get courseID:s earlier?
+    def get_user_course_study_time(self, request, **extra_fields):
         user = request.user
         this_user = User.objects.get(id=user.id)
+        startDate = datetime.strptime(request.POST.get('startDate'),"%Y-%m-%d").date()
+        endDate = datetime.strptime(request.POST.get('endDate'),"%Y-%m-%d").date()
+        courseAndDuration = []
+
+        #courseID = request.POST.get('courseID')
+        
+        if startDate is None:
+            response = {"message": "You need to provide a startDate (startDate). E.g. 2023-01-01"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif endDate is None: 
+            response = {"message": "You need to provide an endDate (endDate). E.g. 2023-01-01"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            for course in this_user.courses.all():
+                print("course: ", course)
+                courseID = course.id
+                queryresult = self.queryset.filter(user_id=this_user.id, course_id = courseID, date__range=[startDate, endDate] )
+
+                if len(queryresult) == 0:
+                    print("No results for those dates for that course. Course: ", course.courseTitle )
+                else:
+                    #för varje datum ta fram durations
+                    durationArray = []
+                    results = []
+                    no_of_dates = abs((endDate-startDate).days)
+                    i = 0 
+
+                    while i < no_of_dates:
+                        futureDate = str(startDate + timedelta(days=i))
+                        dateDuration =  self.queryset.filter(user_id=this_user.id, course_id=courseID, date=futureDate).values_list('duration', flat=True)
+                        if len(dateDuration) == 0:
+                            durationArray.append(0)
+                        else: 
+                            totalSeconds = timedelta(hours=dateDuration[0].hour, minutes=dateDuration[0].minute).total_seconds()
+                            totalHours = round(totalSeconds/(60*60), 2)
+                            durationArray.append(totalHours)
+                        i+=1
+                    #print("durationArray: ", durationArray)
+                    results.append({
+                                    "Course: " : course.courseTitle, 
+                                    "courseID: " : course.id, 
+                                   "timeStudied: " : durationArray})
+                    #results.append({"timeStudied: " : durationArray})
+            
+            response = {
+                            "message": "Time studied per day",  
+                            "userID: ": this_user.id,
+                            "user: " : this_user.email,
+                            "results: " : results
+                            }
+                
+            return Response(data=response, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=['GET'])
+    def get_course_avg_time(self, request, **extra_fields):
+        #get courseID:s earlier?
         courseID = request.POST.get('courseID')
         startDate = request.POST.get('startDate')
         endDate = request.POST.get('endDate')
@@ -193,7 +248,7 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             response = {"message": "You need to provide an endDate (endDate). E.g. 2023-01-01"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else:
-            queryresult = self.queryset.filter(user_id=this_user.id, course_id = courseID, date__range=[startDate, endDate] )
+            queryresult = self.queryset.filter(course_id = courseID, date__range=[startDate, endDate] )
 
             if len(queryresult) == 0:
                 response = {"message": "No results for those dates"}
@@ -204,13 +259,18 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             total_seconds = sum(seconds)
             no_of_instances = len(queryresult)
 
+            #måste få course average för varje användare
+
+            #ta fram användarens average per dag
+            # och summera date average för användaren
+
+            #gör samma fast för varje user_id i denna metod
+
             avg_time = total_seconds / no_of_instances
             avg_timestamp = time.strftime('%H:%M:%S', time.gmtime(avg_time))
 
             response = {
                         "message": "Average time",  
-                        "userID: ": this_user.id,
-                        "user: " : this_user.email,
                         "avg_time": avg_timestamp 
                         }
             
