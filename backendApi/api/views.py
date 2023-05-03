@@ -180,7 +180,11 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
     def get_user_course_study_time(self, request, **extra_fields):
         user = request.user
         this_user = User.objects.get(id=user.id)
-        startDate = datetime.strptime(request.POST.get('startDate'),"%Y-%m-%d").date()
+        startDateRequest = request.POST.get('startDate')
+        print("-------type(startDateRequest)------", type(startDateRequest))
+        print("-------startDateRequest------", startDateRequest)
+        startDate = datetime.strptime(startDateRequest,"%Y-%m-%d").date()
+        #startDate = datetime.strptime(request.POST.get('startDate'),"%Y-%m-%d").date()
         endDate = datetime.strptime(request.POST.get('endDate'),"%Y-%m-%d").date()
         courseAndDuration = []
         results = []
