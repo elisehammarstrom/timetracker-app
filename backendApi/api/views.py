@@ -192,16 +192,15 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             print("-------type(endDateRequest)------", type(endDateRequest))
             print("-------endDateRequest------", endDateRequest)
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-        startDate = datetime.strptime(startDateRequest,"%Y-%m-%d").date()
-        #startDate = datetime.strptime(request.POST.get('startDate'),"%Y-%m-%d").date()
-        endDate = datetime.strptime(endDateRequest,"%Y-%m-%d").date()
-        courseAndDuration = []
-        results = []
-
+    
         #courseID = request.POST.get('courseID')
-        
-        
+
         else:
+            startDate = datetime.strptime(startDateRequest,"%Y-%m-%d").date()
+            #startDate = datetime.strptime(request.POST.get('startDate'),"%Y-%m-%d").date()
+            endDate = datetime.strptime(endDateRequest,"%Y-%m-%d").date()
+            courseAndDuration = []
+            results = []
             for course in this_user.courses.all():
                 print("course: ", course)
                 courseID = course.id
