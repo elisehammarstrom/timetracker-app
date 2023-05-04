@@ -13,8 +13,8 @@ const CalendarScreen = ({route}) => {
     const navigation = useNavigation();
     var [firstDate, setFirstDate] = useState('');
     var [lastDate, setLastDate] = useState('');
-    console.log('first date=', firstDate)
-    console.log('last date=', lastDate)
+    // console.log('first date=', firstDate)
+    // console.log('last date=', lastDate)
 
     const getMarked = () => {
         let marked = {};
@@ -39,7 +39,7 @@ const CalendarScreen = ({route}) => {
             let year = firstDate.year;
             let dayLength = `${day}`.length;
             let monthLength = `${firstDate.month}`.length;
-            console.log(day)
+            // console.log(day)
 
             
             if (monthLength < 2 & dayLength < 2 ) {
@@ -80,13 +80,18 @@ const CalendarScreen = ({route}) => {
             }
   
         }
-        console.log(marked)
+        // console.log(marked)
 
         return marked;
     };
 
     const onSelectPressed = () => {
-        navigation.navigate('YourReports', {firstDate: firstDate, lastDate: lastDate, courses: courses, token: token})
+        if (lastDate.day - firstDate.day > 7) {
+            alert('Choose up to a maximum of 7 days')
+        }
+        else {
+            navigation.navigate('YourReports', {firstDate: firstDate, lastDate: lastDate, courses: courses, token: token})
+        }
     }
     
     return (

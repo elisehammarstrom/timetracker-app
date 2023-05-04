@@ -15,7 +15,7 @@ import SettingIcon from '../../../assets/settings.png';
 import axios from 'axios';
 
 
-
+// 8, 9, 10
 const HomeScreen: React.FC = ({route}) => {
 
   const {token} = route.params;
@@ -123,8 +123,9 @@ const onCalendarPressed = () => {
           {courses.map((option, i) => (
                 <View key={option}>
                   <Timer 
-                    courseName={option} 
+                    courseID={courseIDs[i]} 
                     color={colors[i]}
+                    courseName={option}
                     // date={date}
                   /> 
                 </View>

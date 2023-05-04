@@ -56,11 +56,12 @@ const ButtonMenu = ({screen, token}) => {
     // const courses = ["Mekanik", "Reglerteknik", "Envariabelanalys"];
     // Navigation when you press each button
     const onYourReportsPress = data => {
+      console.log('token= ',token)
       navigation.navigate('YourReports', {courses: courses, token: token}) //Options is the courses youve picked
     };
   
      const onTimetrackingPress = data => {
-      navigation.navigate('Home', {options: courses})
+      navigation.navigate('Home', {options: courses, token: token})
     };
   
     const onCourseStatsPress = type => {
