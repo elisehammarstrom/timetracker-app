@@ -197,22 +197,30 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
 
         else:
             startDate = datetime.strptime(startDateRequest,"%Y-%m-%d").date()
+
+            print("type(startDate): ",type(startDate))
             #startDate = datetime.strptime(request.POST.get('startDate'),"%Y-%m-%d").date()
             endDate = datetime.strptime(endDateRequest,"%Y-%m-%d").date()
             courseAndDuration = []
             results = []
             for course in this_user.courses.all():
+                durationArray = []
                 print("course: ", course)
                 courseID = course.id
                 queryresult = self.queryset.filter(user_id=this_user.id, course_id = courseID, date__range=[startDate, endDate] )
 
+                no_of_dates = abs((endDate-startDate).days) + 1 
+
                 if len(queryresult) == 0:
                     print("No results for those dates for that course. Course: ", course.courseTitle )
+                    j = 0
+                    while j < no_of_dates:
+                        durationArray.append(0)
+                        j += 1
+
                 else:
                     #för varje datum ta fram durations
-                    durationArray = []
-            
-                    no_of_dates = abs((endDate-startDate).days)
+                    #no_of_dates = abs((endDate-startDate).days)
                     i = 0 
 
                     while i < no_of_dates:
@@ -225,12 +233,12 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                             totalHours = round(totalSeconds/(60*60), 2)
                             durationArray.append(totalHours)
                         i+=1
-                    results.append({
+                results.append({
                                     "Course: " : course.courseTitle, 
                                     "courseID: " : course.id, 
                                    "timeStudied: " : durationArray})
-                    print("results: ", results)
-            
+                #print("results: ", results)
+                
             response = {
                             "message": "Time studied per day",  
                             "userID: ": this_user.id,
