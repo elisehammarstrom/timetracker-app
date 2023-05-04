@@ -184,22 +184,18 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
         endDateRequest = request.POST.get('endDate')
         if startDateRequest is None:
             response = {"message": "You need to provide a startDate (startDate). E.g. 2023-01-01"}
-            print("-------type(startDateRequest)------", type(startDateRequest))
-            print("-------startDateRequest------", startDateRequest)
+            print("type(startDateRequest):", type(startDateRequest))
+            print("startDateRequest:", startDateRequest)
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         elif endDateRequest is None: 
             response = {"message": "You need to provide an endDate (endDate). E.g. 2023-01-01"}
-            print("-------type(endDateRequest)------", type(endDateRequest))
-            print("-------endDateRequest------", endDateRequest)
+            print("type(endDateRequest):", type(endDateRequest))
+            print("endDateRequest:", endDateRequest)
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-    
-        #courseID = request.POST.get('courseID')
+
 
         else:
             startDate = datetime.strptime(startDateRequest,"%Y-%m-%d").date()
-
-            print("type(startDate): ",type(startDate))
-            #startDate = datetime.strptime(request.POST.get('startDate'),"%Y-%m-%d").date()
             endDate = datetime.strptime(endDateRequest,"%Y-%m-%d").date()
             courseAndDuration = []
             results = []
@@ -219,8 +215,6 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                         j += 1
 
                 else:
-                    #för varje datum ta fram durations
-                    #no_of_dates = abs((endDate-startDate).days)
                     i = 0 
 
                     while i < no_of_dates:
@@ -234,16 +228,15 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                             durationArray.append(totalHours)
                         i+=1
                 results.append({
-                                    "Course: " : course.courseTitle, 
-                                    "courseID: " : course.id, 
-                                   "timeStudied: " : durationArray})
-                #print("results: ", results)
-                
+                                    "Course" : course.courseTitle, 
+                                    "courseID" : course.id, 
+                                   "timeStudied" : durationArray})
+
             response = {
                             "message": "Time studied per day",  
-                            "userID: ": this_user.id,
-                            "user: " : this_user.email,
-                            "results: " : results
+                            "userID": this_user.id,
+                            "user" : this_user.email,
+                            "results" : results
                             }
                 
             return Response(data=response, status=status.HTTP_200_OK)
@@ -295,8 +288,6 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                 
         return Response(data=response, status=status.HTTP_200_OK)
 
-        
-    
     @action(detail=False, methods=['GET'])
     def get_course_avg_time(self, request, **extra_fields):
         #get courseID:s earlier?
@@ -557,7 +548,7 @@ class UserViewset(viewsets.ModelViewSet):
 
             response = {
                     "message": "Success. Course removed.", 
-                    "courseID to remove": courseInstance.id,
+                    "courseID": courseInstance.id,
                     "userObject": {
                         "user.id": userInstance.id,
                         "user.email": userInstance.email,
