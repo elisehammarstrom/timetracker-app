@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer, CourseEvaluationSerializer
-from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking, CourseEvaluation, Question, Answer
+from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking, CourseEvaluation
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -565,6 +565,7 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
 
     print("queryset CourseEvalViewset: ", queryset)
 
+
     #def update(self, request, *args, **kwargs):
         #response = {"message": "You can't update a course evaluation like that"}
         #return Response(response, status = status.HTTP_400_BAD_REQUEST)
@@ -576,20 +577,44 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
     @action(detail=False, methods=['POST'])
     def create_evaluation(self, request, **extra_fields):
         userInstance = User.objects.get(id=request.user.pk)
+        courseID = request.POST.get('courseID')
 
-        #record = CourseEvaluation.objects.create(user=this_user, course=Course.objects.get(id=courseID), date=date, stress=stress)
+        if courseID is None:
+            response = {"message": "You need to provide a courseID. E.g. 2. (courseID)"}
+            return Response(data=response, status=status.HTTP_500_BAD_REQUEST)
+        else:
 
+            questions = [
+                "What is your general opinion of the course?", 
+                "What is the difficulty level?",
+                "Does this course have a reasonable workload?",
+                "How has your stress levels been in relation to the course?",
+                "If you’ve been to any lectures, were they worth it?", 
+                "If you’ve been to any lesson, were they worth it?",
+                "If you’ve done any assignments, were they worth it?"
+                ]
+            
+            questionAnswers = []
 
+            for question in questions:
+                questionAnswers.append({
+                    "question": question,
+                    "answer" : None,
+                })
 
+            #record = CourseEvaluation.objects.create(user=userInstance, course=Course.objects.get(id=courseID))
+            #print(record)
 
-        response = {
-                    "message": "Success. Course Evaluation added.", 
-                    "userObject": {
-                        "user.id": userInstance.id,
-                        "user.email": userInstance.email,
-                    }
-                } 
-        return Response(data=response, status=status.HTTP_200_OK)
+            response = {
+                        "message": "Success. Course Evaluation added.", 
+                        "userObject": {
+                            "user.id": userInstance.id,
+                            "user.email": userInstance.email,
+                        },
+                        #"record" : record
+                    
+                    } 
+            return Response(data=response, status=status.HTTP_200_OK)
 
 
 
