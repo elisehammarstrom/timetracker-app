@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.postgres.fields import ArrayField
 
 class Course(models.Model):
     courseCode = models.CharField(max_length=10, null=True, blank=True)
@@ -37,15 +38,10 @@ class CourseEvaluation(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
     #stresslevel = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(10)])
-    
-    #questions 
-    # "fråga1" : svar1
+    #questionsAnswers = ArrayField(models.CharField(max_length=10, blank=True, null=True))
 
-    """
-    def __init__(self, param1, param2):
-        self.param1 = param1
-        self.param2 = param2
-    """
+    #def __init__(self):
+    #   self.questions = ["hej", "då"]
     
     class Meta: 
         unique_together = (("user", "course" ), ) #vi behöver kolla att man 
@@ -56,7 +52,7 @@ class CourseEvaluation(models.Model):
         courseEvaluationInfoString = "Course:" + self.course.courseTitle + ";" + "User:" + self.user.username + ";"
         return courseEvaluationInfoString 
     
-
+"""
 class Question(models.Model):
     text = models.CharField(max_length=200)
     courseEvaluation = models.ForeignKey(CourseEvaluation, on_delete=models.CASCADE)
@@ -73,6 +69,7 @@ class Answer(models.Model):
 
     def __str__(self):
         return "Question: "+self.question.text+", answer: "+self.text
+"""
     
     
 
