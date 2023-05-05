@@ -9,7 +9,6 @@ import axios from 'axios';
 
 const YourReportsScreen = ({route}) => {
   const {token} = route.params;
-  // const {courses} = route.params;
   const {firstDate} = route.params;
   const {lastDate} = route.params;
 
@@ -81,9 +80,7 @@ const YourReportsScreen = ({route}) => {
       if (`${fetchedTimeStudied}` != `${timeStudied}` ){
         setCourses(fetchedCourses);
         setTimeStudied(fetchedTimeStudied);
-      }
-
-  
+      }  
     })
     .catch((error) => {
       console.error(error)
@@ -109,41 +106,38 @@ const YourReportsScreen = ({route}) => {
   // Colors for the graph and for the boxes
   const colorsConst = ['#66C7FD', '#5987CC', '#AC7CE4', '#FFB5E2', '#FFA9A3', '#FFC977'];
   const [colors, setColors] = useState(['#66C7FD', '#5987CC', '#AC7CE4', '#FFB5E2', '#FFA9A3', '#FFC977']);
-
-  const testTime = [[6,3,0,1,0], [1,3,2,2,4], [1,1,4,5,0]];
   const [legend, setLegend] = useState(courses);
 
-
-  
   var time = [];
   var timeCourses = [];
-  
 
- 
+  // Get the right format for the timeStudied to fit in to the graph
   if (timeStudied.length > 0) {
     for (let i=0; i<timeStudied[0].length; i++) {
-
-      time.push([timeStudied[0][i], timeStudied[1][i], timeStudied[2][i]])
+      let timeSplit = [];
       
+      for (let j=0; j<timeStudied.length; j++) {
+        timeSplit.push(timeStudied[j][i])
+      }
+      time.push(timeSplit)
     };
   }
-
+  // Making it possible to show data for only one course at a time
   for (let i=0; i<courses.length; i++) {
     timeCourses.push({course: courses[i], time: timeStudied[i]})
   };
 
   const [timeVar, setTimeVar] = useState([]);
-
+  // Set timeVar which can be varied to time if the user haven't picked to show only one course
   if (`${timeVar}` != `${time}` & state != 'pressed') {
       setTimeVar(time)    
   }
 
+  // Gets the sum of time studied of each course
   let sum = [];
   for (let i=0; i<timeCourses.length; i++) {
-    
     sum.push(Math.round(timeCourses[i].time.reduce((a, b) => a + b, 0)*10)/10);
   }
-
   
   const data = {
     labels: initialLabels,
@@ -170,6 +164,7 @@ const YourReportsScreen = ({route}) => {
         for (let j=0;j<timeCourses[i].time.length; j++){
           timeChange.push([timeCourses[i].time[j]])
         }
+
         setTimeVar(timeChange)
         setState('pressed')
       }
