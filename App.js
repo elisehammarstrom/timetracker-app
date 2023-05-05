@@ -13,7 +13,8 @@ const App = () => {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#313131'
+    backgroundColor: '#313131',
+    fontFamily: 'Monte'
   },
 });
 
