@@ -79,7 +79,7 @@ const HomeScreen: React.FC = ({route}) => {
   };
 
   const onSettingsPressed = () => {
-    navigation.navigate('Profile', {});
+    navigation.navigate('Profile', {token: token});
 };
 
 const onCalendarPressed = () => {

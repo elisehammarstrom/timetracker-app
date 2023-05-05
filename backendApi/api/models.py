@@ -34,8 +34,8 @@ class Course(models.Model):
 
 
 class CourseEvaluation(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.DO_NOTHING , blank=True, null=True, db_constraint=False)
-    user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING, blank=True, null=True, db_constraint=False)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True, db_constraint=False)
+    user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True, db_constraint=False)
     #stresslevel = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(10)])
     #questionsAnswers = ArrayField(models.CharField(max_length=10, blank=True, null=True))
 
@@ -58,7 +58,7 @@ class CourseEvaluation(models.Model):
 
 class Question(models.Model):
     text = models.CharField(max_length=200)
-    courseEvaluation = models.ForeignKey(CourseEvaluation, on_delete=models.DO_NOTHING)
+    courseEvaluation = models.ForeignKey(CourseEvaluation, on_delete=models.CASCADE, db_constraint=False, blank=True, null=True,)
 
     def __str__(self):
         return self.text
@@ -68,15 +68,15 @@ class Question(models.Model):
 
 class Answer(models.Model):
     text = models.CharField(max_length=200)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, db_constraint=False, blank=True, null=True,)
 
     def __str__(self):
         return "Question: "+self.question.text+", answer: "+self.text
 
 class QuestionAnswer(models.Model):
-    courseEvaluation = models.ForeignKey(CourseEvaluation, on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
+    courseEvaluation = models.ForeignKey(CourseEvaluation, on_delete=models.CASCADE, db_constraint=False, blank=True, null=True,)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, db_constraint=False, blank=True, null=True,)
+    answer = models.ForeignKey(Answer, on_delete=models.CASCADE, db_constraint=False, blank=True, null=True,)
 
     def __str__(self):
         return self

@@ -8,7 +8,8 @@ import { SelectList } from 'react-native-dropdown-select-list';
 
 
 
-const EditProfileScreen = () => {
+const EditProfileScreen = ({route}) => {
+  const {token} = route.params;
   const {control, handleSubmit, formState: {errors}, watch} = useForm();
   const pwd = watch('password');
 
@@ -21,7 +22,7 @@ const EditProfileScreen = () => {
 
    //här ska sedan den nya infon skickas till databasen och ersätta det gamla i ProfileScreen
   const onSavePressed = data => {
-    navigation.navigate('Profile')
+    navigation.navigate('Profile', {token: token})
     const info = {
       password: data.password,
       pID: selectedProgramme,

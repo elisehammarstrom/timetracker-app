@@ -7,11 +7,10 @@ router = routers.DefaultRouter()
 router.register("courses", CourseViewset)
 router.register("programmes", ProgrammeViewset)
 router.register("evaluate", CourseEvaluationViewset)
-router.register("evaluate/question", CourseEvaluationViewset)
+#router.register("evaluate/question", QuestionAnswerViewset)
 router.register("users", UserViewset)
 router.register("students", StudentViewset)
 router.register("tracking", UserCourseTrackingViewset)
-#router.register("login", LoginView)
 
 
 urlpatterns = [
