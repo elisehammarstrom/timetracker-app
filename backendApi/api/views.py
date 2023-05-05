@@ -17,6 +17,10 @@ from django.http import JsonResponse
 from django.db.models import Avg
 import time
 from datetime import date, datetime, timedelta
+import json as simplejson
+from django.http import HttpResponse
+from django.http import JsonResponse
+from django.core.exceptions import ObjectDoesNotExist
 
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -136,15 +140,12 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
         elif courseID is None: 
             response = {"message": "You must provide a courseID, e.g. 2 (courseID)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-
-        date = datetime.strptime(request.POST.get('date'),"%Y-%m-%d").date()
-
-        if duration is None:
+        elif duration is None:
             response = {"message": "You must provide a duratiom in format Time 'HH:MM:SS' (duration)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-        
         else:
             try:
+                date = datetime.strptime(request.POST.get('date'),"%Y-%m-%d").date()
                 existing_record_object = UserCourseTracking.objects.get(user=User.objects.get(id=user.id), course=Course.objects.get(id=courseID), date=date)
                 existing_record_object.duration = duration
                 existing_record_object.save(update_fields=['duration'])
@@ -586,17 +587,6 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAuthenticated, )
 
-    print("queryset CourseEvalViewset: ", queryset)
-
-
-    #def update(self, request, *args, **kwargs):
-        #response = {"message": "You can't update a course evaluation like that"}
-        #return Response(response, status = status.HTTP_400_BAD_REQUEST)
-    
-   #def create(self, request, *args, **kwargs):
-        #response = {"message": "You can't create a course evaluation like that"}
-        #return Response(response, status = status.HTTP_400_BAD_REQUEST)
-
     @action(detail=False, methods=['POST'])
     def create_evaluation(self, request, **extra_fields):
         userInstance = User.objects.get(id=request.user.pk)
@@ -617,17 +607,30 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                 ]
             
             questionAnswers = []
-            #record = CourseEvaluation.objects.create(user=userInstance, course=Course.objects.get(id=courseID))
+            record = CourseEvaluation.objects.create(user=userInstance, course=Course.objects.get(id=courseID))
+            record.save()
 
-            #for question in questions:
-                #questionObj = Question.objects.create(text=question, courseEvaluation = record)
-                #answerObj = Answer.objects.create(text="", question=questionObj)
-                #questionAnswerObj = QuestionAnswer.objects.create(question=questionObj, answer=answerObj, courseEvaluation = record)
-            
-            #print(record)
+            for question in questions:
+                questionObj = Question.objects.create(text=question, courseEvaluation = record)
+                
+                answerObj = Answer.objects.create(text="", question=questionObj)
+                questionAnswerObj = QuestionAnswer.objects.create(question=questionObj, answer=answerObj, courseEvaluation = record)
+                questionAnswers.append({
+                    "questionAnswer.id": questionAnswerObj.id,
+                    "courseEvaluation.id": questionAnswerObj.courseEvaluation.id,
+                    "question": {
+                        "id": questionAnswerObj.question.id,
+                        "question": questionAnswerObj.question.text,
+                    },
+                    "answer": {
+                        "id": questionAnswerObj.answer.id,
+                        "answer": questionAnswerObj.answer.text,
+                    },
+                }) 
 
-
-            
+                questionObj.save()
+                answerObj.save()
+                questionAnswerObj.save()
 
             response = {
                         "message": "Success. Course Evaluation added.", 
@@ -635,15 +638,44 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                             "user.id": userInstance.id,
                             "user.email": userInstance.email,
                         },
-                        "questionAnswerObj": {
-                            #"courseEvaluationID" : questionAnswerObj.courseEvaluation.id,
-                            #"question" : questionAnswerObj.question.text,
-                            #"answer" : questionAnswerObj.answer.text,
+                        "array" : questionAnswers
 
-                        }
-                    
                     } 
             return Response(data=response, status=status.HTTP_200_OK)
+    @action(detail=False, methods=['POST'])
+    def update_answer(self, request, **extra_fields):
+        userInstance = User.objects.get(id=request.user.pk)
+        answerText = request.POST.get('answerText')
+        answerID = request.POST.get('answerID')
+
+        if answerID is None:
+            response = {"message" : "You need to provide an answerID, e.g. 1. (answerID)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif answerText is None:
+            response = {"message" : "You need to provide an answerText, e.g. '2' (answerText)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            try:
+                answerObj = Answer.objects.get(id=answerID)
+                answerObj.text = answerText
+                answerObj.save()
+                
+                response = {
+                                "message": "Success. Answer updated.", 
+                                "userObject": {
+                                    "user.id": userInstance.id,
+                                    "user.email": userInstance.email,
+                                },
+                                "answerObject": {
+                                    "id": answerObj.id,
+                                    "text" : answerObj.text
+                                }
+                            } 
+                return Response(data=response, status=status.HTTP_200_OK)
+        
+            except ObjectDoesNotExist:
+                response = {"message": "That answerID does not exist"}
+                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
 
 
