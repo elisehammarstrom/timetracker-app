@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer, CourseEvaluationSerializer
-from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking, CourseEvaluation
+from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer, CourseEvaluationSerializer, QuestionAnswerSerializer
+from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking, CourseEvaluation, Question, Answer, QuestionAnswer
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -557,6 +557,12 @@ class UserViewset(viewsets.ModelViewSet):
                 } 
             return Response(data=response, status=status.HTTP_200_OK)
 
+class QuestionAnswerViewset(viewsets.ModelViewSet):
+    queryset = CourseEvaluation.objects.all()
+    serializer_class = QuestionAnswerSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
+
 class CourseEvaluationViewset(viewsets.ModelViewSet):
     queryset = CourseEvaluation.objects.all()
     serializer_class = CourseEvaluationSerializer
@@ -583,7 +589,6 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
             response = {"message": "You need to provide a courseID. E.g. 2. (courseID)"}
             return Response(data=response, status=status.HTTP_500_BAD_REQUEST)
         else:
-
             questions = [
                 "What is your general opinion of the course?", 
                 "What is the difficulty level?",
@@ -595,15 +600,17 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                 ]
             
             questionAnswers = []
+            record = CourseEvaluation.objects.create(user=userInstance, course=Course.objects.get(id=courseID))
 
             for question in questions:
-                questionAnswers.append({
-                    "question": question,
-                    "answer" : None,
-                })
-
-            #record = CourseEvaluation.objects.create(user=userInstance, course=Course.objects.get(id=courseID))
+                questionObj = Question.objects.create(text=question, courseEvaluation = record)
+                answerObj = Answer.objects.create(text="", question=questionObj)
+                questionAnswerObj = QuestionAnswer.objects.create(question=questionObj, answer=answerObj, courseEvaluation = record)
+            
             #print(record)
+
+
+            
 
             response = {
                         "message": "Success. Course Evaluation added.", 
@@ -611,7 +618,12 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                             "user.id": userInstance.id,
                             "user.email": userInstance.email,
                         },
-                        #"record" : record
+                        "questionAnswerObj": {
+                            "courseEvaluationID" : questionAnswerObj.courseEvaluation.id,
+                            "question" : questionAnswerObj.question.text,
+                            "answer" : questionAnswerObj.answer.text,
+
+                        }
                     
                     } 
             return Response(data=response, status=status.HTTP_200_OK)

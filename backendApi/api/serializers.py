@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Course, Programme, User, Student, UserCourseTracking, CourseEvaluation
+from .models import Course, Programme, User, Student, UserCourseTracking, CourseEvaluation, QuestionAnswer
 from rest_framework.authtoken.models import Token
 
 class UserSerializer(serializers.ModelSerializer):
@@ -52,3 +52,8 @@ class CourseEvaluationSerializer(serializers.ModelSerializer):
     class Meta:
         model = CourseEvaluation
         fields = ("id", "course", "user")
+
+class QuestionAnswerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QuestionAnswer
+        fields = ("id", "question", "answer", "courseEvaluation")

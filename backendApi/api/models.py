@@ -4,7 +4,6 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.contrib.postgres.fields import ArrayField
 
 class Course(models.Model):
     courseCode = models.CharField(max_length=10, null=True, blank=True)
@@ -40,6 +39,9 @@ class CourseEvaluation(models.Model):
     #stresslevel = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(10)])
     #questionsAnswers = ArrayField(models.CharField(max_length=10, blank=True, null=True))
 
+    #vi vill ha en tabell med user, course och courseEvaluationID
+    #sen vill vi också ha en tabell med question, answers och courseevaluationID
+
     #def __init__(self):
     #   self.questions = ["hej", "då"]
     
@@ -52,10 +54,11 @@ class CourseEvaluation(models.Model):
         courseEvaluationInfoString = "Course:" + self.course.courseTitle + ";" + "User:" + self.user.username + ";"
         return courseEvaluationInfoString 
     
-"""
+    
+
 class Question(models.Model):
     text = models.CharField(max_length=200)
-    courseEvaluation = models.ForeignKey(CourseEvaluation, on_delete=models.CASCADE)
+    courseEvaluation = models.ForeignKey(CourseEvaluation, on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return self.text
@@ -69,8 +72,14 @@ class Answer(models.Model):
 
     def __str__(self):
         return "Question: "+self.question.text+", answer: "+self.text
-"""
-    
+
+class QuestionAnswer(models.Model):
+    courseEvaluation = models.ForeignKey(CourseEvaluation, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self
     
 
 class UserCourseTracking(models.Model):
