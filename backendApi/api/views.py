@@ -511,6 +511,23 @@ class UserViewset(viewsets.ModelViewSet):
         return Response(data=response, status=status.HTTP_200_OK)
     
     @action(detail=False, methods=['GET'])
+    def get_user_data(self, request, **extra_fields):
+        userInstance = Student.objects.get(id=request.user.pk)
+
+        response = {
+                "message": "Success. User retrieved. ", 
+                "userObject": {
+                    "fullName" : userInstance.first_name + " " + userInstance.last_name,
+                    "email": userInstance.email,
+                   "programmeName": userInstance.programme.programmeName,
+                   "programmeShortName": userInstance.programme.shortProgrammeName,
+                   "university" : userInstance.university
+
+                }
+            } 
+        return Response(data=response, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=['GET'])
     def get_course_data(self, request, **extra_fields):
         if 'courseID' not in request.data: 
             response = {"message": "You must provide a courseID to get course data (courseID)"}
@@ -600,12 +617,12 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                 ]
             
             questionAnswers = []
-            record = CourseEvaluation.objects.create(user=userInstance, course=Course.objects.get(id=courseID))
+            #record = CourseEvaluation.objects.create(user=userInstance, course=Course.objects.get(id=courseID))
 
-            for question in questions:
-                questionObj = Question.objects.create(text=question, courseEvaluation = record)
-                answerObj = Answer.objects.create(text="", question=questionObj)
-                questionAnswerObj = QuestionAnswer.objects.create(question=questionObj, answer=answerObj, courseEvaluation = record)
+            #for question in questions:
+                #questionObj = Question.objects.create(text=question, courseEvaluation = record)
+                #answerObj = Answer.objects.create(text="", question=questionObj)
+                #questionAnswerObj = QuestionAnswer.objects.create(question=questionObj, answer=answerObj, courseEvaluation = record)
             
             #print(record)
 
@@ -619,9 +636,9 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                             "user.email": userInstance.email,
                         },
                         "questionAnswerObj": {
-                            "courseEvaluationID" : questionAnswerObj.courseEvaluation.id,
-                            "question" : questionAnswerObj.question.text,
-                            "answer" : questionAnswerObj.answer.text,
+                            #"courseEvaluationID" : questionAnswerObj.courseEvaluation.id,
+                            #"question" : questionAnswerObj.question.text,
+                            #"answer" : questionAnswerObj.answer.text,
 
                         }
                     

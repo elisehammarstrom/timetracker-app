@@ -34,8 +34,8 @@ class Course(models.Model):
 
 
 class CourseEvaluation(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
+    course = models.ForeignKey(Course, on_delete=models.DO_NOTHING , blank=True, null=True, db_constraint=False)
+    user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING, blank=True, null=True, db_constraint=False)
     #stresslevel = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(10)])
     #questionsAnswers = ArrayField(models.CharField(max_length=10, blank=True, null=True))
 
