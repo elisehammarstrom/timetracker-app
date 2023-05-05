@@ -20,6 +20,7 @@ from datetime import date, datetime, timedelta
 import json as simplejson
 from django.http import HttpResponse
 from django.http import JsonResponse
+from django.core.exceptions import ObjectDoesNotExist
 
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -642,9 +643,42 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                         },
                         "array" : questionAnswers
 
-                    
                     } 
             return Response(data=response, status=status.HTTP_200_OK)
+    @action(detail=False, methods=['POST'])
+    def update_answer(self, request, **extra_fields):
+        userInstance = User.objects.get(id=request.user.pk)
+        answerText = request.POST.get('answerText')
+        answerID = request.POST.get('answerID')
+
+        if answerID is None:
+            response = {"message" : "You need to provide an answerID, e.g. 1. (answerID)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif answerText is None:
+            response = {"message" : "You need to provide an answerText, e.g. '2' (answerText)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            try:
+                answerObj = Answer.objects.get(id=answerID)
+                answerObj.text = answerText
+                answerObj.save()
+                
+                response = {
+                                "message": "Success. Answer updated.", 
+                                "userObject": {
+                                    "user.id": userInstance.id,
+                                    "user.email": userInstance.email,
+                                },
+                                "answerObject": {
+                                    "id": answerObj.id,
+                                    "text" : answerObj.text
+                                }
+                            } 
+                return Response(data=response, status=status.HTTP_200_OK)
+        
+            except ObjectDoesNotExist:
+                response = {"message": "That answerID does not exist"}
+                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
 
 
