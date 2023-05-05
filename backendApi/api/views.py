@@ -140,15 +140,12 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
         elif courseID is None: 
             response = {"message": "You must provide a courseID, e.g. 2 (courseID)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-
-        date = datetime.strptime(request.POST.get('date'),"%Y-%m-%d").date()
-
-        if duration is None:
+        elif duration is None:
             response = {"message": "You must provide a duratiom in format Time 'HH:MM:SS' (duration)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-        
         else:
             try:
+                date = datetime.strptime(request.POST.get('date'),"%Y-%m-%d").date()
                 existing_record_object = UserCourseTracking.objects.get(user=User.objects.get(id=user.id), course=Course.objects.get(id=courseID), date=date)
                 existing_record_object.duration = duration
                 existing_record_object.save(update_fields=['duration'])
