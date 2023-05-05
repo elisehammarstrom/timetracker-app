@@ -17,6 +17,9 @@ from django.http import JsonResponse
 from django.db.models import Avg
 import time
 from datetime import date, datetime, timedelta
+import json as simplejson
+from django.http import HttpResponse
+from django.http import JsonResponse
 
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -586,17 +589,6 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAuthenticated, )
 
-    print("queryset CourseEvalViewset: ", queryset)
-
-
-    #def update(self, request, *args, **kwargs):
-        #response = {"message": "You can't update a course evaluation like that"}
-        #return Response(response, status = status.HTTP_400_BAD_REQUEST)
-    
-   #def create(self, request, *args, **kwargs):
-        #response = {"message": "You can't create a course evaluation like that"}
-        #return Response(response, status = status.HTTP_400_BAD_REQUEST)
-
     @action(detail=False, methods=['POST'])
     def create_evaluation(self, request, **extra_fields):
         userInstance = User.objects.get(id=request.user.pk)
@@ -617,17 +609,30 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                 ]
             
             questionAnswers = []
-            #record = CourseEvaluation.objects.create(user=userInstance, course=Course.objects.get(id=courseID))
+            record = CourseEvaluation.objects.create(user=userInstance, course=Course.objects.get(id=courseID))
+            record.save()
 
-            #for question in questions:
-                #questionObj = Question.objects.create(text=question, courseEvaluation = record)
-                #answerObj = Answer.objects.create(text="", question=questionObj)
-                #questionAnswerObj = QuestionAnswer.objects.create(question=questionObj, answer=answerObj, courseEvaluation = record)
-            
-            #print(record)
+            for question in questions:
+                questionObj = Question.objects.create(text=question, courseEvaluation = record)
+                
+                answerObj = Answer.objects.create(text="", question=questionObj)
+                questionAnswerObj = QuestionAnswer.objects.create(question=questionObj, answer=answerObj, courseEvaluation = record)
+                questionAnswers.append({
+                    "questionAnswer.id": questionAnswerObj.id,
+                    "courseEvaluation.id": questionAnswerObj.courseEvaluation.id,
+                    "question": {
+                        "id": questionAnswerObj.question.id,
+                        "question": questionAnswerObj.question.text,
+                    },
+                    "answer": {
+                        "id": questionAnswerObj.answer.id,
+                        "answer": questionAnswerObj.answer.text,
+                    },
+                }) 
 
-
-            
+                questionObj.save()
+                answerObj.save()
+                questionAnswerObj.save()
 
             response = {
                         "message": "Success. Course Evaluation added.", 
@@ -635,12 +640,8 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                             "user.id": userInstance.id,
                             "user.email": userInstance.email,
                         },
-                        "questionAnswerObj": {
-                            #"courseEvaluationID" : questionAnswerObj.courseEvaluation.id,
-                            #"question" : questionAnswerObj.question.text,
-                            #"answer" : questionAnswerObj.answer.text,
+                        "array" : questionAnswers
 
-                        }
                     
                     } 
             return Response(data=response, status=status.HTTP_200_OK)
