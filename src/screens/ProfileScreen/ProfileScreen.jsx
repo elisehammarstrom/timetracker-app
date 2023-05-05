@@ -6,6 +6,7 @@ import { TouchableHighlight } from 'react-native-gesture-handler';
 import CloseIcon from '../../../assets/close.png';
 import SettingIcon from '../../../assets/settings.png';
 import axios from 'axios';
+import SignOutIcon from '../../../assets/signout.png'
 
 
 const ProfileScreen = ({route}) => {
@@ -56,18 +57,30 @@ const ProfileScreen = ({route}) => {
     navigation.navigate('Home', {token: token})
   }
 
+  const onSignOutPressed = () => {
+    navigation.navigate('SignIn')
+  }
+
     return (
     <View style={styles.topContainer}>
-
-  {/*    Close does not work on iOS right now */}
+      <View style={styles.closeContainer}>
   
-      <TouchableHighlight style={styles.closeContainer} onPress={onClosedPress} >
+      <TouchableHighlight onPress={onClosedPress} >
         <Image 
               source={CloseIcon} 
               style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
               resizeMode="contain"
           />
       </TouchableHighlight>
+
+      <TouchableHighlight  onPress={onSignOutPressed} >
+        <Image 
+              source={SignOutIcon} 
+              style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
+              resizeMode="contain"
+          />
+      </TouchableHighlight>
+      </View>
 
       <View style={styles.bottomContainer}>
         <Image 
@@ -105,51 +118,52 @@ const ProfileScreen = ({route}) => {
 );
 };
     const styles = StyleSheet.create({
-        bottomContainer: {
+      bottomContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#313131',
+      },
+      topContainer: {
           flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
           backgroundColor: '#313131',
-        },
-        topContainer: {
-            flex: 1,
-            backgroundColor: '#313131',
-        },
-        form: {
-          width: '80%',
-         },
-         label: {
-           marginTop: 20,
-           color: 'white',
-         },
-         pictureContainer: {
-          marginTop: 20,
-          alignItems: 'center',
-        },
-        picture: {
-           width: 150,
-           height: 150,
-           borderRadius: 75,
-           border: 'solid',
-           borderColor: 'white'
-         },
-        checkbox:{
-          marginLeft:30,
-          backgroundColor:'gray'
-        },
-        close: {
-          color: 'white',
-          fontSize: 20,
-          padding: 10,
-        },
-        closeContainer: {
-          alignItems: 'flex-start',
-          padding: 10,
-        },
-        settingIcon: {
-          color: 'white',
-          fontSize: 60,
-          paddingBottom: 10,
-        }
+      },
+      form: {
+        width: '80%',
+       },
+       label: {
+         marginTop: 20,
+         color: 'white',
+       },
+       pictureContainer: {
+        marginTop: 20,
+        alignItems: 'center',
+      },
+      picture: {
+         width: 150,
+         height: 150,
+         borderRadius: 75,
+         border: 'solid',
+         borderColor: 'white'
+       },
+      checkbox:{
+        marginLeft:30,
+        backgroundColor:'gray'
+      },
+      close: {
+        color: 'white',
+        fontSize: 20,
+        padding: 10,
+      },
+      closeContainer: {
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        padding: 10,
+      },
+      settingIcon: {
+        color: 'white',
+        fontSize: 60,
+        paddingBottom: 10,
+      }
       });
 export default ProfileScreen
