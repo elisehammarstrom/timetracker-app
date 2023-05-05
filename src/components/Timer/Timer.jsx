@@ -9,7 +9,7 @@ import axios from 'axios';
 
 /* import {PlayCircleOutlined, PauseCircleOutlined} from '@ant-design/icons'; */
 
-const Timer = ({courseName, color}) => {
+const Timer = ({courseID, courseName, color}) => {
     const [isStopwatchStart, setIsStopwatchStart] = useState(false);
     const [resetStopwatch, setResetStopwatch] = useState(false);
     const [isTimerStart, setIsTimerStart] = useState(false);
@@ -23,21 +23,16 @@ const Timer = ({courseName, color}) => {
     var year = new Date().getFullYear();
     var date = year + '-' + month + '-' + day;
 
-
-
-
-
-
     const getTime = (time) => {
       if (isStopwatchStart != true){
         let data = {
-          course: courseName,
+          courseID: courseID,
           date: date,
           duration: time,
         };
         // console.log(courseName)
         const formData = new FormData();
-        formData.append('courseID', courseName);
+        formData.append('courseID', courseID);
         formData.append('date', date);
         formData.append('duration', time);
         
@@ -52,7 +47,7 @@ const Timer = ({courseName, color}) => {
         })
           .then(function (response) {
             //handle success
-            console.log(response.data);
+            // console.log(response.data);
           })
           .catch(function (response) {
             //handle error
