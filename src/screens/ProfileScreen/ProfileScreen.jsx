@@ -3,48 +3,58 @@ import { View, Text, Image, StyleSheet, Dimensions} from 'react-native';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
-import CloseIcon from '../../../assets/close.png'
-import SettingIcon from '../../../assets/settings.png'
+import CloseIcon from '../../../assets/close.png';
+import SettingIcon from '../../../assets/settings.png';
+import axios from 'axios';
+
+
+const ProfileScreen = ({route}) => {
+  const {token} = route.params;
+  const {courses} = route.params;
+  const navigation = useNavigation();
+  // const profile = [];
+  const [profile, setProfile] = useState([]);
 
 
 
- const ProfileScreen = () => {
-    const navigation = useNavigation();
 
-    const profile = {
-        email: 'lovisanilsson58@gmail.com',
-        picture: 'https://example.com/jane-doe-avatar.png',
-        programme: 'STS',
-        university: 'Uppsala university'
-        // language: 'English'
-      }
-    const [fullName, setFullName] = useState(profile.fullName);
-    const [email, setEmail] = useState(profile.email);
-    const [programme, setProgramme] = useState(profile.programme);
-    const [language, setLanguage] = useState(profile.language);
-    const [picture, setpicture] = useState(profile.picture);
-    const [isSelected, setSelection] = useState(false);
   
-    const handleSubmit = () => {
 
+  axios({
+    method: "get",
+    url: "http://127.0.0.1:8000/api/users/get_user_data/",
+    headers: {
+      'Authorization': `token ` + token
+    }
+  })
+  .then((res) => {
+
+    if (`${profile}` != `${res.data.userObject}`) {
+      setProfile(res.data.userObject)
     }
 
-      
-    const onEditPressed = () => {
-      navigation.navigate('EditProfile', {
-      });
-    };
+  })
+  .catch((error) => {
+    console.error(error)
+  })
+  
+  const handleSubmit = () => {
 
-    const onEditCoursePressed = () => {
-      navigation.navigate('StartCourses', {
-    });  
-    };
-            //make separate words bold
-    const B = (props) => <Text style={{fontWeight: 'bold'}}>{props.children}</Text>
+  }
+    
+  const onEditPressed = () => {
+    navigation.navigate('EditProfile', {token: token});
+  };
 
-    const onClosedPress = () => {
-      navigation.navigate('Home')
-    }
+  const onEditCoursePressed = () => {
+    navigation.navigate('StartCourses', {token: token, originalCourses: courses});  
+  };
+          //make separate words bold
+  const B = (props) => <Text style={{fontWeight: 'bold'}}>{props.children}</Text>
+
+  const onClosedPress = () => {
+    navigation.navigate('Home', {token: token})
+  }
 
     return (
     <View style={styles.topContainer}>
@@ -71,7 +81,7 @@ import SettingIcon from '../../../assets/settings.png'
 
       <Text style={styles.label}><B>University:</B> {profile.university}</Text>
 
-      <Text style={styles.label}><B>Programme:</B> {profile.programme}</Text>
+      <Text style={styles.label}><B>Programme:</B> {profile.programmeName}</Text>
 
       {/* <Text style={styles.label}><B>Language</B> {profile.language}</Text> */}
       

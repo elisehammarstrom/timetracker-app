@@ -8,40 +8,42 @@ import { TextInput } from 'react-native-paper';
 
 
 const CourseScreen = ({route}) => {
+  const {originalCourses} = route.params;
+  const {token} = route.params;
+
 
   const [testCourses, setTestCourses] = useState('');
   const [filteredData, setFilteredData] = useState([]);
-  var day = new Date().getDate();
-  var month = new Date().getMonth()+1;
-  var year = new Date().getFullYear();
+  // var day = new Date().getDate();
+  // var month = new Date().getMonth()+1;
+  // var year = new Date().getFullYear();
 
-  const [date, setDate] = useState('');
+  // const [date, setDate] = useState('');
 
-  if (date.length < 1) {
-  if (`${day}`.length === 1 & `${month}`.length === 1) {
-    setDate(year + '-0' + month + '-0' + day + 'T00:00:00Z')
-  }
-  else if (`${day}`.length === 1) {
-    setDate(year + '-' + month + '-0' + day + 'T00:00:00Z')
-  }
-  else if (`${month}`.length === 1) {
-    setDate(year + '-0' + month + '-' + day + 'T00:00:00Z')
-  }
-  else {
-    setDate(year + '-' + month + '-' + day + 'T00:00:00Z')
+  // if (date.length < 1) {
+  // if (`${day}`.length === 1 & `${month}`.length === 1) {
+  //   setDate(year + '-0' + month + '-0' + day + 'T00:00:00Z')
+  // }
+  // else if (`${day}`.length === 1) {
+  //   setDate(year + '-' + month + '-0' + day + 'T00:00:00Z')
+  // }
+  // else if (`${month}`.length === 1) {
+  //   setDate(year + '-0' + month + '-' + day + 'T00:00:00Z')
+  // }
+  // else {
+  //   setDate(year + '-' + month + '-' + day + 'T00:00:00Z')
 
-  }}  
+  // }}  
 
   axios.get('http://127.0.0.1:8000/api/courses/', {
     headers: {
-      'Authorization': `token 53ba76420d512d53c7cca599cbda42c950d37996`
+      'Authorization': `token ` + token
     }
   })
   .then((res) => {
     if (testCourses.length != res.data.length){
       setTestCourses(res.data);
       setFilteredData(res.data);
-
     }
     
   })
@@ -59,15 +61,10 @@ const CourseScreen = ({route}) => {
       })
     // }
   }
-  const {token} = route.params;
-  const {user} = route.params;
-
   const navigation = useNavigation();
   const [courses, setCourses] = useState([]);
   const [courseCodes, setCourseCodes] = useState([]);
   const [search, setSearch] = useState('');
-
-  const [selected, setSelected] = React.useState([]);
 
   const onTimerPressed = () => {
     for (let i=0; i<courseCodes.length; i++) {
@@ -93,18 +90,62 @@ const CourseScreen = ({route}) => {
         });
 
     }
+        // let newTestCourses = [];
+    let sameCourses = [];
+    for (let i=0; i<testCourses.length; i++) {
+      for (let j=0; j<courseCodes.length; j++) {
+        if (testCourses[i].courseCode === courseCodes[j]) {
+          // let newTestCourses = testCourses.slice(i)
+          // console.log("newTestCourses= ", newTestCourses)
+          sameCourses.push(courseCodes[j])
+
+          console.log("plats= ", i)
+        }
+      }
+    }
+    for (let i=0; i<testCourses.length; i++) {
+      // for (let j=0; j<courseCodes.length; j++) {
+        if (courseCodes.includes(testCourses[i].courseCode)) {
+          console.log("samma")
+        } else {
+          const formData = new FormData();
+          console.log(testCourses[i])
+          console.log("courseID= ", testCourses[i].id)
+          formData.append('courseID', testCourses[i].id);
+    
+          axios({
+            method: "post",
+            url: "http://127.0.0.1:8000/api/users/remove_course/",
+            data: formData,
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              'Authorization':`token ` + token
+            }
+          })
+            .then(function (response) {
+              //handle success
+              console.log(response.data);
+            })
+            .catch(function (response) {
+              //handle error
+              console.log(response);
+            });
+        }
+      // }
+    }
 
 
-      navigation.navigate('Home', {token: token});
-      // console.log(user)
-      // console.log("courses=", courses)
-      // console.log('courseCodes=', courseCodes)
+    // console.log(sameCourses)
+
+
+    navigation.navigate('Home', {token: token});
   };
     
 
   function pickCourse(selectedCourse, courseCode) {
       if(courses.includes(selectedCourse)){
         setCourses(courses.filter(Course => Course !== selectedCourse))
+        setCourseCodes(courseCodes.filter(CourseCode => CourseCode !== courseCode))
         return;
       }
     if (courses.length < 6 ){
@@ -114,9 +155,8 @@ const CourseScreen = ({route}) => {
         return;
       }
   
-      setCourseCodes(CourseCode => CourseCode.concat(courseCode) )
-  
-      setCourses(Courses => Courses.concat(selectedCourse))
+    setCourseCodes(CourseCode => CourseCode.concat(courseCode) )
+    setCourses(Courses => Courses.concat(selectedCourse))
     
     }
     else {
@@ -127,6 +167,7 @@ const CourseScreen = ({route}) => {
   }
 
   const searchFilter = (text) => {
+    if (courseCodes.length < 6 ){
     if (text) {
       const newData = data.filter((item) => {
         const itemData = item.courseTitle ? item.courseTitle.toUpperCase()
@@ -140,6 +181,9 @@ const CourseScreen = ({route}) => {
       setFilteredData(data);
       setSearch(text);
     }
+  }else {
+    alert('You can pick a maximum of six courses')
+  }
   }
   const ItemSeparatorView = () => {
     return (
