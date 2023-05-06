@@ -6,9 +6,6 @@ import Pause from '../../../assets/pause.png'
 import { secondsToMinutes } from 'date-fns';
 import axios from 'axios';
 
-
-/* import {PlayCircleOutlined, PauseCircleOutlined} from '@ant-design/icons'; */
-
 const Timer = ({courseID, courseName, color}) => {
     const [isStopwatchStart, setIsStopwatchStart] = useState(false);
     const [resetStopwatch, setResetStopwatch] = useState(false);
@@ -81,7 +78,7 @@ const Timer = ({courseID, courseName, color}) => {
                 />
               </View>
               <View style={styles.playPauseContainer}>
-                <TouchableHighlight 
+                <TouchableHighlight
                   onPress={() => {
                     setIsStopwatchStart(!isStopwatchStart);
                     setResetStopwatch(false);
@@ -132,7 +129,8 @@ const styles = StyleSheet.create({
     alignContent: 'space-between',
     rowGap: 20,
     overflowWrap: 'break-word',
-    padding: 15,
+    padding: 10,
+    paddingRight: 15,
     width: 0.9 * Dimensions.get('window').width,
     marginVertical: 5,
     borderRadius: 5,
@@ -151,9 +149,10 @@ const styles = StyleSheet.create({
 
   playPauseContainer: {
     flex: 1,
+    flexShrink: 1,
     justifyContent: 'center',
     alignItems: 'center',
- /*    paddingTop: 25, */
+    paddingTop: 25
 
   },
   

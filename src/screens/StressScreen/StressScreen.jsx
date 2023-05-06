@@ -1,7 +1,7 @@
 
 import { useNavigation } from '@react-navigation/native';
 import React, {useState, useRef, useEffect} from 'react';
-import {Text, View, TextInput, StyleSheet, FlatList, Image,TouchableOpacity,Dimensions,Button, Alert, PixelRatio} from 'react-native';
+import {Text, View, TextInput, StyleSheet, FlatList, Image,TouchableOpacity,Dimensions,Button, Alert, PixelRatio, ScrollView} from 'react-native';
 import ButtonMenu from '../../components/ButtonMenu';
 import { SelectList } from 'react-native-dropdown-select-list'
 import CustomButton from '../../components/CustomButton';
@@ -86,6 +86,7 @@ const StressScreen = ({route}) => {
                 <Text style={styles.date}>{date}</Text>
             </View>
             </View>
+            <ScrollView>
         <View style={styles.layout}>
             
             
@@ -158,6 +159,7 @@ const StressScreen = ({route}) => {
                 onPress={onSubmitPressed}
             />
         </View>
+        </ScrollView>
    
         <View>
 

@@ -105,7 +105,9 @@ const styles=StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#313131'
+        backgroundColor: '#313131',
+        position: 'absolute',
+        bottom: 0
       },
       buttonContainer: {
         flex: 1,
