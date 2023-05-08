@@ -1,4 +1,4 @@
-import { Button,View, Text , TouchableHighlight,  StyleSheet,SafeAreaView,Dimensions, Image } from 'react-native';
+import { Button,View, Text , TouchableOpacity,  StyleSheet,SafeAreaView,Dimensions, Image } from 'react-native';
 import React, {useState} from 'react';
 import {Stopwatch} from 'react-native-stopwatch-timer';
 import Play from '../../../assets/play.png'
@@ -78,7 +78,7 @@ const Timer = ({courseID, courseName, color}) => {
                 />
               </View>
               <View style={styles.playPauseContainer}>
-                <TouchableHighlight
+                <TouchableOpacity activeOpacity={0.5}
                   onPress={() => {
                     setIsStopwatchStart(!isStopwatchStart);
                     setResetStopwatch(false);
@@ -95,7 +95,7 @@ const Timer = ({courseID, courseName, color}) => {
                         style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
                         resizeMode="contain"/>}
                   </Text>
-                </TouchableHighlight> 
+                </TouchableOpacity> 
               </View>
               
             </View>

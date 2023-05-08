@@ -22,6 +22,7 @@ import EditProfileScreen from '../screens/EditProfileScreen'
 import ProfileScreen from '../screens/ProfileScreen'
 import CalendarScreen from '../components/CalendarScreen/CalendarScreen';
 import CalendarOpScreen from '../screens/CalendarOpScreen'
+import ChooseReportScreen from '../screens/ChooseReportScreen'
 const Stack = createNativeStackNavigator();
 
 const Navigation = () => {
@@ -60,6 +61,7 @@ const Navigation = () => {
                 <Stack.Screen name="Timer" component={TimerScreen}/>
                 <Stack.Screen name="Test" component={TestScreen}/>
                 <Stack.Screen name="CalendarOpScreen" component={CalendarOpScreen} />
+                <Stack.Screen name="ChooseReport" component={ChooseReportScreen} />
 
             </Stack.Navigator>
 

@@ -56,9 +56,9 @@ const ButtonMenu = ({screen, token}) => {
     const navigation = useNavigation();
 
     // Navigation when you press each button
-    const onYourReportsPress = data => {
+    const onReportsPress = data => {
       console.log('token= ',token)
-      navigation.navigate('YourReports', {courses: courses, token: token}) //Options is the courses youve picked
+      navigation.navigate('ChooseReport', {courses: courses, token: token}) //Options is the courses youve picked
     };
   
      const onTimetrackingPress = data => {
@@ -74,7 +74,7 @@ const ButtonMenu = ({screen, token}) => {
         <View style={styles.container}>
             <View style={styles.buttonContainer1}>
 
-              <TouchableOpacity activeOpacity={0.5} onPress={onYourReportsPress}>
+              <TouchableOpacity activeOpacity={0.5} onPress={onReportsPress}>
                <Image 
                     source={StatsIcon} 
                     style={[ {height: 120 * 0.3},{width: 120*0.3}, {marginBottom:10}]} 
@@ -111,11 +111,11 @@ const ButtonMenu = ({screen, token}) => {
                     resizeMode="contain"
                 />
               </TouchableOpacity>
-               {/*  <CustomButton 
+            {/*    <CustomButton 
                     text="Course stats"
                     onPress={onCourseStatsPress}
                     type={screen==='courseStats' ? 'CURRENTPAGE' : 'TERTIARY'}
-                />  */}
+                />   */}
             </View>
 
         </View>
