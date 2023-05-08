@@ -3,61 +3,84 @@ import { View, Text, Image, StyleSheet, Dimensions} from 'react-native';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
-import CloseIcon from '../../../assets/close.png'
-import SettingIcon from '../../../assets/settings.png'
+import CloseIcon from '../../../assets/close.png';
+import SettingIcon from '../../../assets/settings.png';
+import axios from 'axios';
+import SignOutIcon from '../../../assets/signout.png'
+
+
+const ProfileScreen = ({route}) => {
+  const {token} = route.params;
+  const {courses} = route.params;
+  const navigation = useNavigation();
+  // const profile = [];
+  const [profile, setProfile] = useState([]);
 
 
 
- const ProfileScreen = () => {
-    const navigation = useNavigation();
 
-    const profile = {
-        email: 'lovisanilsson58@gmail.com',
-        picture: 'https://example.com/jane-doe-avatar.png',
-        programme: 'STS',
-        university: 'Uppsala university'
-        // language: 'English'
-      }
-    const [fullName, setFullName] = useState(profile.fullName);
-    const [email, setEmail] = useState(profile.email);
-    const [programme, setProgramme] = useState(profile.programme);
-    const [language, setLanguage] = useState(profile.language);
-    const [picture, setpicture] = useState(profile.picture);
-    const [isSelected, setSelection] = useState(false);
   
-    const handleSubmit = () => {
 
+  axios({
+    method: "get",
+    url: "http://127.0.0.1:8000/api/users/get_user_data/",
+    headers: {
+      'Authorization': `token ` + token
+    }
+  })
+  .then((res) => {
+
+    if (`${profile}` != `${res.data.userObject}`) {
+      setProfile(res.data.userObject)
     }
 
-      
-    const onEditPressed = () => {
-      navigation.navigate('EditProfile', {
-      });
-    };
+  })
+  .catch((error) => {
+    console.error(error)
+  })
+  
+  const handleSubmit = () => {
 
-    const onEditCoursePressed = () => {
-      navigation.navigate('StartCourses', {
-    });  
-    };
-            //make separate words bold
-    const B = (props) => <Text style={{fontWeight: 'bold'}}>{props.children}</Text>
+  }
+    
+  const onEditPressed = () => {
+    navigation.navigate('EditProfile', {token: token});
+  };
 
-    const onClosedPress = () => {
-      navigation.navigate('Home')
-    }
+  const onEditCoursePressed = () => {
+    navigation.navigate('StartCourses', {token: token, originalCourses: courses});  
+  };
+          //make separate words bold
+  const B = (props) => <Text style={{fontWeight: 'bold'}}>{props.children}</Text>
+
+  const onClosedPress = () => {
+    navigation.navigate('Home', {token: token})
+  }
+
+  const onSignOutPressed = () => {
+    navigation.navigate('SignIn')
+  }
 
     return (
     <View style={styles.topContainer}>
-
-  {/*    Close does not work on iOS right now */}
+      <View style={styles.closeContainer}>
   
-      <TouchableHighlight style={styles.closeContainer} onPress={onClosedPress} >
+      <TouchableHighlight onPress={onSignOutPressed} >
+        <Image 
+              source={SignOutIcon} 
+              style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
+              resizeMode="contain"
+          />
+      </TouchableHighlight>
+
+      <TouchableHighlight  onPress={onClosedPress} >
         <Image 
               source={CloseIcon} 
               style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
               resizeMode="contain"
           />
       </TouchableHighlight>
+      </View>
 
       <View style={styles.bottomContainer}>
         <Image 
@@ -71,7 +94,7 @@ import SettingIcon from '../../../assets/settings.png'
 
       <Text style={styles.label}><B>University:</B> {profile.university}</Text>
 
-      <Text style={styles.label}><B>Programme:</B> {profile.programme}</Text>
+      <Text style={styles.label}><B>Programme:</B> {profile.programmeName}</Text>
 
       {/* <Text style={styles.label}><B>Language</B> {profile.language}</Text> */}
       
@@ -95,51 +118,52 @@ import SettingIcon from '../../../assets/settings.png'
 );
 };
     const styles = StyleSheet.create({
-        bottomContainer: {
+      bottomContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#313131',
+      },
+      topContainer: {
           flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
           backgroundColor: '#313131',
-        },
-        topContainer: {
-            flex: 1,
-            backgroundColor: '#313131',
-        },
-        form: {
-          width: '80%',
-         },
-         label: {
-           marginTop: 20,
-           color: 'white',
-         },
-         pictureContainer: {
-          marginTop: 20,
-          alignItems: 'center',
-        },
-        picture: {
-           width: 150,
-           height: 150,
-           borderRadius: 75,
-           border: 'solid',
-           borderColor: 'white'
-         },
-        checkbox:{
-          marginLeft:30,
-          backgroundColor:'gray'
-        },
-        close: {
-          color: 'white',
-          fontSize: 20,
-          padding: 10,
-        },
-        closeContainer: {
-          alignItems: 'flex-start',
-          padding: 10,
-        },
-        settingIcon: {
-          color: 'white',
-          fontSize: 60,
-          paddingBottom: 10,
-        }
+      },
+      form: {
+        width: '80%',
+       },
+       label: {
+         marginTop: 20,
+         color: 'white',
+       },
+       pictureContainer: {
+        marginTop: 20,
+        alignItems: 'center',
+      },
+      picture: {
+         width: 150,
+         height: 150,
+         borderRadius: 75,
+         border: 'solid',
+         borderColor: 'white'
+       },
+      checkbox:{
+        marginLeft:30,
+        backgroundColor:'gray'
+      },
+      close: {
+        color: 'white',
+        fontSize: 20,
+        padding: 10,
+      },
+      closeContainer: {
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        padding: 10,
+      },
+      settingIcon: {
+        color: 'white',
+        fontSize: 60,
+        paddingBottom: 10,
+      }
       });
 export default ProfileScreen

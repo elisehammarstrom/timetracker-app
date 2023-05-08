@@ -6,7 +6,7 @@ import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import Timer from '../../components/Timer';
 import React, {useState} from 'react';
-import {Button, SafeAreaView, StyleSheet, Text, View, Image, TouchableHighlight} from 'react-native';
+import {Button, SafeAreaView, StyleSheet, Text, View, Image, TouchableHighlight, ScrollView} from 'react-native';
 import ButtonMenu from '../../components/ButtonMenu';
 /* import {CalendarOutlined, SettingOutlined} from '@ant-design/icons'; */
 import Logo from '../../../assets/icon.png';
@@ -79,7 +79,7 @@ const HomeScreen: React.FC = ({route}) => {
   };
 
   const onSettingsPressed = () => {
-    navigation.navigate('Profile', {});
+    navigation.navigate('Profile', {token: token});
 };
 
 const onCalendarPressed = () => {
@@ -116,8 +116,8 @@ const onCalendarPressed = () => {
       </View>
       
       <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
-      
-      <View style={styles.timeLoop}>
+      <ScrollView>
+        <View style={styles.timeLoop}>
 
           {/* Looping the courses to create a timer for each course */}
           {courses.map((option, i) => (
@@ -150,13 +150,12 @@ const onCalendarPressed = () => {
           />
        
         </View>
-      <View>
-        <ButtonMenu
+      </View>
+      </ScrollView>
+      <ButtonMenu
           screen='timeTracking'
           token={token}
         />
-        </View>
-      </View>
     </SafeAreaView>
   );
 };
@@ -174,6 +173,7 @@ const styles = StyleSheet.create({
   },
   customButtonContainer: {
     paddingHorizontal: 50,
+    marginBottom: 60
   },
   timeLoop: {
     width: '100%',
