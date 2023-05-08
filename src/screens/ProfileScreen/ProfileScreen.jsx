@@ -16,11 +16,6 @@ const ProfileScreen = ({route}) => {
   // const profile = [];
   const [profile, setProfile] = useState([]);
 
-
-
-
-  
-
   axios({
     method: "get",
     url: "http://127.0.0.1:8000/api/users/get_user_data/",

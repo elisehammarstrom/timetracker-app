@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import { useNavigation } from '@react-navigation/native';
 import CustomButton from '../../components/CustomButton';
 import { RadioButton } from 'react-native-paper';
@@ -9,14 +9,22 @@ import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
 const EvaluateCourseScreen = ({route}) => {
     const navigation = useNavigation();
     const {courses} = route.params;
+    const {token} = route.params;
+    const {courseIDs} = route.params;
 
-    const [checked, setChecked] = React.useState('');
+    const [checked, setChecked] = useState('');
 
     const onEvaluateCoursePressed = () => {
+        let checkedID = [];
+        for (let i=0; i<courses.length; i++) {
+            if (checked === courses[i]) {
+                checkedID.push(courseIDs[i])
+            }
+        }
         if (checked === '') {
             alert("Please choose a course to evaluate")
         } else {
-            navigation.navigate('EvaluateCourse', {course: checked, courses:courses});
+            navigation.navigate('EvaluateCourse', {course: checked, courses: courses, token: token, checkedID: checkedID});
         }
     };
     
@@ -52,6 +60,7 @@ const EvaluateCourseScreen = ({route}) => {
             <View>
                 <ButtonMenu
                     screen="courseStats"
+                    token={token}
                 />
             </View>
             

@@ -83,7 +83,7 @@ const CourseStatsScreen = ({route}) =>{
 
 
     const onReadCourseEvaluationsPressed = () => {
-        navigation.navigate('CourseEvaluations', {course: selected, courses: chosenCourses})
+        navigation.navigate('CourseEvaluations', {course: selected, courses: chosenCourses, token: token})
     }
 
     const onSelectListPressed = () => {

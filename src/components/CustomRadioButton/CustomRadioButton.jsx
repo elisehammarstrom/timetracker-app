@@ -43,6 +43,11 @@ const CustomRadioButton = ({question, firstOption, secondOption, thirdOption, fo
           status={ checked === 'fourth' ? 'checked' : 'unchecked' }
           onPress={() => setChecked('fourth')}
         />
+        <RadioButton
+          value="fifth"
+          status={ checked === 'fifth' ? 'checked' : 'unchecked' }
+          onPress={() => setChecked('fifth')}
+        />
 
       </View>
     </View>
