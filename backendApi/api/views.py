@@ -94,7 +94,7 @@ class LoginView(APIView):
         user = authenticate(email=email, password=password)
 
         if user is not None:
-            login(request, user)
+            #login(request, user)
             response = {
                 "message": "Login was successful", 
                 "token": user.auth_token.key,
@@ -115,6 +115,7 @@ class LoginView(APIView):
 
         return Response(data=content, status=status.HTTP_200_OK)
 
+"""
 class LogoutView(APIView):
     permission_classes = []
     #authentication_classes = (CsrfExemptSessionAuthentication,)
@@ -124,6 +125,7 @@ class LogoutView(APIView):
         logout(request)
         return Response(data=response, status=status.HTTP_200_OK)
         # Redirect to a success page.
+"""
 
 class StudentViewset(viewsets.ModelViewSet):
     queryset = Student.objects.all()
