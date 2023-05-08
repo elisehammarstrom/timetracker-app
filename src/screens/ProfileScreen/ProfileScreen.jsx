@@ -60,17 +60,17 @@ const ProfileScreen = ({route}) => {
     <View style={styles.topContainer}>
       <View style={styles.closeContainer}>
   
-      <TouchableHighlight onPress={onClosedPress} >
+      <TouchableHighlight onPress={onSignOutPressed} >
         <Image 
-              source={CloseIcon} 
+              source={SignOutIcon} 
               style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
               resizeMode="contain"
           />
       </TouchableHighlight>
 
-      <TouchableHighlight  onPress={onSignOutPressed} >
+      <TouchableHighlight  onPress={onClosedPress} >
         <Image 
-              source={SignOutIcon} 
+              source={CloseIcon} 
               style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
               resizeMode="contain"
           />

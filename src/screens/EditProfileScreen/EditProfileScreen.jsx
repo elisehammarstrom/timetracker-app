@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Dimensions} from 'react-native';
+import { View, Text, StyleSheet, Dimensions, TouchableHighlight, Image} from 'react-native';
 import CustomButton from '../../components/CustomButton';
 import CustomInput from '../../components/CustomInput';
 import { useForm } from 'react-hook-form';
 import { useNavigation } from '@react-navigation/native';
 import { SelectList } from 'react-native-dropdown-select-list';
+import CloseIcon from '../../../assets/close.png';
 
 
 
@@ -31,6 +32,10 @@ const EditProfileScreen = ({route}) => {
     console.log(info)
   };
 
+  const onClosedPress = () => {
+    navigation.navigate('Profile', {token: token})
+  }
+
   const navigation = useNavigation();
 
   const lang = ['English', 'Svenska']
@@ -43,27 +48,52 @@ const EditProfileScreen = ({route}) => {
 
   return (
      <View style={styles.container}>
-       <View style={styles.form}>
 
-          <Text style={styles.label}><B>Change password:</B>
-            <CustomInput 
+        <View style={styles.closeContainer}>
+            <TouchableHighlight onPress={onClosedPress} >
+              <Image 
+                source={CloseIcon} 
+                style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
+                resizeMode="contain"
+              />
+          </TouchableHighlight>
+        </View>
+
+       <View style={styles.form}>
+       
+
+      
+       <Text style={styles.topLabel}><B>Change password</B></Text>
+
+       
+       <Text style={styles.label}><B>Old password:</B></Text>
+          <CustomInput 
+              name="oldpassword"
+              control={control}
+              rules={{minLength: {value: 8, message: 'Password should be at least 8 characters long'}}}
+              secureTextEntry
+              placeholder='Old Password'
+              minLength='30'
+            /> 
+
+          <Text style={styles.label}><B>New password:</B></Text>
+          <CustomInput 
               name="password"
               control={control}
               rules={{minLength: {value: 8, message: 'Password should be at least 8 characters long'}}}
               secureTextEntry
+              placeholder='New Password'
             /> 
-          </Text>
-
-          <Text style={styles.label}><B>Repeat password:</B>
-            <CustomInput 
+          <Text style={styles.label}><B>Repeat new password:</B></Text>
+          <CustomInput 
               name="passwordrepeat"
               control={control}
               rules={{validate: value => value === pwd || 'Password do not match'}}
               secureTextEntry
+              placeholder='New password'
             /> 
-          </Text>
 
-          <Text style={styles.label}><B>Programme:</B> 
+          <Text style={styles.selectLabel}><B>Programme:</B> </Text>
             <SelectList
               dropdownTextStyles={styles.selectList}
               inputStyles={styles.selectList}
@@ -74,8 +104,8 @@ const EditProfileScreen = ({route}) => {
               search={false}
               placeholder='Choose programme'
             />
-          </Text>
-          <Text style={styles.label}><B>Language:</B> 
+          
+          <Text style={styles.selectLabel}><B>Language:</B></Text>  
             <SelectList
               dropdownTextStyles={styles.selectList}
               inputStyles={styles.selectList}
@@ -86,7 +116,8 @@ const EditProfileScreen = ({route}) => {
               search={false}
               placeholder='Choose language'
             />
-          </Text> 
+       
+    
   
           <CustomButton 
             text="Save changes" 
@@ -100,17 +131,31 @@ const EditProfileScreen = ({route}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
     backgroundColor: '#313131',
+
   },
     form: {
-      padding: 50,
+      paddingHorizontal: 50,
+      justifyContent: 'flex-start',
+      width: '100%',
+      paddingBottom: 30,
     },
     label: {
       marginTop: 20,
       color: 'white',
 
+    },
+    selectLabel: {
+      marginTop: 20,
+      color: 'white',
+      marginBottom: 10
+
+    },
+    topLabel: {
+      color: 'white',
+      fontSize: 20
     },
     info: {
       marginTop: 20,
@@ -148,6 +193,11 @@ const styles = StyleSheet.create({
   },
   boxStyles: {
       width: 0.75 * Dimensions.get('window').width,
+  },
+  closeContainer: {
+  
+    paddingRight: 20,
+    alignItems: 'flex-end',
   },
 
 });

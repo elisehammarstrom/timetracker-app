@@ -21,6 +21,7 @@ import json as simplejson
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth import login, logout
 
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -93,6 +94,7 @@ class LoginView(APIView):
         user = authenticate(email=email, password=password)
 
         if user is not None:
+            #login(request, user)
             response = {
                 "message": "Login was successful", 
                 "token": user.auth_token.key,
@@ -112,6 +114,18 @@ class LoginView(APIView):
         }
 
         return Response(data=content, status=status.HTTP_200_OK)
+
+"""
+class LogoutView(APIView):
+    permission_classes = []
+    #authentication_classes = (CsrfExemptSessionAuthentication,)
+
+    def post(self, request:Request):
+        response = {"message":"Logout successful"}
+        logout(request)
+        return Response(data=response, status=status.HTTP_200_OK)
+        # Redirect to a success page.
+"""
 
 class StudentViewset(viewsets.ModelViewSet):
     queryset = Student.objects.all()
@@ -613,7 +627,7 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
             for question in questions:
                 questionObj = Question.objects.create(text=question, courseEvaluation = record)
                 
-                answerObj = Answer.objects.create(text="", question=questionObj)
+                answerObj = Answer.objects.create(number=0, question=questionObj)
                 questionAnswerObj = QuestionAnswer.objects.create(question=questionObj, answer=answerObj, courseEvaluation = record)
                 questionAnswers.append({
                     "questionAnswer.id": questionAnswerObj.id,
@@ -624,7 +638,7 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                     },
                     "answer": {
                         "id": questionAnswerObj.answer.id,
-                        "answer": questionAnswerObj.answer.text,
+                        "answer": questionAnswerObj.answer.number,
                     },
                 }) 
 
@@ -645,19 +659,19 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
     @action(detail=False, methods=['POST'])
     def update_answer(self, request, **extra_fields):
         userInstance = User.objects.get(id=request.user.pk)
-        answerText = request.POST.get('answerText')
+        answerNumber = request.POST.get('answerNumber')
         answerID = request.POST.get('answerID')
 
         if answerID is None:
             response = {"message" : "You need to provide an answerID, e.g. 1. (answerID)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-        elif answerText is None:
-            response = {"message" : "You need to provide an answerText, e.g. '2' (answerText)"}
+        elif answerNumber is None:
+            response = {"message" : "You need to provide an answerNumber, e.g. 2 (answerNumber)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else:
             try:
                 answerObj = Answer.objects.get(id=answerID)
-                answerObj.text = answerText
+                answerObj.number = answerNumber
                 answerObj.save()
                 
                 response = {
@@ -668,7 +682,7 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                                 },
                                 "answerObject": {
                                     "id": answerObj.id,
-                                    "text" : answerObj.text
+                                    "text" : answerObj.number
                                 }
                             } 
                 return Response(data=response, status=status.HTTP_200_OK)
