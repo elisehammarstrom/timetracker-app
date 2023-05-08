@@ -10,6 +10,8 @@ import { TextInput } from 'react-native-paper';
 const CourseScreen = ({route}) => {
   const {originalCourses} = route.params;
   const {token} = route.params;
+  const [courseIDs, setCourseIDs] = useState('');
+  // const [courses, setCourses] = useState([]);
 
 
   const [testCourses, setTestCourses] = useState('');
@@ -107,8 +109,6 @@ const CourseScreen = ({route}) => {
           console.log("samma")
         } else {
           const formData = new FormData();
-          console.log(testCourses[i])
-          console.log("courseID= ", testCourses[i].id)
           formData.append('courseID', testCourses[i].id);
     
           axios({
@@ -132,7 +132,46 @@ const CourseScreen = ({route}) => {
       // }
     }
 
-    navigation.navigate('Home', {token: token});
+    axios.get('http://127.0.0.1:8000/api/users/get_courses/', {
+      headers: {
+        'Authorization': `token ` + token
+      }
+    })
+    .then((res) => {
+    
+      if (courseIDs.length === 0) {
+        setCourseIDs(res.data.courses)
+      }
+  
+      axios.get('http://127.0.0.1:8000/api/courses/', {
+      headers: {
+        'Authorization': `token ` + token
+      }
+      })
+      .then((res) => {
+        let newCourses = [];
+        for (let j=0; j<courseIDs.length; j++)
+  
+          for (let i=0; i<res.data.length; i++) {
+            if (`${res.data[i].id}` === `${courseIDs[j]}`) {
+              newCourses.push(`${res.data[i].courseTitle}`)
+            }
+        }
+        if (courses.length === 0) {
+          setCourses(newCourses)
+        }
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+    console.log("courses= ", courses)
+  
+    navigation.navigate('Home', {token: token, newCourseIDs: courses});
   };
     
 

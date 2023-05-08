@@ -8,14 +8,12 @@ import Timer from '../../components/Timer';
 import React, {useState} from 'react';
 import {Button, SafeAreaView, StyleSheet, Text, View, Image, TouchableHighlight, ScrollView} from 'react-native';
 import ButtonMenu from '../../components/ButtonMenu';
-/* import {CalendarOutlined, SettingOutlined} from '@ant-design/icons'; */
 import Logo from '../../../assets/icon.png';
 import CalendarIcon from '../../../assets/calendar.png';
 import SettingIcon from '../../../assets/settings.png';
 import axios from 'axios';
 
 
-// 8, 9, 10
 const HomeScreen: React.FC = ({route}) => {
 
   const {token} = route.params;
@@ -29,7 +27,7 @@ const HomeScreen: React.FC = ({route}) => {
   })
   .then((res) => {
   
-    if (courseIDs.length === 0) {
+    if (`${courseIDs}` != `${res.data.courses}`) {
       setCourseIDs(res.data.courses)
     }
 
@@ -47,7 +45,7 @@ const HomeScreen: React.FC = ({route}) => {
             newCourses.push(`${res.data[i].courseTitle}`)
           }
       }
-      if (courses.length === 0) {
+      if (`${courses}` != `${newCourses}`) {
         setCourses(newCourses)
       }
     })
@@ -59,13 +57,11 @@ const HomeScreen: React.FC = ({route}) => {
   .catch((error) => {
     console.error(error)
   })
+  
 
-
-  // const options = ['Mekanik', 'Miljöteknik', 'Envariabelanalys'];
   const navigation = useNavigation();
 
   const [date, setDate] = useState(new Date());
-  // console.log(date)
 
   const colors = ['ONE','TWO','THREE','FOUR','FIVE','SIX']
 
@@ -82,9 +78,9 @@ const HomeScreen: React.FC = ({route}) => {
     navigation.navigate('Profile', {token: token});
 };
 
-const onCalendarPressed = () => {
-  navigation.navigate('CalendarOpScreen', {});
-};
+  const onCalendarPressed = () => {
+    navigation.navigate('CalendarOpScreen', {});
+  };
 
 
 

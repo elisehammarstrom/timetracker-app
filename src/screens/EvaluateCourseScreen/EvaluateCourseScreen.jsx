@@ -13,7 +13,7 @@ const EvaluationScreen = ({route}) => {
     const {checkedID} = route.params;
     const navigation = useNavigation();
     const [questions, setQuestions] = useState('');
-    
+
     // Create evaluation method
     const formData = new FormData();
     formData.append('courseID', checkedID[0])
@@ -28,18 +28,17 @@ const EvaluationScreen = ({route}) => {
       })
         .then(function (response) {
           //handle success
-          console.log(response.data.array[0].question.question);
-          if (questions.length <1 ) {
-            setQuestions(response.data)
-            console.log("questions= ", questions)
-          }
+          console.log(response.data);
+            // let getQuestions = response.data;
+            // if (questions.length <1 ) {
+            //     setQuestions(getQuestions)
+            // }
+            // console.log("questions= ", questions)
         })
         .catch(function (response) {
           //handle error
           console.log(response);
         });
-
-        // console.log()
 
     const onSubmitPressed = () => {
         navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token})

@@ -18,7 +18,7 @@ const ButtonMenu = ({screen, token}) => {
       })
       .then((res) => {
       
-        if (courseIDs.length === 0) {
+        if (`${courseIDs}` != `${res.data.courses}`) {
           setCourseIDs(res.data.courses)
         }
     
@@ -36,7 +36,7 @@ const ButtonMenu = ({screen, token}) => {
                 newCourses.push(`${res.data[i].courseTitle}`)
               }
           }
-          if (courses.length === 0) {
+          if (`${courses}` != `${newCourses}`) {
             setCourses(newCourses)
           }
 
