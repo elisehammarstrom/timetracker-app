@@ -35,6 +35,8 @@ const CourseScreen = ({route}) => {
 
   // }}  
 
+
+// Get all courses from database
   axios.get('http://127.0.0.1:8000/api/courses/', {
     headers: {
       'Authorization': `token ` + token
@@ -71,6 +73,7 @@ const CourseScreen = ({route}) => {
       const formData = new FormData();
       formData.append('courseCode', courseCodes[i]);
 
+      // Post the chosen courses to the database
       axios({
         method: "post",
         url: "http://127.0.0.1:8000/api/users/add_course/",
@@ -90,21 +93,16 @@ const CourseScreen = ({route}) => {
         });
 
     }
-        // let newTestCourses = [];
     let sameCourses = [];
     for (let i=0; i<testCourses.length; i++) {
       for (let j=0; j<courseCodes.length; j++) {
         if (testCourses[i].courseCode === courseCodes[j]) {
-          // let newTestCourses = testCourses.slice(i)
-          // console.log("newTestCourses= ", newTestCourses)
           sameCourses.push(courseCodes[j])
-
-          console.log("plats= ", i)
         }
       }
     }
+    // Remove courses from database of chosen courses if not picked
     for (let i=0; i<testCourses.length; i++) {
-      // for (let j=0; j<courseCodes.length; j++) {
         if (courseCodes.includes(testCourses[i].courseCode)) {
           console.log("samma")
         } else {
@@ -133,10 +131,6 @@ const CourseScreen = ({route}) => {
         }
       // }
     }
-
-
-    // console.log(sameCourses)
-
 
     navigation.navigate('Home', {token: token});
   };
