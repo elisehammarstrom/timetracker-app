@@ -39,6 +39,7 @@ const ButtonMenu = ({screen, token}) => {
           if (courses.length === 0) {
             setCourses(newCourses)
           }
+
         })
         .catch((error) => {
           console.error(error)
@@ -48,12 +49,9 @@ const ButtonMenu = ({screen, token}) => {
       .catch((error) => {
         // console.error(error)
       })
-
-
     
     const navigation = useNavigation();
 
-    // const courses = ["Mekanik", "Reglerteknik", "Envariabelanalys"];
     // Navigation when you press each button
     const onYourReportsPress = data => {
       console.log('token= ',token)
@@ -65,7 +63,7 @@ const ButtonMenu = ({screen, token}) => {
     };
   
     const onCourseStatsPress = type => {
-      navigation.navigate('Courses', {courses: courses, token: token})
+      navigation.navigate('Courses', {courses: courses, token: token, courseIDs: courseIDs})
     };
 
     return(
