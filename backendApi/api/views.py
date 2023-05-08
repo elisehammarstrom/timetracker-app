@@ -10,7 +10,6 @@ from rest_framework.decorators import action
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.request import Request
-from django.contrib.auth import authenticate
 from django.utils.dateparse import parse_datetime
 from django.db import IntegrityError
 from django.http import JsonResponse
@@ -21,6 +20,7 @@ import json as simplejson
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth import authenticate, login, logout
 
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -81,6 +81,7 @@ class ProgrammeViewset(viewsets.ModelViewSet):
             response = {"message": "You need to provide a the system ID for the program (pID)"}
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
         
+
 class LoginView(APIView):
     permission_classes = []
 
@@ -88,15 +89,17 @@ class LoginView(APIView):
         email = request.data.get('email')
         password = request.data.get('password')
         user = request.user
-        user.password = password
-        user.is_active = True
-        user = authenticate(email=email, password=password)
 
         if user is not None:
+            user.password = password
+            user.is_active = True
+            user = authenticate(request, email=email, password=password)
+            login(request, user)
             response = {
                 "message": "Login was successful", 
                 "token": user.auth_token.key,
-                "userSystemID" : user.pk
+                "userSystemID" : user.pk,
+                "Logged in": request.user.is_authenticated
             } 
             return Response(data=response, status=status.HTTP_200_OK)
         else: 
@@ -112,6 +115,27 @@ class LoginView(APIView):
         }
 
         return Response(data=content, status=status.HTTP_200_OK)
+    
+class LogoutView(APIView):
+    permission_classes = []
+
+    def post(self, request:Request):
+        try:
+            request.user.is_active = False
+            logout(request)
+
+            
+            response = {
+                "message": "Logout was successful", 
+                "Logged in": request.user.is_authenticated
+            } 
+            return Response(data=response, status=status.HTTP_200_OK)
+        except: 
+            response = {
+                "message": "Login was unsuccessful. User does not exist"
+            } 
+            return Response(data=response, status=status.HTTP_200_OK)
+
 
 class StudentViewset(viewsets.ModelViewSet):
     queryset = Student.objects.all()

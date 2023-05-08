@@ -1,9 +1,10 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
 import React, {useState} from 'react';
 import { useNavigation } from '@react-navigation/native';
 import CustomButton from '../../components/CustomButton';
 import { RadioButton } from 'react-native-paper';
 import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
+import BackArrow from '../../../assets/arrowBack.png';
 
 
 const EvaluateCourseScreen = ({route}) => {
@@ -13,6 +14,10 @@ const EvaluateCourseScreen = ({route}) => {
     const {courseIDs} = route.params;
 
     const [checked, setChecked] = useState('');
+
+    const onArrowPressed = () => {
+        navigation.navigate('Courses', {courses: courses, token: token, courseIDs: courseIDs})
+      }
 
     const onEvaluateCoursePressed = () => {
         let checkedID = [];
@@ -30,6 +35,14 @@ const EvaluateCourseScreen = ({route}) => {
     
     return (
         <View style={styles.container}>
+
+            <TouchableOpacity activeOpacity={0.5} style={styles.backArrow} onPress={onArrowPressed}>
+                <Image 
+                    source={BackArrow} 
+                    style={[{height: 100 * 0.3}, {width: 100 * 0.3}]} 
+                    resizeMode="contain"
+                />
+            </TouchableOpacity >
 
             <View style={styles.options}>
                 <Text style={styles.title}>Select course to Evaluate</Text>
@@ -97,7 +110,11 @@ const styles = StyleSheet.create({
     },
     evaluateButton: {
         padding: 50
-    }
+    },
+    backArrow: {
+        width: '10%',
+        padding: 10
+    },
 })
 
 export default EvaluateCourseScreen;

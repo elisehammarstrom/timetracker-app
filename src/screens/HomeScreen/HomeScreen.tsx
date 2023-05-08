@@ -6,7 +6,7 @@ import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import Timer from '../../components/Timer';
 import React, {useState} from 'react';
-import {Button, SafeAreaView, StyleSheet, Text, View, Image, TouchableHighlight, ScrollView} from 'react-native';
+import {Button, SafeAreaView, StyleSheet, Text, View, Image, TouchableOpacity, ScrollView} from 'react-native';
 import ButtonMenu from '../../components/ButtonMenu';
 import Logo from '../../../assets/icon.png';
 import CalendarIcon from '../../../assets/calendar.png';
@@ -87,27 +87,28 @@ const HomeScreen: React.FC = ({route}) => {
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.layout} >
-        <TouchableHighlight style={{padding: 10}} onPress={onCalendarPressed}>
+        <TouchableOpacity activeOpacity={0.5} style={{padding: 10}} onPress={onCalendarPressed}>
           <Image 
             source={CalendarIcon} 
             style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
             resizeMode="contain"
           />
   
-        </TouchableHighlight>
+        </TouchableOpacity>
+        
           <Image 
             source={Logo} 
             style={[styles.logo, {height: 200 * 0.3}]} 
             resizeMode="contain"
           />
         
-          <TouchableHighlight style={{padding: 10}}onPress={onSettingsPressed}>
+          <TouchableOpacity activeOpacity={0.5} style={{padding: 10}}onPress={onSettingsPressed}>
             <Image 
               source={SettingIcon} 
               style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
               resizeMode="contain"
             />
-          </TouchableHighlight>
+          </TouchableOpacity>
         
       </View>
       

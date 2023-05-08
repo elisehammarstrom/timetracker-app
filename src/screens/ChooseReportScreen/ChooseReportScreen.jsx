@@ -6,19 +6,19 @@ import ButtonMenu from "../../components/ButtonMenu/ButtonMenu";
 
 
 
-const CourseStatsScreen = ({route}) => {
+const ChooseReportScreen = ({route}) => {
     const {courses} = route.params;
     const {token} = route.params;
     const {courseIDs} = route.params;
     const navigation = useNavigation();
     console.log("courseIDs= ", courseIDs)
 
-    const onEvaluateCoursesPressed = () => {
-        navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token, courseIDs: courseIDs})
+    const onYourReportsPressed = () => {
+        navigation.navigate("YourReports", {courses: courses, token: token, courseIDs: courseIDs})
     }
 
-    const onCourseEvaluationsPressed = () => {
-        navigation.navigate("CourseEvaluations", {courses: courses, token: token, courseIDs: courseIDs})
+    const onSeeCourseStatisticsPressed = () => {
+        navigation.navigate("CourseStats", {chosenCourses: courses, token: token, courseIDs: courseIDs})
     }
 
     return (
@@ -28,13 +28,15 @@ const CourseStatsScreen = ({route}) => {
 
 
                 <CustomButton
-                    text="See course evaluations"
-                    onPress={onCourseEvaluationsPressed}
+                    text="See your reports"
+                    onPress={onYourReportsPressed}
                 />
-                <CustomButton
-                    text="Evaluate courses"
-                    onPress={onEvaluateCoursesPressed}
-                />
+
+                 <CustomButton
+                    text="See other students' reports"
+                    onPress={onSeeCourseStatisticsPressed}
+                /> 
+
                
 
             </View>
@@ -73,4 +75,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default CourseStatsScreen
+export default ChooseReportScreen
