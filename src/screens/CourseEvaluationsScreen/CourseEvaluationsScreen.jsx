@@ -1,18 +1,36 @@
 import React, {useState} from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity} from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list';
 import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
+import BackArrow from '../../../assets/arrowBack.png';
+import { useNavigation } from '@react-navigation/native';
 
 
 const CourseEvaluationsScreen = ({route}) => {
     const {course} = route.params;
     const {courses} = route.params;
     const {token} = route.params;
+    const {courseIDs} = route.params;
+
+    const navigation = useNavigation();
 
     const [selected, setSelected] = useState("");
 
+    const onArrowPressed = () => {
+        navigation.navigate('Courses', {courses: courses, token: token, courseIDs: courseIDs})
+      }
+
     return (
         <View style={styles.container}>
+        
+            <TouchableOpacity activeOpacity={0.5} style={styles.backArrow} onPress={onArrowPressed}>
+                <Image 
+                    source={BackArrow} 
+                    style={[{height: 100 * 0.3}, {width: 100 * 0.3}]} 
+                    resizeMode="contain"
+                />
+            </TouchableOpacity >
+    
             <View style={styles.selectListContainer}>
 
                 <SelectList
@@ -106,7 +124,12 @@ const styles = StyleSheet.create({
     breadtext: {
         fontSize: 20,
         color: "#EFEFEF"
+    },
+    backArrow: {
+        width: '10%',
+        padding: 10
     }
+ 
 });
 
 

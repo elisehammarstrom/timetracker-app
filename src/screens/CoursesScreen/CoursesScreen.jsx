@@ -21,10 +21,6 @@ const CourseStatsScreen = ({route}) => {
         navigation.navigate("CourseEvaluations", {courses: courses, token: token, courseIDs: courseIDs})
     }
 
-    const onSeeCourseStatisticsPressed = () => {
-        navigation.navigate("CourseStats", {chosenCourses: courses, token: token})
-    }
-
     return (
         <View style={styles.container}>
             <View style={styles.buttonContainer}>
@@ -39,12 +35,6 @@ const CourseStatsScreen = ({route}) => {
                     text="Evaluate courses"
                     onPress={onEvaluateCoursesPressed}
                 />
-
-               {/*  <CustomButton
-                    text="See course statistics"
-                    onPress={onSeeCourseStatisticsPressed}
-                /> */}
-
                
 
             </View>

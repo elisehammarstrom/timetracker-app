@@ -18,7 +18,7 @@ const ChooseReportScreen = ({route}) => {
     }
 
     const onSeeCourseStatisticsPressed = () => {
-        navigation.navigate("CourseStats", {chosenCourses: courses, token: token})
+        navigation.navigate("CourseStats", {chosenCourses: courses, token: token, courseIDs: courseIDs})
     }
 
     return (

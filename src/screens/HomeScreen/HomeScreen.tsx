@@ -99,6 +99,7 @@ const onCalendarPressed = () => {
           />
   
         </TouchableOpacity>
+        
           <Image 
             source={Logo} 
             style={[styles.logo, {height: 200 * 0.3}]} 

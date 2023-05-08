@@ -1,16 +1,18 @@
 import { useState } from 'react';
 import React from 'react';
-import {StyleSheet, View, Text, Dimensions } from 'react-native';
+import {StyleSheet, View, Text, Dimensions, TouchableOpacity, Image } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
 import { LineChart } from 'react-native-chart-kit';
+import BackArrow from '../../../assets/arrowBack.png';
 
 const CourseStatsScreen = ({route}) =>{
 
     const {chosenCourses} = route.params;
     const {token} = route.params;
+    const {courseIDs} = route.params;
 
     const navigation = useNavigation();
     const [selected, setSelected] = useState("");
@@ -86,6 +88,10 @@ const CourseStatsScreen = ({route}) =>{
         navigation.navigate('CourseEvaluations', {course: selected, courses: chosenCourses, token: token})
     }
 
+    const onArrowPressed = () => {
+        navigation.navigate('ChooseReport', {token: token, courseIDs: courseIDs})
+      }
+
     const onSelectListPressed = () => {
         
         for (let i=0; i<length; i++) {
@@ -119,6 +125,13 @@ const CourseStatsScreen = ({route}) =>{
 
     return (
         <View style={styles.container}>
+            <TouchableOpacity activeOpacity={0.5} style={styles.backArrow} onPress={onArrowPressed}>
+                <Image 
+                    source={BackArrow} 
+                    style={[{height: 100 * 0.3}, {width: 100 * 0.3}]} 
+                    resizeMode="contain"
+                />
+            </TouchableOpacity >
 
             <View style={styles.selectListContainer}>
 
@@ -252,6 +265,10 @@ const styles = StyleSheet.create({
     evaluationButton: {
         width: 0.6 * Dimensions.get('window').width,
         justifyContent: 'center',
+    },
+    backArrow: {
+        width: '10%',
+        padding: 10
     },
 })
 
