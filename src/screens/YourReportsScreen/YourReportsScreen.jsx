@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image} from 'react-native';
 import { StackedBarChart } from "react-native-chart-kit";
 import CustomButton from '../../components/CustomButton/CustomButton';
 import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+import Ett from '../../../assets/ett.png'
+import Två from '../../../assets/2.png'
+import Tre from '../../../assets/3.png'
+import Fyra from '../../../assets/4.png'
+import Fem from '../../../assets/5.png'
 
 
 const YourReportsScreen = ({route}) => {
@@ -78,6 +83,7 @@ const YourReportsScreen = ({route}) => {
         fetchedCourses.push(res.data.results[i].Course)
       }
       if (`${fetchedTimeStudied}` != `${timeStudied}` ){
+        console.log('timeStudied:', timeStudied)
         setCourses(fetchedCourses);
         setTimeStudied(fetchedTimeStudied);
       }  
@@ -211,15 +217,24 @@ const YourReportsScreen = ({route}) => {
 
             <View style={styles.dataContainer}>
               <View style={styles.data}>
-                <Text style={styles.dataText}>Course</Text>
+                <Text style={styles.dataTextCourse}>Course</Text>
+                <Text style={styles.dataTextStress}>Stress</Text>
                 <Text style={styles.dataText}>Time</Text>
               </View>
               
               {courses.map((course,i) => (
                 <TouchableOpacity style={[styles.colors, {backgroundColor: colorsConst[i]}]} key={course} onPress={() => onCoursePressed(course)}>
-                  
-                  <View>
+
+                  <View style={{flex: 4}}>
                     <Text style={{fontWeight: 'bold'}}>{course}</Text>
+                  </View>
+
+                  <View style={{flex: 1.5}}>
+                   <Image 
+                    source={Tre} 
+                    style={[ {height: 100 * 0.3},{width: 100*0.3}, {marginBottom:10}]} 
+                    resizeMode="contain"
+                    />
                   </View>
 
                   <View>
@@ -228,6 +243,8 @@ const YourReportsScreen = ({route}) => {
 
                 </TouchableOpacity> 
               ))}
+
+
                
             </View>
 
@@ -279,6 +296,18 @@ const styles=StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#EFEFEF',
+  },
+  dataTextStress: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#EFEFEF',
+    flex: 1.5
+  },
+  dataTextCourse: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#EFEFEF',
+    flex: 4
   },
   data: {
     flexDirection: 'row',
