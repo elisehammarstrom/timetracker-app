@@ -67,7 +67,6 @@ class Question(models.Model):
          return self.answer_set.all()
 
 class Answer(models.Model):
-    #text = models.CharField(max_length=200)
     number = models.IntegerField(blank=True, null=True)
     question = models.ForeignKey(Question, on_delete=models.CASCADE, db_constraint=False, blank=True, null=True,)
 
