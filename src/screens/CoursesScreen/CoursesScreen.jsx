@@ -9,10 +9,12 @@ import ButtonMenu from "../../components/ButtonMenu/ButtonMenu";
 const CourseStatsScreen = ({route}) => {
     const {courses} = route.params;
     const {token} = route.params;
+    const {courseIDs} = route.params;
     const navigation = useNavigation();
+    console.log("courseIDs= ", courseIDs)
 
     const onEvaluateCoursesPressed = () => {
-        navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token})
+        navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token, courseIDs: courseIDs})
     }
 
     const onSeeCourseStatisticsPressed = () => {

@@ -85,7 +85,9 @@ const UntrackedScreen = ({route}) => {
                         />
                     </TouchableHighlight>
 
+                    <View style={{paddingHorizontal: 10}}>
                     <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
+                    </View>
                     <View>
                         <Image 
                             source={Invisible} 
@@ -105,9 +107,9 @@ const UntrackedScreen = ({route}) => {
                             resizeMode="contain"
                         />
                     </View>
-
+                    <View style={{paddingHorizontal: 10}}>
                     <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
-
+                    </View>
                     <TouchableHighlight onPress={() => {onCurrentDatePressed(true); setShowingArrow(true);}}> 
                         <Image 
                             source={RightArrow} 
@@ -131,14 +133,11 @@ const UntrackedScreen = ({route}) => {
                 placeholder='Choose course'
             />
         </View>
+
         <View style={styles.timeLayout}>
             <View style={styles.selectListTimeContainer}>
                 <Text style={styles.addTime}>Add time:</Text>
-                <View>
-               
-            
-                </View>
-    
+        
                 <SelectList
                     dropdownTextStyles={styles.selectList}
                     inputStyles={styles.selectList}
@@ -148,7 +147,7 @@ const UntrackedScreen = ({route}) => {
                     save="value"
                     search={false}
                     placeholder='00'
-                    dropdownStyles={{width: 0.18 * Dimensions.get('window').width, border: 'none'}}
+                    dropdownStyles={{width: 0.18 * Dimensions.get('window').width, borderColor: '#313131'}}
                     
                 />
                 <Text style={{color: 'white', fontSize: 30}}>:</Text>
@@ -162,7 +161,7 @@ const UntrackedScreen = ({route}) => {
                     save="value"
                     search={false}
                     placeholder='00'
-                    dropdownStyles={{width: 0.18 * Dimensions.get('window').width, border: 'none'}}
+                    dropdownStyles={{width: 0.18 * Dimensions.get('window').width, borderColor: '#313131'}}
                 />
             </View>
         </View>
@@ -196,16 +195,16 @@ const styles = StyleSheet.create({
     selectListContainer: {
         justifyContent: 'center',
         marginTop: '3%',
-        flexDirection: 'row',       
+        flexDirection: 'row',    
     },
     selectListTimeContainer: {
         justifyContent: 'center',
-        marginTop: '3%',
         flexDirection: 'row',
         borderRadius: 20,
-        border: 'solid',
-        borderColor: 'red',
-        width: '60%',
+        borderColor: 'white',
+
+        borderWidth: 0.5
+
     },
     selectList: {
         fontWeight: 'bold',
@@ -216,7 +215,7 @@ const styles = StyleSheet.create({
     },
     boxTimeStyles: {
         width: 0.18 * Dimensions.get('window').width,
-        borderStyle: 'none'
+        borderColor: '#313131'
     },
     header: {
         flexDirection: 'row',
@@ -253,27 +252,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center'
-    },
-    rightArrow: {
-        color: 'white', 
-        height: 20, 
-        width: 20,
-        marginTop: 20,
-        padding: 20,
-    },
-    leftArrow: {
-        color: 'white', 
-        height: 20, 
-        width: 20,
-        marginTop: 20,
-        padding: 20,
-    },
-    invisibleArrow: {
-        color: '#313131', 
-        height: 20, 
-        width: 20,
-        marginTop: 20,
-        padding: 20,
     },
     plusIcon: {
         color: 'white',

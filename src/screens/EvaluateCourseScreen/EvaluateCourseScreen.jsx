@@ -1,39 +1,61 @@
-import {StyleSheet, View, ScrollView} from 'react-native';
-import React from 'react';
+import {StyleSheet, View, ScrollView, Text} from 'react-native';
+import React, { useState } from 'react';
 import Star from '../../components/Star/Star';
 import CustomRadioButton from '../../components/CustomRadioButton/CustomRadioButton';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 
 const EvaluationScreen = ({route}) => {
     const {course} = route.params;
     const {courses} = route.params;
+    const {token} = route.params;
+    const {checkedID} = route.params;
     const navigation = useNavigation();
+    const [questions, setQuestions] = useState('');
+    
+    // Create evaluation method
+    const formData = new FormData();
+    formData.append('courseID', checkedID[0])
+    axios({
+        method: "post",
+        url: "http://127.0.0.1:8000/api/evaluate/create_evaluation/",
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization':`token ` + token
+        }
+      })
+        .then(function (response) {
+          //handle success
+          console.log(response.data.array[0].question.question);
+          if (questions.length <1 ) {
+            setQuestions(response.data)
+            console.log("questions= ", questions)
+          }
+        })
+        .catch(function (response) {
+          //handle error
+          console.log(response);
+        });
+
+        // console.log()
 
     const onSubmitPressed = () => {
-        navigation.navigate("ChooseEvaluateCourse", {courses: courses})
+        navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token})
     }
 
     return (
         
         <View style={styles.container}>
+            <Text style={styles.title}> Evaluating {course} </Text>
+
             <ScrollView>
+
                 <Star
                     question="Difficulty level"
                     leftText="Easy"
                     rightText="Hard"
-                />
-
-                <Star 
-                    question="How rewarding has this course been?"
-                    leftText="Not at all"
-                    rightText="Very"
-                />
-
-                <Star  
-                    question="Has this course had a reasonable workload?"
-                    leftText="Not at all"
-                    rightText="Fully agree"
                 />
 
                 <CustomRadioButton
@@ -42,30 +64,6 @@ const EvaluationScreen = ({route}) => {
                     secondOption="A few"
                     thirdOption="Most"
                     fourthOption="All"
-                />
-
-                <CustomRadioButton
-                    question="Did you find the letures worthwhile?"
-                    firstOption="Don't know"
-                    secondOption="No"
-                    thirdOption="Somewhat"
-                    fourthOption="Very"
-                />
-
-                <CustomRadioButton
-                    question="Have you done any assignments?"
-                    firstOption="There was none"
-                    secondOption="No"
-                    thirdOption="Some"
-                    fourthOption="Most"
-                />
-
-                <CustomRadioButton
-                    question="Did you find the assingments worthwhile?"
-                    firstOption="Don't know"
-                    secondOption="No"
-                    thirdOption="Somewhat"
-                    fourthOption="Very"
                 />
 
                 <CustomButton

@@ -7,12 +7,12 @@ import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
 const CourseEvaluationsScreen = ({route}) => {
     const {course} = route.params;
     const {courses} = route.params;
+    const {token} = route.params;
 
     const [selected, setSelected] = useState("");
 
     return (
         <View style={styles.container}>
-
             <View style={styles.selectListContainer}>
 
                 <SelectList
@@ -42,6 +42,7 @@ const CourseEvaluationsScreen = ({route}) => {
             <View>
                 <ButtonMenu
                     screen="courseStats"
+                    token={token}
                 />
             </View>
         </View>
