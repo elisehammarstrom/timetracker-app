@@ -21,7 +21,6 @@ import json as simplejson
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth import login, logout
 
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -94,7 +93,6 @@ class LoginView(APIView):
         user = authenticate(email=email, password=password)
 
         if user is not None:
-            #login(request, user)
             response = {
                 "message": "Login was successful", 
                 "token": user.auth_token.key,
@@ -114,18 +112,6 @@ class LoginView(APIView):
         }
 
         return Response(data=content, status=status.HTTP_200_OK)
-
-"""
-class LogoutView(APIView):
-    permission_classes = []
-    #authentication_classes = (CsrfExemptSessionAuthentication,)
-
-    def post(self, request:Request):
-        response = {"message":"Logout successful"}
-        logout(request)
-        return Response(data=response, status=status.HTTP_200_OK)
-        # Redirect to a success page.
-"""
 
 class StudentViewset(viewsets.ModelViewSet):
     queryset = Student.objects.all()
