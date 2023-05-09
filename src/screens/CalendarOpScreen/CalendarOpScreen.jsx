@@ -2,15 +2,20 @@ import { StyleSheet, Text, View ,TouchableOpacity, Image} from 'react-native';
 import React , {useState} from 'react';
 import { useNavigation } from '@react-navigation/native';
 import CloseIcon from '../../../assets/close.png'
+import CalendarBlock from '../../components/CalendarBlock';
 
 
 
 
-const CalendarOpScreen = () => {
+
+const CalendarOpScreen = ({route}) => {
+
+    const {token} = route.params;
+    const {courses} = route.params;
 
     const navigation = useNavigation();
 
-    const courses = ["Mekanik", "Miljöteknik", "Envariabelanalys"];
+ /*    const courses = ["Mekanik", "Miljöteknik", "Envariabelanalys"]; */
     
     const onClosedPress = () => {
         navigation.navigate('Home', {options: courses})
@@ -28,10 +33,19 @@ const CalendarOpScreen = () => {
       }
 
       var showMonth = getMonthName(monthNumber)
+
+      const colors = ['ONE','TWO','THREE','FOUR','FIVE','SIX']
+
+      //get total study time per course from database
+      const studyTime =[4, 5, 2]
+
+
+
+
  
   return (
     <View style={styles.container}> 
-    <View style={styles.topContainer}>
+      <View style={styles.topContainer}>
          <TouchableOpacity activeOpacity={0.5} style={styles.close} onPress={onClosedPress} >
             <Image 
               source={CloseIcon} 
@@ -42,10 +56,19 @@ const CalendarOpScreen = () => {
 
 
           <Text style = {styles.text}>{todaysDate} {showMonth}</Text>
-          </View>
-
-
         </View>
+
+          {/* Looping the courses to create a timer for each course */}
+      {courses.map((option, i) => (
+      <View key={option}>
+        <CalendarBlock
+          color={colors[i]}
+          courseName={option}
+          studyTime={studyTime[i]}
+          />
+      </View>
+      ))}
+</View>
     
   );
 };
@@ -73,6 +96,9 @@ const styles = StyleSheet.create({
       },
       close: {
         flex: 3
+      },
+      box: {
+        backgroundColor: 'pink'
       }
    
 })
