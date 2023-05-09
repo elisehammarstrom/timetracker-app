@@ -1,67 +1,74 @@
-import { StyleSheet, Text, View , SafeAreaView, FlatList, TouchableHighlight, Image} from 'react-native';
+import { StyleSheet, Text, View ,TouchableOpacity, Image} from 'react-native';
 import React , {useState} from 'react';
-import WeekCalendar from '../../components/WeekCalendar';
-import Line from '../../components/Line';
-import LineV from '../../components/LineV';
 import { useNavigation } from '@react-navigation/native';
 import CloseIcon from '../../../assets/close.png'
+import CalendarBlock from '../../components/CalendarBlock';
 
 
 
 
-const CalendarOpScreen = () => {
-    const [date, setDate] = useState(new Date());
+
+const CalendarOpScreen = ({route}) => {
+
+    const {token} = route.params;
+    const {courses} = route.params;
 
     const navigation = useNavigation();
 
-    const courses = ["Mekanik", "Miljöteknik", "Envariabelanalys"];
+ /*    const courses = ["Mekanik", "Miljöteknik", "Envariabelanalys"]; */
     
     const onClosedPress = () => {
         navigation.navigate('Home', {options: courses})
       }
+
+      var todaysDate = new Date().getDate();
+      var monthNumber = new Date().getMonth() + 1;
+
+
+      function getMonthName(monthNumber) {
+        const date = new Date();
+        date.setMonth(monthNumber - 1);
+
+        return date.toLocaleString('en-US', { month: 'long' });
+      }
+
+      var showMonth = getMonthName(monthNumber)
+
+      const colors = ['ONE','TWO','THREE','FOUR','FIVE','SIX']
+
+      //get total study time per course from database
+      const studyTime =[4, 5, 2]
+
+
+
+
  
   return (
     <View style={styles.container}> 
-
-         <TouchableHighlight style={styles.closeContainer} onPress={onClosedPress} >
+      <View style={styles.topContainer}>
+         <TouchableOpacity activeOpacity={0.5} style={styles.close} onPress={onClosedPress} >
             <Image 
               source={CloseIcon} 
               style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
               resizeMode="contain"
             />
-        </TouchableHighlight>
+        </TouchableOpacity>
 
-    
-      <View style={styles.week}> 
- 
-       <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
-        <LineV> </LineV>
-      </View>
 
-{/*       OBS!!!!! Flatlisten funkar inte med iOS */}
-
-      <FlatList
-        data={[
-          {key: '07'},
-          {key: '08'},
-          {key: '09'},
-          {key: '10'},
-          {key: '11'},
-          {key: '12'},
-          {key: '13'},
-          {key: '14'},
-          {key: '15'},
-          {key: '16'},
-          {key: '17'},
-          {key: '18'},
-          {key: '19'},
-          {key: '20'},
-          {key: '21'},
-          {key: '22'},
-        ]}
-        renderItem={({item}) =>  <View>  <Line ></Line> <Text style={styles.item}>{item.key}</Text> </View>}
-      />
+          <Text style = {styles.text}>{todaysDate} {showMonth}</Text>
         </View>
+
+          {/* Looping the courses to create a timer for each course */}
+      {courses.map((option, i) => (
+      <View key={option}>
+        <CalendarBlock
+          color={colors[i]}
+          courseName={option}
+          studyTime={studyTime[i]}
+          />
+      </View>
+      ))}
+</View>
     
   );
 };
@@ -77,30 +84,21 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         
     },
-    item: {
-        padding: 10,
-        fontSize: 18,
-        height: 44,
-        color:'white',
+      text: {
+        color: 'white',
+        fontSize: 30,
+        flex: 5
       },
-      week:{
-        width:'95%',
-        paddingLeft:40,
-      },
-      verticleLine: {
-        height:'100%',
-        width: 1.5,
-        backgroundColor: '#909090',
+      topContainer: {
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        padding: 10
       },
       close: {
-        color: 'white',
-        fontSize: 20,
-        padding: 10,
-        alignItems: 'flex-start'
+        flex: 3
       },
-      closeContainer: {
-        alignItems: 'flex-start',
-        padding: 10,
-      },
+      box: {
+        backgroundColor: 'pink'
+      }
    
 })

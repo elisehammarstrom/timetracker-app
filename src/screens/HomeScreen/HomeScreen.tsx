@@ -79,7 +79,7 @@ const HomeScreen: React.FC = ({route}) => {
 };
 
   const onCalendarPressed = () => {
-    navigation.navigate('CalendarOpScreen', {});
+    navigation.navigate('CalendarOpScreen', {courses: courses, token: token});
   };
 
 
