@@ -110,6 +110,7 @@ const UntrackedScreen = ({route}) => {
                     <View style={{paddingHorizontal: 10}}>
                     <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
                     </View>
+                    
                     <TouchableHighlight onPress={() => {onCurrentDatePressed(true); setShowingArrow(true);}}> 
                         <Image 
                             source={RightArrow} 
