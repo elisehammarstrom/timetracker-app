@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+import crispy_forms
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,6 +42,10 @@ USE_TZ=False
 # Application definition
 
 INSTALLED_APPS = [
+    #third party to run before
+    'accounts',
+
+    #default apps
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -53,7 +58,15 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     #'import_export',
     "api",
+    
+    'crispy_forms',
+    'crispy_bootstrap4'
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+#LOGIN_REDIRECT_URL = 'http://127.0.0.1:8000/accounts/registration/profile.html'
+LOGIN_REDIRECT_URL = '/'
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -153,3 +166,5 @@ MEDIA_URL = "/uploads/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+

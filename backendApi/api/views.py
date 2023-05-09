@@ -19,7 +19,6 @@ from django.shortcuts import render
 import pandas as pd
 import os
 from pathlib import Path
-
 from django.db.models import Avg
 import time
 from datetime import date, datetime, timedelta
@@ -29,6 +28,9 @@ from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
+
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import login_required
 
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -168,10 +170,10 @@ class PasswordChangeView(APIView):
                 user.set_password(password)
                 user.save() # Add this line   
                 #is_private = request.POST.get('is_private', False) 
-                #userInstance = User.objects.get(pk=u.pk)
-                #userInstance.set_password(password)
+                userInstance = User.objects.get(pk=user.pk)
+                userInstance.set_password(password)
                 #userInstance.password = new_password
-                #userInstance.save()
+                userInstance.save()
                 update_session_auth_hash(request, user)
 
                 print("user.password: ", user.password)
@@ -191,6 +193,21 @@ class PasswordChangeView(APIView):
                     "message": "You must provide a new password (new_password)"
                 } 
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        
+@login_required
+def password_change(request):
+    if request.method == "POST":
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+
+        response = {
+                    "message": "Password updated"
+                } 
+        return Response(data=response, status=status.HTTP_200_OK)
+    else:
+        print("----------Password not updated-------")
 
 class StudentViewset(viewsets.ModelViewSet):
     queryset = Student.objects.all()
@@ -421,6 +438,9 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
 
         if stress is None:
             response = {"message": "You must provide a stress number (stress)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif courseID is None:
+            response = {"message": "You must provide a courseID (courseID)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else:
             try:
