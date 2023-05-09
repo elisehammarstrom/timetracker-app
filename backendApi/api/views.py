@@ -551,7 +551,7 @@ class UserViewset(viewsets.ModelViewSet):
             user.courses.add(courseInstance)
             user.save()
 
-            userInstance = User.objects.get(id=25)
+            userInstance = User.objects.get(id=user.id)
             userInstance.save()
 
             serializer = self.serializer_class(request.user, data=request.data, partial=True)
