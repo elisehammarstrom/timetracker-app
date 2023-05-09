@@ -17,66 +17,77 @@ const EvaluationScreen = ({route}) => {
     // Create evaluation method
     const formData = new FormData();
     formData.append('courseID', checkedID[0])
-    axios({
-        method: "post",
-        url: "http://127.0.0.1:8000/api/evaluate/create_evaluation/",
-        data: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization':`token ` + token
+    if (`${questions.length}` <1) {
+        axios({
+            method: "post",
+            url: "http://127.0.0.1:8000/api/evaluate/create_evaluation/",
+            data: formData,
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              'Authorization':`token ` + token
+            }
+          })
+            .then(function (response) {
+                //handle success
+                console.log(response.data);
+                // if (`${questions}`.length < 1) {
+                    setQuestions(response.data.array);
+                    // console.log("i if-sats, questions= ", questions)
+                // }
+    
+            })
+            .catch(function (response) {
+              //handle error
+              console.log(response);
+            });
+    }
+    
+        if (`${questions}`.length > 1) {
+            console.log("questions[0].question.question= ", questions[0].question.question)
         }
-      })
-        .then(function (response) {
-          //handle success
-          console.log(response.data);
-            // let getQuestions = response.data;
-            // if (questions.length <1 ) {
-            //     setQuestions(getQuestions)
-            // }
-            // console.log("questions= ", questions)
-        })
-        .catch(function (response) {
-          //handle error
-          console.log(response);
-        });
+        // console.log("questions[0].question.question= ", questions[0].question.question)
 
     const onSubmitPressed = () => {
         navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token})
     }
+    
+    if (`${questions}`.length > 1) {
 
-    return (
-        
-        <View style={styles.container}>
-            <Text style={styles.title}> Evaluating {course} </Text>
+        return (
+            
+            <View style={styles.container}>
+                <Text style={styles.title}> Evaluating {course} </Text>
 
-            <ScrollView>
+                <ScrollView>
 
-                <Star
-                    question="Difficulty level"
-                    leftText="Easy"
-                    rightText="Hard"
-                />
+                    <Star
+                        question={questions[0].question.question}
+                        leftText="Easy"
+                        rightText="Hard"
+                    />
 
-                <CustomRadioButton
-                    question="Did you attend any lectures?"
-                    firstOption="No"
-                    secondOption="A few"
-                    thirdOption="Most"
-                    fourthOption="All"
-                />
+                    <CustomRadioButton
+                        question="Did you attend any lectures?"
+                        firstOption="No"
+                        secondOption="A few"
+                        thirdOption="Most"
+                        fourthOption="All"
+                    />
 
-                <CustomButton
-                    text="Submit"
-                    onPress={onSubmitPressed}
-                />
+                    <CustomButton
+                        text="Submit"
+                        onPress={onSubmitPressed}
+                    />
 
-            </ScrollView>   
+                </ScrollView>   
 
 
-        </View>
- 
-    )
+            </View>
+    
+        )
+    }
 }
+
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
