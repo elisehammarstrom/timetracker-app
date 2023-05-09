@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer
-from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking
+from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer, CourseCalendarSerializer, UserFreetimeSerializer, CourseScheduleSerializer, YearGradeSerializer
+from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking, CourseCalendar, UserFreetime, ExcelFile, CourseSchedule, YearGrade
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -15,6 +15,13 @@ from datetime import datetime, timedelta
 from django.utils.dateparse import parse_datetime
 from django.db import IntegrityError
 from django.http import JsonResponse
+from .forms import ExcelForm
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
+import pandas as pd
+import os
+from pathlib import Path
+
 
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -389,18 +396,102 @@ class UserViewset(viewsets.ModelViewSet):
                 } 
             return Response(data=response, status=status.HTTP_200_OK)
 
+class CourseCalendarViewset(viewsets.ModelViewSet):
+    queryset = CourseCalendar.objects.all()
+    serializer_class = CourseCalendarSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
 
 
 
-        
+class UserFreetimeViewset(viewsets.ModelViewSet):
+    queryset = UserFreetime.objects.all()
+    serializer_class = UserFreetimeSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )       
     
+class ExcelFileViewset(viewsets.ModelViewSet):
+    model = ExcelFile
+    form_class = ExcelForm
+    template_name = 'upload.html'
+    # def model_form_upload(request):
+    #     if request.method == 'POST':
+    #         form = ExcelForm(request.POST, request.FILES)
+    #         if form.is_valid():
+    #             form.save()
+    #             return redirect('home')
+    #     else:
+    #         form = ExcelForm()
+    #     return render(request, 'core/model_form_upload.html', {
+    #         'form': form
+    #     })
+    # def upload_file(request):
+    #     if request.method == 'POST':
+    #         form = UploadFileForm(request.POST, request.FILES)
+    #         if form.is_valid():
+    #             handle_uploaded_file(request.FILES['file'])
+    #             return HttpResponseRedirect('/success/url/')
+    #     else:
+    #         form = UploadFileForm()
+    #     return render(request, 'upload.html', {'form': form})
+    def upload_file(request):
+        if request.method == 'POST':
+            form = ExcelForm(request.POST, request.FILES)
+            if form.is_valid():
+                # file is saved
+                form.save()
+                return HttpResponseRedirect('/success/url/')
+        else:
+            form = ExcelForm()
+        return render(request, 'upload.html', {'form': form})
 
 
+# class newTest():
+#     print("hej")
+#     module_dir = os.path.dirname(__file__)  # get current 
+#     parent_dir = os.path.abspath(os.path.join(module_dir, '..'))
+#     print(parent_dir)
+#     file_path = os.path.join(module_dir, "uploads\TimeEdit_2023-05-02_16_40.xls") 
+#     print(file_path)
+#     df=pd.read_excel(file_path,skiprows=5) #, usecols=["Slutdatum"])
+#     #print(df[df["Program"] == 'STS2'].head())
+#     pColum=df[df['Program'].str.contains('STS2', na=False)]
+#     klass = pColum[df['Program'] != 'STS2.B']
+#     klassA = klass[df['Program'] != 'STS2.C']
+#     print(klassA)
             
+         
 
-        
+class CourseScheduleViewset(viewsets.ModelViewSet):
+    queryset = CourseSchedule.objects.all()
+    serializer_class = CourseScheduleSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
+    # def create_courseSchedule():
+        # print("hej")
+        # module_dir = os.path.dirname(__file__)  # get current 
+        # parent_dir = os.path.abspath(os.path.join(module_dir, '..'))
+        # print(parent_dir)
+        # file_path = os.path.join(module_dir, "uploads\TimeEdit_2023-05-02_16_40.xls") 
+        # print(file_path)
+        # df=pd.read_excel(file_path,skiprows=5) #, usecols=["Slutdatum"])
+        # #print(df[df["Program"] == 'STS2'].head())
+        # pColum=df[df['Program'].str.contains('STS2', na=False)]
+        # klass = pColum[df['Program'] != 'STS2.B']
+        # klassA = klass[df['Program'] != 'STS2.C']
+        # print(klassA)
+        # dbframe = klassA
+        # for dbframe in dbframe.itertuples():
+        #     startDateTime = dbframe.Startdatum + " " + dbframe.Starttid + ":00"
+        #     endtDateTime = dbframe.Slutdatum + " " + dbframe.Sluttid + ":00"
+        #     print(startDateTime)
+        #     obj = CourseSchedule.objects.create(courseEvent = dbframe.Moment, eventStartTime =datetime.strptime(startDateTime, '%Y-%m-%d %H:%M:%S'), 
+        #                                         eventEndTime = datetime.strptime(endtDateTime, '%Y-%m-%d %H:%M:%S'))                         
+        #     obj.save()
 
-        
-        
-        
-    
+
+class YearGradeViewset(viewsets.ModelViewSet):
+    queryset = YearGrade.objects.all()
+    serializer_class = YearGradeSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
