@@ -19,6 +19,7 @@ from django.shortcuts import render
 import pandas as pd
 import os
 from pathlib import Path
+
 from django.db.models import Avg
 import time
 from datetime import date, datetime, timedelta
@@ -28,9 +29,6 @@ from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
-
-from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.decorators import login_required
 
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -170,10 +168,10 @@ class PasswordChangeView(APIView):
                 user.set_password(password)
                 user.save() # Add this line   
                 #is_private = request.POST.get('is_private', False) 
-                userInstance = User.objects.get(pk=user.pk)
-                userInstance.set_password(password)
+                #userInstance = User.objects.get(pk=u.pk)
+                #userInstance.set_password(password)
                 #userInstance.password = new_password
-                userInstance.save()
+                #userInstance.save()
                 update_session_auth_hash(request, user)
 
                 print("user.password: ", user.password)
@@ -193,21 +191,6 @@ class PasswordChangeView(APIView):
                     "message": "You must provide a new password (new_password)"
                 } 
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-        
-@login_required
-def password_change(request):
-    if request.method == "POST":
-        form = PasswordChangeForm(user=request.user, data=request.POST)
-        if form.is_valid():
-            form.save()
-            update_session_auth_hash(request, form.user)
-
-        response = {
-                    "message": "Password updated"
-                } 
-        return Response(data=response, status=status.HTTP_200_OK)
-    else:
-        print("----------Password not updated-------")
 
 class StudentViewset(viewsets.ModelViewSet):
     queryset = Student.objects.all()
@@ -427,6 +410,50 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                         }
             
             return Response(data=response, status=status.HTTP_200_OK)
+    @action(detail=False, methods=['POST'])
+    def get_user_stress_period(self, request, **extra_fields):
+        user = request.user
+        courseID = request.POST.get('courseID')
+        startDateInput = request.POST.get('startDate')
+        endDateInput = request.POST.get('endDate')
+
+        if courseID is None:
+            response = {"message": "You need to provide a courseID (courseID)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif startDateInput is None:
+            response = {"message": "You need to provide a startDate (startDate). E.g. 2023-01-01"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif endDateInput is None: 
+            response = {"message": "You need to provide an endDate (endDate). E.g. 2023-01-01"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            startDate = datetime.strptime(startDateInput,"%Y-%m-%d").date()
+            endDate = datetime.strptime(endDateInput,"%Y-%m-%d").date()
+            queryresult = self.queryset.filter(user = user, course = courseID, date__range=[startDate, endDate] )
+            print("queryresult: ", queryresult)
+            if len(queryresult) == 0:
+                response = {"message": "No results for those dates"}
+                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+
+            userStress = queryresult.values_list('stress', flat=True)
+            print("userStress: ", userStress)
+
+            totalStress = 0
+            no_of_objects = 0
+            for trackingObj in userStress:
+                print("trackingObj: ", trackingObj)
+                if trackingObj is not None:
+                    totalStress += trackingObj
+                    no_of_objects += 1
+            averageStress = totalStress/no_of_objects
+
+            response = {
+                        "message": "Average stress",  
+                        "user": user.email,
+                        "avg_stress": averageStress
+                        }
+            
+            return Response(data=response, status=status.HTTP_200_OK)
         
     @action(detail=False, methods=['POST'])
     def track_stress(self, request, **extra_fields):
@@ -434,16 +461,19 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
         this_user = User.objects.get(id=user.id)
         courseID = request.POST.get('courseID')
         stress = request.POST.get('stress')
-        date = datetime.strptime(request.POST.get('date'),"%Y-%m-%d").date()
+        dateInput = request.POST.get('date')
+        
 
         if stress is None:
             response = {"message": "You must provide a stress number (stress)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-        elif courseID is None:
-            response = {"message": "You must provide a courseID (courseID)"}
+        elif dateInput is None:
+            response = {"message": "You must provide a date in format 2023-04-01 (date)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+            
         else:
             try:
+                date = datetime.strptime(dateInput,"%Y-%m-%d").date()
                 existing_record_object = UserCourseTracking.objects.get(user=User.objects.get(id=user.id), course=Course.objects.get(id=courseID), date=date)
                 existing_record_object.stress = stress
                 existing_record_object.save(update_fields=['stress'])
