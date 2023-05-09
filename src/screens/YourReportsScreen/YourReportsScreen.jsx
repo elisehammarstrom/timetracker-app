@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image} from 'react-native';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image, ScrollView} from 'react-native';
 import { StackedBarChart } from "react-native-chart-kit";
 import CustomButton from '../../components/CustomButton/CustomButton';
 import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
@@ -10,6 +10,7 @@ import Två from '../../../assets/2.png'
 import Tre from '../../../assets/3.png'
 import Fyra from '../../../assets/4.png'
 import Fem from '../../../assets/5.png'
+import { ConsoleSqlOutlined } from '@ant-design/icons';
 
 
 const YourReportsScreen = ({route}) => {
@@ -23,7 +24,8 @@ const YourReportsScreen = ({route}) => {
   const fetchedCourses = [];
   const fetchedTimeStudied = [];
   const [courses, setCourses] = useState([]);
-  const [timeStudied, setTimeStudied] = useState([]);
+/*   const [timeStudied, setTimeStudied] = useState([]); */
+  let timeStudied = [];
   const [state, setState] = useState('');
 
 
@@ -66,6 +68,8 @@ const YourReportsScreen = ({route}) => {
   const formData = new FormData();
   formData.append('startDate', startDate)
   formData.append('endDate', endDate)
+
+/*   let timeStudied=[] */
   
   if (startDate) {
     axios({
@@ -81,17 +85,29 @@ const YourReportsScreen = ({route}) => {
       for (let i=0; i<res.data.results.length; i++) {
         fetchedTimeStudied.push(res.data.results[i].timeStudied)
         fetchedCourses.push(res.data.results[i].Course)
+        console.log('fetchedTimeStudied:', res.data.results[i].timeStudied)
+        console.log('fetchedCourses:', res.data.results[i].Course)
+        
       }
-      if (`${fetchedTimeStudied}` != `${timeStudied}` ){
-        console.log('timeStudied:', timeStudied)
+      console.log("----timeStudied----", res.data.results)
+      
+      console.log("----timeStudied----", timeStudied)
+
+      if (`${fetchedCourses}` != `${courses}` ){
+        console.log('if sats')
         setCourses(fetchedCourses);
-        setTimeStudied(fetchedTimeStudied);
+   /*      setTimeStudied(fetchedTimeStudied); */
+        timeStudied.push(fetchedTimeStudied); 
+       console.log('courses:',courses)
+       console.log('timeStudied:', timeStudied)
       }  
     })
     .catch((error) => {
       console.error(error)
     })
   }
+
+
   
   
   // Specifics for the graph 
@@ -139,11 +155,11 @@ const YourReportsScreen = ({route}) => {
       setTimeVar(time)    
   }
 
-  // Gets the sum of time studied of each course
+/*   // Gets the sum of time studied of each course
   let sum = [];
   for (let i=0; i<timeCourses.length; i++) {
     sum.push(Math.round(timeCourses[i].time.reduce((a, b) => a + b, 0)*10)/10);
-  }
+  } */
   
   const data = {
     labels: initialLabels,
@@ -221,8 +237,9 @@ const YourReportsScreen = ({route}) => {
                 <Text style={styles.dataTextStress}>Stress</Text>
                 <Text style={styles.dataText}>Time</Text>
               </View>
-              
+             
               {courses.map((course,i) => (
+               
                 <TouchableOpacity style={[styles.colors, {backgroundColor: colorsConst[i]}]} key={course} onPress={() => onCoursePressed(course)}>
 
                   <View style={{flex: 4}}>
@@ -238,11 +255,13 @@ const YourReportsScreen = ({route}) => {
                   </View>
 
                   <View>
-                    <Text style={{fontWeight: 'bold'}}>{sum[i]} h</Text>
+                 {/*    <Text style={{fontWeight: 'bold'}}>{sum[i]} h</Text> */}
                   </View>
 
                 </TouchableOpacity> 
+   
               ))}
+             
 
 
                
