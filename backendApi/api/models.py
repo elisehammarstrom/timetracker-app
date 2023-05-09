@@ -71,6 +71,8 @@ class Question(models.Model):
 
 class Answer(models.Model):
     number = models.IntegerField(blank=True, null=True)
+    text = models.CharField(max_length=200, blank=True, null=True)
+
     question = models.ForeignKey(Question, on_delete=models.CASCADE, db_constraint=False, blank=True, null=True,)
 
     def __str__(self):

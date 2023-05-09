@@ -155,23 +155,30 @@ class PasswordChangeView(APIView):
     def post(self, request:Request):
         #new_password = request.data.get('new_password')
         print("PASSWORD CHANGE")
+        user = request.user
         password = request.POST['password']
+        print("user.password before change: ", user.password)
+        print("password: ", password)
 
         if password is not None:
             try:
+                print("in IF")
                 #user = request.user
-                u = request.user
-                u.set_password(password)
-                u.save() # Add this line    
+                #u = request.user
+                #u.set_password(password)
+                #u.save() # Add this line   
+                #is_private = request.POST.get('is_private', False) 
                 #userInstance = User.objects.get(pk=u.pk)
                 #userInstance.set_password(password)
                 #userInstance.password = new_password
                 #userInstance.save()
-                #update_session_auth_hash(request, userInstance)
+                update_session_auth_hash(request, user)
+
+                print("user.password: ", user.password)
     
                 response = {
                     "message": "Password changed", 
-                    "LoggedIn": u.is_authenticated,
+                    "LoggedIn": user.is_authenticated,
                 } 
                 return Response(data=response, status=status.HTTP_200_OK)
             except: 
@@ -716,6 +723,7 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
         userInstance = User.objects.get(id=request.user.pk)
         answerNumber = request.POST.get('answerNumber')
         answerID = request.POST.get('answerID')
+        answerText = request.POST.get('answerText')
 
         if answerID is None:
             response = {"message" : "You need to provide an answerID, e.g. 1. (answerID)"}
@@ -723,10 +731,14 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
         elif answerNumber is None:
             response = {"message" : "You need to provide an answerNumber, e.g. 2 (answerNumber)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif answerText is None:
+            response = {"message" : "You need to provide an answerText, e.g. 2 (answerText)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else:
             try:
                 answerObj = Answer.objects.get(id=answerID)
                 answerObj.number = answerNumber
+                answerObj.text = answerText
                 answerObj.save()
                 
                 response = {
