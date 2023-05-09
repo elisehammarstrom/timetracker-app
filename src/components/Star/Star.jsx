@@ -14,7 +14,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-const Star = ({question, leftText, rightText}) => {
+const Star = ({question}) => {
         // To set the default Star Selected
     const [defaultRating, setDefaultRating] = useState(2);
     // To set the max number of Stars
@@ -58,12 +58,6 @@ const Star = ({question, leftText, rightText}) => {
 
             <Text style={styles.title}>{question}</Text>
 
-            <View style={styles.ratingTextContainer}>
-
-                <Text style={styles.ratingText}>{leftText}</Text>
-
-                <Text style={styles.ratingText}>{rightText}</Text>
-            </View>
             <CustomRatingBar />
             
             </View>
@@ -95,16 +89,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#EFEFEF',
         margin: 10,
-    },
-    ratingTextContainer: {
-        color: '#EFEFEF',
-        flexDirection: 'row',
-        justifyContent: 'space-between'
-    },
-    ratingText: {
-        fontSize: 15,
-        fontWeight: 'bold',
-        color: '#EFEFEF',
     },
   });
 

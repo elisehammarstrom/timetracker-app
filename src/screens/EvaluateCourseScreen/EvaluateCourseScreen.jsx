@@ -30,11 +30,7 @@ const EvaluationScreen = ({route}) => {
             .then(function (response) {
                 //handle success
                 console.log(response.data);
-                // if (`${questions}`.length < 1) {
-                    setQuestions(response.data.array);
-                    // console.log("i if-sats, questions= ", questions)
-                // }
-    
+                setQuestions(response.data.array);
             })
             .catch(function (response) {
               //handle error
@@ -45,7 +41,6 @@ const EvaluationScreen = ({route}) => {
         if (`${questions}`.length > 1) {
             console.log("questions[0].question.question= ", questions[0].question.question)
         }
-        // console.log("questions[0].question.question= ", questions[0].question.question)
 
     const onSubmitPressed = () => {
         navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token})
@@ -62,22 +57,67 @@ const EvaluationScreen = ({route}) => {
 
                     <Star
                         question={questions[0].question.question}
-                        leftText="Easy"
-                        rightText="Hard"
                     />
 
                     <CustomRadioButton
-                        question="Did you attend any lectures?"
-                        firstOption="No"
-                        secondOption="A few"
-                        thirdOption="Most"
-                        fourthOption="All"
+                        question={questions[1].question.question}
+                        firstOption="Don't know"
+                        secondOption="Difficult"
+                        thirdOption="Somewhat difficult"
+                        fourthOption="Somewhat easy"
+                        fifthOption="Easy"
+                    />
+
+                    <CustomRadioButton
+                        question={questions[2].question.question}
+                        firstOption="Don't know"
+                        secondOption="No"
+                        thirdOption="Not really"
+                        fourthOption="Somewhat"
+                        fifthOption="Yes"
+                    />
+
+                    <CustomRadioButton
+                        question={questions[3].question.question}
+                        firstOption="Don't know"
+                        secondOption="Very stressful"
+                        thirdOption="Somewhat stressful"
+                        fourthOption="Little stressful"
+                        fifthOption="No stress"
+                    />
+
+                    <CustomRadioButton
+                        question={questions[4].question.question}
+                        firstOption="Don't know"
+                        secondOption="No"
+                        thirdOption="Somewhat"
+                        fourthOption="A bit"
+                        fifthOption="Yes"
+                    />
+
+                    <CustomRadioButton
+                        question={questions[5].question.question}
+                        firstOption="Don't know"
+                        secondOption="No"
+                        thirdOption="Somewhat"
+                        fourthOption="A bit"
+                        fifthOption="Yes"
+                    />
+
+                    <CustomRadioButton
+                        question={questions[6].question.question}
+                        firstOption="Don't know"
+                        secondOption="No"
+                        thirdOption="Somewhat"
+                        fourthOption="A bit"
+                        fifthOption="Yes"
                     />
 
                     <CustomButton
                         text="Submit"
                         onPress={onSubmitPressed}
                     />
+
 
                 </ScrollView>   
 

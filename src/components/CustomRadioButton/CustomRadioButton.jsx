@@ -2,9 +2,9 @@ import * as React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { RadioButton } from 'react-native-paper';
 
-const CustomRadioButton = ({question, firstOption, secondOption, thirdOption, fourthOption}) => {
-  const [checked, setChecked] = React.useState('first');
-
+const CustomRadioButton = ({question, firstOption, secondOption, thirdOption, fourthOption, fifthOption}) => {
+  const [checked, setChecked] = React.useState(1);
+  console.log(checked)
   return (
 
     <View style={styles.container}>
@@ -19,34 +19,36 @@ const CustomRadioButton = ({question, firstOption, secondOption, thirdOption, fo
 
         <Text style={styles.optionText}>{fourthOption}</Text>
 
+        <Text style={styles.optionText}>{fifthOption}</Text>
+
       </View>
 
       <View style={styles.radioButtonContainer}>
         
         <RadioButton
-          value="first"
-          status={ checked === 'first' ? 'checked' : 'unchecked' }
-          onPress={() => setChecked('first')}
+          value={1}
+          status={ checked === 1 ? 'checked' : 'unchecked' }
+          onPress={() => setChecked(1)}
         />
         <RadioButton
-          value="second"
-          status={ checked === 'second' ? 'checked' : 'unchecked' }
-          onPress={() => setChecked('second')}
+          value={2}
+          status={ checked === 2 ? 'checked' : 'unchecked' }
+          onPress={() => setChecked(2)}
         />
         <RadioButton
-          value="third"
-          status={ checked === 'third' ? 'checked' : 'unchecked' }
-          onPress={() => setChecked('third')}
+          value={3}
+          status={ checked === 3 ? 'checked' : 'unchecked' }
+          onPress={() => setChecked(3)}
         />
         <RadioButton
-          value="fourth"
-          status={ checked === 'fourth' ? 'checked' : 'unchecked' }
-          onPress={() => setChecked('fourth')}
+          value={4}
+          status={ checked === 4 ? 'checked' : 'unchecked' }
+          onPress={() => setChecked(4)}
         />
         <RadioButton
-          value="fifth"
-          status={ checked === 'fifth' ? 'checked' : 'unchecked' }
-          onPress={() => setChecked('fifth')}
+          value={5}
+          status={ checked === 5 ? 'checked' : 'unchecked' }
+          onPress={() => setChecked(5)}
         />
 
       </View>

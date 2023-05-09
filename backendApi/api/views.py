@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer, CourseEvaluationSerializer, QuestionAnswerSerializer
-from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking, CourseEvaluation, Question, Answer, QuestionAnswer
+from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer, CourseCalendarSerializer, UserFreetimeSerializer, CourseScheduleSerializer, YearGradeSerializer, CourseEvaluationSerializer, QuestionAnswerSerializer
+from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking, CourseCalendar, UserFreetime, ExcelFile, CourseSchedule, YearGrade, CourseEvaluation, Question, Answer, QuestionAnswer
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -13,6 +13,13 @@ from rest_framework.request import Request
 from django.utils.dateparse import parse_datetime
 from django.db import IntegrityError
 from django.http import JsonResponse
+from .forms import ExcelForm
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
+import pandas as pd
+import os
+from pathlib import Path
+
 from django.db.models import Avg
 import time
 from datetime import date, datetime, timedelta
@@ -20,7 +27,8 @@ import json as simplejson
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -93,20 +101,26 @@ class LoginView(APIView):
         if user is not None:
             user.password = password
             user.is_active = True
-            user = authenticate(request, email=email, password=password)
-            login(request, user)
-            response = {
-                "message": "Login was successful", 
-                "token": user.auth_token.key,
-                "userSystemID" : user.pk,
-                "Logged in": request.user.is_authenticated
-            } 
-            return Response(data=response, status=status.HTTP_200_OK)
+            try:
+                user = authenticate(email=email, password=password)
+                login(request, user)
+                response = {
+                    "message": "Login was successful", 
+                    "token": user.auth_token.key,
+                    "userSystemID" : user.pk,
+                    "LoggedIn": user.is_authenticated
+                } 
+                return Response(data=response, status=status.HTTP_200_OK)
+            except: 
+                response = {
+                    "message": "Wrong email or password", 
+                } 
+                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else: 
             response = {
                 "message": "Login was unsuccessful. User does not exist"
             } 
-            return Response(data=response, status=status.HTTP_200_OK)
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request:Request):
         content = {
@@ -117,14 +131,12 @@ class LoginView(APIView):
         return Response(data=content, status=status.HTTP_200_OK)
     
 class LogoutView(APIView):
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
 
     def post(self, request:Request):
         try:
             request.user.is_active = False
             logout(request)
-
-            
             response = {
                 "message": "Logout was successful", 
                 "Logged in": request.user.is_authenticated
@@ -135,7 +147,50 @@ class LogoutView(APIView):
                 "message": "Login was unsuccessful. User does not exist"
             } 
             return Response(data=response, status=status.HTTP_200_OK)
+        
+class PasswordChangeView(APIView):
+    #permission_classes = [IsAuthenticated]
+    permission_classes = []
 
+    def post(self, request:Request):
+        #new_password = request.data.get('new_password')
+        print("PASSWORD CHANGE")
+        user = request.user
+        password = request.POST['password']
+        print("user.password before change: ", user.password)
+        print("password: ", password)
+
+        if password is not None:
+            try:
+                print("in IF")
+                #user = request.user
+                #u = request.user
+                user.set_password(password)
+                user.save() # Add this line   
+                #is_private = request.POST.get('is_private', False) 
+                #userInstance = User.objects.get(pk=u.pk)
+                #userInstance.set_password(password)
+                #userInstance.password = new_password
+                #userInstance.save()
+                update_session_auth_hash(request, user)
+
+                print("user.password: ", user.password)
+    
+                response = {
+                    "message": "Password changed", 
+                    "LoggedIn": user.is_authenticated,
+                } 
+                return Response(data=response, status=status.HTTP_200_OK)
+            except: 
+                response = {
+                    "message": "Password change was unsuccessful. User does not exist"
+                } 
+                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            response = {
+                    "message": "You must provide a new password (new_password)"
+                } 
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
 class StudentViewset(viewsets.ModelViewSet):
     queryset = Student.objects.all()
@@ -217,8 +272,6 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             print("type(endDateRequest):", type(endDateRequest))
             print("endDateRequest:", endDateRequest)
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-
-
         else:
             startDate = datetime.strptime(startDateRequest,"%Y-%m-%d").date()
             endDate = datetime.strptime(endDateRequest,"%Y-%m-%d").date()
@@ -238,7 +291,6 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                     while j < no_of_dates:
                         durationArray.append(0)
                         j += 1
-
                 else:
                     i = 0 
 
@@ -253,9 +305,10 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                             durationArray.append(totalHours)
                         i+=1
                 results.append({
-                                    "Course" : course.courseTitle, 
-                                    "courseID" : course.id, 
-                                   "timeStudied" : durationArray})
+                                "Course" : course.courseTitle, 
+                                "courseID" : course.id, 
+                                "timeStudied" : durationArray
+                            })
 
             response = {
                             "message": "Time studied per day",  
@@ -498,7 +551,7 @@ class UserViewset(viewsets.ModelViewSet):
             user.courses.add(courseInstance)
             user.save()
 
-            userInstance = User.objects.get(id=25)
+            userInstance = User.objects.get(id=user.id)
             userInstance.save()
 
             serializer = self.serializer_class(request.user, data=request.data, partial=True)
@@ -636,7 +689,6 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
 
             for question in questions:
                 questionObj = Question.objects.create(text=question, courseEvaluation = record)
-                
                 answerObj = Answer.objects.create(number=0, question=questionObj)
                 questionAnswerObj = QuestionAnswer.objects.create(question=questionObj, answer=answerObj, courseEvaluation = record)
                 questionAnswers.append({
@@ -671,6 +723,7 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
         userInstance = User.objects.get(id=request.user.pk)
         answerNumber = request.POST.get('answerNumber')
         answerID = request.POST.get('answerID')
+        answerText = request.POST.get('answerText')
 
         if answerID is None:
             response = {"message" : "You need to provide an answerID, e.g. 1. (answerID)"}
@@ -678,10 +731,14 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
         elif answerNumber is None:
             response = {"message" : "You need to provide an answerNumber, e.g. 2 (answerNumber)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif answerText is None:
+            response = {"message" : "You need to provide an answerText, e.g. 2 (answerText)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else:
             try:
                 answerObj = Answer.objects.get(id=answerID)
                 answerObj.number = answerNumber
+                answerObj.text = answerText
                 answerObj.save()
                 
                 response = {
@@ -701,18 +758,100 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                 response = {"message": "That answerID does not exist"}
                 return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
+class CourseCalendarViewset(viewsets.ModelViewSet):
+    queryset = CourseCalendar.objects.all()
+    serializer_class = CourseCalendarSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
 
 
-
-        
+class UserFreetimeViewset(viewsets.ModelViewSet):
+    queryset = UserFreetime.objects.all()
+    serializer_class = UserFreetimeSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )       
     
+class ExcelFileViewset(viewsets.ModelViewSet):
+    model = ExcelFile
+    form_class = ExcelForm
+    template_name = 'upload.html'
+    # def model_form_upload(request):
+    #     if request.method == 'POST':
+    #         form = ExcelForm(request.POST, request.FILES)
+    #         if form.is_valid():
+    #             form.save()
+    #             return redirect('home')
+    #     else:
+    #         form = ExcelForm()
+    #     return render(request, 'core/model_form_upload.html', {
+    #         'form': form
+    #     })
+    # def upload_file(request):
+    #     if request.method == 'POST':
+    #         form = UploadFileForm(request.POST, request.FILES)
+    #         if form.is_valid():
+    #             handle_uploaded_file(request.FILES['file'])
+    #             return HttpResponseRedirect('/success/url/')
+    #     else:
+    #         form = UploadFileForm()
+    #     return render(request, 'upload.html', {'form': form})
+    def upload_file(request):
+        if request.method == 'POST':
+            form = ExcelForm(request.POST, request.FILES)
+            if form.is_valid():
+                # file is saved
+                form.save()
+                return HttpResponseRedirect('/success/url/')
+        else:
+            form = ExcelForm()
+        return render(request, 'upload.html', {'form': form})
 
 
+# class newTest():
+#     print("hej")
+#     module_dir = os.path.dirname(__file__)  # get current 
+#     parent_dir = os.path.abspath(os.path.join(module_dir, '..'))
+#     print(parent_dir)
+#     file_path = os.path.join(module_dir, "uploads\TimeEdit_2023-05-02_16_40.xls") 
+#     print(file_path)
+#     df=pd.read_excel(file_path,skiprows=5) #, usecols=["Slutdatum"])
+#     #print(df[df["Program"] == 'STS2'].head())
+#     pColum=df[df['Program'].str.contains('STS2', na=False)]
+#     klass = pColum[df['Program'] != 'STS2.B']
+#     klassA = klass[df['Program'] != 'STS2.C']
+#     print(klassA)
             
+         
 
-        
+class CourseScheduleViewset(viewsets.ModelViewSet):
+    queryset = CourseSchedule.objects.all()
+    serializer_class = CourseScheduleSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
+    # def create_courseSchedule():
+        # print("hej")
+        # module_dir = os.path.dirname(__file__)  # get current 
+        # parent_dir = os.path.abspath(os.path.join(module_dir, '..'))
+        # print(parent_dir)
+        # file_path = os.path.join(module_dir, "uploads\TimeEdit_2023-05-02_16_40.xls") 
+        # print(file_path)
+        # df=pd.read_excel(file_path,skiprows=5) #, usecols=["Slutdatum"])
+        # #print(df[df["Program"] == 'STS2'].head())
+        # pColum=df[df['Program'].str.contains('STS2', na=False)]
+        # klass = pColum[df['Program'] != 'STS2.B']
+        # klassA = klass[df['Program'] != 'STS2.C']
+        # print(klassA)
+        # dbframe = klassA
+        # for dbframe in dbframe.itertuples():
+        #     startDateTime = dbframe.Startdatum + " " + dbframe.Starttid + ":00"
+        #     endtDateTime = dbframe.Slutdatum + " " + dbframe.Sluttid + ":00"
+        #     print(startDateTime)
+        #     obj = CourseSchedule.objects.create(courseEvent = dbframe.Moment, eventStartTime =datetime.strptime(startDateTime, '%Y-%m-%d %H:%M:%S'), 
+        #                                         eventEndTime = datetime.strptime(endtDateTime, '%Y-%m-%d %H:%M:%S'))                         
+        #     obj.save()
 
-        
-        
-        
-    
+class YearGradeViewset(viewsets.ModelViewSet):
+    queryset = YearGrade.objects.all()
+    serializer_class = YearGradeSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
