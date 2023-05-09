@@ -1,15 +1,22 @@
 import { useState } from 'react';
 import React from 'react';
-import {StyleSheet, View, Text, Dimensions } from 'react-native';
+import {StyleSheet, View, Text, Dimensions, TouchableOpacity, Image } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
 import { LineChart } from 'react-native-chart-kit';
+import BackArrow from '../../../assets/arrowBack.png';
 
-const CourseStatsScreen = () =>{
+const CourseStatsScreen = ({route}) =>{
+
+    const {chosenCourses} = route.params;
+    const {token} = route.params;
+    const {courseIDs} = route.params;
+
     const navigation = useNavigation();
     const [selected, setSelected] = useState("");
+    const legend = ["Your time", "Average time"];
     const [dataGraph, setDataGraph] = useState({
         labels: ["Mon", "Tue", "Wen", "Thu", "Fri", "Sat", "Sun"],
         datasets: [
@@ -39,74 +46,51 @@ const CourseStatsScreen = () =>{
         useShadowColorFromDataset: false, // optional
     };
 
-    const courses = [ 
-        { course: 'Mekanik', data:
-        {
-            labels: ["Mon", "Tue", "Wen", "Thu", "Fri", "Sat", "Sun"],
-            datasets: [
-                {
-                data: [2, 1, 2, 3, 4, 0, 0],
-                color: (opacity = 1) => `#AC7CE4`, // optional
-                strokeWidth: 2 // optional
-                },
-                {
-                data: [2, 2, 0, 2, 1, 1, 1],
-                color: (opacity = 1) => `#5987CC`, // optional
-                strokeWidth: 2 // optional
-                }
-            ],
-            legend: ["Your time", "Average time"] // optional
-            }
-        },
-        { course: 'Reglerteknik', data:
-        {
-            labels: ["Mon", "Tue", "Wen", "Thu", "Fri", "Sat", "Sun"],
-            datasets: [
-                {
-                data: [4, 3, 1, 3, 2, 0, 2],
-                color: (opacity = 1) => `#AC7CE4`, // optional
-                strokeWidth: 2 // optional
-                },
-                {
-                data: [2, 2, 3, 3, 2, 0, 0],
-                color: (opacity = 1) => `#5987CC`, // optional
-                strokeWidth: 2 // optional
-                }
-            ],
-            legend: ["Your time", "Average time"] // optional
-            }
-        },
-        { course: 'Envariabelanalys', data:
-        {
-            labels: ["Mon", "Tue", "Wen", "Thu", "Fri", "Sat", "Sun"],
-            datasets: [
-                {
-                data: [1, 1, 0, 0, 3, 3, 0],
-                color: (opacity = 1) => `#AC7CE4`, // optional
-                strokeWidth: 2 // optional
-                },
-                {
-                data: [2, 4, 1, 1, 2, 0, 0],
-                color: (opacity = 1) => `#5987CC`, // optional
-                strokeWidth: 2 // optional
-                }
-            ],
-            legend: ["Your time", "Average time"] // optional
-            }
-        },
-    ] ;
+    let courses = [];
+    const length = chosenCourses.length;
+    const [avgTime, setAvgTime] = useState('');
+    const [time, setTime] = useState('');
 
-    const data = [
-        {key:'1', value:'Mekanik'},
-        {key:'2', value:'Reglerteknik'},
-        {key:'3', value:'Envariabelanalys'}
-    ]
 
-    const length = data.length;
+    for (let i=0; i<length; i++) {
+
+        courses.push( 
+            { course: `${chosenCourses[i]}`, data: 
+                {
+                    labels: ["Mon", "Tue", "Wen", "Thu", "Fri", "Sat", "Sun"],
+                    datasets: [
+                        {
+                        data: [2, 1, 2, 3, 4, 0, 0],
+                        color: (opacity = 1) => `#AC7CE4`, // optional
+                        strokeWidth: 2 // optional
+                        },
+                        {
+                        data: [2, 2, 0, 2, 1, 1, 1],
+                        color: (opacity = 1) => `#5987CC`, // optional
+                        strokeWidth: 2 // optional
+                        }
+                    ],
+                    legend: legend // optional
+                }
+            },
+        );
+        if (selected === chosenCourses[i]) {
+            if (time != "...your time"){
+                setAvgTime("...avg time")
+                setTime("...your time")
+            }
+        }
+    }
+
+
 
     const onReadCourseEvaluationsPressed = () => {
-        navigation.navigate('CourseEvaluations', {course: selected})
+        navigation.navigate('CourseEvaluations', {course: selected, courses: chosenCourses, token: token})
     }
+
+    const onArrowPressed = () => {
+        navigation.navigate('ChooseReport', {token: token, courseIDs: courseIDs})
+      }
 
     const onSelectListPressed = () => {
         
@@ -118,8 +102,7 @@ const CourseStatsScreen = () =>{
 
     }
 
-    const [avgTime, setAvgTime] = useState('');
-    const [time, setTime] = useState('');
+   
 
     if (selected === "Mekanik") {
         if (time != "12h"){
@@ -127,7 +110,7 @@ const CourseStatsScreen = () =>{
             setTime('12h')
         }
     }
-    if (selected === "Reglerteknik") {
+    if (selected === "Miljöteknik") {
         if (time != "15h"){
             setAvgTime("12h")
             setTime('15h')
@@ -142,6 +125,13 @@ const CourseStatsScreen = () =>{
 
     return (
         <View style={styles.container}>
+            <TouchableOpacity activeOpacity={0.5} style={styles.backArrow} onPress={onArrowPressed}>
+                <Image 
+                    source={BackArrow} 
+                    style={[{height: 100 * 0.3}, {width: 100 * 0.3}]} 
+                    resizeMode="contain"
+                />
+            </TouchableOpacity >
 
             <View style={styles.selectListContainer}>
 
@@ -151,7 +141,7 @@ const CourseStatsScreen = () =>{
                     boxStyles={styles.boxStyles}
                     setSelected={(val) => setSelected(val)}
                     onSelect={onSelectListPressed}
-                    data={data}
+                    data={chosenCourses}
                     save="value"
                     search={false}
                     placeholder='Choose course to see statistics'
@@ -162,19 +152,8 @@ const CourseStatsScreen = () =>{
 
             <View style={styles.header}>
                 
-                <View>
-
                     <Text style={styles.title}>{selected}</Text>
-                    
-                </View>
-
-                <View style={styles.dateButton}>
-
-                    <CustomButton
-                        text="Select week"
-                    />
-
-                </View>
+                
             </View>
 
             <View>
@@ -220,6 +199,7 @@ const CourseStatsScreen = () =>{
             <View style={styles.ButtonMenu}>
                 <ButtonMenu
                     screen="courseStats"
+                    token={token}
                 />
             </View>
 
@@ -246,8 +226,10 @@ const styles = StyleSheet.create({
         width: 0.9 * Dimensions.get('window').width,
     },
     header: {
+        overflowWrap: 'break-word',
+        width: Dimensions.get('window').width,
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'centers',
     },
     title: {
         fontSize: 24,
@@ -255,7 +237,9 @@ const styles = StyleSheet.create({
         color: '#EFEFEF',
         margin: 10,
         marginBottom: 50,
-        justifyContent: 'flex-start'
+        justifyContent: 'flex-start',
+        overflowWrap: 'break-word',
+
     },
     dateButton: {
         marginRight: '2%',
@@ -281,6 +265,10 @@ const styles = StyleSheet.create({
     evaluationButton: {
         width: 0.6 * Dimensions.get('window').width,
         justifyContent: 'center',
+    },
+    backArrow: {
+        width: '10%',
+        padding: 10
     },
 })
 

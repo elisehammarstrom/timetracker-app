@@ -22,6 +22,7 @@ import EditProfileScreen from '../screens/EditProfileScreen'
 import ProfileScreen from '../screens/ProfileScreen'
 import CalendarScreen from '../components/CalendarScreen/CalendarScreen';
 import CalendarOpScreen from '../screens/CalendarOpScreen'
+import ChooseReportScreen from '../screens/ChooseReportScreen'
 const Stack = createNativeStackNavigator();
 
 const Navigation = () => {
@@ -31,12 +32,13 @@ const Navigation = () => {
             <Stack.Navigator screenOptions={{headerShown: false}}>
 
 
-            
+                
                 <Stack.Screen name="SignIn" component={SignInScreen} />
                 <Stack.Screen name="SignUp" component={SignUpScreen} />
                 <Stack.Screen name="ConfirmEmail" component={ConfirmEmailScreen} />
                 <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
                 <Stack.Screen name="NewPassword" component={NewPasswordScreen} />
+                <Stack.Screen name="Profile" component={ProfileScreen} />
 
                 <Stack.Screen name="StartCourses" component={CourseScreen}/>
                 <Stack.Screen name="Home" component={HomeScreen} />
@@ -53,12 +55,14 @@ const Navigation = () => {
                 <Stack.Screen name="CourseStats" component={CourseStatsScreen}/>
                 <Stack.Screen name="CourseEvaluations" component={CourseEvaluationsScreen}/>
 
-                <Stack.Screen name="Profile" component={ProfileScreen}/>
+                
 
                 <Stack.Screen name="EditProfile" component={EditProfileScreen}/>
-                <Stack.Screen name="CalendarOpScreen" component={CalendarOpScreen} />
                 <Stack.Screen name="Timer" component={TimerScreen}/>
                 <Stack.Screen name="Test" component={TestScreen}/>
+                <Stack.Screen name="CalendarOpScreen" component={CalendarOpScreen} />
+                <Stack.Screen name="ChooseReport" component={ChooseReportScreen} />
+
             </Stack.Navigator>
 
         </NavigationContainer>

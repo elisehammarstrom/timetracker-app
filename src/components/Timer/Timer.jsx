@@ -1,10 +1,12 @@
-import { Button,View, Text , TouchableHighlight,  StyleSheet,SafeAreaView,Dimensions } from 'react-native';
+import { Button,View, Text , TouchableOpacity,  StyleSheet,SafeAreaView,Dimensions, Image } from 'react-native';
 import React, {useState} from 'react';
 import {Stopwatch} from 'react-native-stopwatch-timer';
-import { BorderlessButton } from 'react-native-gesture-handler';
-import {PlayCircleOutlined, PauseCircleOutlined} from '@ant-design/icons';
+import Play from '../../../assets/play.png'
+import Pause from '../../../assets/pause.png'
+import { secondsToMinutes } from 'date-fns';
+import axios from 'axios';
 
-const Timer = ({courseName, color}) => {
+const Timer = ({courseID, courseName, color}) => {
     const [isStopwatchStart, setIsStopwatchStart] = useState(false);
     const [resetStopwatch, setResetStopwatch] = useState(false);
     const [isTimerStart, setIsTimerStart] = useState(false);
@@ -16,25 +18,42 @@ const Timer = ({courseName, color}) => {
     var day = new Date().getDate();
     var month = new Date().getMonth()+1;
     var year = new Date().getFullYear();
-    var date = day + '-' + month + '-' + year;
+    var date = year + '-' + month + '-' + day;
 
     const getTime = (time) => {
       if (isStopwatchStart != true){
         let data = {
-          course: courseName,
+          courseID: courseID,
           date: date,
           duration: time,
         };
-        setActive(false)
-        console.log(data)
-      } else {
-        if (active != true){
-          setActive(true)
-        }
-      }
-      if (active === false){
-        console.log("active=", active)
-      }
+        // console.log(courseName)
+        const formData = new FormData();
+        formData.append('courseID', courseID);
+        formData.append('date', date);
+        formData.append('duration', time);
+        
+        axios({
+          method: "post",
+          url: "http://127.0.0.1:8000/api/tracking/track_time/",
+          data: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization':`token 53ba76420d512d53c7cca599cbda42c950d37996`
+          }
+        })
+          .then(function (response) {
+            //handle success
+            // console.log(response.data);
+          })
+          .catch(function (response) {
+            //handle error
+            // console.log(response);
+          });
+
+        // console.log(data)
+      } 
+     
     }
 
     return (
@@ -59,15 +78,24 @@ const Timer = ({courseName, color}) => {
                 />
               </View>
               <View style={styles.playPauseContainer}>
-                <TouchableHighlight
+                <TouchableOpacity activeOpacity={0.5}
                   onPress={() => {
                     setIsStopwatchStart(!isStopwatchStart);
                     setResetStopwatch(false);
                   }}>
                   <Text style={styles.buttonText}>
-                    {!isStopwatchStart ? <PlayCircleOutlined/> : <PauseCircleOutlined/>}
+                    {!isStopwatchStart ? 
+                      <Image 
+                        source={Play} 
+                        style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
+                        resizeMode="contain" 
+                        />: 
+                      <Image 
+                        source={Pause}
+                        style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
+                        resizeMode="contain"/>}
                   </Text>
-                </TouchableHighlight> 
+                </TouchableOpacity> 
               </View>
               
             </View>
@@ -87,21 +115,22 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    flex: 1,
+/*     flex: 1, */
     padding: 10,
     justifyContent: 'space-between',
     alignItems: 'center',
   },
 
   sectionStyle: {
-    flex: 1,
+ /*    flex: 5, */
     flexDirection: 'row',
     alignIems: 'center',
     justifyContent: 'space-between',
     alignContent: 'space-between',
-    rowGap: 10,
+    rowGap: 20,
     overflowWrap: 'break-word',
-    padding: 15,
+    padding: 10,
+    paddingRight: 15,
     width: 0.9 * Dimensions.get('window').width,
     marginVertical: 5,
     borderRadius: 5,
@@ -119,7 +148,12 @@ const styles = StyleSheet.create({
   },
 
   playPauseContainer: {
-    flex: 2
+    flex: 1,
+    flexShrink: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 25
+
   },
   
   sectionStyle_ONE:{

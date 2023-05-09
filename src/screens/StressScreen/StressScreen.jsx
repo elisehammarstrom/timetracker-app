@@ -1,23 +1,20 @@
 
 import { useNavigation } from '@react-navigation/native';
 import React, {useState, useRef, useEffect} from 'react';
-import {Text, View, TextInput, StyleSheet, FlatList, Image,TouchableOpacity,Dimensions,Button, Alert, PixelRatio} from 'react-native';
+import {Text, View, TextInput, StyleSheet, FlatList, Image,TouchableOpacity,Dimensions,Button, Alert, PixelRatio, ScrollView} from 'react-native';
 import ButtonMenu from '../../components/ButtonMenu';
 import { SelectList } from 'react-native-dropdown-select-list'
-import DatePicker from 'react-native-modern-datepicker'
 import CustomButton from '../../components/CustomButton';
 import Ett from '../../../assets/ett.png'
 import Två from '../../../assets/2.png'
 import Tre from '../../../assets/3.png'
 import Fyra from '../../../assets/4.png'
 import Fem from '../../../assets/5.png'
-import { setDate } from 'date-fns/esm';
-import ProfileIcon from '../../components/ProfileIcon/ProfileIcon';
-import {SettingOutlined} from '@ant-design/icons';
-import { TouchableHighlight } from 'react-native-gesture-handler';
 
-const StressScreen = () => {  
-
+const StressScreen = ({route}) => {  
+    const {courses} = route.params;
+    const {token} = route.params;
+ 
     const navigation = useNavigation();
     
     const [selectedDate, setSelectedDate] = useState('');
@@ -26,12 +23,6 @@ const StressScreen = () => {
  /*    const [date, setDate] = useState(null); */
     
    
-    const data = [
-    {key:'1', value:'Mekanik'},
-    {key:'2', value:'Reglerteknik'},
-    {key:'3', value:'Envariabelanalys'},
- ]
-
     // get today's date
     var date = new Date().getDate(); //To get the Current Date
     var month = new Date().getMonth() + 1; //To get the Current Month
@@ -88,30 +79,28 @@ const StressScreen = () => {
     return (
 
     <View style={styles.container}>
-        <Text style={styles.day}>{day}</Text>
-        <View style={styles.layout}>
         
+        <Text style={styles.day}>{day}</Text>
+        <View style={styles.dateContainer}>
             <View style={styles.circle}>
                 <Text style={styles.date}>{date}</Text>
             </View>
+            </View>
+            <ScrollView>
+        <View style={styles.layout}>
             
-           
+            
             <View style={styles.selectListContainer}>
                 <SelectList
                     dropdownTextStyles={styles.selectList}
                     inputStyles={styles.selectList}
                     setSelected={(val) => setSelected(val)}
-                    data={data}
+                    data={courses}
                     save="value"
                     search={false}
                     placeholder='Choose course'
                 />
             </View>
-            <TouchableHighlight onPress={onSettingsPressed}>
-                <View>
-                <SettingOutlined style={styles.settings}/> 
-                </View>
-            </TouchableHighlight>
         </View>
 
         <View style={styles.smileys}>
@@ -170,11 +159,13 @@ const StressScreen = () => {
                 onPress={onSubmitPressed}
             />
         </View>
+        </ScrollView>
    
         <View>
 
             <ButtonMenu
                 screen='timeTracking'
+                token={token}
             />
             </View>
 
@@ -191,7 +182,7 @@ const styles = StyleSheet.create({
     },
     layout: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
 
     },
     smileys: {
@@ -203,6 +194,8 @@ const styles = StyleSheet.create({
     selectListContainer: {
         alignItems: 'center',
         justifyContent: 'center',
+        flex: 5,
+        marginTop: 10
         
     },
     selectList: {
@@ -233,7 +226,7 @@ const styles = StyleSheet.create({
         color: 'white',
         marginLeft: 18,
         marginBottom: -30,
-        marginTop: 5,
+        marginTop: 10,
     },
     circle: {
         height: 40,
@@ -266,12 +259,15 @@ const styles = StyleSheet.create({
     notPressed: {
         backgroundColor: 'transparent'
     },
-        settings: {
-            color: 'white',
-            height: 40,
-            width: 40,
-        }
-
+    settings: {
+        color: 'white',
+        height: 40,
+        width: 40,
+    },
+    dateContainer: {
+        flex: 0.5,
+    },
+        
 })
 
 

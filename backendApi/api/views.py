@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer, CourseCalendarSerializer, UserFreetimeSerializer, CourseScheduleSerializer, YearGradeSerializer
-from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking, CourseCalendar, UserFreetime, ExcelFile, CourseSchedule, YearGrade
+from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer, CourseCalendarSerializer, UserFreetimeSerializer, CourseScheduleSerializer, YearGradeSerializer, CourseEvaluationSerializer, QuestionAnswerSerializer
+from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking, CourseCalendar, UserFreetime, ExcelFile, CourseSchedule, YearGrade, CourseEvaluation, Question, Answer, QuestionAnswer
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -10,8 +10,6 @@ from rest_framework.decorators import action
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.request import Request
-from django.contrib.auth import authenticate
-from datetime import datetime, timedelta
 from django.utils.dateparse import parse_datetime
 from django.db import IntegrityError
 from django.http import JsonResponse
@@ -22,6 +20,15 @@ import pandas as pd
 import os
 from pathlib import Path
 
+from django.db.models import Avg
+import time
+from datetime import date, datetime, timedelta
+import json as simplejson
+from django.http import HttpResponse
+from django.http import JsonResponse
+from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -77,17 +84,11 @@ class ProgrammeViewset(viewsets.ModelViewSet):
         if 'id' in request.data:
             id = request.data.get('id')
             programmeObject = Programme.objects.get(id=id)
-            #response = {
-             #   "message": "You need to provide a system ID for the programme (id)", 
-             #   "programmeObject": programmeObject
-             #   }
-            #return Response(response, status = status.HTTP_200_OK)
             return JsonResponse(programmeObject, safe=False)
         else:
             response = {"message": "You need to provide a the system ID for the program (pID)"}
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
         
-
 
 class LoginView(APIView):
     permission_classes = []
@@ -96,22 +97,30 @@ class LoginView(APIView):
         email = request.data.get('email')
         password = request.data.get('password')
         user = request.user
-        user.password = password
-        user.is_active = True
-        user = authenticate(email=email, password=password)
 
         if user is not None:
-            response = {
-                "message": "Login was successful", 
-                "token": user.auth_token.key,
-                "userSystemID" : user.pk
-            } 
-            return Response(data=response, status=status.HTTP_200_OK)
+            user.password = password
+            user.is_active = True
+            try:
+                user = authenticate(email=email, password=password)
+                login(request, user)
+                response = {
+                    "message": "Login was successful", 
+                    "token": user.auth_token.key,
+                    "userSystemID" : user.pk,
+                    "LoggedIn": user.is_authenticated
+                } 
+                return Response(data=response, status=status.HTTP_200_OK)
+            except: 
+                response = {
+                    "message": "Wrong email or password", 
+                } 
+                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else: 
             response = {
                 "message": "Login was unsuccessful. User does not exist"
             } 
-            return Response(data=response, status=status.HTTP_200_OK)
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request:Request):
         content = {
@@ -120,6 +129,61 @@ class LoginView(APIView):
         }
 
         return Response(data=content, status=status.HTTP_200_OK)
+    
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request:Request):
+        try:
+            request.user.is_active = False
+            logout(request)
+            response = {
+                "message": "Logout was successful", 
+                "Logged in": request.user.is_authenticated
+            } 
+            return Response(data=response, status=status.HTTP_200_OK)
+        except: 
+            response = {
+                "message": "Login was unsuccessful. User does not exist"
+            } 
+            return Response(data=response, status=status.HTTP_200_OK)
+        
+class PasswordChangeView(APIView):
+    #permission_classes = [IsAuthenticated]
+    permission_classes = []
+
+    def post(self, request:Request):
+        #new_password = request.data.get('new_password')
+        print("PASSWORD CHANGE")
+        password = request.POST['password']
+
+        if password is not None:
+            try:
+                #user = request.user
+                u = request.user
+                u.set_password(password)
+                u.save() # Add this line    
+                #userInstance = User.objects.get(pk=u.pk)
+                #userInstance.set_password(password)
+                #userInstance.password = new_password
+                #userInstance.save()
+                #update_session_auth_hash(request, userInstance)
+    
+                response = {
+                    "message": "Password changed", 
+                    "LoggedIn": u.is_authenticated,
+                } 
+                return Response(data=response, status=status.HTTP_200_OK)
+            except: 
+                response = {
+                    "message": "Password change was unsuccessful. User does not exist"
+                } 
+                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            response = {
+                    "message": "You must provide a new password (new_password)"
+                } 
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
 class StudentViewset(viewsets.ModelViewSet):
     queryset = Student.objects.all()
@@ -141,13 +205,19 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
         this_user = User.objects.get(id=user.id)
         courseID = request.POST.get('courseID')
         duration = request.POST.get('duration')
-        date = datetime.strptime(request.POST.get('date'),"%Y-%m-%d").date()
 
-        if duration is None:
+        if request.POST.get('date') is None:
+            response = {"message": "You must provide a date in format DateFormat '2023-05-01' (date)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif courseID is None: 
+            response = {"message": "You must provide a courseID, e.g. 2 (courseID)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif duration is None:
             response = {"message": "You must provide a duratiom in format Time 'HH:MM:SS' (duration)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else:
             try:
+                date = datetime.strptime(request.POST.get('date'),"%Y-%m-%d").date()
                 existing_record_object = UserCourseTracking.objects.get(user=User.objects.get(id=user.id), course=Course.objects.get(id=courseID), date=date)
                 existing_record_object.duration = duration
                 existing_record_object.save(update_fields=['duration'])
@@ -177,6 +247,161 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                                 "duration": record.duration,
                             }     
                     }
+            return Response(data=response, status=status.HTTP_200_OK)
+        
+    @action(detail=False, methods=['POST'])
+    def get_user_course_study_time(self, request, **extra_fields):
+        user = request.user
+        this_user = User.objects.get(id=user.id)
+        startDateRequest = request.POST.get('startDate')
+        endDateRequest = request.POST.get('endDate')
+        if startDateRequest is None:
+            response = {"message": "You need to provide a startDate (startDate). E.g. 2023-01-01"}
+            print("type(startDateRequest):", type(startDateRequest))
+            print("startDateRequest:", startDateRequest)
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif endDateRequest is None: 
+            response = {"message": "You need to provide an endDate (endDate). E.g. 2023-01-01"}
+            print("type(endDateRequest):", type(endDateRequest))
+            print("endDateRequest:", endDateRequest)
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            startDate = datetime.strptime(startDateRequest,"%Y-%m-%d").date()
+            endDate = datetime.strptime(endDateRequest,"%Y-%m-%d").date()
+            courseAndDuration = []
+            results = []
+            for course in this_user.courses.all():
+                durationArray = []
+                print("course: ", course)
+                courseID = course.id
+                queryresult = self.queryset.filter(user_id=this_user.id, course_id = courseID, date__range=[startDate, endDate] )
+
+                no_of_dates = abs((endDate-startDate).days) + 1 
+
+                if len(queryresult) == 0:
+                    print("No results for those dates for that course. Course: ", course.courseTitle )
+                    j = 0
+                    while j < no_of_dates:
+                        durationArray.append(0)
+                        j += 1
+                else:
+                    i = 0 
+
+                    while i < no_of_dates:
+                        futureDate = str(startDate + timedelta(days=i))
+                        dateDuration =  self.queryset.filter(user_id=this_user.id, course_id=courseID, date=futureDate).values_list('duration', flat=True)
+                        if len(dateDuration) == 0:
+                            durationArray.append(0)
+                        else: 
+                            totalSeconds = timedelta(hours=dateDuration[0].hour, minutes=dateDuration[0].minute).total_seconds()
+                            totalHours = round(totalSeconds/(60*60), 2)
+                            durationArray.append(totalHours)
+                        i+=1
+                results.append({
+                                "Course" : course.courseTitle, 
+                                "courseID" : course.id, 
+                                "timeStudied" : durationArray
+                            })
+
+            response = {
+                            "message": "Time studied per day",  
+                            "userID": this_user.id,
+                            "user" : this_user.email,
+                            "results" : results
+                            }
+                
+            return Response(data=response, status=status.HTTP_200_OK)
+    @action(detail=False, methods=['GET'])
+    def get_dates_in_week(self, request, **extra_fields):
+        today = date.today()
+        dates = []
+
+        if today.isoweekday() == 1:
+            #monday
+            monday = today
+        elif today.isoweekday() == 2:
+            #tuesday
+            monday = today - timedelta(days=1)
+        elif today.isoweekday() == 3:
+            #wednesday
+            monday = today - timedelta(days=2)
+        elif today.isoweekday() == 4:
+            #thursday
+            monday = today - timedelta(days=3)
+        elif today.isoweekday() == 5:
+            #friday
+            monday = today - timedelta(days=4)
+        elif today.isoweekday() == 6:
+            #saturday
+            monday = today - timedelta(days=5)
+        elif today.isoweekday() == 7:
+            #sunday
+            monday = today - timedelta(days=6)
+        else:
+            response = {"message": "That date isn't in a week"}    
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        dates.append([monday + timedelta(days=x) for x in range(7)])
+        print(dates)
+
+        #remaking dates to format for frontEnd
+        dates_for_frontend = []
+
+        for item in dates[0]: 
+            date_string = item.strftime("%d/%m").replace("0", "")
+            dates_for_frontend.append(date_string)  
+
+        response = {
+                            "message": "Dates",  
+                            "dates" : dates_for_frontend,
+                            "startDate": dates[0][0],
+                            "endDate": dates[0][-1]
+                            }
+                
+        return Response(data=response, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['GET'])
+    def get_course_avg_time(self, request, **extra_fields):
+        #get courseID:s earlier?
+        courseID = request.POST.get('courseID')
+        startDate = request.POST.get('startDate')
+        endDate = request.POST.get('endDate')
+
+        if courseID is None:
+            response = {"message": "You need to provide a courseID (courseID)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif startDate is None:
+            response = {"message": "You need to provide a startDate (startDate). E.g. 2023-01-01"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif endDate is None: 
+            response = {"message": "You need to provide an endDate (endDate). E.g. 2023-01-01"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            queryresult = self.queryset.filter(course_id = courseID, date__range=[startDate, endDate] )
+
+            if len(queryresult) == 0:
+                response = {"message": "No results for those dates"}
+                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+
+            durations = queryresult.values_list('duration', flat=True)
+            seconds = map(lambda time: (time.hour * 60 * 60 ) + (time.minute * 60.0) + time.second, durations)
+            total_seconds = sum(seconds)
+            no_of_instances = len(queryresult)
+
+            #måste få course average för varje användare
+
+            #ta fram användarens average per dag
+            # och summera date average för användaren
+
+            #gör samma fast för varje user_id i denna metod
+
+            avg_time = total_seconds / no_of_instances
+            avg_timestamp = time.strftime('%H:%M:%S', time.gmtime(avg_time))
+
+            response = {
+                        "message": "Average time",  
+                        "avg_time": avg_timestamp 
+                        }
+            
             return Response(data=response, status=status.HTTP_200_OK)
         
     @action(detail=False, methods=['POST'])
@@ -229,7 +454,7 @@ class UserViewset(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     authentication_classes = (TokenAuthentication, )
     #permission_classes = (IsAuthenticated, )
-    permission_classes = []
+    permission_classes = ()
     
     @action(detail=False, methods=['POST'])
     def create_user(self, request, **extra_fields):
@@ -256,7 +481,6 @@ class UserViewset(viewsets.ModelViewSet):
            #create with programme 
            if pID != None:
             pID = request.POST.get('pID')
-            print("HEJ I IF PID")
             user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=Programme.objects.get(id=request.POST.get('pID')))
            else:
                #create with no programme or course
@@ -297,13 +521,13 @@ class UserViewset(viewsets.ModelViewSet):
         #if user.role != 'STUDENT' or :
         #    response = {"message": "You need to be a STUDENT to enrol in a course"}
         #   return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        #print("HEJ ÄR USER: ", user.email)
 
         if 'courseCode' in request.data: 
             courseCode = request.POST.get('courseCode')
             list_w_same_courseCode = []
 
             for item in CourseViewset.queryset:
-                print("item: ", item)
                 if courseCode == item.courseCode:
                     list_w_same_courseCode.append(item)
                     #courseInstance = item
@@ -329,7 +553,15 @@ class UserViewset(viewsets.ModelViewSet):
 
             #vi sparar id:et på användaren
             #Lägg till så att kursID:et också syns i response
-            response = ('Courses assigned to user: ', str(user.email))
+            response = {'Courses assigned to user: ': str(user.email),
+                        "course: ": {
+                            "systemID: ": courseInstance.id,
+                            "courseTitle: ": courseInstance.courseTitle,
+                            "courseCode: ": courseInstance.courseCode,
+                            "courseStartDateTime: ":courseInstance.courseStartDateTime,
+                            "courseEndDateTime: ": courseInstance.courseEndDateTime
+                            }
+            }
             return Response(response, status = status.HTTP_200_OK)
         else:
             response = {"message": "You need to provide a courseCode for the course (e.g. '1FA104' for the course Mechanics)"}
@@ -346,6 +578,23 @@ class UserViewset(viewsets.ModelViewSet):
         response = {
                 "message": "Success. Courses retrieved. ", 
                 "courses": user_courses
+            } 
+        return Response(data=response, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=['GET'])
+    def get_user_data(self, request, **extra_fields):
+        userInstance = Student.objects.get(id=request.user.pk)
+
+        response = {
+                "message": "Success. User retrieved. ", 
+                "userObject": {
+                    "fullName" : userInstance.first_name + " " + userInstance.last_name,
+                    "email": userInstance.email,
+                   "programmeName": userInstance.programme.programmeName,
+                   "programmeShortName": userInstance.programme.shortProgrammeName,
+                   "university" : userInstance.university
+
+                }
             } 
         return Response(data=response, status=status.HTTP_200_OK)
     
@@ -387,7 +636,7 @@ class UserViewset(viewsets.ModelViewSet):
 
             response = {
                     "message": "Success. Course removed.", 
-                    "courseID to remove": courseInstance.id,
+                    "courseID": courseInstance.id,
                     "userObject": {
                         "user.id": userInstance.id,
                         "user.email": userInstance.email,
@@ -396,11 +645,113 @@ class UserViewset(viewsets.ModelViewSet):
                 } 
             return Response(data=response, status=status.HTTP_200_OK)
 
-class CourseCalendarViewset(viewsets.ModelViewSet):
+class QuestionAnswerViewset(viewsets.ModelViewSet):
+    queryset = CourseEvaluation.objects.all()
+    serializer_class = QuestionAnswerSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
+
+class CourseEvaluationViewset(viewsets.ModelViewSet):
+    queryset = CourseEvaluation.objects.all()
+    serializer_class = CourseEvaluationSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
+
+    @action(detail=False, methods=['POST'])
+    def create_evaluation(self, request, **extra_fields):
+        userInstance = User.objects.get(id=request.user.pk)
+        courseID = request.POST.get('courseID')
+
+        if courseID is None:
+            response = {"message": "You need to provide a courseID. E.g. 2. (courseID)"}
+            return Response(data=response, status=status.HTTP_500_BAD_REQUEST)
+        else:
+            questions = [
+                "What is your general opinion of the course?", 
+                "What is the difficulty level?",
+                "Does this course have a reasonable workload?",
+                "How has your stress levels been in relation to the course?",
+                "If you’ve been to any lectures, were they worth it?", 
+                "If you’ve been to any lesson, were they worth it?",
+                "If you’ve done any assignments, were they worth it?"
+                ]
+            
+            questionAnswers = []
+            record = CourseEvaluation.objects.create(user=userInstance, course=Course.objects.get(id=courseID))
+            record.save()
+
+            for question in questions:
+                questionObj = Question.objects.create(text=question, courseEvaluation = record)
+                class CourseCalendarViewset(viewsets.ModelViewSet):
     queryset = CourseCalendar.objects.all()
     serializer_class = CourseCalendarSerializer
     authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAuthenticated, )
+                answerObj = Answer.objects.create(number=0, question=questionObj)
+                questionAnswerObj = QuestionAnswer.objects.create(question=questionObj, answer=answerObj, courseEvaluation = record)
+                questionAnswers.append({
+                    "questionAnswer.id": questionAnswerObj.id,
+                    "courseEvaluation.id": questionAnswerObj.courseEvaluation.id,
+                    "question": {
+                        "id": questionAnswerObj.question.id,
+                        "question": questionAnswerObj.question.text,
+                    },
+                    "answer": {
+                        "id": questionAnswerObj.answer.id,
+                        "answer": questionAnswerObj.answer.number,
+                    },
+                }) 
+
+                questionObj.save()
+                answerObj.save()
+                questionAnswerObj.save()
+
+            response = {
+                        "message": "Success. Course Evaluation added.", 
+                        "userObject": {
+                            "user.id": userInstance.id,
+                            "user.email": userInstance.email,
+                        },
+                        "array" : questionAnswers
+
+                    } 
+            return Response(data=response, status=status.HTTP_200_OK)
+    @action(detail=False, methods=['POST'])
+    def update_answer(self, request, **extra_fields):
+        userInstance = User.objects.get(id=request.user.pk)
+        answerNumber = request.POST.get('answerNumber')
+        answerID = request.POST.get('answerID')
+
+        if answerID is None:
+            response = {"message" : "You need to provide an answerID, e.g. 1. (answerID)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif answerNumber is None:
+            response = {"message" : "You need to provide an answerNumber, e.g. 2 (answerNumber)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            try:
+                answerObj = Answer.objects.get(id=answerID)
+                answerObj.number = answerNumber
+                answerObj.save()
+                
+                response = {
+                                "message": "Success. Answer updated.", 
+                                "userObject": {
+                                    "user.id": userInstance.id,
+                                    "user.email": userInstance.email,
+                                },
+                                "answerObject": {
+                                    "id": answerObj.id,
+                                    "text" : answerObj.number
+                                }
+                            } 
+                return Response(data=response, status=status.HTTP_200_OK)
+        
+            except ObjectDoesNotExist:
+                response = {"message": "That answerID does not exist"}
+                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 

@@ -9,7 +9,6 @@ import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
 const TimerScreen = ({route}) => {
 
   const {options} = route.params;
-  const navigation = useNavigation();
   
   return (
       <View style={styles.test} >

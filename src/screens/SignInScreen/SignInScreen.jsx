@@ -12,7 +12,7 @@ const SignInScreen = () => {
     const navigation = useNavigation();
 
     const {control, handleSubmit, formState: {errors}} = useForm();
-    console.log(errors);
+    // console.log(errors);
 
 
     const onSignInPressed = data => {
@@ -36,15 +36,20 @@ const SignInScreen = () => {
             timeout: 3000,
         })
         .then(async response => {
-            console.log(response.data);
+
+            if (response.data.token) {
+                navigation.navigate('Home', {token: response.data.token})
+            }
+            else {
+                alert('Wrong email or password')
+            }
+
         })
         .catch(error=> {
             console.log("error from image :");
    })
-        console.log(data)
-        // Validate user
+  
         
-        navigation.navigate('StartCourses', {user: data});
     };
     const onForgotPasswordPressed = () => {
         navigation.navigate('ForgotPassword')
@@ -54,21 +59,6 @@ const SignInScreen = () => {
         navigation.navigate('SignUp')
     };
 
-/*     var info = []; */
-
-    /* const requestData = {
-        email: 'simon.sjo@gmail.com',
-        password: '123456',
-      };
-      
-      // Send a POST request with the request data in the request body
-      axios.post('http://127.0.0.1:8000/auth/login/', requestData)
-        .then(response => {
-          // Handle response data here
-        })
-       /*  .catch(error => {
-          // Handle error here
-        }); */
       
 
     return (

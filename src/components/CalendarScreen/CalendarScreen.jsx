@@ -6,12 +6,15 @@ import Navigation from "../../navigation";
 import { useNavigation } from "@react-navigation/native";
 
 
-const CalendarScreen = () => {
+const CalendarScreen = ({route}) => {
+    const {courses} = route.params;
+    const {token} = route.params;
+
     const navigation = useNavigation();
     var [firstDate, setFirstDate] = useState('');
     var [lastDate, setLastDate] = useState('');
-    console.log('first date=', firstDate)
-    console.log('last date=', lastDate)
+    // console.log('first date=', firstDate)
+    // console.log('last date=', lastDate)
 
     const getMarked = () => {
         let marked = {};
@@ -36,7 +39,7 @@ const CalendarScreen = () => {
             let year = firstDate.year;
             let dayLength = `${day}`.length;
             let monthLength = `${firstDate.month}`.length;
-            console.log(day)
+            // console.log(day)
 
             
             if (monthLength < 2 & dayLength < 2 ) {
@@ -77,13 +80,18 @@ const CalendarScreen = () => {
             }
   
         }
-        console.log(marked)
+        // console.log(marked)
 
         return marked;
     };
 
     const onSelectPressed = () => {
-        navigation.navigate('YourReports', {firstDate: firstDate, lastDate: lastDate})
+        if (lastDate.day - firstDate.day > 7) {
+            alert('Choose up to a maximum of 7 days')
+        }
+        else {
+            navigation.navigate('YourReports', {firstDate: firstDate, lastDate: lastDate, courses: courses, token: token})
+        }
     }
     
     return (

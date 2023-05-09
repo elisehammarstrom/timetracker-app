@@ -1,85 +1,270 @@
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import React, {useState} from 'react';
+import {StyleSheet, Text, View, TouchableOpacity, FlatList} from 'react-native';
+import React, {useState, useEffect} from 'react';
 import { useNavigation } from '@react-navigation/native';
 import CustomButton from '../../components/CustomButton';
-import { MultipleSelectList } from 'react-native-dropdown-select-list'
+import axios from 'axios';
+import { TextInput } from 'react-native-paper';
+// import { FlatList } from 'react-native-gesture-handler/lib/typescript/components/GestureComponents';
+
 
 const CourseScreen = ({route}) => {
-  const {user} = route.params;
+  const {originalCourses} = route.params;
+  const {token} = route.params;
+  const [courseIDs, setCourseIDs] = useState('');
+  // const [courses, setCourses] = useState([]);
 
 
+  const [testCourses, setTestCourses] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
+  // var day = new Date().getDate();
+  // var month = new Date().getMonth()+1;
+  // var year = new Date().getFullYear();
+
+  // const [date, setDate] = useState('');
+
+  // if (date.length < 1) {
+  // if (`${day}`.length === 1 & `${month}`.length === 1) {
+  //   setDate(year + '-0' + month + '-0' + day + 'T00:00:00Z')
+  // }
+  // else if (`${day}`.length === 1) {
+  //   setDate(year + '-' + month + '-0' + day + 'T00:00:00Z')
+  // }
+  // else if (`${month}`.length === 1) {
+  //   setDate(year + '-0' + month + '-' + day + 'T00:00:00Z')
+  // }
+  // else {
+  //   setDate(year + '-' + month + '-' + day + 'T00:00:00Z')
+
+  // }}  
+
+
+// Get all courses from database
+  axios.get('http://127.0.0.1:8000/api/courses/', {
+    headers: {
+      'Authorization': `token ` + token
+    }
+  })
+  .then((res) => {
+    if (testCourses.length != res.data.length){
+      setTestCourses(res.data);
+      setFilteredData(res.data);
+    }
+    
+  })
+  .catch((error) => {
+    console.error(error)
+  })
+
+  let data = [];
+  for (let i=0; i<testCourses.length; i++){
+    // if (testCourses[i].courseEndDateTime >= date) {
+      data.push({
+        id: testCourses[i].id,
+        courseTitle: testCourses[i].courseTitle,
+        courseCode: testCourses[i].courseCode,
+      })
+    // }
+  }
   const navigation = useNavigation();
-  const [courses, setCourses] = useState([])
-  const options = ["Mekanik", "Reglerteknik", "Envariabelanalys", "System- och operationsanalys"]
-
-  const [selected, setSelected] = React.useState([]);
-
-  const data = [
-    {key:'1', value:'Algoritmer och datastrukter'},
-    {key:'2', value:'Mekanik'},
-    {key:'3', value:'Miljöteknik'},
-    {key:'4', value:'Reglerteknik'},
-    {key:'5', value:'Sannolikhet och statistik'},
-    {key:'6', value:'System- och operationsanalys'},
-    {key:'7', value:'Transformmetoder'},
-]
-
+  const [courses, setCourses] = useState([]);
+  const [courseCodes, setCourseCodes] = useState([]);
+  const [search, setSearch] = useState('');
 
   const onTimerPressed = () => {
-      navigation.navigate('Home', {options: courses});
-      console.log(user)
+    for (let i=0; i<courseCodes.length; i++) {
+      const formData = new FormData();
+      formData.append('courseCode', courseCodes[i]);
+
+      // Post the chosen courses to the database
+      axios({
+        method: "post",
+        url: "http://127.0.0.1:8000/api/users/add_course/",
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization':`token ` + token
+        }
+      })
+        .then(function (response) {
+          //handle success
+          console.log(response.data);
+        })
+        .catch(function (response) {
+          //handle error
+          console.log(response);
+        });
+
+    }
+    let sameCourses = [];
+    for (let i=0; i<testCourses.length; i++) {
+      for (let j=0; j<courseCodes.length; j++) {
+        if (testCourses[i].courseCode === courseCodes[j]) {
+          sameCourses.push(courseCodes[j])
+        }
+      }
+    }
+    // Remove courses from database of chosen courses if not picked
+    for (let i=0; i<testCourses.length; i++) {
+        if (courseCodes.includes(testCourses[i].courseCode)) {
+          console.log("samma")
+        } else {
+          const formData = new FormData();
+          formData.append('courseID', testCourses[i].id);
+    
+          axios({
+            method: "post",
+            url: "http://127.0.0.1:8000/api/users/remove_course/",
+            data: formData,
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              'Authorization':`token ` + token
+            }
+          })
+            .then(function (response) {
+              //handle success
+              console.log(response.data);
+            })
+            .catch(function (response) {
+              //handle error
+              console.log(response);
+            });
+        }
+      // }
+    }
+
+    axios.get('http://127.0.0.1:8000/api/users/get_courses/', {
+      headers: {
+        'Authorization': `token ` + token
+      }
+    })
+    .then((res) => {
+    
+      if (courseIDs.length === 0) {
+        setCourseIDs(res.data.courses)
+      }
+  
+      axios.get('http://127.0.0.1:8000/api/courses/', {
+      headers: {
+        'Authorization': `token ` + token
+      }
+      })
+      .then((res) => {
+        let newCourses = [];
+        for (let j=0; j<courseIDs.length; j++)
+  
+          for (let i=0; i<res.data.length; i++) {
+            if (`${res.data[i].id}` === `${courseIDs[j]}`) {
+              newCourses.push(`${res.data[i].courseTitle}`)
+            }
+        }
+        if (courses.length === 0) {
+          setCourses(newCourses)
+        }
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+    console.log("courses= ", courses)
+  
+    navigation.navigate('Home', {token: token, newCourseIDs: courses});
   };
     
 
-  function pickCourse(selectedCourse) {
-    if(courses.includes(selectedCourse)){
-      setCourses(courses.filter(Course => Course !== selectedCourse))
-      return;
-    }
-
+  function pickCourse(selectedCourse, courseCode) {
+      if(courses.includes(selectedCourse)){
+        setCourses(courses.filter(Course => Course !== selectedCourse))
+        setCourseCodes(courseCodes.filter(CourseCode => CourseCode !== courseCode))
+        return;
+      }
+    if (courses.length < 6 ){
+  
+      if(courseCodes.includes(courseCode)){
+        setCourseCodes(courseCodes.filter(CourseCode => CourseCode !== courseCode))
+        return;
+      }
+  
+    setCourseCodes(CourseCode => CourseCode.concat(courseCode) )
     setCourses(Courses => Courses.concat(selectedCourse))
-
+    
+    }
+    else {
+      alert('You cannot track more than six courses at a time, please deselect a course to select another one')
+    }
+    
+    
   }
 
+  const searchFilter = (text) => {
+    if (courseCodes.length < 6 ){
+    if (text) {
+      const newData = data.filter((item) => {
+        const itemData = item.courseTitle ? item.courseTitle.toUpperCase()
+                      : ''.toUpperCase();
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      setFilteredData(newData);
+      setSearch(text);
+    } else {
+      setFilteredData(data);
+      setSearch(text);
+    }
+  }else {
+    alert('You can pick a maximum of six courses')
+  }
+  }
+  const ItemSeparatorView = () => {
+    return (
+      // Flat List Item Separator
+      <View
+        style={{
+          height: 0.5,
+          width: '100%',
+          backgroundColor: '#C8C8C8',
+        }}
+      />
+    );
+  };
+  
     return (
         <View style={styles.container}>
-         
- 
-          {/* <View style={styles.selectListContainer}>
-            <MultipleSelectList 
-              setSelected={(val) => setSelected(val)} 
-              data={data} 
-              save="value"
-              label="Chosen courses"
-              search = {true}
-              placeholder = 'Search courses'
-              dropdownTextStyles={{color: 'white'}}
-              inputStyles={{color: 'white', width: 200}}
-              checkBoxStyles = {{backgroundColor: 'white'}}
-              boxStyles = {styles.selectBox}
-              labelStyles = {{color:'white'}}
-              notFoundText = 'No course found'
-              dropdownStyles={{backgroundColor: 'grey', width: 300}}
-              badgeStyles = {{backgroundColor: '#313131'}}
-           
-           
-              />
-          </View> */}
           
-            <View styles={styles.options}>
-              {options.map(option => (
-                <View key={option} style={styles.course}>
-                  <TouchableOpacity style={styles.checkBox} onPress={()=>pickCourse(option)}>
-                    {courses.includes(option) && <Text style={styles.check}>✓</Text>}
-                  </TouchableOpacity>
-                  <Text style={styles.courseName}>{option}</Text>
-                </View>
-                ))}
+            <View style={styles.options}>
+                
+                  <TextInput
+                    value={search}
+                    placeholder='Search courses'
+                    onChangeText={(text) => searchFilter(text)}
+                  />
+
+                
+                <FlatList
+                  data={filteredData}
+                  renderItem={({item}) => (
+                    <View style={styles.course}>
+
+                      <TouchableOpacity style={styles.checkBox} onPress={()=>pickCourse(item.id, item.courseCode)}>
+                        {courses.includes(item.id) && <Text style={styles.check}>✓</Text>}
+                      </TouchableOpacity>
+
+                      <Text style={styles.courseName}>{item.courseTitle}  {item.courseCode}</Text>
+
+                    </View>
+
+                    )}
+                    ItemSeparatorComponent={ItemSeparatorView}
+                  />
+                  
                 <View style={styles.customButtonContainer}>
                   <CustomButton 
                     text="Start tracking" 
                     onPress={onTimerPressed}
-                    />
+                  />
                 </View>
             </View>
         </View>
@@ -88,7 +273,7 @@ const CourseScreen = ({route}) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center', 
     backgroundColor:  '#313131',
@@ -106,37 +291,20 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#EFEFEF',
     marginRight: 5,
+    backgroundColor: 'white'
   },
   course: {
     flexDirection: 'row',
     marginVertical: 7,
   },
   options: {
-    alignSelf: 'flex-start',
-    marginLeft: 50,
+    width: '90%',
+    height: '90%',
+   
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#EFEFEF',
-    margin: 10,
-    marginBottom: 50,
-  },
- 
   customButtonContainer: {
     paddingHorizontal: 50,
   },
-  selectListContainer: {
-    marginTop: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'scroll' // behövs bara för webben, på mobilen med expo appen funkar allt som det ska
-},
-selectBox: {
-  backgroundColor: 'grey',
-  color: 'white'
-}
-
 
 })
 

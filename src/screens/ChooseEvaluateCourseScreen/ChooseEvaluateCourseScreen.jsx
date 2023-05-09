@@ -1,33 +1,54 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
+import React, {useState} from 'react';
 import { useNavigation } from '@react-navigation/native';
 import CustomButton from '../../components/CustomButton';
 import { RadioButton } from 'react-native-paper';
 import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
+import BackArrow from '../../../assets/arrowBack.png';
 
 
-const EvaluateCourseScreen = () => {
+const EvaluateCourseScreen = ({route}) => {
     const navigation = useNavigation();
-    const options = ["Mekanik", "Reglerteknik", "Envariabelanalys"]
+    const {courses} = route.params;
+    const {token} = route.params;
+    const {courseIDs} = route.params;
 
-    const [checked, setChecked] = React.useState('');
+    const [checked, setChecked] = useState('');
+
+    const onArrowPressed = () => {
+        navigation.navigate('Courses', {courses: courses, token: token, courseIDs: courseIDs})
+      }
 
     const onEvaluateCoursePressed = () => {
+        let checkedID = [];
+        for (let i=0; i<courses.length; i++) {
+            if (checked === courses[i]) {
+                checkedID.push(courseIDs[i])
+            }
+        }
         if (checked === '') {
             alert("Please choose a course to evaluate")
         } else {
-            navigation.navigate('EvaluateCourse', {course: checked});
+            navigation.navigate('EvaluateCourse', {course: checked, courses: courses, token: token, checkedID: checkedID});
         }
     };
     
     return (
         <View style={styles.container}>
 
+            <TouchableOpacity activeOpacity={0.5} style={styles.backArrow} onPress={onArrowPressed}>
+                <Image 
+                    source={BackArrow} 
+                    style={[{height: 100 * 0.3}, {width: 100 * 0.3}]} 
+                    resizeMode="contain"
+                />
+            </TouchableOpacity >
+
             <View style={styles.options}>
                 <Text style={styles.title}>Select course to Evaluate</Text>
 
                 <View>
-                    {options.map(option => (
+                    {courses.map(option => (
                         <View style={styles.button} key={option}>
                             <RadioButton
                                 text={option}
@@ -52,6 +73,7 @@ const EvaluateCourseScreen = () => {
             <View>
                 <ButtonMenu
                     screen="courseStats"
+                    token={token}
                 />
             </View>
             
@@ -88,7 +110,11 @@ const styles = StyleSheet.create({
     },
     evaluateButton: {
         padding: 50
-    }
+    },
+    backArrow: {
+        width: '10%',
+        padding: 10
+    },
 })
 
 export default EvaluateCourseScreen;

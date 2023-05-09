@@ -6,17 +6,19 @@ import ButtonMenu from "../../components/ButtonMenu/ButtonMenu";
 
 
 
-const CourseStatsScreen = () => {
+const CourseStatsScreen = ({route}) => {
+    const {courses} = route.params;
+    const {token} = route.params;
+    const {courseIDs} = route.params;
     const navigation = useNavigation();
+    console.log("courseIDs= ", courseIDs)
 
     const onEvaluateCoursesPressed = () => {
-        console.log("Evaluate courses")
-        navigation.navigate("ChooseEvaluateCourse")
+        navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token, courseIDs: courseIDs})
     }
 
-    const onSeeCourseStatisticsPressed = () => {
-        console.log("See course statistics")
-        navigation.navigate("CourseStats")
+    const onCourseEvaluationsPressed = () => {
+        navigation.navigate("CourseEvaluations", {courses: courses, token: token, courseIDs: courseIDs})
     }
 
     return (
@@ -24,21 +26,23 @@ const CourseStatsScreen = () => {
             <View style={styles.buttonContainer}>
                 <Text style={styles.title}>What do you want to do?</Text>
 
+
+                <CustomButton
+                    text="See course evaluations"
+                    onPress={onCourseEvaluationsPressed}
+                />
                 <CustomButton
                     text="Evaluate courses"
                     onPress={onEvaluateCoursesPressed}
                 />
-
-                <CustomButton
-                    text="See course statistics"
-                    onPress={onSeeCourseStatisticsPressed}
-                />
+               
 
             </View>
             <View>
 
                 <ButtonMenu
                     screen='courseStats'
+                    token={token}
                 />
 
             </View>

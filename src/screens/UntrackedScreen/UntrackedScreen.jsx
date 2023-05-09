@@ -1,23 +1,28 @@
 
 import React, {useState} from 'react';
-import {Text, View,Dimensions,StyleSheet, Button, TouchableHighlight, TouchableOpacity} from 'react-native';
+import {Text, View,Dimensions,StyleSheet, Button, TouchableHighlight, TouchableOpacity, Image} from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list'
 import ButtonMenu from '../../components/ButtonMenu';
 import WeekCalendar from '../../components/WeekCalendar';
-import {ArrowLeftOutlined, ArrowRightOutlined} from '@ant-design/icons';
+/* import {ArrowLeftOutlined, ArrowRightOutlined} from '@ant-design/icons'; */
 import CustomButton from '../../components/CustomButton';
+import LeftArrow from '../../../assets/left-arrow.png'
+import RightArrow from '../../../assets/right-arrow.png'
+import Invisible from '../../../assets/invisible-box.png'
 
 
-const UntrackedScreen = () => {
 
-    const [selected, setSelected] = React.useState("");
+
+const UntrackedScreen = ({route}) => {
+    const {courses} = route.params;
+    const {token} = route.params;
+
+    const [selectedCourse, setSelectedCourse] = React.useState("");
+    const [selectedHour, setSelectedHour] = React.useState("");
+    const [selectedMinute, setSelectedMinute] = React.useState("");
+
     const [isShowingArrow, setShowingArrow] = React.useState(true)
 
-    const data = [
-        {key:'1', value:'Meknik'},
-        {key:'2', value:'Reglerteknik'},
-        {key:'3', value:'Envariabelanalys'},
-        ]
 
     const hourData = [
         {key:'1', value:'00'},
@@ -55,9 +60,15 @@ const UntrackedScreen = () => {
         
       }
 
-      const onCurrentDatePressed = () => {       
-        setDate(new Date())
-      }
+    const onCurrentDatePressed = () => {       
+    setDate(new Date())
+    }
+
+    const onAddTimePressed = () => {
+        console.log(selectedHour,':', selectedMinute)
+        alert('Time tracked')
+        
+    }
 
     return (
     <View style={styles.container}>
@@ -67,13 +78,22 @@ const UntrackedScreen = () => {
             (
                 <View style={styles.layout}>
                     <TouchableHighlight onPress={() => {onCalendarPressed(true); setShowingArrow(false);}}> 
-                        <View>
-                            <ArrowLeftOutlined style={styles.leftArrow} />
-                        </View>
+                        <Image 
+                            source={LeftArrow} 
+                            style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
+                            resizeMode="contain"
+                        />
                     </TouchableHighlight>
+
+                    <View style={{paddingHorizontal: 10}}>
                     <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
+                    </View>
                     <View>
-                        <ArrowLeftOutlined style={styles.invisibleArrow} />
+                        <Image 
+                            source={Invisible} 
+                            style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
+                            resizeMode="contain"
+                        />
                     </View>
                 </View>
             ) 
@@ -81,13 +101,21 @@ const UntrackedScreen = () => {
             (
                 <View style={styles.layout}>
                     <View>
-                        <ArrowLeftOutlined style={styles.invisibleArrow} />
+                        <Image 
+                            source={Invisible} 
+                            style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
+                            resizeMode="contain"
+                        />
                     </View>
+                    <View style={{paddingHorizontal: 10}}>
                     <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
+                    </View>
                     <TouchableHighlight onPress={() => {onCurrentDatePressed(true); setShowingArrow(true);}}> 
-                        <View>
-                            <ArrowRightOutlined style={styles.rightArrow} />
-                        </View>
+                        <Image 
+                            source={RightArrow} 
+                            style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
+                            resizeMode="contain"
+                        />
                     </TouchableHighlight>
                 </View>
             )
@@ -98,31 +126,28 @@ const UntrackedScreen = () => {
                 dropdownTextStyles={styles.selectList}
                 inputStyles={styles.selectList}
                 boxStyles={styles.boxStyles}
-                setSelected={(val) => setSelected(val)}
-                data={data}
+                setSelected={(val) => setSelectedCourse(val)}
+                data={courses}
                 save="value"
                 search={false}
                 placeholder='Choose course'
             />
         </View>
+
         <View style={styles.timeLayout}>
             <View style={styles.selectListTimeContainer}>
                 <Text style={styles.addTime}>Add time:</Text>
-                <View>
-               
-            
-                </View>
-    
+        
                 <SelectList
                     dropdownTextStyles={styles.selectList}
                     inputStyles={styles.selectList}
                     boxStyles={styles.boxTimeStyles}
-                    setSelected={(val) => setSelected(val)}
+                    setSelected={(val) => setSelectedHour(val)}
                     data={hourData}
                     save="value"
                     search={false}
                     placeholder='00'
-                    dropdownStyles={{width: 0.18 * Dimensions.get('window').width, border: 'none'}}
+                    dropdownStyles={{width: 0.18 * Dimensions.get('window').width, borderColor: '#313131'}}
                     
                 />
                 <Text style={{color: 'white', fontSize: 30}}>:</Text>
@@ -131,12 +156,12 @@ const UntrackedScreen = () => {
                     dropdownTextStyles={styles.selectList}
                     inputStyles={styles.selectList}
                     boxStyles={styles.boxTimeStyles}
-                    setSelected={(val) => setSelected(val)}
+                    setSelected={(val) => setSelectedMinute(val)}
                     data={minuteData}
                     save="value"
                     search={false}
                     placeholder='00'
-                    dropdownStyles={{width: 0.18 * Dimensions.get('window').width, border: 'none'}}
+                    dropdownStyles={{width: 0.18 * Dimensions.get('window').width, borderColor: '#313131'}}
                 />
             </View>
         </View>
@@ -144,11 +169,13 @@ const UntrackedScreen = () => {
         <View style={styles.customButtonContainer}>
             <CustomButton
                 text="Add time"
+                onPress={onAddTimePressed}
             />
         </View>
         <View>
             <ButtonMenu 
                 screen='timeTracking'
+                token={token}
             />
         </View>
         
@@ -168,16 +195,16 @@ const styles = StyleSheet.create({
     selectListContainer: {
         justifyContent: 'center',
         marginTop: '3%',
-        flexDirection: 'row',       
+        flexDirection: 'row',    
     },
     selectListTimeContainer: {
         justifyContent: 'center',
-        marginTop: '3%',
         flexDirection: 'row',
         borderRadius: 20,
-        border: 'solid',
-        borderColor: 'red',
-        width: '60%',
+        borderColor: 'white',
+
+        borderWidth: 0.5
+
     },
     selectList: {
         fontWeight: 'bold',
@@ -188,7 +215,7 @@ const styles = StyleSheet.create({
     },
     boxTimeStyles: {
         width: 0.18 * Dimensions.get('window').width,
-        borderStyle: 'none'
+        borderColor: '#313131'
     },
     header: {
         flexDirection: 'row',
@@ -204,8 +231,7 @@ const styles = StyleSheet.create({
     },
     dateButton: {
         marginRight: '2%',
-        width:100,
-        
+        width:100, 
     },
     logo: {
         width: '70%',
@@ -226,27 +252,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center'
-    },
-    rightArrow: {
-        color: 'white', 
-        height: 20, 
-        width: 20,
-        marginTop: 20,
-        padding: 20,
-    },
-    leftArrow: {
-        color: 'white', 
-        height: 20, 
-        width: 20,
-        marginTop: 20,
-        padding: 20,
-    },
-    invisibleArrow: {
-        color: '#313131', 
-        height: 20, 
-        width: 20,
-        marginTop: 20,
-        padding: 20,
     },
     plusIcon: {
         color: 'white',

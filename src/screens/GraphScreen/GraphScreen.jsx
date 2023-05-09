@@ -47,7 +47,7 @@ const GraphScreen = () => {
             <StackedBarChart
             data={{
                 labels: ['Mon', 'Tue', 'Wen', 'Thu', 'Fri'],
-                legend: ['Mekanik', 'Reglerteknik', 'Envariabelanalys'],
+                legend: ['Mekanik', 'Miljöteknik', 'Envariabelanalys'],
                 data: [[5, 3, 0], [3, 2, 3], [1, 2, 5], [0, 0, 8], [2, 4, 1]],
                 barColors: ['#66C7FD', '#5987CC', '#AC7CE4'],
             }}

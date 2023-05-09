@@ -1,48 +1,104 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image} from 'react-native';
 import { StackedBarChart } from "react-native-chart-kit";
 import CustomButton from '../../components/CustomButton/CustomButton';
 import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
-import Navigation from '../../navigation';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import Ett from '../../../assets/ett.png'
+import Två from '../../../assets/2.png'
+import Tre from '../../../assets/3.png'
+import Fyra from '../../../assets/4.png'
+import Fem from '../../../assets/5.png'
 
 
 const YourReportsScreen = ({route}) => {
-  const fakeTime = ["10h", "12h", "11h"]
+  const {token} = route.params;
+  const {firstDate} = route.params;
+  const {lastDate} = route.params;
+
+  const [initialLabels, setInitialLabels] = useState([]);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const fetchedCourses = [];
+  const fetchedTimeStudied = [];
+  const [courses, setCourses] = useState([]);
+  const [timeStudied, setTimeStudied] = useState([]);
+  const [state, setState] = useState('');
 
 
-  console.log("route.params=", route.params)
+  //Fetching the first dates for the graph 
+  axios.get('http://127.0.0.1:8000/api/tracking/get_dates_in_week/', {
+    headers: {
+      'Authorization': `token ` + token
+    }
+  })
+  .then((res) => {
+    if (initialLabels.length < 1 ) {
+      setInitialLabels(res.data.dates)
+      setStartDate(`${res.data.startDate}`);
+      setEndDate(`${res.data.endDate}`);
+    }
+  })
+  .catch((error) => {
+    console.error(error)
+  })
 
-  var date = new Date().getDate();
-  const test = new Date().getMonth()+1;
-  const [month, setMonth] = useState("/" + test); 
-  var createLabels = [];
-  for (let i=0; i<7; i++) {
-    createLabels.push(date+i)
+  // If you have selected dates from the calendar the dates of the graph will change
+  if (firstDate) {
+    if (startDate !== firstDate.dateString) {
+      setStartDate(firstDate.dateString)
+      setEndDate(lastDate.dateString)
+    }
   }
-  const [labels, setLabels] = useState(createLabels)
-
-  if (route.params !== undefined) {
-    console.log("route.params=", route.params)
-    const {firstDate} = route.params;
-    const {lastDate} = route.params;
+  if (firstDate) {
     let newLabels = [];
 
-    if (month != "/" + firstDate.month) {
-      setMonth("/" +  firstDate.month);
-    }
     for (let i=firstDate.day; i<=lastDate.day; i++) {
-      newLabels.push(i) 
+      newLabels.push(i + '/' + firstDate.month) 
     }
-    console.log("newlabels=", newLabels)
-    if (`${labels}` != `${newLabels}`) {
-      setLabels(newLabels)
+    if (`${initialLabels}` != `${newLabels}`) {
+      setInitialLabels(newLabels)
     }
   }
-    
-  const navigation = useNavigation();
+  
+  //Fetching the users study time on each course for the dates you have picked
+  const formData = new FormData();
+  formData.append('startDate', startDate)
+  formData.append('endDate', endDate)
+  
+  if (startDate) {
+    axios({
+      method: "post",
+      url: "http://127.0.0.1:8000/api/tracking/get_user_course_study_time/",
+      data: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `token ` + token
+      }
+    })
+    .then((res) => {
+      for (let i=0; i<res.data.results.length; i++) {
+        fetchedTimeStudied.push(res.data.results[i].timeStudied)
+        fetchedCourses.push(res.data.results[i].Course)
+      }
+      if (`${fetchedTimeStudied}` != `${timeStudied}` ){
+        console.log('timeStudied:', timeStudied)
+        setCourses(fetchedCourses);
+        setTimeStudied(fetchedTimeStudied);
+      }  
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+  }
+  
+  
+  // Specifics for the graph 
+  const fakeTime = ["10h", "12h", "11h"]
   const screenWidth = Dimensions.get("window").width;
   const chartConfig = {
+      decimalPlaces: 0,
       backgroundGradientFrom: "#313131",
       backgroundGradientFromOpacity: 0,
       backgroundGradientTo: "#313131",
@@ -50,42 +106,57 @@ const YourReportsScreen = ({route}) => {
       color: (opacity = 1) => `rgba(239, 239, 239, ${opacity})`,
       strokeWidth: 2, // optional, default 3
       barPercentage: 0.5,
-      useShadowColorFromDataset: false // optional
-    };
-  
-  const courses = ["Mekanik", "Reglerteknik", "Envariabelanalys"]; 
-  const colorsConst = ['#66C7FD', '#5987CC', '#AC7CE4', '#FFB5E2', '#FFA9A3', '#FFC977'];
-  // const weakColorsConst = ['rgba(102, 199, 253, 0.5)','rgba(89, 135, 204, 0.5)','rgba(172, 124, 228, 0.5)', 'rgba(255, 181, 226, 0.5)','rgba(255, 169, 163, 0.5)','rgba(255, 201, 119, 0.5)' ];
-  const testTime = [[6,3,0,1,0], [1,3,2,2,4], [1,1,4,5,0]];
+      useShadowColorFromDataset: false, // optional
+  };
 
-  const [legend, setLegend] = useState(["Mekanik", "Reglerteknik", "Envariabelanalys"]);
+  // Colors for the graph and for the boxes
+  const colorsConst = ['#66C7FD', '#5987CC', '#AC7CE4', '#FFB5E2', '#FFA9A3', '#FFC977'];
   const [colors, setColors] = useState(['#66C7FD', '#5987CC', '#AC7CE4', '#FFB5E2', '#FFA9A3', '#FFC977']);
-  
+  const [legend, setLegend] = useState(courses);
+
   var time = [];
   var timeCourses = [];
 
-  const [timeVar, setTimeVar] = useState(time)
-
+  // Get the right format for the timeStudied to fit in to the graph
+  if (timeStudied.length > 0) {
+    for (let i=0; i<timeStudied[0].length; i++) {
+      let timeSplit = [];
+      
+      for (let j=0; j<timeStudied.length; j++) {
+        timeSplit.push(timeStudied[j][i])
+      }
+      time.push(timeSplit)
+    };
+  }
+  // Making it possible to show data for only one course at a time
   for (let i=0; i<courses.length; i++) {
-    timeCourses.push({course: courses[i], time: testTime[i]})
+    timeCourses.push({course: courses[i], time: timeStudied[i]})
   };
+
+  const [timeVar, setTimeVar] = useState([]);
+  // Set timeVar which can be varied to time if the user haven't picked to show only one course
+  if (`${timeVar}` != `${time}` & state != 'pressed') {
+      setTimeVar(time)    
+  }
+
+  // Gets the sum of time studied of each course
+  let sum = [];
+  for (let i=0; i<timeCourses.length; i++) {
+    sum.push(Math.round(timeCourses[i].time.reduce((a, b) => a + b, 0)*10)/10);
+  }
   
-  for (let i=0; i<testTime[0].length; i++) {
-
-    time.push([testTime[0][i], testTime[1][i], testTime[2][i]])
-    
-  };
-
   const data = {
-    labels: labels,
-    legend: legend,
+    labels: initialLabels,
+    legend: [],
     data: timeVar,
     barColors: colors
   };
 
+  // When you press a course you will only see data for that course
   const onCoursePressed = (course) => {
     for (let i=0; i<timeCourses.length; i++) {
       if (legend.length === 1 & legend[0] === course) {
+        setLegend([timeCourses[i].course])
         setLegend(courses)
         setColors(colorsConst)
         setTimeVar(time)
@@ -94,18 +165,24 @@ const YourReportsScreen = ({route}) => {
       else if (course === timeCourses[i].course & legend.length != 1){
         setLegend([timeCourses[i].course])
         setColors([colors[i]])
-        var timeChange = []
+        var timeChange = [];
+
         for (let j=0;j<timeCourses[i].time.length; j++){
           timeChange.push([timeCourses[i].time[j]])
         }
-        setTimeVar(timeChange)  
+
+        setTimeVar(timeChange)
+        setState('pressed')
       }
     }
   };
 
+  // Navigation to the calendar where you can pick other dates to display
+  const navigation = useNavigation();
   const onDatePressed = () => {
-    navigation.navigate('Calendar')
+    navigation.navigate('Calendar', {courses: courses, token: token})
   }
+
     return (
         <View style={styles.container}>
           
@@ -132,35 +209,49 @@ const YourReportsScreen = ({route}) => {
                 width={screenWidth}
                 height={220}
                 chartConfig={chartConfig}
-                xAxisLabel={month}
+                yAxisLabel="h "
+
+                decimalPlaces={1}
               />
             </View>
 
             <View style={styles.dataContainer}>
               <View style={styles.data}>
-                <Text style={styles.dataText}>Course</Text>
+                <Text style={styles.dataTextCourse}>Course</Text>
+                <Text style={styles.dataTextStress}>Stress</Text>
                 <Text style={styles.dataText}>Time</Text>
               </View>
               
               {courses.map((course,i) => (
                 <TouchableOpacity style={[styles.colors, {backgroundColor: colorsConst[i]}]} key={course} onPress={() => onCoursePressed(course)}>
-                  
-                  <View>
+
+                  <View style={{flex: 4}}>
                     <Text style={{fontWeight: 'bold'}}>{course}</Text>
                   </View>
 
+                  <View style={{flex: 1.5}}>
+                   <Image 
+                    source={Tre} 
+                    style={[ {height: 100 * 0.3},{width: 100*0.3}, {marginBottom:10}]} 
+                    resizeMode="contain"
+                    />
+                  </View>
+
                   <View>
-                    <Text style={{fontWeight: 'bold'}}>{fakeTime[i]}</Text>
+                    <Text style={{fontWeight: 'bold'}}>{sum[i]} h</Text>
                   </View>
 
                 </TouchableOpacity> 
               ))}
+
+
                
             </View>
 
             <View>
               <ButtonMenu
                 screen="yourReports"
+                token={token}
               />
             </View>
             
@@ -205,6 +296,18 @@ const styles=StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#EFEFEF',
+  },
+  dataTextStress: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#EFEFEF',
+    flex: 1.5
+  },
+  dataTextCourse: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#EFEFEF',
+    flex: 4
   },
   data: {
     flexDirection: 'row',
