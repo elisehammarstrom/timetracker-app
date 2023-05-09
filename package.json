@@ -12,47 +12,33 @@
     "@ant-design/icons": "^5.0.1",
     "@expo/webpack-config": "^18.0.4",
     "@react-native-community/checkbox": "^0.5.15",
-    "@react-native-community/datetimepicker": "6.7.3",
+    "@react-native-community/datetimepicker": "4.0.0",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
     "@types/react": "~18.0.27",
     "@types/react-native": "~0.69.1",
     "axios": "^1.3.6",
     "date-fns": "^2.29.3",
-<<<<<<< HEAD
-    "expo": "^44.0.6",
-    "expo-status-bar": "~1.4.4",
-=======
     "expo": "^46.0.21",
     "expo-status-bar": "~1.2.0",
->>>>>>> e84eed8b0f4a6f304058dacb5d9a2498565d191f
     "react": "18.2.0",
     "react-hook-form": "^7.43.9",
-    "react-native": "0.71.3",
+    "react-native": "0.71.7",
     "react-native-calendars": "^1.1275.0",
     "react-native-chart-kit": "^6.12.0",
     "react-native-dropdown-select-list": "^2.0.4",
-    "react-native-gesture-handler": "~2.9.0",
+    "react-native-gesture-handler": "~2.1.0",
     "react-native-grid-component": "^2.0.1",
     "react-native-modern-datepicker": "^1.0.0-beta.91",
     "react-native-paper": "^5.6.0",
     "react-native-passmeter": "^0.0.5",
-<<<<<<< HEAD
-    "react-native-reanimated": "~2.14.4",
-=======
     "react-native-reanimated": "^2.17.0",
->>>>>>> e84eed8b0f4a6f304058dacb5d9a2498565d191f
     "react-native-responsive-linechart": "^5.7.1",
-    "react-native-safe-area-context": "4.5.0",
-    "react-native-screens": "~3.20.0",
+    "react-native-safe-area-context": "3.3.2",
+    "react-native-screens": "~3.10.1",
     "react-native-stopwatch-timer": "^0.0.21",
-<<<<<<< HEAD
-    "react-native-svg": "13.4.0",
-    "react-native-web": "~0.18.11",
-=======
     "react-native-svg": "^12.5.1",
     "react-native-web": "~0.18.10",
->>>>>>> e84eed8b0f4a6f304058dacb5d9a2498565d191f
     "react-navigation": "^4.4.4",
     "react-navigation-stack": "^2.10.4",
     "typescript": "^4.9.4"
