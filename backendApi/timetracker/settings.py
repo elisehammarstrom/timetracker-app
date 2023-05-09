@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     #third-party apps
     'rest_framework',
     'rest_framework.authtoken',
-    'import_export',
+    #'import_export',
     "api",
 ]
 

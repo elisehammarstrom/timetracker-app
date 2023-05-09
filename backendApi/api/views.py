@@ -165,8 +165,8 @@ class PasswordChangeView(APIView):
                 print("in IF")
                 #user = request.user
                 #u = request.user
-                #u.set_password(password)
-                #u.save() # Add this line   
+                user.set_password(password)
+                user.save() # Add this line   
                 #is_private = request.POST.get('is_private', False) 
                 #userInstance = User.objects.get(pk=u.pk)
                 #userInstance.set_password(password)
