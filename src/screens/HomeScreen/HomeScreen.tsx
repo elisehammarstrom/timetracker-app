@@ -95,7 +95,7 @@ const HomeScreen: React.FC = ({route}) => {
           />
   
         </TouchableOpacity>
-        
+
           <Image 
             source={Logo} 
             style={[styles.logo, {height: 200 * 0.3}]} 
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
   },
   customButtonContainer: {
     paddingHorizontal: 50,
-    marginBottom: 60
+    marginBottom: 80
   },
   timeLoop: {
     width: '100%',

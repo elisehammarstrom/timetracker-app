@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, Dimensions} from 'react-native';
+import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity} from 'react-native';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
-import { TouchableHighlight } from 'react-native-gesture-handler';
 import CloseIcon from '../../../assets/close.png';
 import SettingIcon from '../../../assets/settings.png';
 import axios from 'axios';
@@ -60,21 +59,21 @@ const ProfileScreen = ({route}) => {
     <View style={styles.topContainer}>
       <View style={styles.closeContainer}>
   
-      <TouchableHighlight onPress={onSignOutPressed} >
+      <TouchableOpacity activeOpacity={0.5} onPress={onSignOutPressed} >
         <Image 
               source={SignOutIcon} 
               style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
               resizeMode="contain"
           />
-      </TouchableHighlight>
+      </TouchableOpacity>
 
-      <TouchableHighlight  onPress={onClosedPress} >
+      <TouchableOpacity activeOpacity={0.5}  onPress={onClosedPress} >
         <Image 
               source={CloseIcon} 
               style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
               resizeMode="contain"
           />
-      </TouchableHighlight>
+      </TouchableOpacity>
       </View>
 
       <View style={styles.bottomContainer}>
