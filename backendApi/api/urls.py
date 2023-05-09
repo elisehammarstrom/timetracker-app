@@ -12,7 +12,6 @@ router.register("users", UserViewset)
 router.register("students", StudentViewset)
 router.register("tracking", UserCourseTrackingViewset)
 
-
 urlpatterns = [
     path('', include(router.urls))
 ]

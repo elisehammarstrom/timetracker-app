@@ -20,7 +20,8 @@ import json as simplejson
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -93,20 +94,26 @@ class LoginView(APIView):
         if user is not None:
             user.password = password
             user.is_active = True
-            user = authenticate(request, email=email, password=password)
-            login(request, user)
-            response = {
-                "message": "Login was successful", 
-                "token": user.auth_token.key,
-                "userSystemID" : user.pk,
-                "Logged in": request.user.is_authenticated
-            } 
-            return Response(data=response, status=status.HTTP_200_OK)
+            try:
+                user = authenticate(email=email, password=password)
+                login(request, user)
+                response = {
+                    "message": "Login was successful", 
+                    "token": user.auth_token.key,
+                    "userSystemID" : user.pk,
+                    "LoggedIn": user.is_authenticated
+                } 
+                return Response(data=response, status=status.HTTP_200_OK)
+            except: 
+                response = {
+                    "message": "Wrong email or password", 
+                } 
+                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else: 
             response = {
                 "message": "Login was unsuccessful. User does not exist"
             } 
-            return Response(data=response, status=status.HTTP_200_OK)
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request:Request):
         content = {
@@ -117,14 +124,12 @@ class LoginView(APIView):
         return Response(data=content, status=status.HTTP_200_OK)
     
 class LogoutView(APIView):
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
 
     def post(self, request:Request):
         try:
             request.user.is_active = False
             logout(request)
-
-            
             response = {
                 "message": "Logout was successful", 
                 "Logged in": request.user.is_authenticated
@@ -135,7 +140,43 @@ class LogoutView(APIView):
                 "message": "Login was unsuccessful. User does not exist"
             } 
             return Response(data=response, status=status.HTTP_200_OK)
+        
+class PasswordChangeView(APIView):
+    #permission_classes = [IsAuthenticated]
+    permission_classes = []
 
+    def post(self, request:Request):
+        #new_password = request.data.get('new_password')
+        print("PASSWORD CHANGE")
+        password = request.POST['password']
+
+        if password is not None:
+            try:
+                #user = request.user
+                u = request.user
+                u.set_password(password)
+                u.save() # Add this line    
+                #userInstance = User.objects.get(pk=u.pk)
+                #userInstance.set_password(password)
+                #userInstance.password = new_password
+                #userInstance.save()
+                #update_session_auth_hash(request, userInstance)
+    
+                response = {
+                    "message": "Password changed", 
+                    "LoggedIn": u.is_authenticated,
+                } 
+                return Response(data=response, status=status.HTTP_200_OK)
+            except: 
+                response = {
+                    "message": "Password change was unsuccessful. User does not exist"
+                } 
+                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            response = {
+                    "message": "You must provide a new password (new_password)"
+                } 
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
 class StudentViewset(viewsets.ModelViewSet):
     queryset = Student.objects.all()
@@ -217,8 +258,6 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             print("type(endDateRequest):", type(endDateRequest))
             print("endDateRequest:", endDateRequest)
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-
-
         else:
             startDate = datetime.strptime(startDateRequest,"%Y-%m-%d").date()
             endDate = datetime.strptime(endDateRequest,"%Y-%m-%d").date()
@@ -238,7 +277,6 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                     while j < no_of_dates:
                         durationArray.append(0)
                         j += 1
-
                 else:
                     i = 0 
 
@@ -253,9 +291,10 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                             durationArray.append(totalHours)
                         i+=1
                 results.append({
-                                    "Course" : course.courseTitle, 
-                                    "courseID" : course.id, 
-                                   "timeStudied" : durationArray})
+                                "Course" : course.courseTitle, 
+                                "courseID" : course.id, 
+                                "timeStudied" : durationArray
+                            })
 
             response = {
                             "message": "Time studied per day",  

@@ -19,11 +19,22 @@ from django.urls import path
 from django.conf.urls import include
 from rest_framework.authtoken.views import obtain_auth_token
 from api import views
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
     path('auth/', obtain_auth_token),
+    
+    #path("accounts/", include("django.contrib.auth.urls")),
+    
     path('auth/login/', views.LoginView.as_view(), name="login"),
+    #path('accounts/login/', auth_views.LoginView.as_view(), name="login"),
+    
     path('auth/logout/', views.LogoutView.as_view(), name="logout"),
+    #path('accounts/logout/', auth_views.LogoutView.as_view(), name="logout"),
+    
+    path('auth/password/', views.PasswordChangeView.as_view()),
+    #path('accounts/password/', auth_views.PasswordChangeView.as_view()),
+    
 ]

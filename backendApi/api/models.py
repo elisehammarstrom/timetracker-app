@@ -152,7 +152,6 @@ class ProgrammeHead(User):
     def welcome(self):
         return "Only for ProgrammeHead"
 
-
 class TeacherManager(BaseUserManager):
     def get_queryset(self, *args, **kwargs):
         results = super().get_queryset(*args, **kwargs)
@@ -167,7 +166,6 @@ class Teacher(User):
     
     def welcome(self):
         return "Only for Teacher"
-
 
 class StudentManager(BaseUserManager):
     def get_queryset(self, *args, **kwargs):
