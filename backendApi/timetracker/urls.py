@@ -42,5 +42,5 @@ urlpatterns = [
     
     #path('auth/password/', views.PasswordChangeView.as_view()),
     #path('auth/password/', auth_views.PasswordChangeView.as_view()),
-    
+
 ]
