@@ -10,10 +10,13 @@ import Två from '../../../assets/2.png'
 import Tre from '../../../assets/3.png'
 import Fyra from '../../../assets/4.png'
 import Fem from '../../../assets/5.png'
+import axios from 'axios';
 
 const StressScreen = ({route}) => {  
     const {courses} = route.params;
     const {token} = route.params;
+    const {courseIDs} = route.params;
+    console.log(courseIDs)
  
     const navigation = useNavigation();
     
@@ -24,9 +27,27 @@ const StressScreen = ({route}) => {
     
    
     // get today's date
-    var date = new Date().getDate(); //To get the Current Date
+    var thisDay = new Date().getDate(); //To get the Current Date
     var month = new Date().getMonth() + 1; //To get the Current Month
     var year = new Date().getFullYear(); //To get the Current Year
+    const [thisDate, setThisDate] = useState('');
+
+
+    if (thisDate.length < 1) {
+    if (`${thisDay}`.length === 1 & `${month}`.length === 1) {
+        setThisDate(year + '-0' + month + '-0' + thisDay)
+    }
+    else if (`${day}`.length === 1) {
+        setThisDate(year + '-' + month + '-0' + thisDay)
+    }
+    else if (`${month}`.length === 1) {
+        setThisDate(year + '-0' + month + '-' + thisDay)
+    }
+    else {
+        setThisDate(year + '-' + month + '-' + thisDay)
+
+    }
+}  
 
     var days = [,'Mon','Tue','Wed','Thu','Fri','Sat', 'Sun'];
 
@@ -49,14 +70,17 @@ const StressScreen = ({route}) => {
     const [pressed3, setPressed3] = useState(false);
     const [pressed4, setPressed4] = useState(false);
     const [pressed5, setPressed5] = useState(false);
-
-    
-
     
     const onSubmitPressed = () => {
+        let checkedID = [];
+        for (let i=0; i<courses.length; i++) {
+            if (selected === courses[i]) {
+                checkedID.push(courseIDs[i])
+            }
+        }
         let stressTracked = {
-            course: selected,
-            date: date + "-" + month +"-" + year,
+            course: checkedID[0],
+            date: thisDate,
             stress: selectedValue
         }
         if (stressTracked.course === ''){
@@ -75,6 +99,29 @@ const StressScreen = ({route}) => {
             setPressed5(false)
             setSelectedValue('')
         }
+
+        const formData = new FormData();
+        formData.append('courseID', stressTracked.course);
+        formData.append('stress', stressTracked.stress);
+        formData.append('date', stressTracked.date)
+
+        axios({
+            method: "post",
+            url: "http://127.0.0.1:8000/api/tracking/track_stress/",
+            data: formData,
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              'Authorization':`token ` + token
+            }
+          })
+            .then(function (response) {
+              //handle success
+              console.log(response.data);
+            })
+            .catch(function (response) {
+              //handle error
+              console.log(response);
+            });
     }
     return (
 
@@ -83,7 +130,7 @@ const StressScreen = ({route}) => {
         <Text style={styles.day}>{day}</Text>
         <View style={styles.dateContainer}>
             <View style={styles.circle}>
-                <Text style={styles.date}>{date}</Text>
+                <Text style={styles.date}>{thisDay}</Text>
             </View>
             </View>
             <ScrollView>
