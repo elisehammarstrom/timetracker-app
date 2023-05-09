@@ -1,4 +1,4 @@
-import { Button,View, Text , TouchableOpacity,  StyleSheet,SafeAreaView,Dimensions, Image } from 'react-native';
+import { Button,View, Text , TouchableOpacity,  StyleSheet,SafeAreaView,Dimensions, Image, TouchableHighlight } from 'react-native';
 import React, {useState} from 'react';
 import {Stopwatch} from 'react-native-stopwatch-timer';
 import Play from '../../../assets/play.png'
@@ -58,13 +58,17 @@ const CalendarBlock = ({courseID, courseName, color, studyTime}) => {
 
     return (
         <SafeAreaView>
+         
+
            <View style={styles.container}>
 
             <View style={[styles.sectionStyle, styles[`sectionStyle_${color}`]]}>
 
               <View style={styles.titleContainer}>
+            
                 <Text style={styles.title}>{courseName}</Text>
                 <Text style={styles.title}>{studyTime}h</Text>
+               
               </View>
 
               
@@ -72,6 +76,8 @@ const CalendarBlock = ({courseID, courseName, color, studyTime}) => {
             </View>
 
           </View>
+        
+        
         </SafeAreaView>
     )
 }
