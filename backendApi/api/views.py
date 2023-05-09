@@ -682,11 +682,6 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
 
             for question in questions:
                 questionObj = Question.objects.create(text=question, courseEvaluation = record)
-                class CourseCalendarViewset(viewsets.ModelViewSet):
-    queryset = CourseCalendar.objects.all()
-    serializer_class = CourseCalendarSerializer
-    authentication_classes = (TokenAuthentication, )
-    permission_classes = (IsAuthenticated, )
                 answerObj = Answer.objects.create(number=0, question=questionObj)
                 questionAnswerObj = QuestionAnswer.objects.create(question=questionObj, answer=answerObj, courseEvaluation = record)
                 questionAnswers.append({
@@ -751,8 +746,11 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                 response = {"message": "That answerID does not exist"}
                 return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
-
-
+class CourseCalendarViewset(viewsets.ModelViewSet):
+    queryset = CourseCalendar.objects.all()
+    serializer_class = CourseCalendarSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
 
 
 class UserFreetimeViewset(viewsets.ModelViewSet):
@@ -839,7 +837,6 @@ class CourseScheduleViewset(viewsets.ModelViewSet):
         #     obj = CourseSchedule.objects.create(courseEvent = dbframe.Moment, eventStartTime =datetime.strptime(startDateTime, '%Y-%m-%d %H:%M:%S'), 
         #                                         eventEndTime = datetime.strptime(endtDateTime, '%Y-%m-%d %H:%M:%S'))                         
         #     obj.save()
-
 
 class YearGradeViewset(viewsets.ModelViewSet):
     queryset = YearGrade.objects.all()
