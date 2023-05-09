@@ -17,6 +17,7 @@ import {
 const Star = ({question}) => {
         // To set the default Star Selected
     const [defaultRating, setDefaultRating] = useState(2);
+    console.log("Star= ", defaultRating)
     // To set the max number of Stars
     const [maxRating, setMaxRating] = useState([1, 2, 3, 4, 5]);
 
