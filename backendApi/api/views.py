@@ -318,6 +318,12 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                             }
                 
             return Response(data=response, status=status.HTTP_200_OK)
+        
+    #get avg hours other for course on a weekly basis
+    # send in start date and end date
+    # calculate weeks
+    # 
+    #     
     @action(detail=False, methods=['GET'])
     def get_dates_in_week(self, request, **extra_fields):
         today = date.today()
@@ -393,14 +399,6 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             seconds = map(lambda time: (time.hour * 60 * 60 ) + (time.minute * 60.0) + time.second, durations)
             total_seconds = sum(seconds)
             no_of_instances = len(queryresult)
-
-            #måste få course average för varje användare
-
-            #ta fram användarens average per dag
-            # och summera date average för användaren
-
-            #gör samma fast för varje user_id i denna metod
-
             avg_time = total_seconds / no_of_instances
             avg_timestamp = time.strftime('%H:%M:%S', time.gmtime(avg_time))
 
@@ -701,6 +699,7 @@ class UserViewset(viewsets.ModelViewSet):
                     }
                 } 
             return Response(data=response, status=status.HTTP_200_OK)
+        
 
 class QuestionAnswerViewset(viewsets.ModelViewSet):
     queryset = CourseEvaluation.objects.all()
