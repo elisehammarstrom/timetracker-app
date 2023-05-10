@@ -658,28 +658,25 @@ class UserViewset(viewsets.ModelViewSet):
     @action(detail=False, methods=['POST'])
     def change_programme(self, request, **extra_fields):
         user = request.user
-        #if user.role != 'STUDENT' or :
-        #    response = {"message": "You need to be a STUDENT to enrol in a course"}
-        #   return Response(response, status = status.HTTP_400_BAD_REQUEST)
-        #print("HEJ ÄR USER: ", user.email)
 
         if 'programmeID' in request.data: 
             programmeID = request.POST.get('programmeID')
             programmeInstance = Programme.objects.get(id=programmeID)
 
-            #user.programme.add(programmeInstance)
-            #user.save()
-
             userInstance = Student.objects.get(id=user.id)
+            userInstance.programme = programmeInstance
             userInstance.save()
 
             serializer = self.serializer_class(request.user, data=request.data, partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
-
-            #vi sparar id:et på användaren
-            #Lägg till så att kursID:et också syns i response
+            
             response = {'Programme assigned to user: ': str(user.email),
+                        "user" : {
+                            "first_name" : userInstance.first_name,
+                            "programme": userInstance.programme.shortProgrammeName
+
+                        }, 
                         "Programme: ": {
                             "systemID: ": programmeInstance.id,
                             "programmeName: ": programmeInstance.programmeName,
