@@ -9,6 +9,7 @@ import { useNavigation } from "@react-navigation/native";
 const CalendarScreen = ({route}) => {
     const {courses} = route.params;
     const {token} = route.params;
+    const {courseIDs} = route.params;
 
     const navigation = useNavigation();
     var [firstDate, setFirstDate] = useState('');
@@ -90,7 +91,7 @@ const CalendarScreen = ({route}) => {
             alert('Choose up to a maximum of 7 days')
         }
         else {
-            navigation.navigate('YourReports', {firstDate: firstDate, lastDate: lastDate, courses: courses, token: token})
+            navigation.navigate('YourReports', {firstDate: firstDate, lastDate: lastDate, courses: courses, token: token, courseIDs: courseIDs})
         }
     }
     
