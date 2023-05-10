@@ -727,7 +727,7 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
 
         if courseID is None:
             response = {"message": "You need to provide a courseID. E.g. 2. (courseID)"}
-            return Response(data=response, status=status.HTTP_500_BAD_REQUEST)
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else:
             questions = [
                 "What is your general opinion of the course?", 
@@ -740,16 +740,17 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                 ]
             
             questionAnswers = []
-            record = CourseEvaluation.objects.create(user=userInstance, course=Course.objects.get(id=courseID))
+            record = CourseEvaluation.objects.create(user=userInstance, course=Course.objects.get(id=courseID), **extra_fields)
             record.save()
 
+            print("record.id", record.id)
+            """
             for question in questions:
                 questionObj = Question.objects.create(text=question, courseEvaluation = record)
                 answerObj = Answer.objects.create(number=0, question=questionObj)
                 questionAnswerObj = QuestionAnswer.objects.create(question=questionObj, answer=answerObj, courseEvaluation = record)
                 questionAnswers.append({
                     "questionAnswer.id": questionAnswerObj.id,
-                    "courseEvaluation.id": questionAnswerObj.courseEvaluation.id,
                     "question": {
                         "id": questionAnswerObj.question.id,
                         "question": questionAnswerObj.question.text,
@@ -763,6 +764,7 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                 questionObj.save()
                 answerObj.save()
                 questionAnswerObj.save()
+                """
 
             response = {
                         "message": "Success. Course Evaluation added.", 
@@ -770,7 +772,8 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                             "user.id": userInstance.id,
                             "user.email": userInstance.email,
                         },
-                        "array" : questionAnswers
+                        "courseEvaluationID": record.id,
+                        #"array" : questionAnswers
 
                     } 
             return Response(data=response, status=status.HTTP_200_OK)
