@@ -1,5 +1,6 @@
+#from msilib import sequence
 from django.shortcuts import render
-from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer, CourseCalendarSerializer, UserFreetimeSerializer, CourseScheduleSerializer, YearGradeSerializer, CourseEvaluationSerializer, QuestionAnswerSerializer
+from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer, CourseCalendarSerializer, UserFreetimeSerializer, CourseScheduleSerializer, YearGradeSerializer, CourseEvaluationSerializer, QuestionAnswerSerializer, QuestionSerializer
 from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking, CourseCalendar, UserFreetime, ExcelFile, CourseSchedule, YearGrade, CourseEvaluation, Question, Answer, QuestionAnswer
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
@@ -702,8 +703,14 @@ class UserViewset(viewsets.ModelViewSet):
         
 
 class QuestionAnswerViewset(viewsets.ModelViewSet):
-    queryset = CourseEvaluation.objects.all()
+    queryset = QuestionAnswer.objects.all()
     serializer_class = QuestionAnswerSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
+
+class QuestionViewset(viewsets.ModelViewSet):
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
     authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAuthenticated, )
 
@@ -870,13 +877,64 @@ class ExcelFileViewset(viewsets.ModelViewSet):
 #     klassA = klass[df['Program'] != 'STS2.C']
 #     print(klassA)
             
-         
+class YearGradeViewset(viewsets.ModelViewSet):
+    queryset = YearGrade.objects.all()
+    serializer_class = YearGradeSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )        
 
 class CourseScheduleViewset(viewsets.ModelViewSet):
     queryset = CourseSchedule.objects.all()
     serializer_class = CourseScheduleSerializer
     authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAuthenticated, )
+    
+    @action(detail=False, methods=['POST'])
+    def create_schedule(self, request, **extra_fields):
+        if 'yearGradeID' not in request.data: 
+            response = {"message": "You must provide a yearGradeID as foreinkey to create schedule"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        elif 'courseID' not in request.data:
+            response = {"message": "You must provide a courseID as foreinkey to create schedule"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            course = Course.objects.get(id=request.data.get('courseID'))
+            yearGrade=YearGrade.objects.get(id=request.data.get('yearGradeID'))
+            module_dir = os.path.dirname(__file__)  # get current
+            print("hej")
+            get_file = "uploads\\" + str(course.file)
+            file_path = os.path.join(module_dir, get_file)
+            print(get_file)
+            df=pd.read_excel(file_path,skiprows=5)
+            pColum=df[df['Program'].str.contains(yearGrade.yearGrade, na=False)]
+            listYearGradeClass=[]   
+            for item in YearGradeViewset.queryset:
+                if yearGrade.yearGrade == item.yearGrade:
+                    if yearGrade.yearGradeClass != item.yearGradeClass:
+                        listYearGradeClass.append(item.yearGradeClass)
+            if len(listYearGradeClass) > 0:
+                for val in listYearGradeClass:
+                    pColum = pColum[df['Program'] != val]
+            dbframe = pColum
+            for dbframe in dbframe.itertuples():
+                startDateTime = dbframe.Startdatum + " " + dbframe.Starttid + ":00"
+                endtDateTime = dbframe.Slutdatum + " " + dbframe.Sluttid + ":00"
+                print(startDateTime)
+                obj = CourseSchedule.objects.create(courseEvent = dbframe.Moment, 
+                                                    eventStartTime =datetime.strptime(startDateTime, '%Y-%m-%d %H:%M:%S'), 
+                                                    eventEndTime = datetime.strptime(endtDateTime, '%Y-%m-%d %H:%M:%S'),
+                                                    course = course, yearGrade=yearGrade
+                                                    
+                                                    )                         
+                obj.save()
+
+            response ={"message": "Success. Schedule created."}
+            return Response(data=response, status=status.HTTP_200_OK)
+
+                    
+
+
+    
     # def create_courseSchedule():
         # print("hej")
         # module_dir = os.path.dirname(__file__)  # get current 
@@ -899,8 +957,3 @@ class CourseScheduleViewset(viewsets.ModelViewSet):
         #                                         eventEndTime = datetime.strptime(endtDateTime, '%Y-%m-%d %H:%M:%S'))                         
         #     obj.save()
 
-class YearGradeViewset(viewsets.ModelViewSet):
-    queryset = YearGrade.objects.all()
-    serializer_class = YearGradeSerializer
-    authentication_classes = (TokenAuthentication, )
-    permission_classes = (IsAuthenticated, )
