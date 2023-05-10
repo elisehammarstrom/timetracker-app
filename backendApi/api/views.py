@@ -30,6 +30,7 @@ from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
+from datetime import time
 
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -320,11 +321,159 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                 
             return Response(data=response, status=status.HTTP_200_OK)
         
-    #get avg hours other for course on a weekly basis
-    # send in start date and end date
-    # calculate weeks
-    # 
-    #     
+    @action(detail=False, methods=['POST'])
+    def get_user_timetracked_per_week(self, request, **extra_fields):
+        user = request.user
+        this_user = User.objects.get(id=user.id)
+        startDateRequest = request.POST.get('startDate')
+        endDateRequest = request.POST.get('endDate')
+        courseID = request.POST.get('courseID')
+        if startDateRequest is None:
+            response = {"message": "You need to provide a startDate (startDate). E.g. 2023-01-01"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif endDateRequest is None: 
+            response = {"message": "You need to provide an endDate (endDate). E.g. 2023-01-01"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST) 
+        elif courseID is None: 
+            response = {"message": "You need to provide a courseID (courseID). E.g. 2"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            startDate = datetime.strptime(startDateRequest,"%Y-%m-%d").date()
+            endDate = datetime.strptime(endDateRequest,"%Y-%m-%d").date()
+            course = Course.objects.get(id=courseID)
+            firstWeek = date(startDate.year, startDate.month, startDate.day).isocalendar()[1]
+            year_week_string = str(startDate.year) + "-W" + str(firstWeek)
+
+            d = year_week_string
+            firstMonday = datetime.strptime(d + '-1', "%Y-W%W-%w")
+
+            endOfWeek = firstMonday + timedelta(days=6)
+
+            #get all start of week numbers
+            thisMonday = firstMonday
+            startOfWeeks = []
+
+            endDateTime = datetime.combine(endDate, datetime.min.time())
+            
+            while thisMonday < endDateTime:
+                startOfWeeks.append(thisMonday)
+                thisMonday += timedelta(days=7)
+
+            weekObjectArray = []
+
+            for week in startOfWeeks:
+                weekEndDate =  week + timedelta(days=6)
+                week_avg = 0
+                print("week no", week.isocalendar()[1])
+                queryresult = self.queryset.filter(user=this_user, course = course, date__range=[week, weekEndDate]).values_list('duration', flat=True)
+
+                no_of_tracking_instances = 0
+
+
+                total_week_time = timedelta(hours=0, minutes=0, seconds=0)
+
+                for timetracked in queryresult:
+                   no_of_tracking_instances += 1
+                   total_week_time += timedelta(hours=timetracked.hour, minutes=timetracked.minute, seconds=timetracked.second )
+                   totalSeconds = total_week_time.total_seconds()
+                   hours = total_week_time.total_seconds()/3600
+
+                   week_avg = hours / no_of_tracking_instances
+                   
+                weekObjectArray.append({
+                    "weekNo": week.isocalendar()[1],
+                    "weekStartDate" : week,
+                    "weekEndDate": weekEndDate,
+                    "avgDuration" : week_avg
+
+                })
+
+            response = {
+                        "message": "Time studied per day",  
+                        "userID": this_user.id,
+                        "user" : this_user.email,
+                        "results" : weekObjectArray
+                        }
+                
+            return Response(data=response, status=status.HTTP_200_OK)
+        
+    @action(detail=False, methods=['POST'])
+    def get_total_timetracked_per_week(self, request, **extra_fields):
+        startDateRequest = request.POST.get('startDate')
+        endDateRequest = request.POST.get('endDate')
+        courseID = request.POST.get('courseID')
+        if startDateRequest is None:
+            response = {"message": "You need to provide a startDate (startDate). E.g. 2023-01-01"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif endDateRequest is None: 
+            response = {"message": "You need to provide an endDate (endDate). E.g. 2023-01-01"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST) 
+        elif courseID is None: 
+            response = {"message": "You need to provide a courseID (courseID). E.g. 2"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            startDate = datetime.strptime(startDateRequest,"%Y-%m-%d").date()
+            endDate = datetime.strptime(endDateRequest,"%Y-%m-%d").date()
+            course = Course.objects.get(id=courseID)
+            firstWeek = date(startDate.year, startDate.month, startDate.day).isocalendar()[1]
+            year_week_string = str(startDate.year) + "-W" + str(firstWeek)
+
+            d = year_week_string
+            firstMonday = datetime.strptime(d + '-1', "%Y-W%W-%w")
+
+            endOfWeek = firstMonday + timedelta(days=6)
+
+            #get all start of week numbers
+            thisMonday = firstMonday
+            startOfWeeks = []
+
+            endDateTime = datetime.combine(endDate, datetime.min.time())
+            
+            while thisMonday < endDateTime:
+                startOfWeeks.append(thisMonday)
+                thisMonday += timedelta(days=7)
+
+            weekObjectArray = []
+
+            for week in startOfWeeks:
+                weekEndDate =  week + timedelta(days=6)
+                week_avg = 0
+                print("week no", week.isocalendar()[1])
+                queryresult = self.queryset.filter(course = course, date__range=[week, weekEndDate]).values_list('duration', flat=True)
+
+                no_of_tracking_instances = 0
+
+                zero_time =  timedelta(hours=0, minutes=0, seconds=0)
+
+                total_week_time = zero_time 
+                zero_time_string = "0" + str(zero_time)
+
+                for timetracked in queryresult:
+                   if str(timetracked) != zero_time_string:
+                    print(zero_time)
+                    print("timetracked", timetracked)
+                    no_of_tracking_instances += 1
+                    total_week_time += timedelta(hours=timetracked.hour, minutes=timetracked.minute, seconds=timetracked.second )
+                    totalSeconds = total_week_time.total_seconds()
+                    hours = total_week_time.total_seconds()/3600
+
+                    week_avg = hours / no_of_tracking_instances
+                   
+                weekObjectArray.append({
+                    "weekNo": week.isocalendar()[1],
+                    "weekStartDate" : week,
+                    "weekEndDate": weekEndDate,
+                    "avgDuration" : week_avg
+
+                })
+
+            response = {
+                        "message": "Time studied per day",  
+                        "results" : weekObjectArray
+                        }
+                
+            return Response(data=response, status=status.HTTP_200_OK)
+         
     @action(detail=False, methods=['GET'])
     def get_dates_in_week(self, request, **extra_fields):
         today = date.today()
@@ -670,7 +819,7 @@ class UserViewset(viewsets.ModelViewSet):
             serializer = self.serializer_class(request.user, data=request.data, partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            
+
             response = {'Programme assigned to user: ': str(user.email),
                         "user" : {
                             "first_name" : userInstance.first_name,
