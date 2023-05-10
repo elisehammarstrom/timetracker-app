@@ -655,6 +655,73 @@ class UserViewset(viewsets.ModelViewSet):
             } 
         return Response(data=response, status=status.HTTP_200_OK)
     
+    @action(detail=False, methods=['POST'])
+    def change_programme(self, request, **extra_fields):
+        user = request.user
+        #if user.role != 'STUDENT' or :
+        #    response = {"message": "You need to be a STUDENT to enrol in a course"}
+        #   return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        #print("HEJ ÄR USER: ", user.email)
+
+        if 'programmeID' in request.data: 
+            programmeID = request.POST.get('programmeID')
+            programmeInstance = Programme.objects.get(id=programmeID)
+
+            #user.programme.add(programmeInstance)
+            #user.save()
+
+            userInstance = Student.objects.get(id=user.id)
+            userInstance.save()
+
+            serializer = self.serializer_class(request.user, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+            #vi sparar id:et på användaren
+            #Lägg till så att kursID:et också syns i response
+            response = {'Programme assigned to user: ': str(user.email),
+                        "Programme: ": {
+                            "systemID: ": programmeInstance.id,
+                            "programmeName: ": programmeInstance.programmeName,
+                            "shortProgrammeName: ": programmeInstance.shortProgrammeName,
+                            }
+            }
+            return Response(response, status = status.HTTP_200_OK)
+        else:
+            response = {"message": "You need to provide a programmeID (e.g. '2' for the programme STS)"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+    
+    @action(detail=False, methods=['GET'])
+    def get_courses(self, request, **extra_fields):
+        user_courses_qs = User.objects.get(id=request.user.pk).courses.all()
+
+        user_courses = []
+        for course in user_courses_qs:
+            user_courses.append(course.id)
+
+        response = {
+                "message": "Success. Courses retrieved. ", 
+                "courses": user_courses
+            } 
+        return Response(data=response, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=['GET'])
+    def get_user_data(self, request, **extra_fields):
+        userInstance = Student.objects.get(id=request.user.pk)
+
+        response = {
+                "message": "Success. User retrieved. ", 
+                "userObject": {
+                    "fullName" : userInstance.first_name + " " + userInstance.last_name,
+                    "email": userInstance.email,
+                   "programmeName": userInstance.programme.programmeName,
+                   "programmeShortName": userInstance.programme.shortProgrammeName,
+                   "university" : userInstance.university
+
+                }
+            } 
+        return Response(data=response, status=status.HTTP_200_OK)
+    
     @action(detail=False, methods=['GET'])
     def get_course_data(self, request, **extra_fields):
         if 'courseID' not in request.data: 
@@ -723,11 +790,16 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def create_evaluation(self, request, **extra_fields):
-        userInstance = User.objects.get(id=request.user.pk)
-        courseID = request.POST.get('courseID')
+        user = self.request.user
+        #userInstance = User.objects.get(pk=user.pk)
 
-        if courseID is None:
-            response = {"message": "You need to provide a courseID. E.g. 2. (courseID)"}
+        studentInstance = Student.objects.get(pk=user.pk)
+        userInstance = studentInstance
+        courseID = request.POST.get('courseID')
+        course = Course.objects.get(id=courseID)
+
+        if course is None:
+            response = {"message": "You need to provide a courseID that corresponds to a course. E.g. 2. (courseID)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else:
             questions = [
@@ -739,38 +811,19 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                 "If you’ve been to any lesson, were they worth it?",
                 "If you’ve done any assignments, were they worth it?"
                 ]
-            
-            questionAnswers = []
-            #record = CourseEvaluation.objects.create(user=userInstance, course=Course.objects.get(id=courseID), **extra_fields)
 
-            courseObj = Course.objects.get(id=courseID)
-            print(courseObj)
-
-            #record = CourseEvaluation(user=userInstance, course=Course.objects.get(id=courseID))
-            record = CourseEvaluation(user=userInstance, course=Course.objects.get(id=courseID))
+            record = CourseEvaluation.objects.create(user=userInstance, course=course)
             record.save()
 
-            print("record.id", record.id)
+            serializer = self.serializer_class(record, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
 
-            obj = CourseEvaluation.objects.get(id = record.id)
-            print("obj.user.email: ", obj.user.email)
-            print("obj.course.courseTitle: ", obj.course.courseTitle)
+            questionAnswers = []
 
-            courseEvalList = CourseEvaluation.objects.all().filter(user_id=userInstance.id, course=courseObj)
-            print(courseEvalList)
-
-            for obj in courseEvalList:
-                print("obj.id", obj.id)
-                print("obj.user.id", obj.user.id)
-                print("obj.course.id", obj.course.id)
-
-
-
-
-            """
             for question in questions:
                 questionObj = Question.objects.create(text=question, courseEvaluation = record)
-                answerObj = Answer.objects.create(number=0, question=questionObj)
+                answerObj = Answer.objects.create(number=0, question=questionObj, text="")
                 questionAnswerObj = QuestionAnswer.objects.create(question=questionObj, answer=answerObj, courseEvaluation = record)
                 questionAnswers.append({
                     "questionAnswer.id": questionAnswerObj.id,
@@ -780,14 +833,14 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                     },
                     "answer": {
                         "id": questionAnswerObj.answer.id,
-                        "answer": questionAnswerObj.answer.number,
+                        "answerNumber": questionAnswerObj.answer.number,
+                        "answerText": questionAnswerObj.answer.text,
                     },
                 }) 
 
                 questionObj.save()
                 answerObj.save()
                 questionAnswerObj.save()
-                """
 
             response = {
                         "message": "Success. Course Evaluation added.", 
@@ -795,8 +848,12 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                             "user.id": userInstance.id,
                             "user.email": userInstance.email,
                         },
-                        "courseEvaluationID": record.id,
-                        #"array" : questionAnswers
+                        "courseEvaluation": {
+                            "id": record.id,
+                            "userID" : record.user.id,
+                            "courseID" : record.course.id,
+                        },
+                        "array" : questionAnswers
 
                     } 
             return Response(data=response, status=status.HTTP_200_OK)
@@ -831,7 +888,8 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                                 },
                                 "answerObject": {
                                     "id": answerObj.id,
-                                    "text" : answerObj.number
+                                    "number" : answerObj.number,
+                                    "text" : answerObj.text
                                 }
                             } 
                 return Response(data=response, status=status.HTTP_200_OK)

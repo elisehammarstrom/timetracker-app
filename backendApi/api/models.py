@@ -37,13 +37,13 @@ class Course(models.Model):
 
 
 class CourseEvaluation(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, db_constraint=False)
-    user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING, null=True, db_constraint=False)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, related_name="courseEvaluations") 
+    user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING, null=True, related_name="courseEvaluationUser") 
     
     class Meta: 
         unique_together = (("user", "course" ), ) #vi behöver kolla att man 
         #kan ändra sin kursutvärdering och stresslevel
-        index_together = (("user", "course" ), )
+        #index_together = (("user", "course" ), )
 
     def __str__(self):
         courseEvaluationInfoString = "Course:" + self.course.courseTitle + ";" + "User:" + self.user.username + ";"
