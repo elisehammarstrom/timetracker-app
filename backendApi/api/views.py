@@ -359,9 +359,10 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
 
         #remaking dates to format for frontEnd
         dates_for_frontend = []
+        
 
         for item in dates[0]: 
-            date_string = item.strftime("%d/%m").replace("0", "")
+            date_string = item.strftime("%d/%m")
             dates_for_frontend.append(date_string)  
 
         response = {
@@ -740,10 +741,24 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                 ]
             
             questionAnswers = []
-            record = CourseEvaluation.objects.create(user=userInstance, course=Course.objects.get(id=courseID), **extra_fields)
+            #record = CourseEvaluation.objects.create(user=userInstance, course=Course.objects.get(id=courseID), **extra_fields)
+
+            courseObj = Course.objects.get(id=courseID)
+            print(courseObj)
+
+            #record = CourseEvaluation(user=userInstance, course=Course.objects.get(id=courseID))
+            record = CourseEvaluation(user=userInstance, course=Course.objects.get(id=courseID))
             record.save()
 
             print("record.id", record.id)
+
+            obj = CourseEvaluation.objects.get(id = record.id)
+            print("obj.user.email: ", obj.user.email)
+            print("obj.course.courseTitle: ", obj.course.courseTitle)
+
+
+
+
             """
             for question in questions:
                 questionObj = Question.objects.create(text=question, courseEvaluation = record)
