@@ -46,10 +46,8 @@ const EvaluationScreen = ({route}) => {
 
     const onSubmitPressed = () => {
         setSubmit(true)
-        if (navigate === true) {
-            navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token, courseIDs: courseIDs})
-        }
-        let navigate = true;
+        // navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token, courseIDs: courseIDs})
+        
 
     }
     
