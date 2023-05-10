@@ -1,6 +1,6 @@
-from msilib import sequence
+#from msilib import sequence
 from django.shortcuts import render
-from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer, CourseCalendarSerializer, UserFreetimeSerializer, CourseScheduleSerializer, YearGradeSerializer, CourseEvaluationSerializer, QuestionAnswerSerializer
+from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer, CourseCalendarSerializer, UserFreetimeSerializer, CourseScheduleSerializer, YearGradeSerializer, CourseEvaluationSerializer, QuestionAnswerSerializer, QuestionSerializer
 from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking, CourseCalendar, UserFreetime, ExcelFile, CourseSchedule, YearGrade, CourseEvaluation, Question, Answer, QuestionAnswer
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
@@ -703,8 +703,14 @@ class UserViewset(viewsets.ModelViewSet):
         
 
 class QuestionAnswerViewset(viewsets.ModelViewSet):
-    queryset = CourseEvaluation.objects.all()
+    queryset = QuestionAnswer.objects.all()
     serializer_class = QuestionAnswerSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
+
+class QuestionViewset(viewsets.ModelViewSet):
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
     authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAuthenticated, )
 
