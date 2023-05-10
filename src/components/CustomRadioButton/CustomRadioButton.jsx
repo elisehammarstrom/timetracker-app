@@ -1,10 +1,49 @@
 import * as React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { RadioButton } from 'react-native-paper';
+import axios from 'axios';
 
-const CustomRadioButton = ({question, firstOption, secondOption, thirdOption, fourthOption, fifthOption}) => {
+const CustomRadioButton = ({token, question, answerID, submit, firstOption, secondOption, thirdOption, fourthOption, fifthOption}) => {
   const [checked, setChecked] = React.useState(1);
-  console.log(checked)
+
+  if (submit === true) {
+    const formData = new FormData();
+    formData.append('answerID', answerID)
+    formData.append('answerNumber', checked)
+    if (checked === 1) {
+      formData.append('answerText', firstOption)
+    }
+    if (checked === 2) {
+      formData.append('answerText', secondOption)
+    }
+    if (checked === 3) {
+      formData.append('answerText', thirdOption)
+    }
+    if (checked === 4) {
+      formData.append('answerText', fourthOption)
+    }
+    if (checked === 5) {
+      formData.append('answerText', fifthOption)
+    }
+    axios({
+      method: "post",
+      url: " http://127.0.0.1:8000/api/evaluate/update_answer/",
+      data: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization':`token ` + token
+      }
+    })
+      .then(function (response) {
+          //handle success
+          console.log(response.data);
+      })
+      .catch(function (response) {
+        //handle error
+        console.log(response);
+      });
+  }
+  
   return (
 
     <View style={styles.container}>

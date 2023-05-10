@@ -1,7 +1,7 @@
-
+// The screen where the student can track their stress each day for each course. 
 import { useNavigation } from '@react-navigation/native';
-import React, {useState, useRef, useEffect} from 'react';
-import {Text, View, TextInput, StyleSheet, FlatList, Image,TouchableOpacity,Dimensions,Button, Alert, PixelRatio, ScrollView} from 'react-native';
+import React, {useState} from 'react';
+import {Text, View, StyleSheet,  Image,TouchableOpacity, PixelRatio, ScrollView} from 'react-native';
 import ButtonMenu from '../../components/ButtonMenu';
 import { SelectList } from 'react-native-dropdown-select-list'
 import CustomButton from '../../components/CustomButton';
@@ -16,14 +16,10 @@ const StressScreen = ({route}) => {
     const {courses} = route.params;
     const {token} = route.params;
     const {courseIDs} = route.params;
-    console.log(courseIDs)
  
     const navigation = useNavigation();
     
-    const [selectedDate, setSelectedDate] = useState('');
     const [selected, setSelected] = useState("");
-    const [isShowingImage, setShowingImage] = React.useState(false);
- /*    const [date, setDate] = useState(null); */
     
    
     // get today's date
@@ -32,7 +28,7 @@ const StressScreen = ({route}) => {
     var year = new Date().getFullYear(); //To get the Current Year
     const [thisDate, setThisDate] = useState('');
 
-
+    // Giving the date the right format we need for sending it to the database; YYYY-MM-DD
     if (thisDate.length < 1) {
     if (`${thisDay}`.length === 1 & `${month}`.length === 1) {
         setThisDate(year + '-0' + month + '-0' + thisDay)
@@ -48,22 +44,15 @@ const StressScreen = ({route}) => {
 
     }
 }  
-
+    // For the little circle displaying the day
     var days = [,'Mon','Tue','Wed','Thu','Fri','Sat', 'Sun'];
-
     Date.prototype.getDayName = function() {
         return days[ this.getDay() ];
     };
-
     var now = new Date();
-
     var day = now.getDayName();
 
-    const onSettingsPressed = () => {
-        navigation.navigate('Profile')
-        console.log('pressed')
-    };
-
+    // Set which stresslevel the student picks.
     const [selectedValue, setSelectedValue] = useState("");
     const [pressed1, setPressed1] = useState(false);
     const [pressed2, setPressed2] = useState(false);
@@ -75,7 +64,7 @@ const StressScreen = ({route}) => {
         let checkedID = [];
         for (let i=0; i<courses.length; i++) {
             if (selected === courses[i]) {
-                checkedID.push(courseIDs[i])
+                checkedID.push(courseIDs[i])// The database need the courseID, and not the name of the course
             }
         }
         let stressTracked = {
@@ -91,7 +80,6 @@ const StressScreen = ({route}) => {
         }
         if (stressTracked.course != '' & stressTracked.stress != ''){
             alert('Stress tracked!')
-            console.log(stressTracked)
             setPressed1(false)
             setPressed2(false)
             setPressed3(false)
@@ -99,6 +87,7 @@ const StressScreen = ({route}) => {
             setPressed5(false)
             setSelectedValue('')
         }
+        //Sending the tracked stress to the database
 
         const formData = new FormData();
         formData.append('courseID', stressTracked.course);
