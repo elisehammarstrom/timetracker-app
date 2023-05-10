@@ -29,7 +29,7 @@ const EvaluateCourseScreen = ({route}) => {
         if (checked === '') {
             alert("Please choose a course to evaluate")
         } else {
-            navigation.navigate('EvaluateCourse', {course: checked, courses: courses, token: token, checkedID: checkedID});
+            navigation.navigate('EvaluateCourse', {course: checked, courses: courses, token: token, checkedID: checkedID, courseIDs: courseIDs});
         }
     };
     

@@ -24,8 +24,7 @@ const YourReportsScreen = ({route}) => {
   const fetchedCourses = [];
   const fetchedTimeStudied = [];
   const [courses, setCourses] = useState([]);
-/*   const [timeStudied, setTimeStudied] = useState([]); */
-  let timeStudied = [];
+  const [timeStudied, setTimeStudied] = useState([]); 
   const [state, setState] = useState('');
 
 
@@ -68,8 +67,6 @@ const YourReportsScreen = ({route}) => {
   const formData = new FormData();
   formData.append('startDate', startDate)
   formData.append('endDate', endDate)
-
-/*   let timeStudied=[] */
   
   if (startDate) {
     axios({
@@ -85,21 +82,13 @@ const YourReportsScreen = ({route}) => {
       for (let i=0; i<res.data.results.length; i++) {
         fetchedTimeStudied.push(res.data.results[i].timeStudied)
         fetchedCourses.push(res.data.results[i].Course)
-        console.log('fetchedTimeStudied:', res.data.results[i].timeStudied)
-        console.log('fetchedCourses:', res.data.results[i].Course)
-        
+        console.log("fetchedTimeStudied= ", fetchedTimeStudied)
       }
-      console.log("----timeStudied----", res.data.results)
-      
-      console.log("----timeStudied----", timeStudied)
-
-      if (`${fetchedCourses}` != `${courses}` ){
+      if (`${fetchedTimeStudied}` != `${timeStudied}` ){
         console.log('if sats')
         setCourses(fetchedCourses);
-   /*      setTimeStudied(fetchedTimeStudied); */
-        timeStudied.push(fetchedTimeStudied); 
-       console.log('courses:',courses)
-       console.log('timeStudied:', timeStudied)
+        setTimeStudied(fetchedTimeStudied);
+        console.log('courses= ', courses)
       }  
     })
     .catch((error) => {
@@ -108,7 +97,6 @@ const YourReportsScreen = ({route}) => {
   }
 
 
-  
   
   // Specifics for the graph 
   const fakeTime = ["10h", "12h", "11h"]

@@ -1,8 +1,10 @@
-import { StyleSheet, Text, View ,TouchableOpacity, Image} from 'react-native';
+import { StyleSheet, Text, View ,TouchableOpacity, Image,TouchableHighlight, Button} from 'react-native';
 import React , {useState} from 'react';
 import { useNavigation } from '@react-navigation/native';
 import CloseIcon from '../../../assets/close.png'
 import CalendarBlock from '../../components/CalendarBlock';
+import LeftArrow from '../../../assets/left-arrow.png'
+import RightArrow from '../../../assets/right-arrow.png'
 
 
 
@@ -12,6 +14,9 @@ const CalendarOpScreen = ({route}) => {
 
     const {token} = route.params;
     const {courses} = route.params;
+    const [isShowingInfo, setShowingInfo] = React.useState(true)
+    const [name, setname] = useState('');
+
 
     const navigation = useNavigation();
 
@@ -39,12 +44,23 @@ const CalendarOpScreen = ({route}) => {
       //get total study time per course from database
       const studyTime =[4, 5, 2]
 
+      const showInfo = (option) => {
+        let name = option
+        console.log(name)
+     
+        
+          
+        
+        
+      }
+     
 
-
+     
 
  
   return (
     <View style={styles.container}> 
+
       <View style={styles.topContainer}>
          <TouchableOpacity activeOpacity={0.5} style={styles.close} onPress={onClosedPress} >
             <Image 
@@ -55,19 +71,25 @@ const CalendarOpScreen = ({route}) => {
         </TouchableOpacity>
 
 
+
           <Text style = {styles.text}>{todaysDate} {showMonth}</Text>
         </View>
+        <View> 
+                
+                {courses.map((option, i) => (
+  
+                  <TouchableOpacity key={option} onPress={() => {setShowingInfo(false); console.log({option}); showInfo({option})}} >
+        
+                    <CalendarBlock
+                      color={colors[i]}
+                      courseName={option}
+                      studyTime={studyTime[i]}
+                      />
+                      
+                  </TouchableOpacity>
+                  ))}
+                      </View> 
 
-          {/* Looping the courses to create a timer for each course */}
-      {courses.map((option, i) => (
-      <View key={option}>
-        <CalendarBlock
-          color={colors[i]}
-          courseName={option}
-          studyTime={studyTime[i]}
-          />
-      </View>
-      ))}
 </View>
     
   );
@@ -99,6 +121,7 @@ const styles = StyleSheet.create({
       },
       box: {
         backgroundColor: 'pink'
-      }
+      },
+    
    
 })

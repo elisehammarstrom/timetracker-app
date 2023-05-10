@@ -319,6 +319,12 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                             }
                 
             return Response(data=response, status=status.HTTP_200_OK)
+        
+    #get avg hours other for course on a weekly basis
+    # send in start date and end date
+    # calculate weeks
+    # 
+    #     
     @action(detail=False, methods=['GET'])
     def get_dates_in_week(self, request, **extra_fields):
         today = date.today()
@@ -394,20 +400,56 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             seconds = map(lambda time: (time.hour * 60 * 60 ) + (time.minute * 60.0) + time.second, durations)
             total_seconds = sum(seconds)
             no_of_instances = len(queryresult)
-
-            #måste få course average för varje användare
-
-            #ta fram användarens average per dag
-            # och summera date average för användaren
-
-            #gör samma fast för varje user_id i denna metod
-
             avg_time = total_seconds / no_of_instances
             avg_timestamp = time.strftime('%H:%M:%S', time.gmtime(avg_time))
 
             response = {
                         "message": "Average time",  
                         "avg_time": avg_timestamp 
+                        }
+            
+            return Response(data=response, status=status.HTTP_200_OK)
+    @action(detail=False, methods=['POST'])
+    def get_user_stress_period(self, request, **extra_fields):
+        user = request.user
+        courseID = request.POST.get('courseID')
+        startDateInput = request.POST.get('startDate')
+        endDateInput = request.POST.get('endDate')
+
+        if courseID is None:
+            response = {"message": "You need to provide a courseID (courseID)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif startDateInput is None:
+            response = {"message": "You need to provide a startDate (startDate). E.g. 2023-01-01"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif endDateInput is None: 
+            response = {"message": "You need to provide an endDate (endDate). E.g. 2023-01-01"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            startDate = datetime.strptime(startDateInput,"%Y-%m-%d").date()
+            endDate = datetime.strptime(endDateInput,"%Y-%m-%d").date()
+            queryresult = self.queryset.filter(user = user, course = courseID, date__range=[startDate, endDate] )
+            print("queryresult: ", queryresult)
+            if len(queryresult) == 0:
+                response = {"message": "No results for those dates"}
+                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+
+            userStress = queryresult.values_list('stress', flat=True)
+            print("userStress: ", userStress)
+
+            totalStress = 0
+            no_of_objects = 0
+            for trackingObj in userStress:
+                print("trackingObj: ", trackingObj)
+                if trackingObj is not None:
+                    totalStress += trackingObj
+                    no_of_objects += 1
+            averageStress = totalStress/no_of_objects
+
+            response = {
+                        "message": "Average stress",  
+                        "user": user.email,
+                        "avg_stress": averageStress
                         }
             
             return Response(data=response, status=status.HTTP_200_OK)
@@ -418,13 +460,19 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
         this_user = User.objects.get(id=user.id)
         courseID = request.POST.get('courseID')
         stress = request.POST.get('stress')
-        date = datetime.strptime(request.POST.get('date'),"%Y-%m-%d").date()
+        dateInput = request.POST.get('date')
+        
 
         if stress is None:
             response = {"message": "You must provide a stress number (stress)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif dateInput is None:
+            response = {"message": "You must provide a date in format 2023-04-01 (date)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+            
         else:
             try:
+                date = datetime.strptime(dateInput,"%Y-%m-%d").date()
                 existing_record_object = UserCourseTracking.objects.get(user=User.objects.get(id=user.id), course=Course.objects.get(id=courseID), date=date)
                 existing_record_object.stress = stress
                 existing_record_object.save(update_fields=['stress'])
@@ -652,6 +700,7 @@ class UserViewset(viewsets.ModelViewSet):
                     }
                 } 
             return Response(data=response, status=status.HTTP_200_OK)
+        
 
 class QuestionAnswerViewset(viewsets.ModelViewSet):
     queryset = CourseEvaluation.objects.all()
