@@ -756,6 +756,14 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
             print("obj.user.email: ", obj.user.email)
             print("obj.course.courseTitle: ", obj.course.courseTitle)
 
+            courseEvalList = CourseEvaluation.objects.all().filter(user_id=userInstance.id, course=courseObj)
+            print(courseEvalList)
+
+            for obj in courseEvalList:
+                print("obj.id", obj.id)
+                print("obj.user.id", obj.user.id)
+                print("obj.course.id", obj.course.id)
+
 
 
 
