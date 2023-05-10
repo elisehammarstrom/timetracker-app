@@ -16,7 +16,7 @@ router.register("tracking", UserCourseTrackingViewset)
 #router.register("login", LoginView)
 router.register("courseCalendar", CourseCalendarViewset)
 router.register("userFreetime", UserFreetimeViewset)
-router.register("courseSchedulehed", CourseScheduleViewset)
+router.register("courseSchedule", CourseScheduleViewset)
 router.register("yearGrade", YearGradeViewset)
 
 

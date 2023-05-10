@@ -75,10 +75,10 @@ class CourseScheduleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model =CourseSchedule
-        fields = ( "courseEvent", " eventStartTime", "eventEndTime")
+        fields = ( "courseEvent", "eventStartTime", "eventEndTime", "course", "yearGrade")
 
 class YearGradeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model =YearGrade
-        fields = ( "yearGrade", "yearGradeClass", " programme")
+        fields = ( "yearGrade", "yearGradeClass", "programme")
