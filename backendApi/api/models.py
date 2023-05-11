@@ -43,7 +43,7 @@ class CourseEvaluation(models.Model):
     class Meta: 
         unique_together = (("user", "course" ), ) #vi behöver kolla att man 
         #kan ändra sin kursutvärdering och stresslevel
-        #index_together = (("user", "course" ), )
+        index_together = (("user", "course" ), )
 
     def __str__(self):
         courseEvaluationInfoString = "Course:" + self.course.courseTitle + ";" + "User:" + self.user.username + ";"

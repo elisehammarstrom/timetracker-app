@@ -513,40 +513,48 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['GET'])
     def get_course_avg_time(self, request, **extra_fields):
-        #get courseID:s earlier?
         courseID = request.POST.get('courseID')
-        startDate = request.POST.get('startDate')
-        endDate = request.POST.get('endDate')
+        try: 
+            courseInstance = Course.objects.get(id=courseID)
+        except:
+            response = {"message": "That course doesn't exist"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+
+        startDate = courseInstance.courseStartDateTime
+        endDate = courseInstance.courseEndDateTime
 
         if courseID is None:
             response = {"message": "You need to provide a courseID (courseID)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-        elif startDate is None:
-            response = {"message": "You need to provide a startDate (startDate). E.g. 2023-01-01"}
-            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-        elif endDate is None: 
-            response = {"message": "You need to provide an endDate (endDate). E.g. 2023-01-01"}
-            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else:
-            queryresult = self.queryset.filter(course_id = courseID, date__range=[startDate, endDate] )
+            queryresult = self.queryset.filter(course = courseInstance, date__range=[startDate, endDate] )
 
             if len(queryresult) == 0:
-                response = {"message": "No results for those dates"}
+                response = {"message": "No results for that course"}
                 return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
             durations = queryresult.values_list('duration', flat=True)
             seconds = map(lambda time: (time.hour * 60 * 60 ) + (time.minute * 60.0) + time.second, durations)
             total_seconds = sum(seconds)
             no_of_instances = len(queryresult)
-            avg_time = total_seconds / no_of_instances
-            avg_timestamp = time.strftime('%H:%M:%S', time.gmtime(avg_time))
+            if no_of_instances == 0:
+                avg_time = 0
+            else:
+                hours = total_seconds /3600
+                avg_time = round(hours / no_of_instances, 2)
 
             response = {
                         "message": "Average time",  
-                        "avg_time": avg_timestamp 
+                        "avg_time": avg_time,
+                        "courseObj": {
+                            "courseID": courseInstance.id,
+                            "courseStartDate" : courseInstance.courseStartDateTime,
+                            "courseEndDate" : courseInstance.courseEndDateTime
                         }
+                    }
             
             return Response(data=response, status=status.HTTP_200_OK)
+        
     @action(detail=False, methods=['POST'])
     def get_user_stress_period(self, request, **extra_fields):
         user = request.user
@@ -936,8 +944,6 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
     @action(detail=False, methods=['POST'])
     def create_evaluation(self, request, **extra_fields):
         user = self.request.user
-        #userInstance = User.objects.get(pk=user.pk)
-
         studentInstance = Student.objects.get(pk=user.pk)
         userInstance = studentInstance
         courseID = request.POST.get('courseID')
@@ -956,52 +962,49 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                 "If you’ve been to any lesson, were they worth it?",
                 "If you’ve done any assignments, were they worth it?"
                 ]
+            try:
+                record = CourseEvaluation.objects.create(user=userInstance, course=course)
+                record.save()
+                questionAnswers = []
 
-            record = CourseEvaluation.objects.create(user=userInstance, course=course)
-            record.save()
-
-            serializer = self.serializer_class(record, data=request.data, partial=True)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-
-            questionAnswers = []
-
-            for question in questions:
-                questionObj = Question.objects.create(text=question, courseEvaluation = record)
-                answerObj = Answer.objects.create(number=0, question=questionObj, text="")
-                questionAnswerObj = QuestionAnswer.objects.create(question=questionObj, answer=answerObj, courseEvaluation = record)
-                questionAnswers.append({
-                    "questionAnswer.id": questionAnswerObj.id,
-                    "question": {
-                        "id": questionAnswerObj.question.id,
-                        "question": questionAnswerObj.question.text,
-                    },
-                    "answer": {
-                        "id": questionAnswerObj.answer.id,
-                        "answerNumber": questionAnswerObj.answer.number,
-                        "answerText": questionAnswerObj.answer.text,
-                    },
-                }) 
-
-                questionObj.save()
-                answerObj.save()
-                questionAnswerObj.save()
-
-            response = {
-                        "message": "Success. Course Evaluation added.", 
-                        "userObject": {
-                            "user.id": userInstance.id,
-                            "user.email": userInstance.email,
+                for question in questions:
+                    questionObj = Question.objects.create(text=question, courseEvaluation = record)
+                    answerObj = Answer.objects.create(number=0, question=questionObj, text="")
+                    questionAnswerObj = QuestionAnswer.objects.create(question=questionObj, answer=answerObj, courseEvaluation = record)
+                    questionAnswers.append({
+                        "questionAnswer.id": questionAnswerObj.id,
+                        "question": {
+                            "id": questionAnswerObj.question.id,
+                            "question": questionAnswerObj.question.text,
                         },
-                        "courseEvaluation": {
-                            "id": record.id,
-                            "userID" : record.user.id,
-                            "courseID" : record.course.id,
+                        "answer": {
+                            "id": questionAnswerObj.answer.id,
+                            "answerNumber": questionAnswerObj.answer.number,
+                            "answerText": questionAnswerObj.answer.text,
                         },
-                        "array" : questionAnswers
+                    }) 
+                    questionObj.save()
+                    answerObj.save()
+                    questionAnswerObj.save()
 
-                    } 
-            return Response(data=response, status=status.HTTP_200_OK)
+                response = {
+                            "message": "Success. Course Evaluation added.", 
+                            "userObject": {
+                                "user.id": userInstance.id,
+                                "user.email": userInstance.email,
+                            },
+                            "courseEvaluation": {
+                                "id": record.id,
+                                "userID" : record.user.id,
+                                "courseID" : record.course.id,
+                            },
+                            "array" : questionAnswers
+                        } 
+                return Response(data=response, status=status.HTTP_200_OK)
+            except IntegrityError as e:
+                response = {"message": "CourseEvaluation already exists"}
+                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+    
     @action(detail=False, methods=['POST'])
     def update_answer(self, request, **extra_fields):
         userInstance = User.objects.get(id=request.user.pk)

@@ -64,27 +64,27 @@ const CustomRadioButton = ({token, question, answerID, submit, firstOption, seco
 
       <View style={styles.radioButtonContainer}>
         
-        <RadioButton
+        <RadioButton.Android
           value={1}
           status={ checked === 1 ? 'checked' : 'unchecked' }
           onPress={() => setChecked(1)}
         />
-        <RadioButton
+        <RadioButton.Android
           value={2}
           status={ checked === 2 ? 'checked' : 'unchecked' }
           onPress={() => setChecked(2)}
         />
-        <RadioButton
+        <RadioButton.Android
           value={3}
           status={ checked === 3 ? 'checked' : 'unchecked' }
           onPress={() => setChecked(3)}
         />
-        <RadioButton
+        <RadioButton.Android
           value={4}
           status={ checked === 4 ? 'checked' : 'unchecked' }
           onPress={() => setChecked(4)}
         />
-        <RadioButton
+        <RadioButton.Android
           value={5}
           status={ checked === 5 ? 'checked' : 'unchecked' }
           onPress={() => setChecked(5)}
@@ -103,6 +103,7 @@ const styles=StyleSheet.create({
     textAlign: 'center',
     overflowWrap: 'break-word',
     width: 0.9 * Dimensions.get('window').width,
+   
   },
   radioButtonContainer:{
     flexDirection: 'row',
