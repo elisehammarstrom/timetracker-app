@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
 import { LineChart } from 'react-native-chart-kit';
 import BackArrow from '../../../assets/arrowBack.png';
+import axios from 'axios';
 
 const CourseStatsScreen = ({route}) =>{
 
@@ -14,37 +15,71 @@ const CourseStatsScreen = ({route}) =>{
     const {token} = route.params;
     const {courseIDs} = route.params;
 
-    for (let i=0; i<courseIDs.length; i++) {
-        const formData = new FormData();
-        formData.append('courseID', courseIDs[i]);
-        formData.append('startDate', );
-        formData.append('endDate', );
-
-        axios({
-          method: "post",
-          url: "http://127.0.0.1:8000/api/tracking/get_user_timetracked_per_week/",
-          data: formData,
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization':`token ` + token
-          }
-        })
-          .then(function (response) {
-            //handle success
-            console.log(response.data);
-          })
-          .catch(function (response) {
-            //handle error
-            console.log(response);
-          });
-  
-      }
-
-
-
     const navigation = useNavigation();
     const [selected, setSelected] = useState("");
     const legend = ["Your time", "Average time"];
+    const [courseData, setCourseData] = useState('');
+    let fetchedCourseData = [];
+
+    for (let i=0; i<courseIDs.length; i++) {
+        axios({
+            method: "get",
+            url: "http://127.0.0.1:8000/api/courses/" + `${courseIDs[i]}` + '/',
+            headers: {
+            'Authorization':`token ` + token
+            }
+        })
+            .then(function (response) {
+            //handle success
+            // console.log(response.data);
+            fetchedCourseData.push(response.data)
+            if (courseData.length < courseIDs.length) {
+                setCourseData(fetchedCourseData)
+            }
+            })
+            .catch(function (response) {
+            //handle error
+            console.log(response);
+            });
+    }
+    
+
+if (courseData.length >1) {
+console.log("courseData= ", courseData)
+
+    for (let i=0; i<courseData.length; i++) {
+        console.log('selected= ', selected)
+        console.log('courseData[i].courseTitle= ',courseData[i].courseTitle )
+        if (selected === courseData[i].courseTitle) {
+            const formData = new FormData();
+            formData.append('courseID', courseData[i].id);
+
+            axios({
+            method: "post",
+            url: "http://127.0.0.1:8000/api/tracking/get_user_timetracked_per_week/",
+            data: formData,
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization':`token ` + token
+            }
+            })
+            .then(function (response) {
+                //handle success
+                console.log(response.data);
+            })
+            .catch(function (response) {
+                //handle error
+                console.log(response);
+            });
+        }
+      }
+}
+    
+
+
+
+
+
     const [dataGraph, setDataGraph] = useState({
         labels: ["Mon", "Tue", "Wen", "Thu", "Fri", "Sat", "Sun"],
         datasets: [
@@ -61,6 +96,7 @@ const CourseStatsScreen = ({route}) =>{
         ],
         // legend: ["Your time", "Average time"] // optional
         });
+
 
     const screenWidth = Dimensions.get("window").width;
     const chartConfig = {
