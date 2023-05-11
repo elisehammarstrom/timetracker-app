@@ -28,6 +28,7 @@ const YourReportsScreen = ({route}) => {
   const [timeStudied, setTimeStudied] = useState([]); 
   const [state, setState] = useState('');
   const [timeFetched, setTimeFetched] = useState(false)
+  const [stress, setStress] = useState('');
 
 
   //Fetching the first dates for the graph 
@@ -84,7 +85,7 @@ const YourReportsScreen = ({route}) => {
         for (let i=0; i<res.data.results.length; i++) {
           fetchedTimeStudied.push(res.data.results[i].timeStudied)
           fetchedCourses.push(res.data.results[i].Course)
-          console.log("fetchedTimeStudied= ", fetchedTimeStudied)
+          // console.log("fetchedTimeStudied= ", fetchedTimeStudied)
         }
         setTimeFetched(true)
         if (`${fetchedTimeStudied}` != `${timeStudied}` ){
@@ -98,29 +99,38 @@ const YourReportsScreen = ({route}) => {
         console.log("endDate i catch= ", endDate)
   
       })
-
+      let fetchedStress = [];
       for (let i=0; i<courseIDs.length; i++){
         const formData = new FormData();
         formData.append('startDate', startDate)
         formData.append('endDate', endDate)
         formData.append('courseID', courseIDs[i])
 
-      axios({
-        method: "post",
-        url: "http://127.0.0.1:8000/api/tracking/get_user_stress_period/",
-        data: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `token ` + token
-        }
-      })
-      .then((res) => {
-        console.log(res.data)
-      })
-      .catch((error) => {
-        console.error(error)
-      })
+        axios({
+          method: "post",
+          url: "http://127.0.0.1:8000/api/tracking/get_user_stress_period/",
+          data: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `token ` + token
+          }
+        })
+        .then((res) => {
+          console.log(res.data)
+          fetchedStress.push({'courseID': courseIDs[i], 'stress': res.data.avg_stress})
+          // console.log("fetchedStress= ", fetchedStress)
+          if (`${stress}` != `${fetchedStress}`) {
+            console.log('i if sats')
+            setStress(fetchedStress)
+          }
+        })
+        .catch((error) => {
+          console.error(error)
+        })
       }
+      // console.log("fetchedStress utanför loop= ", fetchedStress)
+
+      console.log("stress= ", stress)
     }
     
   }
