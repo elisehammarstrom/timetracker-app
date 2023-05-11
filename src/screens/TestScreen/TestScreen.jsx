@@ -2,7 +2,6 @@
 import {useState, useEffect} from 'react'
 import {FlatList, View, Text, StyleSheet} from 'react-native'
 import React from 'react'
-import {Picker} from '@react-native-picker/picker';
 import DropDown from '../../components/DropDown';
 
 export default function TestScreen() {
@@ -47,16 +46,6 @@ return (
         onSelect={onSelect}
     />
 
-            {/* <Picker
-              style={styles.picker}
-              selectedValue = {pickerValue}
-              onValueChange = {(itemValue) => (setPickerValue(itemValue))}
-              >
-                <Picker.Item label ='Råtta' value='råtta'/>
-                <Picker.Item label ='Åsna' value='åsna'/>
-                <Picker.Item label ='Berit' value='berit'/>
-
-              </Picker> */}
 {/* <FlatList
 data={courses}
 renderItem={ ( {item} ) => (

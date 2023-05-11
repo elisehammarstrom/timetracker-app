@@ -1,7 +1,6 @@
 import React, {Component, useState} from 'react';
 import {View, Text, StyleSheet,TouchableOpacity, Image, ScrollView} from 'react-native';
 import DropdownArrow from '../../../assets/dropdownArrow.png'
-//create component
 
 
 const DropDown = ({
