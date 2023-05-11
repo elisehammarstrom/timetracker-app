@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { RadioButton } from 'react-native-paper';
 import axios from 'axios';
 
@@ -101,10 +101,13 @@ const styles=StyleSheet.create({
     padding: 10,
     justifyContent: 'center',
     textAlign: 'center',
+    overflowWrap: 'break-word',
+    width: 0.9 * Dimensions.get('window').width,
   },
   radioButtonContainer:{
     flexDirection: 'row',
     justifyContent: 'space-between',
+    
   },
   title: {
     fontSize: 20,
@@ -116,9 +119,10 @@ const styles=StyleSheet.create({
     color: '#EFEFEF',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    
   },
   optionText: {
-    fontSize: 15,
+    fontSize: 10,
     fontWeight: 'bold',
     color: '#EFEFEF',
   },
