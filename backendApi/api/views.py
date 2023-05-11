@@ -565,8 +565,13 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
         startDateInput = request.POST.get('startDate')
         endDateInput = request.POST.get('endDate')
 
+        courseInstance = Course.objects.get(id=courseID)
+
         if courseID is None:
             response = {"message": "You need to provide a courseID (courseID)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif courseInstance is None:
+            response = {"message": "Course does not exist"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         elif startDateInput is None:
             response = {"message": "You need to provide a startDate (startDate). E.g. 2023-01-01"}
@@ -600,6 +605,10 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             response = {
                         "message": "Average stress",  
                         "user": user.email,
+                        "courseObject": {
+                            "courseID" : courseInstance.id,
+                            "courseTitle" : courseInstance.courseTitle
+                        },
                         "avg_stress": averageStress
                         }
             
