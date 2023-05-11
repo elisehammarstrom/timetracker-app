@@ -21,7 +21,8 @@ const CourseStatsScreen = ({route}) =>{
     const [courseData, setCourseData] = useState('');
     let fetchedCourseData = [];
     const [label, setLabel] = useState('');
-    const [data, setData] = useState('');
+    const [userData, setUserData] = useState('');
+    const [avgData, setAvgData] = useState('');
 
     for (let i=0; i<courseIDs.length; i++) {
         axios({
@@ -47,11 +48,9 @@ const CourseStatsScreen = ({route}) =>{
     
 
 if (courseData.length >1) {
-// console.log("courseData= ", courseData)
 
     for (let i=0; i<courseData.length; i++) {
-        // console.log('selected= ', selected)
-        // console.log('courseData[i].courseTitle= ',courseData[i].courseTitle )
+      
         if (selected === courseData[i].courseTitle) {
             const formData = new FormData();
             formData.append('courseID', courseData[i].id);
@@ -67,7 +66,6 @@ if (courseData.length >1) {
             })
             .then(function (response) {
                 //handle success
-                console.log(response.data);
                 let newData = response.data.results;
                 let weeks = [];
                 let avgDuration = [];
@@ -78,14 +76,44 @@ if (courseData.length >1) {
 
                 if (`${label}` != `${weeks}`) {
                     setLabel(weeks)
-                    setData(avgDuration)
+                    setUserData(avgDuration)
                 }
-                console.log(data)
+                console.log("userData= ", userData)
             })
             .catch(function (response) {
                 //handle error
                 console.log(response);
             });
+
+            axios({
+                method: "post",
+                url: "http://127.0.0.1:8000/api/tracking/get_total_timetracked_per_week/",
+                data: formData,
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization':`token ` + token
+                }
+                })
+                .then(function (response) {
+                    //handle success
+                    let newData = response.data.results;
+                    let weeks = [];
+                    let avgDuration = [];
+                    for (let i=0; i<newData.length; i++){
+                        weeks.push(newData[i].weekNo)
+                        avgDuration.push(newData[i].avgDuration)
+                    }
+    
+                    if (`${label}` != `${weeks}`) {
+                        // setLabel(weeks)
+                        setAvgData(avgDuration)
+                    }
+                    console.log("avgdata= ", avgData)
+                })
+                .catch(function (response) {
+                    //handle error
+                    console.log(response);
+                });
         }
       }
 }
@@ -94,36 +122,35 @@ if (courseData.length >1) {
         datasets: [
             {
             data: [0, 0, 0, 0, 0, 0, 0],
-            color: (opacity = 1) => `transparent`, // optional
+            color: (opacity = 1) => `#AC7CE4`, // optional
             strokeWidth: 2 // optional
             },
             {
             data: [0, 0, 0, 0, 0, 0, 0],
-            color: (opacity = 1) => `transparent`, // optional
+            color: (opacity = 1) => `#5987CC`, // optional
             strokeWidth: 2 // optional
             }
         ],
         // legend: ["Your time", "Average time"] // optional
         });
-    if (label.length > 1 & data.length > 1 & dataGraph.labels != label) {
+    if (label.length > 1 & userData.length > 1 & avgData.length > 1 & dataGraph.labels != label) {
         setDataGraph({
             labels: label,
             datasets: [
                 {
-                data: data,
-                color: (opacity = 1) => `transparent`, // optional
+                data: userData,
+                color: (opacity = 1) => `#AC7CE4`, // optional
                 strokeWidth: 2 // optional
                 },
                 {
-                data: [0, 0, 0, 0, 0, 0, 0],
-                color: (opacity = 1) => `transparent`, // optional
+                data: avgData,
+                color: (opacity = 1) => `#5987CC`, // optional
                 strokeWidth: 2 // optional
                 }
             ],
-            // legend: ["Your time", "Average time"] // optional
+            legend: ["Your time", "Average time"] // optional
             })
     }
-
 
 
     const screenWidth = Dimensions.get("window").width;
@@ -138,42 +165,8 @@ if (courseData.length >1) {
         useShadowColorFromDataset: false, // optional
     };
 
-    let courses = [];
-    const length = chosenCourses.length;
     const [avgTime, setAvgTime] = useState('');
     const [time, setTime] = useState('');
-
-
-    // for (let i=0; i<length; i++) {
-
-    //     courses.push( 
-    //         { course: `${chosenCourses[i]}`, data: 
-    //             {
-    //                 labels: ["Mon", "Tue", "Wen", "Thu", "Fri", "Sat", "Sun"],
-    //                 datasets: [
-    //                     {
-    //                     data: [2, 1, 2, 3, 4, 0, 0],
-    //                     color: (opacity = 1) => `#AC7CE4`, // optional
-    //                     strokeWidth: 2 // optional
-    //                     },
-    //                     {
-    //                     data: [2, 2, 0, 2, 1, 1, 1],
-    //                     color: (opacity = 1) => `#5987CC`, // optional
-    //                     strokeWidth: 2 // optional
-    //                     }
-    //                 ],
-    //                 legend: legend // optional
-    //             }
-    //         },
-    //     );
-    //     if (selected === chosenCourses[i]) {
-    //         if (time != "...your time"){
-    //             setAvgTime("...avg time")
-    //             setTime("...your time")
-    //         }
-    //     }
-    // }
-
 
 
     const onReadCourseEvaluationsPressed = () => {
@@ -183,17 +176,6 @@ if (courseData.length >1) {
     const onArrowPressed = () => {
         navigation.navigate('ChooseReport', {token: token, courseIDs: courseIDs})
       }
-
-    // const onSelectListPressed = () => {
-        
-    //     for (let i=0; i<length; i++) {
-    //         if (selected === courses[i].course) {
-    //             setDataGraph(courses[i].data)
-    //         }
-    //     }
-
-    // }
-
 
     return (
         <View style={styles.container}>
