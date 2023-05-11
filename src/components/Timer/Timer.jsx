@@ -5,6 +5,7 @@ import Play from '../../../assets/play.png'
 import Pause from '../../../assets/pause.png'
 import { secondsToMinutes } from 'date-fns';
 import axios from 'axios';
+import DropDown from '../../components/DropDown';
 
 const Timer = ({courseID, courseName, color}) => {
     const [isStopwatchStart, setIsStopwatchStart] = useState(false);
@@ -14,6 +15,21 @@ const Timer = ({courseID, courseName, color}) => {
     const [timerDuration, setTimerDuration] = useState(90000);
     const [resetTimer, setResetTimer] = useState(false);
     const [active, setActive] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
+
+    //hämta in uppgifter från databasen
+    let fruits = [
+      {id: 1, name: courseName},
+      {id: 2, name: 'Assignment 1'},
+      {id: 3, name: 'Lecture 3 '},
+      {id: 4, name: 'Lesson 2'},
+      {id: 5, name: 'Group project'},
+      {id: 6, name: 'Repetition'},
+  ]
+  
+  const onSelect = (item) => {
+      setSelectedItem(item)
+  }
     
     var day = new Date().getDate();
     var month = new Date().getMonth()+1;
@@ -63,7 +79,14 @@ const Timer = ({courseID, courseName, color}) => {
             <View style={[styles.sectionStyle, styles[`sectionStyle_${color}`]]}>
 
               <View style={styles.titleContainer}>
-                <Text style={styles.title}>{courseName}</Text>
+
+              <DropDown
+                    value={selectedItem}
+                    data={fruits}
+                    courseName={courseName}
+                    onSelect={onSelect}
+                    />
+                {/* <Text style={styles.title}>{courseName}</Text> */}
               </View>
 
               <View style={styles.stopWatchContainer}>

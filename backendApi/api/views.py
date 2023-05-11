@@ -284,7 +284,6 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                 print("course: ", course)
                 courseID = course.id
                 queryresult = self.queryset.filter(user_id=this_user.id, course_id = courseID, date__range=[startDate, endDate] )
-
                 no_of_dates = abs((endDate-startDate).days) + 1 
 
                 if len(queryresult) == 0:
@@ -302,19 +301,13 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                         if len(dateDuration) == 0:
                             durationArray.append(0)
                         elif dateDuration is not None:
-                            print("in elif: dateDuration is not None")
-                            print("durationDuration: ", dateDuration)
                             for timetracked in dateDuration:
                                 if timetracked is not None:
-                                    print("-----timetracked: ", timetracked)
-                                    print("str(timetracked): ", str(timetracked))
                                     if str(timetracked) == "00:00:00":
                                         durationArray.append(0)
                                     else:
                                         totalSeconds = timedelta(hours=timetracked.hour, minutes=timetracked.minute).total_seconds()
                                         totalHours = round(totalSeconds/(60*60), 2)
-                                        print("totalSeconds: ", totalSeconds)
-                                        totalHours = (totalSeconds/(60*60))
                                         durationArray.append(totalHours)
                                 else: 
                                     print("timetracked is None: ", type(timetracked), timetracked)
