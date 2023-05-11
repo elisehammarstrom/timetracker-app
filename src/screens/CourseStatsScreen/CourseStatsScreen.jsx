@@ -14,6 +14,34 @@ const CourseStatsScreen = ({route}) =>{
     const {token} = route.params;
     const {courseIDs} = route.params;
 
+    for (let i=0; i<courseIDs.length; i++) {
+        const formData = new FormData();
+        formData.append('courseID', courseIDs[i]);
+        formData.append('startDate', );
+        formData.append('endDate', );
+
+        axios({
+          method: "post",
+          url: "http://127.0.0.1:8000/api/tracking/get_user_timetracked_per_week/",
+          data: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization':`token ` + token
+          }
+        })
+          .then(function (response) {
+            //handle success
+            console.log(response.data);
+          })
+          .catch(function (response) {
+            //handle error
+            console.log(response);
+          });
+  
+      }
+
+
+
     const navigation = useNavigation();
     const [selected, setSelected] = useState("");
     const legend = ["Your time", "Average time"];
