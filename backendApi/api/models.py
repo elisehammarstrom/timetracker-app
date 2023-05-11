@@ -40,8 +40,8 @@ class CourseEvaluation(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, related_name="courseEvaluations") 
     user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING, null=True, related_name="courseEvaluationUser") 
     
-    class Meta: 
-        unique_together = (("user", "course" ), ) #vi behöver kolla att man 
+    #class Meta: 
+        #unique_together = (("user", "course" ), ) #vi behöver kolla att man 
         #kan ändra sin kursutvärdering och stresslevel
         #index_together = (("user", "course" ), )
 

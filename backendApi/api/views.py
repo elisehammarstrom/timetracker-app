@@ -343,10 +343,12 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             course = Course.objects.get(id=courseID)
             startDate = course.courseStartDateTime
             endDate = course.courseEndDateTime
+            print("startDate.year: ", startDate.year)
             firstWeek = date(startDate.year, startDate.month, startDate.day).isocalendar()[1]
             year_week_string = str(startDate.year) + "-W" + str(firstWeek)
             d = year_week_string
             firstMonday = datetime.strptime(d + '-1', "%Y-W%W-%w")
+            print("firstMonday: ", firstMonday)
             endOfWeek = firstMonday + timedelta(days=6)
 
             #get all start of week numbers
