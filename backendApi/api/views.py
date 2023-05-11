@@ -1004,7 +1004,6 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
             except IntegrityError as e:
                 response = {"message": "CourseEvaluation already exists"}
                 return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-
     
     @action(detail=False, methods=['POST'])
     def update_answer(self, request, **extra_fields):
