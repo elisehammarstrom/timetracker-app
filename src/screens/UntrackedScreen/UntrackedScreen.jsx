@@ -77,13 +77,13 @@ const UntrackedScreen = ({route}) => {
             isShowingArrow ?
             (
                 <View style={styles.layout}>
-                    <TouchableHighlight onPress={() => {onCalendarPressed(true); setShowingArrow(false);}}> 
+                    <TouchableOpacity onPress={() => {onCalendarPressed(true); setShowingArrow(false);}}> 
                         <Image 
                             source={LeftArrow} 
                             style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
                             resizeMode="contain"
                         />
-                    </TouchableHighlight>
+                    </TouchableOpacity>
 
                     <View style={{paddingHorizontal: 10}}>
                     <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
@@ -111,13 +111,13 @@ const UntrackedScreen = ({route}) => {
                     <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
                     </View>
                     
-                    <TouchableHighlight onPress={() => {onCurrentDatePressed(true); setShowingArrow(true);}}> 
+                    <TouchableOpacity onPress={() => {onCurrentDatePressed(true); setShowingArrow(true);}}> 
                         <Image 
                             source={RightArrow} 
                             style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
                             resizeMode="contain"
                         />
-                    </TouchableHighlight>
+                    </TouchableOpacity>
                 </View>
             )
         } 
