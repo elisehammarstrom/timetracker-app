@@ -340,67 +340,51 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
     def get_user_timetracked_per_week(self, request, **extra_fields):
         user = request.user
         this_user = User.objects.get(id=user.id)
-        startDateRequest = request.POST.get('startDate')
-        endDateRequest = request.POST.get('endDate')
+        #startDateRequest = request.POST.get('startDate')
+        #endDateRequest = request.POST.get('endDate')
         courseID = request.POST.get('courseID')
-        if startDateRequest is None:
-            response = {"message": "You need to provide a startDate (startDate). E.g. 2023-01-01"}
-            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-        elif endDateRequest is None: 
-            response = {"message": "You need to provide an endDate (endDate). E.g. 2023-01-01"}
-            return Response(data=response, status=status.HTTP_400_BAD_REQUEST) 
-        elif courseID is None: 
+        if courseID is None: 
             response = {"message": "You need to provide a courseID (courseID). E.g. 2"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else:
-            startDate = datetime.strptime(startDateRequest,"%Y-%m-%d").date()
-            endDate = datetime.strptime(endDateRequest,"%Y-%m-%d").date()
             course = Course.objects.get(id=courseID)
+            startDate = course.courseStartDateTime
+            endDate = course.courseEndDateTime
             firstWeek = date(startDate.year, startDate.month, startDate.day).isocalendar()[1]
             year_week_string = str(startDate.year) + "-W" + str(firstWeek)
-
             d = year_week_string
             firstMonday = datetime.strptime(d + '-1', "%Y-W%W-%w")
-
             endOfWeek = firstMonday + timedelta(days=6)
 
             #get all start of week numbers
             thisMonday = firstMonday
             startOfWeeks = []
-
             endDateTime = datetime.combine(endDate, datetime.min.time())
             
             while thisMonday < endDateTime:
                 startOfWeeks.append(thisMonday)
                 thisMonday += timedelta(days=7)
-
             weekObjectArray = []
 
             for week in startOfWeeks:
                 weekEndDate =  week + timedelta(days=6)
                 week_avg = 0
-                print("week no", week.isocalendar()[1])
                 queryresult = self.queryset.filter(user=this_user, course = course, date__range=[week, weekEndDate]).values_list('duration', flat=True)
-
                 no_of_tracking_instances = 0
-
-
                 total_week_time = timedelta(hours=0, minutes=0, seconds=0)
-
+                
                 for timetracked in queryresult:
                    no_of_tracking_instances += 1
                    total_week_time += timedelta(hours=timetracked.hour, minutes=timetracked.minute, seconds=timetracked.second )
                    totalSeconds = total_week_time.total_seconds()
                    hours = total_week_time.total_seconds()/3600
-
                    week_avg = hours / no_of_tracking_instances
-                   
+                
                 weekObjectArray.append({
                     "weekNo": week.isocalendar()[1],
                     "weekStartDate" : week,
                     "weekEndDate": weekEndDate,
                     "avgDuration" : week_avg
-
                 })
 
             response = {
@@ -409,7 +393,7 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                         "user" : this_user.email,
                         "results" : weekObjectArray
                         }
-                
+
             return Response(data=response, status=status.HTTP_200_OK)
         
     @action(detail=False, methods=['POST'])
@@ -581,8 +565,13 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
         startDateInput = request.POST.get('startDate')
         endDateInput = request.POST.get('endDate')
 
+        courseInstance = Course.objects.get(id=courseID)
+
         if courseID is None:
             response = {"message": "You need to provide a courseID (courseID)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif courseInstance is None:
+            response = {"message": "Course does not exist"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         elif startDateInput is None:
             response = {"message": "You need to provide a startDate (startDate). E.g. 2023-01-01"}
@@ -616,6 +605,10 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             response = {
                         "message": "Average stress",  
                         "user": user.email,
+                        "courseObject": {
+                            "courseID" : courseInstance.id,
+                            "courseTitle" : courseInstance.courseTitle
+                        },
                         "avg_stress": averageStress
                         }
             

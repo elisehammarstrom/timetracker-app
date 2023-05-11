@@ -6,6 +6,7 @@ import DropdownArrow from '../../../assets/dropdownArrow.png'
 const DropDown = ({
     data = [],
     value = {},
+    courseName,
     onSelect = () => {}
 }) => {
 
@@ -15,12 +16,10 @@ const DropDown = ({
         onSelect(val)
         
     }
-
-/*     const [data, setData] = useState([]) */
     return (
         <View style={styles.container}>
             <TouchableOpacity activeOpacity={0.5} style={styles.dropdownStyle} onPress={() => setShowOption(!showOption)}>
-                <Text>{!!value? value?.name: 'Choose an option'}</Text>
+                <Text style={{paddingRight: 6}}>{!!value? value?.name: courseName}</Text>
                 <Image
                     source={DropdownArrow}
                     style={[ {height: 50 * 0.3},{width: 50*0.3},
@@ -29,16 +28,19 @@ const DropDown = ({
                 />
 
             </TouchableOpacity>
-            {showOption && (<View style={{backgroundColor: 'orange', padding: 8, borderRadius: 6, maxHeight: 100}}>
+            {showOption && (<View style={{padding: 8, borderRadius: 6, maxHeight: 100}}>
             <ScrollView>
             {data.map((val, i) => {
                 return(
                     <TouchableOpacity activeOpacity={0.5} 
                         key={String(i)}
                         onPress={()=>onSelectedItem(val)}
-                        style = {{backgroundColor: value.id == val.id? 'pink':'white'}}
+                        /* style = {{backgroundColor: value.id == val.id? 'pink':'transparent'}} */
                         >
+                            <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                         <Text style={{padding: 5}}>{val.name}</Text>
+                        <Text> {val.time} h</Text>
+                        </View>
                     </TouchableOpacity>
                 )
             })}
@@ -54,7 +56,6 @@ const styles = StyleSheet.create({
 
     },
     dropdownStyle: {
-        backgroundColor: 'grey',
         padding: 8,
         borderRadius: 6,
         minHeight: 42,
