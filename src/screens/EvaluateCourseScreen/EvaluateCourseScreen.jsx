@@ -169,9 +169,10 @@ const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 50,
+        padding: 10,
         backgroundColor: '#313131',
-        height: '100%'
+        height: '100%',
+        maxWidth: '100%'
     },
     title: {
         fontSize: 24,

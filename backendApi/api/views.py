@@ -343,12 +343,12 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             course = Course.objects.get(id=courseID)
             startDate = course.courseStartDateTime
             endDate = course.courseEndDateTime
-            print("startDate.year: ", startDate.year)
+            #print("startDate.year: ", startDate.year)
             firstWeek = date(startDate.year, startDate.month, startDate.day).isocalendar()[1]
             year_week_string = str(startDate.year) + "-W" + str(firstWeek)
             d = year_week_string
             firstMonday = datetime.strptime(d + '-1', "%Y-W%W-%w")
-            print("firstMonday: ", firstMonday)
+            #print("firstMonday: ", firstMonday)
             endOfWeek = firstMonday + timedelta(days=6)
 
             #get all start of week numbers
@@ -393,22 +393,16 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
         
     @action(detail=False, methods=['POST'])
     def get_total_timetracked_per_week(self, request, **extra_fields):
-        startDateRequest = request.POST.get('startDate')
-        endDateRequest = request.POST.get('endDate')
         courseID = request.POST.get('courseID')
-        if startDateRequest is None:
-            response = {"message": "You need to provide a startDate (startDate). E.g. 2023-01-01"}
-            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-        elif endDateRequest is None: 
-            response = {"message": "You need to provide an endDate (endDate). E.g. 2023-01-01"}
-            return Response(data=response, status=status.HTTP_400_BAD_REQUEST) 
-        elif courseID is None: 
+        if courseID is None: 
             response = {"message": "You need to provide a courseID (courseID). E.g. 2"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else:
-            startDate = datetime.strptime(startDateRequest,"%Y-%m-%d").date()
-            endDate = datetime.strptime(endDateRequest,"%Y-%m-%d").date()
+            #startDate = datetime.strptime(startDateRequest,"%Y-%m-%d").date()
+            #endDate = datetime.strptime(endDateRequest,"%Y-%m-%d").date()
             course = Course.objects.get(id=courseID)
+            startDate = course.courseStartDateTime
+            endDate = course.courseEndDateTime
             firstWeek = date(startDate.year, startDate.month, startDate.day).isocalendar()[1]
             year_week_string = str(startDate.year) + "-W" + str(firstWeek)
 
@@ -955,9 +949,9 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
         else:
             questions = [
                 "What is your general opinion of the course?", 
-                "What is the difficulty level?",
+                "Was this course difficult?",
                 "Does this course have a reasonable workload?",
-                "How has your stress levels been in relation to the course?",
+                "Was this course stressful in general?",
                 "If you’ve been to any lectures, were they worth it?", 
                 "If you’ve been to any lesson, were they worth it?",
                 "If you’ve done any assignments, were they worth it?"
