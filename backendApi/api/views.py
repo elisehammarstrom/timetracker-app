@@ -301,10 +301,25 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                         dateDuration =  self.queryset.filter(user_id=this_user.id, course_id=courseID, date=futureDate).values_list('duration', flat=True)
                         if len(dateDuration) == 0:
                             durationArray.append(0)
+                        elif dateDuration is not None:
+                            print("in elif: dateDuration is not None")
+                            print("durationDuration: ", dateDuration)
+                            for timetracked in dateDuration:
+                                if timetracked is not None:
+                                    print("-----timetracked: ", timetracked)
+                                    print("str(timetracked): ", str(timetracked))
+                                    if str(timetracked) == "00:00:00":
+                                        durationArray.append(0)
+                                    else:
+                                        totalSeconds = timedelta(hours=timetracked.hour, minutes=timetracked.minute).total_seconds()
+                                        totalHours = round(totalSeconds/(60*60), 2)
+                                        print("totalSeconds: ", totalSeconds)
+                                        totalHours = (totalSeconds/(60*60))
+                                        durationArray.append(totalHours)
+                                else: 
+                                    print("timetracked is None: ", type(timetracked), timetracked)
                         else: 
-                            totalSeconds = timedelta(hours=dateDuration[0].hour, minutes=dateDuration[0].minute).total_seconds()
-                            totalHours = round(totalSeconds/(60*60), 2)
-                            durationArray.append(totalHours)
+                            print("dateDuration is None")
                         i+=1
                 results.append({
                                 "Course" : course.courseTitle, 
@@ -325,67 +340,51 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
     def get_user_timetracked_per_week(self, request, **extra_fields):
         user = request.user
         this_user = User.objects.get(id=user.id)
-        startDateRequest = request.POST.get('startDate')
-        endDateRequest = request.POST.get('endDate')
+        #startDateRequest = request.POST.get('startDate')
+        #endDateRequest = request.POST.get('endDate')
         courseID = request.POST.get('courseID')
-        if startDateRequest is None:
-            response = {"message": "You need to provide a startDate (startDate). E.g. 2023-01-01"}
-            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-        elif endDateRequest is None: 
-            response = {"message": "You need to provide an endDate (endDate). E.g. 2023-01-01"}
-            return Response(data=response, status=status.HTTP_400_BAD_REQUEST) 
-        elif courseID is None: 
+        if courseID is None: 
             response = {"message": "You need to provide a courseID (courseID). E.g. 2"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else:
-            startDate = datetime.strptime(startDateRequest,"%Y-%m-%d").date()
-            endDate = datetime.strptime(endDateRequest,"%Y-%m-%d").date()
             course = Course.objects.get(id=courseID)
+            startDate = course.courseStartDateTime
+            endDate = course.courseEndDateTime
             firstWeek = date(startDate.year, startDate.month, startDate.day).isocalendar()[1]
             year_week_string = str(startDate.year) + "-W" + str(firstWeek)
-
             d = year_week_string
             firstMonday = datetime.strptime(d + '-1', "%Y-W%W-%w")
-
             endOfWeek = firstMonday + timedelta(days=6)
 
             #get all start of week numbers
             thisMonday = firstMonday
             startOfWeeks = []
-
             endDateTime = datetime.combine(endDate, datetime.min.time())
             
             while thisMonday < endDateTime:
                 startOfWeeks.append(thisMonday)
                 thisMonday += timedelta(days=7)
-
             weekObjectArray = []
 
             for week in startOfWeeks:
                 weekEndDate =  week + timedelta(days=6)
                 week_avg = 0
-                print("week no", week.isocalendar()[1])
                 queryresult = self.queryset.filter(user=this_user, course = course, date__range=[week, weekEndDate]).values_list('duration', flat=True)
-
                 no_of_tracking_instances = 0
-
-
                 total_week_time = timedelta(hours=0, minutes=0, seconds=0)
-
+                
                 for timetracked in queryresult:
                    no_of_tracking_instances += 1
                    total_week_time += timedelta(hours=timetracked.hour, minutes=timetracked.minute, seconds=timetracked.second )
                    totalSeconds = total_week_time.total_seconds()
                    hours = total_week_time.total_seconds()/3600
-
                    week_avg = hours / no_of_tracking_instances
-                   
+                
                 weekObjectArray.append({
                     "weekNo": week.isocalendar()[1],
                     "weekStartDate" : week,
                     "weekEndDate": weekEndDate,
                     "avgDuration" : week_avg
-
                 })
 
             response = {
@@ -394,7 +393,7 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                         "user" : this_user.email,
                         "results" : weekObjectArray
                         }
-                
+
             return Response(data=response, status=status.HTTP_200_OK)
         
     @action(detail=False, methods=['POST'])
@@ -585,16 +584,18 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                 return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
             userStress = queryresult.values_list('stress', flat=True)
-            print("userStress: ", userStress)
 
             totalStress = 0
             no_of_objects = 0
             for trackingObj in userStress:
-                print("trackingObj: ", trackingObj)
                 if trackingObj is not None:
                     totalStress += trackingObj
                     no_of_objects += 1
-            averageStress = totalStress/no_of_objects
+            if no_of_objects == 0:
+                print("no stress is tracked")
+                averageStress = 0
+            else:
+                averageStress = totalStress/no_of_objects
 
             response = {
                         "message": "Average stress",  
