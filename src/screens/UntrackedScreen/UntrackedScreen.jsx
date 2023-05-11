@@ -9,19 +9,46 @@ import CustomButton from '../../components/CustomButton';
 import LeftArrow from '../../../assets/left-arrow.png'
 import RightArrow from '../../../assets/right-arrow.png'
 import Invisible from '../../../assets/invisible-box.png'
-
-
+import axios from 'axios';
 
 
 const UntrackedScreen = ({route}) => {
     const {courses} = route.params;
     const {token} = route.params;
+    const {courseIDs} = route.params;
 
     const [selectedCourse, setSelectedCourse] = React.useState("");
     const [selectedHour, setSelectedHour] = React.useState("");
     const [selectedMinute, setSelectedMinute] = React.useState("");
 
     const [isShowingArrow, setShowingArrow] = React.useState(true)
+
+    // var day = new Date().getDate();
+    // var month = new Date().getMonth()+1;
+    // var year = new Date().getFullYear();
+    // var thisDate = year + '-' + month + '-' + day;
+
+
+    var day = new Date().getDate();
+    var month = new Date().getMonth()+1;
+    var year = new Date().getFullYear();
+
+    const [thisDate, setThisDate] = useState('');
+
+    if (thisDate.length < 1) {
+    if (`${day}`.length === 1 & `${month}`.length === 1) {
+        setThisDate(year + '-0' + month + '-0' + day)
+    }
+    else if (`${day}`.length === 1) {
+        setThisDate(year + '-' + month + '-0' + day)
+    }
+    else if (`${month}`.length === 1) {
+        setThisDate(year + '-0' + month + '-' + day)
+    }
+    else {
+        setThisDate(year + '-' + month + '-' + day)
+
+    }}  
 
 
     const hourData = [
@@ -53,8 +80,6 @@ const UntrackedScreen = ({route}) => {
     var pastDate = ourDate.getDate() - 7;
     ourDate.setDate(pastDate);      
 
-   
-
     const onCalendarPressed = () => {       
         setDate(ourDate)
         
@@ -65,8 +90,39 @@ const UntrackedScreen = ({route}) => {
     }
 
     const onAddTimePressed = () => {
-        console.log(selectedHour,':', selectedMinute)
-        alert('Time tracked')
+        for (let i=0; i<courses.length; i++){
+            if (selectedCourse === courses[i]) {
+                let time = selectedHour + ':' + selectedMinute + ':' + '00' ;
+                console.log("date= ", thisDate)
+                const formData = new FormData();
+                formData.append('courseID', courseIDs[i]);
+                formData.append('date', thisDate);
+                formData.append('duration', time);
+        
+                axios({
+                  method: "post",
+                  url: "http://127.0.0.1:8000/api/tracking/track_time/",
+                  data: formData,
+                  headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization':`token ` + token
+                  }
+                })
+                  .then(function (response) {
+                    //handle success
+                    console.log(response.data);
+                    alert('Time tracked');
+
+                  })
+                  .catch(function (response) {
+                    //handle error
+                    console.log(response);
+                  });
+        
+        
+            }
+        }
+        
         
     }
 

@@ -7,7 +7,7 @@ import { secondsToMinutes } from 'date-fns';
 import axios from 'axios';
 import DropDown from '../../components/DropDown';
 
-const Timer = ({courseID, courseName, color}) => {
+const Timer = ({courseID, courseName, color, token}) => {
     const [isStopwatchStart, setIsStopwatchStart] = useState(false);
     const [resetStopwatch, setResetStopwatch] = useState(false);
     const [isTimerStart, setIsTimerStart] = useState(false);
@@ -48,14 +48,14 @@ const Timer = ({courseID, courseName, color}) => {
         formData.append('courseID', courseID);
         formData.append('date', date);
         formData.append('duration', time);
-        
+
         axios({
           method: "post",
           url: "http://127.0.0.1:8000/api/tracking/track_time/",
           data: formData,
           headers: {
             'Content-Type': 'multipart/form-data',
-            'Authorization':`token 53ba76420d512d53c7cca599cbda42c950d37996`
+            'Authorization':`token ` + token
           }
         })
           .then(function (response) {

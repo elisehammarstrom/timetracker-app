@@ -67,7 +67,7 @@ const HomeScreen: React.FC = ({route}) => {
 
 
   const onTimePressed = () => {       
-    navigation.navigate('AddTime', {courses: courses, token: token});
+    navigation.navigate('AddTime', {courses: courses, token: token, courseIDs: courseIDs});
   }
 
   const onStressPressed = () => {
@@ -123,6 +123,7 @@ const HomeScreen: React.FC = ({route}) => {
                     courseID={courseIDs[i]} 
                     color={colors[i]}
                     courseName={option}
+                    token={token}
                     // date={date}
                   /> 
                 </View>

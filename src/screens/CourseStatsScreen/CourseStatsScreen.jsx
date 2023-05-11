@@ -23,6 +23,8 @@ const CourseStatsScreen = ({route}) =>{
     const [label, setLabel] = useState('');
     const [userData, setUserData] = useState('');
     const [avgData, setAvgData] = useState('');
+    const [avgTime, setAvgTime] = useState('');
+    const [time, setTime] = useState('');
 
     for (let i=0; i<courseIDs.length; i++) {
         axios({
@@ -78,7 +80,7 @@ if (courseData.length >1) {
                     setLabel(weeks)
                     setUserData(avgDuration)
                 }
-                console.log("userData= ", userData)
+                // console.log("userData= ", userData)
             })
             .catch(function (response) {
                 //handle error
@@ -108,7 +110,7 @@ if (courseData.length >1) {
                         // setLabel(weeks)
                         setAvgData(avgDuration)
                     }
-                    console.log("avgdata= ", avgData)
+                    // console.log("avgdata= ", avgData)
                 })
                 .catch(function (response) {
                     //handle error
@@ -148,7 +150,7 @@ if (courseData.length >1) {
                 strokeWidth: 2 // optional
                 }
             ],
-            legend: ["Your time", "Average time"] // optional
+            legend: legend// optional
             })
     }
 
@@ -165,8 +167,7 @@ if (courseData.length >1) {
         useShadowColorFromDataset: false, // optional
     };
 
-    const [avgTime, setAvgTime] = useState('');
-    const [time, setTime] = useState('');
+
 
 
     const onReadCourseEvaluationsPressed = () => {
