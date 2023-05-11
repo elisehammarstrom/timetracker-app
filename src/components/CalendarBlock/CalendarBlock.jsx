@@ -20,12 +20,12 @@ const CalendarBlock = ({courseID, courseName, color, studyTime}) => {
 
     //hämta in uppgifter från databasen
     let fruits = [
-        {id: 1, name: courseName, time: 8.5},
-        {id: 2, name: 'Assignment 1', time: 3},
-        {id: 3, name: 'Lecture 3', time: 2},
-        {id: 4, name: 'Lesson 2', time: 2},
-        {id: 5, name: 'Group project', time: 0.5},
-        {id: 6, name: 'Repetition', time: 1}
+        {id: 1, name: courseName, time: 8.5 + ' h'},
+        {id: 2, name: 'Assignment 1', time: 3 + 'h'},
+        {id: 3, name: 'Lecture 3', time: 2 + 'h'},
+        {id: 4, name: 'Lesson 2', time: 2 + 'h'},
+        {id: 5, name: 'Group project', time: 0.5 + ' h'},
+        {id: 6, name: 'Repetition', time: 1 + ' h '}
     ]
     
     const onSelect = (item) => {
