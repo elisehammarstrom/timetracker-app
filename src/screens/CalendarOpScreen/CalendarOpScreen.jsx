@@ -3,8 +3,8 @@ import React , {useState} from 'react';
 import { useNavigation } from '@react-navigation/native';
 import CloseIcon from '../../../assets/close.png'
 import CalendarBlock from '../../components/CalendarBlock';
-import LeftArrow from '../../../assets/left-arrow.png'
-import RightArrow from '../../../assets/right-arrow.png'
+import DropDown from '../../components/DropDown';
+import WeekCalendar from '../../components/WeekCalendar';
 
 
 
@@ -16,9 +16,21 @@ const CalendarOpScreen = ({route}) => {
     const {courses} = route.params;
     const [isShowingInfo, setShowingInfo] = React.useState(true)
     const [name, setname] = useState('');
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [date, setDate] = useState(new Date());
 
 
     const navigation = useNavigation();
+
+    let fruits = [
+      {id: 1, name: 'mango'},
+      {id: 2, name: 'banana'},
+      {id: 3, name: 'cherry'}
+  ]
+
+  const onSelect = (item) => {
+    setSelectedItem(item)
+}
 
  /*    const courses = ["Mekanik", "Miljöteknik", "Envariabelanalys"]; */
     
@@ -26,18 +38,9 @@ const CalendarOpScreen = ({route}) => {
         navigation.navigate('Home', {options: courses})
       }
 
-      var todaysDate = new Date().getDate();
-      var monthNumber = new Date().getMonth() + 1;
 
 
-      function getMonthName(monthNumber) {
-        const date = new Date();
-        date.setMonth(monthNumber - 1);
-
-        return date.toLocaleString('en-US', { month: 'long' });
-      }
-
-      var showMonth = getMonthName(monthNumber)
+     
 
       const colors = ['ONE','TWO','THREE','FOUR','FIVE','SIX']
 
@@ -60,6 +63,7 @@ const CalendarOpScreen = ({route}) => {
  
   return (
     <View style={styles.container}> 
+    
 
       <View style={styles.topContainer}>
          <TouchableOpacity activeOpacity={0.5} style={styles.close} onPress={onClosedPress} >
@@ -69,11 +73,10 @@ const CalendarOpScreen = ({route}) => {
               resizeMode="contain"
             />
         </TouchableOpacity>
+        
 
-
-
-          <Text style = {styles.text}>{todaysDate} {showMonth}</Text>
         </View>
+        <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
         <View> 
                 
                 {courses.map((option, i) => (
@@ -83,8 +86,15 @@ const CalendarOpScreen = ({route}) => {
                     <CalendarBlock
                       color={colors[i]}
                       courseName={option}
-                      studyTime={studyTime[i]}
-                      />
+                      studyTime={studyTime[i]}>
+
+                        
+                      </CalendarBlock>
+                     {/*  <DropDown
+                        value={selectedItem}
+                        data={fruits}
+                        courseName={option}
+                        onSelect={onSelect}/> */}
                       
                   </TouchableOpacity>
                   ))}
@@ -103,7 +113,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#313131',
         height: '100%',
         alignitems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start',
         
     },
       text: {
@@ -115,6 +125,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         flexDirection: 'row',
         padding: 10
+
       },
       close: {
         flex: 3
