@@ -21,7 +21,8 @@ const CourseStatsScreen = ({route}) =>{
     const [courseData, setCourseData] = useState('');
     let fetchedCourseData = [];
     const [label, setLabel] = useState('');
-    const [data, setData] = useState('');
+    const [userData, setUserData] = useState('');
+    const [avgData, setAvgData] = useState('');
 
     for (let i=0; i<courseIDs.length; i++) {
         axios({
@@ -43,6 +44,8 @@ const CourseStatsScreen = ({route}) =>{
             //handle error
             console.log(response);
             });
+
+        
     }
     
 
@@ -78,7 +81,7 @@ if (courseData.length >1) {
 
                 if (`${label}` != `${weeks}`) {
                     setLabel(weeks)
-                    setData(avgDuration)
+                    setUserData(avgDuration)
                 }
                 console.log(data)
             })
@@ -86,6 +89,37 @@ if (courseData.length >1) {
                 //handle error
                 console.log(response);
             });
+
+            axios({
+                method: "post",
+                url: "http://127.0.0.1:8000/api/tracking/get_total_timetracked_per_week/",
+                data: formData,
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization':`token ` + token
+                }
+                })
+                .then(function (response) {
+                    //handle success
+                    console.log(response.data);
+                    let newData = response.data.results;
+                    // let weeks = [];
+                    let avgDuration = [];
+                    for (let i=0; i<newData.length; i++){
+                        // weeks.push(newData[i].weekNo)
+                        avgDuration.push(newData[i].avgDuration)
+                    }
+    
+                    if (`${label}` != `${weeks}`) {
+                        // setLabel(weeks)
+                        setAvgData(avgDuration)
+                    }
+                    console.log(data)
+                })
+                .catch(function (response) {
+                    //handle error
+                    console.log(response);
+                });
         }
       }
 }
@@ -94,12 +128,12 @@ if (courseData.length >1) {
         datasets: [
             {
             data: [0, 0, 0, 0, 0, 0, 0],
-            color: (opacity = 1) => `transparent`, // optional
+            color: (opacity = 1) => `red`, // optional
             strokeWidth: 2 // optional
             },
             {
             data: [0, 0, 0, 0, 0, 0, 0],
-            color: (opacity = 1) => `transparent`, // optional
+            color: (opacity = 1) => `blue`, // optional
             strokeWidth: 2 // optional
             }
         ],
@@ -110,13 +144,13 @@ if (courseData.length >1) {
             labels: label,
             datasets: [
                 {
-                data: data,
-                color: (opacity = 1) => `transparent`, // optional
+                data: userData,
+                color: (opacity = 1) => `red`, // optional
                 strokeWidth: 2 // optional
                 },
                 {
-                data: [0, 0, 0, 0, 0, 0, 0],
-                color: (opacity = 1) => `transparent`, // optional
+                data: avgData,
+                color: (opacity = 1) => `blue`, // optional
                 strokeWidth: 2 // optional
                 }
             ],
