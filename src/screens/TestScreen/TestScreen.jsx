@@ -1,10 +1,24 @@
 
 import {useState, useEffect} from 'react'
-import {FlatList, View, Text} from 'react-native'
+import {FlatList, View, Text, StyleSheet} from 'react-native'
 import React from 'react'
+import DropDown from '../../components/DropDown';
 
 export default function TestScreen() {
 const [courses, setCourses] = useState ( [ ] ) ;
+const [selectedItem, setSelectedItem] = useState(null);
+
+/* const [pickerValue, setPickerValue] = useState('råtta')
+ */
+let fruits = [
+    {id: 1, name: 'mango'},
+    {id: 2, name: 'banana'},
+    {id: 3, name: 'cherry'}
+]
+
+const onSelect = (item) => {
+    setSelectedItem(item)
+}
 
 
 useEffect ( () => {
@@ -22,18 +36,36 @@ useEffect ( () => {
 }, [] );
 
 
+
 return (
 <View>
-<FlatList
+
+    <DropDown
+        value={selectedItem}
+        data={fruits}
+        onSelect={onSelect}
+    />
+
+{/* <FlatList
 data={courses}
 renderItem={ ( {item} ) => (
 <Text key={item.id}> {item.courseTitle} </Text>
 ) }
 
-/>
+/> */}
 </View>
 
 );}
+
+const styles = StyleSheet.create({
+
+picker: {
+    width: 200,
+    height: 1,
+    backgroundColor: 'red'
+
+  }, 
+})
 
  
 
