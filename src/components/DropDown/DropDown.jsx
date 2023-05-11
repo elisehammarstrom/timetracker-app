@@ -19,7 +19,9 @@ const DropDown = ({
     return (
         <View style={styles.container}>
             <TouchableOpacity activeOpacity={0.5} style={styles.dropdownStyle} onPress={() => setShowOption(!showOption)}>
-                <Text style={{paddingRight: 6}}>{!!value? value?.name: courseName}</Text>
+                <Text style={{paddingRight: 6 ,  fontWeight: 'bold'}}
+                
+                >{!!value? value?.name: courseName}</Text>
                 <Image
                     source={DropdownArrow}
                     style={[ {height: 50 * 0.3},{width: 50*0.3},
@@ -39,7 +41,7 @@ const DropDown = ({
                         >
                             <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                         <Text style={{padding: 5}}>{val.name}</Text>
-                        <Text> {val.time} h</Text>
+                        <Text> {val.time} </Text>
                         </View>
                     </TouchableOpacity>
                 )
