@@ -178,7 +178,7 @@ class Student(User):
     base_role = User.Role.STUDENT
     university = models.CharField(max_length=70, blank=True, null=True)
     programme= models.ForeignKey(Programme, on_delete=models.CASCADE, null=True, blank=True)
-    yearGrade = models.ForeignKey(YearGrade, on_delete=models.CASCADE, null=True, blank=True )
+    yearGrade = models.ForeignKey(YearGrade, on_delete=models.CASCADE, null=True, blank=True)
     #courses = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True)
 
     student = StudentManager()

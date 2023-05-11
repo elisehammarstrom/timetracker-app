@@ -343,10 +343,12 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             course = Course.objects.get(id=courseID)
             startDate = course.courseStartDateTime
             endDate = course.courseEndDateTime
+            print("startDate.year: ", startDate.year)
             firstWeek = date(startDate.year, startDate.month, startDate.day).isocalendar()[1]
             year_week_string = str(startDate.year) + "-W" + str(firstWeek)
             d = year_week_string
             firstMonday = datetime.strptime(d + '-1', "%Y-W%W-%w")
+            print("firstMonday: ", firstMonday)
             endOfWeek = firstMonday + timedelta(days=6)
 
             #get all start of week numbers
@@ -690,10 +692,10 @@ class UserViewset(viewsets.ModelViewSet):
            #create with programme 
            if pID != None:
             pID = request.POST.get('pID')
-            user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=Programme.objects.get(id=request.POST.get('pID')))
+            user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=Programme.objects.get(id=request.POST.get('pID')), yearGrade=None)
            else:
                #create with no programme or course
-               user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=pID)
+               user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=pID, yearGrade=None)
            user.is_active = True
            user.save()
 
