@@ -27,8 +27,6 @@ const YourReportsScreen = ({route}) => {
   const [courses, setCourses] = useState([]);
   const [timeStudied, setTimeStudied] = useState([]); 
   const [state, setState] = useState('');
-  const [timeFetched, setTimeFetched] = useState(false)
-  const [stress, setStress] = useState('');
 
 
   //Fetching the first dates for the graph 
@@ -50,10 +48,17 @@ const YourReportsScreen = ({route}) => {
 
   // If you have selected dates from the calendar the dates of the graph will change
   if (firstDate) {
+    // console.log("i firstDate if sats")
+    // console.log("firstDate= ", firstDate)
+    // console.log("startDate= ", startDate)
+
     if (startDate !== firstDate.dateString) {
       setStartDate(firstDate.dateString)
       setEndDate(lastDate.dateString)
     }
+    // console.log("firstDate efter= ", firstDate)
+    // console.log("startDate efter= ", startDate)
+    console.log("endDate efter =", endDate)
   }
   if (firstDate) {
     let newLabels = [];
@@ -68,13 +73,47 @@ const YourReportsScreen = ({route}) => {
   
   //Fetching the users study time on each course for the dates you have picked
   if (endDate) {
-    if (timeFetched === false){
+
+    const formData = new FormData();
+    console.log("startDate= ", startDate)
+    
+    formData.append('startDate', startDate)
+    formData.append('endDate', endDate)
+    axios({
+      method: "post",
+      url: "http://127.0.0.1:8000/api/tracking/get_user_course_study_time/",
+      data: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `token ` + token
+      }
+    })
+    .then((res) => {
+      for (let i=0; i<res.data.results.length; i++) {
+        fetchedTimeStudied.push(res.data.results[i].timeStudied)
+        fetchedCourses.push(res.data.results[i].Course)
+        // console.log("fetchedTimeStudied= ", fetchedTimeStudied)
+      }
+      if (`${fetchedTimeStudied}` != `${timeStudied}` ){
+        setCourses(fetchedCourses);
+        setTimeStudied(fetchedTimeStudied);
+      }  
+    })
+    .catch((error) => {
+      console.error(error)
+      console.log("startDate i catch= ", startDate)
+      console.log("endDate i catch= ", endDate)
+
+    })
+    for (let i=0; i<courseIDs.length; i++){
       const formData = new FormData();
       formData.append('startDate', startDate)
       formData.append('endDate', endDate)
+      formData.append('courseID', courseIDs[i])
+
       axios({
         method: "post",
-        url: "http://127.0.0.1:8000/api/tracking/get_user_course_study_time/",
+        url: "http://127.0.0.1:8000/api/tracking/get_user_stress_period/",
         data: formData,
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -82,56 +121,16 @@ const YourReportsScreen = ({route}) => {
         }
       })
       .then((res) => {
-        for (let i=0; i<res.data.results.length; i++) {
-          fetchedTimeStudied.push(res.data.results[i].timeStudied)
-          fetchedCourses.push(res.data.results[i].Course)
-          // console.log("fetchedTimeStudied= ", fetchedTimeStudied)
-        }
-        setTimeFetched(true)
-        if (`${fetchedTimeStudied}` != `${timeStudied}` ){
-          setCourses(fetchedCourses);
-          setTimeStudied(fetchedTimeStudied);
-        }  
+        console.log(res.data)
+        
       })
       .catch((error) => {
         console.error(error)
-        console.log("startDate i catch= ", startDate)
-        console.log("endDate i catch= ", endDate)
-  
       })
-      let fetchedStress = [];
-      for (let i=0; i<courseIDs.length; i++){
-        const formData = new FormData();
-        formData.append('startDate', startDate)
-        formData.append('endDate', endDate)
-        formData.append('courseID', courseIDs[i])
-
-        axios({
-          method: "post",
-          url: "http://127.0.0.1:8000/api/tracking/get_user_stress_period/",
-          data: formData,
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': `token ` + token
-          }
-        })
-        .then((res) => {
-          console.log(res.data)
-          fetchedStress.push({'courseID': courseIDs[i], 'stress': res.data.avg_stress})
-          // console.log("fetchedStress= ", fetchedStress)
-          if (`${stress}` != `${fetchedStress}`) {
-            console.log('i if sats')
-            setStress(fetchedStress)
-          }
-        })
-        .catch((error) => {
-          console.error(error)
-        })
-      }
-      // console.log("fetchedStress utanför loop= ", fetchedStress)
-
-      console.log("stress= ", stress)
     }
+    // console.log("fetchedStress utanför loop= ", fetchedStress)
+
+    
     
   }
 
