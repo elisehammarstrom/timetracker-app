@@ -305,16 +305,19 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                             print("in elif: dateDuration is not None")
                             print("durationDuration: ", dateDuration)
                             for timetracked in dateDuration:
-                                print("-----timetracked: ", timetracked)
-                                print("str(timetracked): ", str(timetracked))
-                                if str(timetracked) == "00:00:00":
-                                    durationArray.append(0)
-                                else:
-                                    totalSeconds = timedelta(hours=timetracked.hour, minutes=timetracked.minute).total_seconds()
-                                    totalHours = round(totalSeconds/(60*60), 2)
-                                    print("totalSeconds: ", totalSeconds)
-                                    totalHours = (totalSeconds/(60*60))
-                                    durationArray.append(totalHours)
+                                if timetracked is not None:
+                                    print("-----timetracked: ", timetracked)
+                                    print("str(timetracked): ", str(timetracked))
+                                    if str(timetracked) == "00:00:00":
+                                        durationArray.append(0)
+                                    else:
+                                        totalSeconds = timedelta(hours=timetracked.hour, minutes=timetracked.minute).total_seconds()
+                                        totalHours = round(totalSeconds/(60*60), 2)
+                                        print("totalSeconds: ", totalSeconds)
+                                        totalHours = (totalSeconds/(60*60))
+                                        durationArray.append(totalHours)
+                                else: 
+                                    print("timetracked is None: ", type(timetracked), timetracked)
                         else: 
                             print("dateDuration is None")
                         i+=1
@@ -597,16 +600,18 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                 return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
             userStress = queryresult.values_list('stress', flat=True)
-            print("userStress: ", userStress)
 
             totalStress = 0
             no_of_objects = 0
             for trackingObj in userStress:
-                print("trackingObj: ", trackingObj)
                 if trackingObj is not None:
                     totalStress += trackingObj
                     no_of_objects += 1
-            averageStress = totalStress/no_of_objects
+            if no_of_objects == 0:
+                print("no stress is tracked")
+                averageStress = 0
+            else:
+                averageStress = totalStress/no_of_objects
 
             response = {
                         "message": "Average stress",  
