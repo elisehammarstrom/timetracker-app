@@ -1,5 +1,6 @@
+#from msilib import sequence
 from django.shortcuts import render
-from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer, CourseCalendarSerializer, UserFreetimeSerializer, CourseScheduleSerializer, YearGradeSerializer, CourseEvaluationSerializer, QuestionAnswerSerializer
+from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer, CourseCalendarSerializer, UserFreetimeSerializer, CourseScheduleSerializer, YearGradeSerializer, CourseEvaluationSerializer, QuestionAnswerSerializer, QuestionSerializer
 from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking, CourseCalendar, UserFreetime, ExcelFile, CourseSchedule, YearGrade, CourseEvaluation, Question, Answer, QuestionAnswer
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
@@ -29,6 +30,7 @@ from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
+from datetime import time
 
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -318,6 +320,160 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                             }
                 
             return Response(data=response, status=status.HTTP_200_OK)
+        
+    @action(detail=False, methods=['POST'])
+    def get_user_timetracked_per_week(self, request, **extra_fields):
+        user = request.user
+        this_user = User.objects.get(id=user.id)
+        startDateRequest = request.POST.get('startDate')
+        endDateRequest = request.POST.get('endDate')
+        courseID = request.POST.get('courseID')
+        if startDateRequest is None:
+            response = {"message": "You need to provide a startDate (startDate). E.g. 2023-01-01"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif endDateRequest is None: 
+            response = {"message": "You need to provide an endDate (endDate). E.g. 2023-01-01"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST) 
+        elif courseID is None: 
+            response = {"message": "You need to provide a courseID (courseID). E.g. 2"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            startDate = datetime.strptime(startDateRequest,"%Y-%m-%d").date()
+            endDate = datetime.strptime(endDateRequest,"%Y-%m-%d").date()
+            course = Course.objects.get(id=courseID)
+            firstWeek = date(startDate.year, startDate.month, startDate.day).isocalendar()[1]
+            year_week_string = str(startDate.year) + "-W" + str(firstWeek)
+
+            d = year_week_string
+            firstMonday = datetime.strptime(d + '-1', "%Y-W%W-%w")
+
+            endOfWeek = firstMonday + timedelta(days=6)
+
+            #get all start of week numbers
+            thisMonday = firstMonday
+            startOfWeeks = []
+
+            endDateTime = datetime.combine(endDate, datetime.min.time())
+            
+            while thisMonday < endDateTime:
+                startOfWeeks.append(thisMonday)
+                thisMonday += timedelta(days=7)
+
+            weekObjectArray = []
+
+            for week in startOfWeeks:
+                weekEndDate =  week + timedelta(days=6)
+                week_avg = 0
+                print("week no", week.isocalendar()[1])
+                queryresult = self.queryset.filter(user=this_user, course = course, date__range=[week, weekEndDate]).values_list('duration', flat=True)
+
+                no_of_tracking_instances = 0
+
+
+                total_week_time = timedelta(hours=0, minutes=0, seconds=0)
+
+                for timetracked in queryresult:
+                   no_of_tracking_instances += 1
+                   total_week_time += timedelta(hours=timetracked.hour, minutes=timetracked.minute, seconds=timetracked.second )
+                   totalSeconds = total_week_time.total_seconds()
+                   hours = total_week_time.total_seconds()/3600
+
+                   week_avg = hours / no_of_tracking_instances
+                   
+                weekObjectArray.append({
+                    "weekNo": week.isocalendar()[1],
+                    "weekStartDate" : week,
+                    "weekEndDate": weekEndDate,
+                    "avgDuration" : week_avg
+
+                })
+
+            response = {
+                        "message": "Time studied per day",  
+                        "userID": this_user.id,
+                        "user" : this_user.email,
+                        "results" : weekObjectArray
+                        }
+                
+            return Response(data=response, status=status.HTTP_200_OK)
+        
+    @action(detail=False, methods=['POST'])
+    def get_total_timetracked_per_week(self, request, **extra_fields):
+        startDateRequest = request.POST.get('startDate')
+        endDateRequest = request.POST.get('endDate')
+        courseID = request.POST.get('courseID')
+        if startDateRequest is None:
+            response = {"message": "You need to provide a startDate (startDate). E.g. 2023-01-01"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif endDateRequest is None: 
+            response = {"message": "You need to provide an endDate (endDate). E.g. 2023-01-01"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST) 
+        elif courseID is None: 
+            response = {"message": "You need to provide a courseID (courseID). E.g. 2"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            startDate = datetime.strptime(startDateRequest,"%Y-%m-%d").date()
+            endDate = datetime.strptime(endDateRequest,"%Y-%m-%d").date()
+            course = Course.objects.get(id=courseID)
+            firstWeek = date(startDate.year, startDate.month, startDate.day).isocalendar()[1]
+            year_week_string = str(startDate.year) + "-W" + str(firstWeek)
+
+            d = year_week_string
+            firstMonday = datetime.strptime(d + '-1', "%Y-W%W-%w")
+
+            endOfWeek = firstMonday + timedelta(days=6)
+
+            #get all start of week numbers
+            thisMonday = firstMonday
+            startOfWeeks = []
+
+            endDateTime = datetime.combine(endDate, datetime.min.time())
+            
+            while thisMonday < endDateTime:
+                startOfWeeks.append(thisMonday)
+                thisMonday += timedelta(days=7)
+
+            weekObjectArray = []
+
+            for week in startOfWeeks:
+                weekEndDate =  week + timedelta(days=6)
+                week_avg = 0
+                print("week no", week.isocalendar()[1])
+                queryresult = self.queryset.filter(course = course, date__range=[week, weekEndDate]).values_list('duration', flat=True)
+
+                no_of_tracking_instances = 0
+
+                zero_time =  timedelta(hours=0, minutes=0, seconds=0)
+
+                total_week_time = zero_time 
+                zero_time_string = "0" + str(zero_time)
+
+                for timetracked in queryresult:
+                   if str(timetracked) != zero_time_string:
+                    print(zero_time)
+                    print("timetracked", timetracked)
+                    no_of_tracking_instances += 1
+                    total_week_time += timedelta(hours=timetracked.hour, minutes=timetracked.minute, seconds=timetracked.second )
+                    totalSeconds = total_week_time.total_seconds()
+                    hours = total_week_time.total_seconds()/3600
+
+                    week_avg = hours / no_of_tracking_instances
+                   
+                weekObjectArray.append({
+                    "weekNo": week.isocalendar()[1],
+                    "weekStartDate" : week,
+                    "weekEndDate": weekEndDate,
+                    "avgDuration" : week_avg
+
+                })
+
+            response = {
+                        "message": "Time studied per day",  
+                        "results" : weekObjectArray
+                        }
+                
+            return Response(data=response, status=status.HTTP_200_OK)
+         
     @action(detail=False, methods=['GET'])
     def get_dates_in_week(self, request, **extra_fields):
         today = date.today()
@@ -352,9 +508,10 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
 
         #remaking dates to format for frontEnd
         dates_for_frontend = []
+        
 
         for item in dates[0]: 
-            date_string = item.strftime("%d/%m").replace("0", "")
+            date_string = item.strftime("%d/%m")
             dates_for_frontend.append(date_string)  
 
         response = {
@@ -393,14 +550,6 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             seconds = map(lambda time: (time.hour * 60 * 60 ) + (time.minute * 60.0) + time.second, durations)
             total_seconds = sum(seconds)
             no_of_instances = len(queryresult)
-
-            #måste få course average för varje användare
-
-            #ta fram användarens average per dag
-            # och summera date average för användaren
-
-            #gör samma fast för varje user_id i denna metod
-
             avg_time = total_seconds / no_of_instances
             avg_timestamp = time.strftime('%H:%M:%S', time.gmtime(avg_time))
 
@@ -655,6 +804,70 @@ class UserViewset(viewsets.ModelViewSet):
             } 
         return Response(data=response, status=status.HTTP_200_OK)
     
+    @action(detail=False, methods=['POST'])
+    def change_programme(self, request, **extra_fields):
+        user = request.user
+
+        if 'programmeID' in request.data: 
+            programmeID = request.POST.get('programmeID')
+            programmeInstance = Programme.objects.get(id=programmeID)
+
+            userInstance = Student.objects.get(id=user.id)
+            userInstance.programme = programmeInstance
+            userInstance.save()
+
+            serializer = self.serializer_class(request.user, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+            response = {'Programme assigned to user: ': str(user.email),
+                        "user" : {
+                            "first_name" : userInstance.first_name,
+                            "programme": userInstance.programme.shortProgrammeName
+
+                        }, 
+                        "Programme: ": {
+                            "systemID: ": programmeInstance.id,
+                            "programmeName: ": programmeInstance.programmeName,
+                            "shortProgrammeName: ": programmeInstance.shortProgrammeName,
+                            }
+            }
+            return Response(response, status = status.HTTP_200_OK)
+        else:
+            response = {"message": "You need to provide a programmeID (e.g. '2' for the programme STS)"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+    
+    @action(detail=False, methods=['GET'])
+    def get_courses(self, request, **extra_fields):
+        user_courses_qs = User.objects.get(id=request.user.pk).courses.all()
+
+        user_courses = []
+        for course in user_courses_qs:
+            user_courses.append(course.id)
+
+        response = {
+                "message": "Success. Courses retrieved. ", 
+                "courses": user_courses
+            } 
+        return Response(data=response, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=['GET'])
+    def get_user_data(self, request, **extra_fields):
+        userInstance = Student.objects.get(id=request.user.pk)
+
+        response = {
+                "message": "Success. User retrieved. ", 
+                "userObject": {
+                    "fullName" : userInstance.first_name + " " + userInstance.last_name,
+                    "email": userInstance.email,
+                   "programmeName": userInstance.programme.programmeName,
+                   "programmeShortName": userInstance.programme.shortProgrammeName,
+                   "university" : userInstance.university
+
+                }
+            } 
+        return Response(data=response, status=status.HTTP_200_OK)
+    
     @action(detail=False, methods=['GET'])
     def get_course_data(self, request, **extra_fields):
         if 'courseID' not in request.data: 
@@ -701,10 +914,17 @@ class UserViewset(viewsets.ModelViewSet):
                     }
                 } 
             return Response(data=response, status=status.HTTP_200_OK)
+        
 
 class QuestionAnswerViewset(viewsets.ModelViewSet):
-    queryset = CourseEvaluation.objects.all()
+    queryset = QuestionAnswer.objects.all()
     serializer_class = QuestionAnswerSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
+
+class QuestionViewset(viewsets.ModelViewSet):
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
     authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAuthenticated, )
 
@@ -716,12 +936,17 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def create_evaluation(self, request, **extra_fields):
-        userInstance = User.objects.get(id=request.user.pk)
-        courseID = request.POST.get('courseID')
+        user = self.request.user
+        #userInstance = User.objects.get(pk=user.pk)
 
-        if courseID is None:
-            response = {"message": "You need to provide a courseID. E.g. 2. (courseID)"}
-            return Response(data=response, status=status.HTTP_500_BAD_REQUEST)
+        studentInstance = Student.objects.get(pk=user.pk)
+        userInstance = studentInstance
+        courseID = request.POST.get('courseID')
+        course = Course.objects.get(id=courseID)
+
+        if course is None:
+            response = {"message": "You need to provide a courseID that corresponds to a course. E.g. 2. (courseID)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else:
             questions = [
                 "What is your general opinion of the course?", 
@@ -732,25 +957,30 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                 "If you’ve been to any lesson, were they worth it?",
                 "If you’ve done any assignments, were they worth it?"
                 ]
-            
-            questionAnswers = []
-            record = CourseEvaluation.objects.create(user=userInstance, course=Course.objects.get(id=courseID))
+
+            record = CourseEvaluation.objects.create(user=userInstance, course=course)
             record.save()
+
+            serializer = self.serializer_class(record, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+            questionAnswers = []
 
             for question in questions:
                 questionObj = Question.objects.create(text=question, courseEvaluation = record)
-                answerObj = Answer.objects.create(number=0, question=questionObj)
+                answerObj = Answer.objects.create(number=0, question=questionObj, text="")
                 questionAnswerObj = QuestionAnswer.objects.create(question=questionObj, answer=answerObj, courseEvaluation = record)
                 questionAnswers.append({
                     "questionAnswer.id": questionAnswerObj.id,
-                    "courseEvaluation.id": questionAnswerObj.courseEvaluation.id,
                     "question": {
                         "id": questionAnswerObj.question.id,
                         "question": questionAnswerObj.question.text,
                     },
                     "answer": {
                         "id": questionAnswerObj.answer.id,
-                        "answer": questionAnswerObj.answer.number,
+                        "answerNumber": questionAnswerObj.answer.number,
+                        "answerText": questionAnswerObj.answer.text,
                     },
                 }) 
 
@@ -763,6 +993,11 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                         "userObject": {
                             "user.id": userInstance.id,
                             "user.email": userInstance.email,
+                        },
+                        "courseEvaluation": {
+                            "id": record.id,
+                            "userID" : record.user.id,
+                            "courseID" : record.course.id,
                         },
                         "array" : questionAnswers
 
@@ -799,7 +1034,8 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                                 },
                                 "answerObject": {
                                     "id": answerObj.id,
-                                    "text" : answerObj.number
+                                    "number" : answerObj.number,
+                                    "text" : answerObj.text
                                 }
                             } 
                 return Response(data=response, status=status.HTTP_200_OK)
@@ -871,13 +1107,64 @@ class ExcelFileViewset(viewsets.ModelViewSet):
 #     klassA = klass[df['Program'] != 'STS2.C']
 #     print(klassA)
             
-         
+class YearGradeViewset(viewsets.ModelViewSet):
+    queryset = YearGrade.objects.all()
+    serializer_class = YearGradeSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )        
 
 class CourseScheduleViewset(viewsets.ModelViewSet):
     queryset = CourseSchedule.objects.all()
     serializer_class = CourseScheduleSerializer
     authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAuthenticated, )
+    
+    @action(detail=False, methods=['POST'])
+    def create_schedule(self, request, **extra_fields):
+        if 'yearGradeID' not in request.data: 
+            response = {"message": "You must provide a yearGradeID as foreinkey to create schedule"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        elif 'courseID' not in request.data:
+            response = {"message": "You must provide a courseID as foreinkey to create schedule"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            course = Course.objects.get(id=request.data.get('courseID'))
+            yearGrade=YearGrade.objects.get(id=request.data.get('yearGradeID'))
+            module_dir = os.path.dirname(__file__)  # get current
+            print("hej")
+            get_file = "uploads\\" + str(course.file)
+            file_path = os.path.join(module_dir, get_file)
+            print(get_file)
+            df=pd.read_excel(file_path,skiprows=5)
+            pColum=df[df['Program'].str.contains(yearGrade.yearGrade, na=False)]
+            listYearGradeClass=[]   
+            for item in YearGradeViewset.queryset:
+                if yearGrade.yearGrade == item.yearGrade:
+                    if yearGrade.yearGradeClass != item.yearGradeClass:
+                        listYearGradeClass.append(item.yearGradeClass)
+            if len(listYearGradeClass) > 0:
+                for val in listYearGradeClass:
+                    pColum = pColum[df['Program'] != val]
+            dbframe = pColum
+            for dbframe in dbframe.itertuples():
+                startDateTime = dbframe.Startdatum + " " + dbframe.Starttid + ":00"
+                endtDateTime = dbframe.Slutdatum + " " + dbframe.Sluttid + ":00"
+                print(startDateTime)
+                obj = CourseSchedule.objects.create(courseEvent = dbframe.Moment, 
+                                                    eventStartTime =datetime.strptime(startDateTime, '%Y-%m-%d %H:%M:%S'), 
+                                                    eventEndTime = datetime.strptime(endtDateTime, '%Y-%m-%d %H:%M:%S'),
+                                                    course = course, yearGrade=yearGrade
+                                                    
+                                                    )                         
+                obj.save()
+
+            response ={"message": "Success. Schedule created."}
+            return Response(data=response, status=status.HTTP_200_OK)
+
+                    
+
+
+    
     # def create_courseSchedule():
         # print("hej")
         # module_dir = os.path.dirname(__file__)  # get current 
@@ -900,8 +1187,3 @@ class CourseScheduleViewset(viewsets.ModelViewSet):
         #                                         eventEndTime = datetime.strptime(endtDateTime, '%Y-%m-%d %H:%M:%S'))                         
         #     obj.save()
 
-class YearGradeViewset(viewsets.ModelViewSet):
-    queryset = YearGrade.objects.all()
-    serializer_class = YearGradeSerializer
-    authentication_classes = (TokenAuthentication, )
-    permission_classes = (IsAuthenticated, )

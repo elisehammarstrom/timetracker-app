@@ -11,8 +11,11 @@ const EvaluationScreen = ({route}) => {
     const {courses} = route.params;
     const {token} = route.params;
     const {checkedID} = route.params;
+    const {courseIDs} = route.params;
+
     const navigation = useNavigation();
     const [questions, setQuestions] = useState('');
+    const [submit, setSubmit] = useState('');
 
     // Create evaluation method
     const formData = new FormData();
@@ -23,8 +26,8 @@ const EvaluationScreen = ({route}) => {
             url: "http://127.0.0.1:8000/api/evaluate/create_evaluation/",
             data: formData,
             headers: {
-              'Content-Type': 'multipart/form-data',
-              'Authorization':`token ` + token
+                'Content-Type': 'multipart/form-data',
+                'Authorization':`token ` + token
             }
           })
             .then(function (response) {
@@ -33,17 +36,19 @@ const EvaluationScreen = ({route}) => {
                 setQuestions(response.data.array);
             })
             .catch(function (response) {
-              //handle error
-              console.log(response);
+                //handle error
+                console.log(response);
+            //   alert('You have already evaluated this course')
+            //     navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token, courseIDs: courseIDs})
             });
     }
     
-        if (`${questions}`.length > 1) {
-            console.log("questions[0].question.question= ", questions[0].question.question)
-        }
 
     const onSubmitPressed = () => {
-        navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token})
+        setSubmit(true)
+        // navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token, courseIDs: courseIDs})
+        
+
     }
     
     if (`${questions}`.length > 1) {
@@ -56,11 +61,20 @@ const EvaluationScreen = ({route}) => {
                 <ScrollView>
 
                     <Star
+                        token={token}
+
                         question={questions[0].question.question}
+                        answerID={questions[0].answer.id}
+                        submit={submit}
                     />
 
                     <CustomRadioButton
+                        token={token}
+
                         question={questions[1].question.question}
+                        answerID={questions[1].answer.id}
+                        submit={submit}
+
                         firstOption="Don't know"
                         secondOption="Difficult"
                         thirdOption="Somewhat difficult"
@@ -69,7 +83,12 @@ const EvaluationScreen = ({route}) => {
                     />
 
                     <CustomRadioButton
+                        token={token}
+
                         question={questions[2].question.question}
+                        answerID={questions[2].answer.id}
+                        submit={submit}
+
                         firstOption="Don't know"
                         secondOption="No"
                         thirdOption="Not really"
@@ -78,7 +97,12 @@ const EvaluationScreen = ({route}) => {
                     />
 
                     <CustomRadioButton
+                        token={token}
+
                         question={questions[3].question.question}
+                        answerID={questions[3].answer.id}
+                        submit={submit}
+
                         firstOption="Don't know"
                         secondOption="Very stressful"
                         thirdOption="Somewhat stressful"
@@ -87,7 +111,12 @@ const EvaluationScreen = ({route}) => {
                     />
 
                     <CustomRadioButton
+                        token={token}
+
                         question={questions[4].question.question}
+                        answerID={questions[4].answer.id}
+                        submit={submit}
+
                         firstOption="Don't know"
                         secondOption="No"
                         thirdOption="Somewhat"
@@ -96,7 +125,12 @@ const EvaluationScreen = ({route}) => {
                     />
 
                     <CustomRadioButton
+                        token={token}
+
                         question={questions[5].question.question}
+                        answerID={questions[5].answer.id}
+                        submit={submit}
+
                         firstOption="Don't know"
                         secondOption="No"
                         thirdOption="Somewhat"
@@ -105,7 +139,12 @@ const EvaluationScreen = ({route}) => {
                     />
 
                     <CustomRadioButton
+                        token={token}
+
                         question={questions[6].question.question}
+                        answerID={questions[6].answer.id}
+                        submit={submit}
+
                         firstOption="Don't know"
                         secondOption="No"
                         thirdOption="Somewhat"
@@ -118,14 +157,12 @@ const EvaluationScreen = ({route}) => {
                         onPress={onSubmitPressed}
                     />
 
-
                 </ScrollView>   
-
 
             </View>
     
         )
-    }
+    } 
 }
 
 const styles = StyleSheet.create({

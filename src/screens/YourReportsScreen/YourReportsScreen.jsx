@@ -17,6 +17,7 @@ const YourReportsScreen = ({route}) => {
   const {token} = route.params;
   const {firstDate} = route.params;
   const {lastDate} = route.params;
+  const {courseIDs} = route.params;
 
   const [initialLabels, setInitialLabels] = useState([]);
   const [startDate, setStartDate] = useState('');
@@ -26,6 +27,7 @@ const YourReportsScreen = ({route}) => {
   const [courses, setCourses] = useState([]);
   const [timeStudied, setTimeStudied] = useState([]); 
   const [state, setState] = useState('');
+  const [timeFetched, setTimeFetched] = useState(false)
 
 
   //Fetching the first dates for the graph 
@@ -64,36 +66,63 @@ const YourReportsScreen = ({route}) => {
   }
   
   //Fetching the users study time on each course for the dates you have picked
-  const formData = new FormData();
-  formData.append('startDate', startDate)
-  formData.append('endDate', endDate)
+  if (endDate) {
+    if (timeFetched === false){
+      const formData = new FormData();
+      formData.append('startDate', startDate)
+      formData.append('endDate', endDate)
+      axios({
+        method: "post",
+        url: "http://127.0.0.1:8000/api/tracking/get_user_course_study_time/",
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `token ` + token
+        }
+      })
+      .then((res) => {
+        for (let i=0; i<res.data.results.length; i++) {
+          fetchedTimeStudied.push(res.data.results[i].timeStudied)
+          fetchedCourses.push(res.data.results[i].Course)
+          console.log("fetchedTimeStudied= ", fetchedTimeStudied)
+        }
+        setTimeFetched(true)
+        if (`${fetchedTimeStudied}` != `${timeStudied}` ){
+          setCourses(fetchedCourses);
+          setTimeStudied(fetchedTimeStudied);
+        }  
+      })
+      .catch((error) => {
+        console.error(error)
+        console.log("startDate i catch= ", startDate)
+        console.log("endDate i catch= ", endDate)
   
-  if (startDate) {
-    axios({
-      method: "post",
-      url: "http://127.0.0.1:8000/api/tracking/get_user_course_study_time/",
-      data: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        'Authorization': `token ` + token
+      })
+
+      for (let i=0; i<courseIDs.length; i++){
+        const formData = new FormData();
+        formData.append('startDate', startDate)
+        formData.append('endDate', endDate)
+        formData.append('courseID', courseIDs[i])
+
+      axios({
+        method: "post",
+        url: "http://127.0.0.1:8000/api/tracking/get_user_stress_period/",
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `token ` + token
+        }
+      })
+      .then((res) => {
+        console.log(res.data)
+      })
+      .catch((error) => {
+        console.error(error)
+      })
       }
-    })
-    .then((res) => {
-      for (let i=0; i<res.data.results.length; i++) {
-        fetchedTimeStudied.push(res.data.results[i].timeStudied)
-        fetchedCourses.push(res.data.results[i].Course)
-        console.log("fetchedTimeStudied= ", fetchedTimeStudied)
-      }
-      if (`${fetchedTimeStudied}` != `${timeStudied}` ){
-        console.log('if sats')
-        setCourses(fetchedCourses);
-        setTimeStudied(fetchedTimeStudied);
-        console.log('courses= ', courses)
-      }  
-    })
-    .catch((error) => {
-      console.error(error)
-    })
+    }
+    
   }
 
 
@@ -184,7 +213,7 @@ const YourReportsScreen = ({route}) => {
   // Navigation to the calendar where you can pick other dates to display
   const navigation = useNavigation();
   const onDatePressed = () => {
-    navigation.navigate('Calendar', {courses: courses, token: token})
+    navigation.navigate('Calendar', {courses: courses, token: token, courseIDs: courseIDs})
   }
 
     return (

@@ -3,6 +3,7 @@
 
 // import React in our code
 import React, {useState} from 'react';
+import axios from 'axios';
 
 // import all the components we are going to use
 import {
@@ -14,10 +15,10 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-const Star = ({question}) => {
-        // To set the default Star Selected
+const Star = ({token, question, answerID, submit}) => {
+    // To set the default Star Selected
     const [defaultRating, setDefaultRating] = useState(2);
-    console.log("Star= ", defaultRating)
+    const answerText = "star";
     // To set the max number of Stars
     const [maxRating, setMaxRating] = useState([1, 2, 3, 4, 5]);
 
@@ -27,6 +28,31 @@ const Star = ({question}) => {
     // Empty Star. You can also give the path from local
     const starImageCorner =
         'https://raw.githubusercontent.com/AboutReact/sampleresource/master/star_corner.png';
+
+    if (submit === true) {
+        const formData = new FormData();
+        formData.append('answerID', answerID)
+        formData.append('answerNumber', defaultRating)
+        formData.append('answerText', answerText)
+
+        axios({
+        method: "post",
+        url: " http://127.0.0.1:8000/api/evaluate/update_answer/",
+        data: formData,
+        headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization':`token ` + token
+        }
+        })
+        .then(function (response) {
+            //handle success
+            console.log(response.data);
+        })
+        .catch(function (response) {
+            //handle error
+            console.log(response);
+        });
+    }
 
     const CustomRatingBar = () => {
         return (
