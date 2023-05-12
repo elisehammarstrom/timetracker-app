@@ -61,6 +61,7 @@ const StressScreen = ({route}) => {
     const [pressed5, setPressed5] = useState(false);
     
     const onSubmitPressed = () => {
+        
         let checkedID = [];
         for (let i=0; i<courses.length; i++) {
             if (selected === courses[i]) {
@@ -72,13 +73,14 @@ const StressScreen = ({route}) => {
             date: thisDate,
             stress: selectedValue
         }
-        if (stressTracked.course === ''){
+        console.log("stressTracked.course= ", stressTracked.course)
+        if (stressTracked.course === undefined){
             alert('Please choose a course')
         }
         if (stressTracked.stress === ''){
             alert('Please track your stress before submitting')
         }
-        if (stressTracked.course != '' & stressTracked.stress != ''){
+        if (stressTracked.course != undefined & stressTracked.stress != ''){
             alert('Stress tracked!')
             setPressed1(false)
             setPressed2(false)

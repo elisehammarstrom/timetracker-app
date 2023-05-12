@@ -40,13 +40,12 @@ const SignInScreen = () => {
             if (response.data.token) {
                 navigation.navigate('Home', {token: response.data.token})
             }
-            else {
-                alert('Wrong email or password')
-            }
 
         })
         .catch(error=> {
             console.log("error from image :");
+            alert('Wrong email or password')
+
    })
   
         
@@ -64,14 +63,14 @@ const SignInScreen = () => {
     return (
         <View style={styles.container}>
 
-            <View style={styles.languageContainer}>
+            {/* <View style={styles.languageContainer}>
                 <View style={styles.languageButton}>
                     <CustomButton
                         text="Language"
                         type="TERTIARY"
                     />
                 </View>
-            </View>
+            </View> */}
                 
             <View style={styles.root}>
 
