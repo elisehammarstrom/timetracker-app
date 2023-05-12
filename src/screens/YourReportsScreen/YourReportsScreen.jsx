@@ -176,6 +176,7 @@ const YourReportsScreen = ({route}) => {
   };
 
   const [timeVar, setTimeVar] = useState([]);
+  
   // Set timeVar which can be varied to time if the user haven't picked to show only one course
   if (`${timeVar}` != `${time}` & state != 'pressed') {
       setTimeVar(time)    
@@ -186,7 +187,7 @@ const YourReportsScreen = ({route}) => {
   for (let i=0; i<timeCourses.length; i++) {
     sum.push(Math.round(timeCourses[i].time.reduce((a, b) => a + b, 0)*10)/10);
   } */
-  
+  console.log("timevar= ", timeVar)
   const data = {
     labels: initialLabels,
     legend: [],
@@ -224,7 +225,6 @@ const YourReportsScreen = ({route}) => {
   const onDatePressed = () => {
     navigation.navigate('Calendar', {courses: courses, token: token, courseIDs: courseIDs})
   }
-
     return (
         <View style={styles.container}>
           
