@@ -209,7 +209,7 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
     permission_classes = []
 
     @action(detail=False, methods=['POST'])
-    def track_untracked_time(self, request, **extra_fields):
+    def add_untracked_time(self, request, **extra_fields):
         user = request.user
         this_user = User.objects.get(id=user.id)
         courseID = request.POST.get('courseID')
@@ -228,27 +228,36 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             try:
                 date = datetime.strptime(request.POST.get('date'),"%Y-%m-%d").date()
                 existing_record_object = UserCourseTracking.objects.get(user=User.objects.get(id=user.id), course=Course.objects.get(id=courseID), date=date)
-                print("INNAN ADD existing_record_object.duration: ",existing_record_object.duration)
-                existing_record_object.duration += duration
-                print("EFTER ADD existing_record_object.duration: ",existing_record_object.duration)
+
+                old_duration = existing_record_object.duration
+                add_duration = datetime.strptime(duration, "%H:%M:%S")
+
+                duration_old = timedelta(hours=old_duration.hour, minutes=old_duration.minute, seconds=old_duration.second)
+                duration_new = timedelta(hours=add_duration.hour, minutes=add_duration.minute, seconds=add_duration.second)
+
+                updated_duration = duration_old + duration_new
                 
+
+                updated_time_in_time_format = datetime.strptime(str(updated_duration),"%H:%M:%S" ).time()
+                existing_record_object.duration = updated_time_in_time_format
                 existing_record_object.save(update_fields=['duration'])
+                    
                 record = existing_record_object
-                
+                    
                 response = {
-                "message": "Record updated",
-                "trackedData": 
-                        {
-                            "userID": record.user.id, 
-                            "courseID": record.course.id, 
-                            "date": record.date,
-                            "duration": record.duration,
-                        }       
-                }
+                    "message": "Record updated",
+                    "trackedData": 
+                            {
+                                "userID": record.user.id, 
+                                "courseID": record.course.id, 
+                                "date": record.date,
+                                "duration": record.duration,
+                            }       
+                    }
                 return Response(data=response, status=status.HTTP_200_OK)
             except:
                 response = {
-                    "message": "Record does not exist"   
+                    "message": "Error in updating record",      
                     }
                 return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
