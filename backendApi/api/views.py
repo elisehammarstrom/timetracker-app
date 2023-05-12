@@ -209,6 +209,50 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
     permission_classes = []
 
     @action(detail=False, methods=['POST'])
+    def track_untracked_time(self, request, **extra_fields):
+        user = request.user
+        this_user = User.objects.get(id=user.id)
+        courseID = request.POST.get('courseID')
+        duration = request.POST.get('duration')
+
+        if request.POST.get('date') is None:
+            response = {"message": "You must provide a date in format DateFormat '2023-05-01' (date)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif courseID is None: 
+            response = {"message": "You must provide a courseID, e.g. 2 (courseID)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif duration is None:
+            response = {"message": "You must provide a duratiom in format Time 'HH:MM:SS' (duration)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            try:
+                date = datetime.strptime(request.POST.get('date'),"%Y-%m-%d").date()
+                existing_record_object = UserCourseTracking.objects.get(user=User.objects.get(id=user.id), course=Course.objects.get(id=courseID), date=date)
+                print("INNAN ADD existing_record_object.duration: ",existing_record_object.duration)
+                existing_record_object.duration += duration
+                print("EFTER ADD existing_record_object.duration: ",existing_record_object.duration)
+                
+                existing_record_object.save(update_fields=['duration'])
+                record = existing_record_object
+                
+                response = {
+                "message": "Record updated",
+                "trackedData": 
+                        {
+                            "userID": record.user.id, 
+                            "courseID": record.course.id, 
+                            "date": record.date,
+                            "duration": record.duration,
+                        }       
+                }
+                return Response(data=response, status=status.HTTP_200_OK)
+            except:
+                response = {
+                    "message": "Record does not exist"   
+                    }
+                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=['POST'])
     def track_time(self, request, **extra_fields):
         user = request.user
         this_user = User.objects.get(id=user.id)
@@ -228,7 +272,10 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             try:
                 date = datetime.strptime(request.POST.get('date'),"%Y-%m-%d").date()
                 existing_record_object = UserCourseTracking.objects.get(user=User.objects.get(id=user.id), course=Course.objects.get(id=courseID), date=date)
+                #print("INNAN ADD existing_record_object.duration: ",existing_record_object.duration)
                 existing_record_object.duration = duration
+                #print("EFTER ADD existing_record_object.duration: ",existing_record_object.duration)
+                
                 existing_record_object.save(update_fields=['duration'])
                 record = existing_record_object
                 
