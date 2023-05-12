@@ -201,7 +201,7 @@ if (courseData.length >1) {
     }
 
     const onArrowPressed = () => {
-        navigation.navigate('ChooseReport', {token: token, courseIDs: courseIDs})
+        navigation.navigate('ChooseReport', {token: token, courseIDs: courseIDs, courses: chosenCourses})
       }
 
     return (

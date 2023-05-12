@@ -105,29 +105,29 @@ const YourReportsScreen = ({route}) => {
       console.log("endDate i catch= ", endDate)
 
     })
-    for (let i=0; i<courseIDs.length; i++){
-      const formData = new FormData();
-      formData.append('startDate', startDate)
-      formData.append('endDate', endDate)
-      formData.append('courseID', courseIDs[i])
+    // for (let i=0; i<courseIDs.length; i++){
+    //   const formData = new FormData();
+    //   formData.append('startDate', startDate)
+    //   formData.append('endDate', endDate)
+    //   formData.append('courseID', courseIDs[i])
 
-      axios({
-        method: "post",
-        url: "http://127.0.0.1:8000/api/tracking/get_user_stress_period/",
-        data: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `token ` + token
-        }
-      })
-      .then((res) => {
-        console.log(res.data)
+    //   axios({
+    //     method: "post",
+    //     url: "http://127.0.0.1:8000/api/tracking/get_user_stress_period/",
+    //     data: formData,
+    //     headers: {
+    //       'Content-Type': 'multipart/form-data',
+    //       'Authorization': `token ` + token
+    //     }
+    //   })
+    //   .then((res) => {
+    //     console.log(res.data)
         
-      })
-      .catch((error) => {
-        console.error(error)
-      })
-    }
+    //   })
+    //   .catch((error) => {
+    //     console.error(error)
+    //   })
+    // }
     // console.log("fetchedStress utanför loop= ", fetchedStress)
 
 
@@ -188,7 +188,7 @@ const YourReportsScreen = ({route}) => {
     sum.push(Math.round(timeCourses[i].time.reduce((a, b) => a + b, 0)*10)/10);
   } */
   console.log("timevar= ", timeVar)
-  if (timeVar.length > 0 & data.length<1){
+  if (timeVar.length > 0 & data.data != timeVar){
     setData({
       labels: initialLabels,
       legend: [],
