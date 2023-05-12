@@ -37,7 +37,7 @@ const Timer = ({courseID, courseName, color, token}) => {
     var date = year + '-' + month + '-' + day;
 
     const getTime = (time) => {
-      if (isStopwatchStart != true){
+      if (isStopwatchStart != true & time != '00:00:00'){
         let data = {
           courseID: courseID,
           date: date,

@@ -92,7 +92,7 @@ const YourReportsScreen = ({route}) => {
       for (let i=0; i<res.data.results.length; i++) {
         fetchedTimeStudied.push(res.data.results[i].timeStudied)
         fetchedCourses.push(res.data.results[i].Course)
-        // console.log("fetchedTimeStudied= ", fetchedTimeStudied)
+        console.log("fetchedTimeStudied= ", fetchedTimeStudied)
       }
       if (`${fetchedTimeStudied}` != `${timeStudied}` ){
         setCourses(fetchedCourses);
