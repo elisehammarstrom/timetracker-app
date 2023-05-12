@@ -1,10 +1,10 @@
-import React, {useState} from 'react'
-import { View, Text, Image, StyleSheet, useWindowDimensions, TextInput } from 'react-native'
+import React from 'react'
+import { View, Image, StyleSheet, useWindowDimensions } from 'react-native'
 import Logo from '../../../assets/icon.png'
 import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import axios from 'axios';
 
 const SignInScreen = () => {

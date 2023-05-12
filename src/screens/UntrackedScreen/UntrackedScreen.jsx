@@ -18,8 +18,8 @@ const UntrackedScreen = ({route}) => {
     const {courseIDs} = route.params;
 
     const [selectedCourse, setSelectedCourse] = React.useState("");
-    const [selectedHour, setSelectedHour] = React.useState("");
-    const [selectedMinute, setSelectedMinute] = React.useState("");
+    const [selectedHour, setSelectedHour] = React.useState("00");
+    const [selectedMinute, setSelectedMinute] = React.useState("00");
 
     const [isShowingArrow, setShowingArrow] = React.useState(true)
 
