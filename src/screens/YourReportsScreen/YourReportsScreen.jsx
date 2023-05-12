@@ -130,8 +130,7 @@ const YourReportsScreen = ({route}) => {
     }
     // console.log("fetchedStress utanför loop= ", fetchedStress)
 
-    
-    
+
   }
 
 
@@ -176,6 +175,7 @@ const YourReportsScreen = ({route}) => {
   };
 
   const [timeVar, setTimeVar] = useState([]);
+  const [data, setData] = useState('');
   
   // Set timeVar which can be varied to time if the user haven't picked to show only one course
   if (`${timeVar}` != `${time}` & state != 'pressed') {
@@ -188,13 +188,15 @@ const YourReportsScreen = ({route}) => {
     sum.push(Math.round(timeCourses[i].time.reduce((a, b) => a + b, 0)*10)/10);
   } */
   console.log("timevar= ", timeVar)
-  const data = {
-    labels: initialLabels,
-    legend: [],
-    data: timeVar,
-    barColors: colors
-  };
-
+  if (timeVar.length > 0 & data.length<1){
+    setData({
+      labels: initialLabels,
+      legend: [],
+      data: timeVar,
+      barColors: colors
+    })
+  }
+ 
   // When you press a course you will only see data for that course
   const onCoursePressed = (course) => {
     for (let i=0; i<timeCourses.length; i++) {
@@ -225,6 +227,9 @@ const YourReportsScreen = ({route}) => {
   const onDatePressed = () => {
     navigation.navigate('Calendar', {courses: courses, token: token, courseIDs: courseIDs})
   }
+
+  if (data != '') {
+
     return (
         <View style={styles.container}>
           
@@ -302,6 +307,7 @@ const YourReportsScreen = ({route}) => {
             
         </View>
     )
+              }
 };
 
 const styles=StyleSheet.create({
