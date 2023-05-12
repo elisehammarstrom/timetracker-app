@@ -1,13 +1,13 @@
-import {addDays, format, getDate, isSameDay, startOfWeek} from 'date-fns';
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import { addDays, format, getDate, isSameDay, startOfWeek } from 'date-fns';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 type Props = {
   date: Date;
   onChange: (value: Date) => void;
 };
 
-const WeekCalendar: React.FC<Props> = ({date, onChange}) => {
+const WeekCalendar: React.FC<Props> = ({ date, onChange }) => {
   const [week, setWeek] = useState<WeekDay[]>([]);
 
   useEffect(() => {
@@ -30,11 +30,10 @@ const WeekCalendar: React.FC<Props> = ({date, onChange}) => {
         return (
           <View style={styles.weekDayItem} key={weekDay.formatted}>
             <Text style={styles.weekDayText}>{weekDay.formatted}</Text>
-            <TouchableOpacity
-              // onPress={() => onChange(weekDay.date)}
+            <View
               style={touchable}>
               <Text style={textStyles}>{weekDay.day}</Text>
-            </TouchableOpacity>
+            </View>
           </View>
         );
       })}
@@ -82,7 +81,7 @@ type WeekDay = {
 
 // get week days
 export const getWeekDays = (date: Date): WeekDay[] => {
-  const start = startOfWeek(date, {weekStartsOn: 1});
+  const start = startOfWeek(date, { weekStartsOn: 1 });
 
   const final = [];
 

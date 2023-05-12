@@ -5,8 +5,8 @@ import WeekCalendar from '../../components/WeekCalendar';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import Timer from '../../components/Timer';
-import React, {useState} from 'react';
-import {Button, SafeAreaView, StyleSheet, Text, View, Image, TouchableOpacity, ScrollView} from 'react-native';
+import React, { useState } from 'react';
+import { Button, SafeAreaView, StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
 import ButtonMenu from '../../components/ButtonMenu';
 import Logo from '../../../assets/icon.png';
 import CalendarIcon from '../../../assets/calendar.png';
@@ -14,9 +14,9 @@ import SettingIcon from '../../../assets/settings.png';
 import axios from 'axios';
 
 
-const HomeScreen: React.FC = ({route}) => {
+const HomeScreen: React.FC = ({ route }) => {
 
-  const {token} = route.params;
+  const { token } = route.params;
   const [courseIDs, setCourseIDs] = useState('');
   const [courses, setCourses] = useState([]);
 
@@ -25,61 +25,61 @@ const HomeScreen: React.FC = ({route}) => {
       'Authorization': `token ` + token
     }
   })
-  .then((res) => {
-  
-    if (`${courseIDs}` != `${res.data.courses}`) {
-      setCourseIDs(res.data.courses)
-    }
-
-    axios.get('http://127.0.0.1:8000/api/courses/', {
-    headers: {
-      'Authorization': `token ` + token
-    }
-    })
     .then((res) => {
-      let newCourses = [];
-      for (let j=0; j<courseIDs.length; j++)
 
-        for (let i=0; i<res.data.length; i++) {
-          if (`${res.data[i].id}` === `${courseIDs[j]}`) {
-            newCourses.push(`${res.data[i].courseTitle}`)
+      if (`${courseIDs}` != `${res.data.courses}`) {
+        setCourseIDs(res.data.courses)
+      }
+
+      axios.get('http://127.0.0.1:8000/api/courses/', {
+        headers: {
+          'Authorization': `token ` + token
+        }
+      })
+        .then((res) => {
+          let newCourses = [];
+          for (let j = 0; j < courseIDs.length; j++)
+
+            for (let i = 0; i < res.data.length; i++) {
+              if (`${res.data[i].id}` === `${courseIDs[j]}`) {
+                newCourses.push(`${res.data[i].courseTitle}`)
+              }
+            }
+          if (`${courses}` != `${newCourses}`) {
+            setCourses(newCourses)
           }
-      }
-      if (`${courses}` != `${newCourses}`) {
-        setCourses(newCourses)
-      }
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+
     })
     .catch((error) => {
       console.error(error)
     })
 
-  })
-  .catch((error) => {
-    console.error(error)
-  })
-  
 
   const navigation = useNavigation();
 
   const [date, setDate] = useState(new Date());
 
-  const colors = ['ONE','TWO','THREE','FOUR','FIVE','SIX']
+  const colors = ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX']
 
 
-  const onTimePressed = () => {       
-    navigation.navigate('AddTime', {courses: courses, token: token, courseIDs: courseIDs});
+  const onTimePressed = () => {
+    navigation.navigate('AddTime', { courses: courses, token: token, courseIDs: courseIDs });
   }
 
   const onStressPressed = () => {
-    navigation.navigate('Stress', {courses: courses, token: token, courseIDs: courseIDs});
+    navigation.navigate('Test', { courses: courses, token: token, courseIDs: courseIDs });
   };
 
   const onSettingsPressed = () => {
-    navigation.navigate('Profile', {token: token});
-};
+    navigation.navigate('Profile', { token: token });
+  };
 
   const onCalendarPressed = () => {
-    navigation.navigate('CalendarOpScreen', {courses: courses, token: token});
+    navigation.navigate('CalendarOpScreen', { courses: courses, token: token });
   };
 
 
@@ -87,73 +87,73 @@ const HomeScreen: React.FC = ({route}) => {
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.layout} >
-        <TouchableOpacity activeOpacity={0.5} style={{padding: 10}} onPress={onCalendarPressed}>
-          <Image 
-            source={CalendarIcon} 
-            style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
+        <TouchableOpacity activeOpacity={0.5} style={{ padding: 10 }} onPress={onCalendarPressed}>
+          <Image
+            source={CalendarIcon}
+            style={[{ height: 100 * 0.3 }, { width: 100 * 0.3 }]}
             resizeMode="contain"
           />
-  
+
         </TouchableOpacity>
 
-          <Image 
-            source={Logo} 
-            style={[styles.logo, {height: 200 * 0.3}]} 
+        <Image
+          source={Logo}
+          style={[styles.logo, { height: 200 * 0.3 }]}
+          resizeMode="contain"
+        />
+
+        <TouchableOpacity activeOpacity={0.5} style={{ padding: 10 }} onPress={onSettingsPressed}>
+          <Image
+            source={SettingIcon}
+            style={[{ height: 100 * 0.3 }, { width: 100 * 0.3 }]}
             resizeMode="contain"
           />
-        
-          <TouchableOpacity activeOpacity={0.5} style={{padding: 10}}onPress={onSettingsPressed}>
-            <Image 
-              source={SettingIcon} 
-              style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-        
+        </TouchableOpacity>
+
       </View>
-      
+
       <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
       <ScrollView>
         <View style={styles.timeLoop}>
 
           {/* Looping the courses to create a timer for each course */}
           {courses.map((option, i) => (
-                <View key={option}>
-                  <Timer 
-                    courseID={courseIDs[i]} 
-                    color={colors[i]}
-                    courseName={option}
-                    token={token}
-                    // date={date}
-                  /> 
-                </View>
+            <View key={option}>
+              <Timer
+                courseID={courseIDs[i]}
+                color={colors[i]}
+                courseName={option}
+                token={token}
+              // date={date}
+              />
+            </View>
           ))}
-      </View>
-      
-
-      {/* Buttons for adding untracked time and for tracking stress level */}
-      <View style={styles.buttonContainer}>
-        <View style={styles.customButtonContainer}>
-          <CustomButton 
-            text="Add untracked time" 
-            onPress={onTimePressed}
-            type="HOMESCREEN"
-          />
-        
-
-          <CustomButton 
-            text="Track stress level" 
-            onPress={onStressPressed}
-            type="HOMESCREEN"
-          />
-       
         </View>
-      </View>
+
+
+        {/* Buttons for adding untracked time and for tracking stress level */}
+        <View style={styles.buttonContainer}>
+          <View style={styles.customButtonContainer}>
+            <CustomButton
+              text="Add untracked time"
+              onPress={onTimePressed}
+              type="HOMESCREEN"
+            />
+
+
+            <CustomButton
+              text="Track stress level"
+              onPress={onStressPressed}
+              type="HOMESCREEN"
+            />
+
+          </View>
+        </View>
       </ScrollView>
       <ButtonMenu
-          screen='timeTracking'
-          token={token}
-        />
+        screen='timeTracking'
+        token={token}
+      />
     </SafeAreaView>
   );
 };
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#313131',
     height: '100%',
-    justifyContent:'space-between',
+    justifyContent: 'space-between',
     width: '100%',
   },
   buttonContainer: {
@@ -193,9 +193,9 @@ const styles = StyleSheet.create({
   },
   image: {
     height: '100%',
-    justifyContent:'center',
+    justifyContent: 'center',
     alighItems: 'center',
-    width: 150 ,
+    width: 150,
     padding: 10,
   },
 });

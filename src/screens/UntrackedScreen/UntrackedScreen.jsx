@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Text, View, Dimensions, StyleSheet, Button, TouchableHighlight, TouchableOpacity, Image } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list'
 import ButtonMenu from '../../components/ButtonMenu';
-import WeekCalendar from '../../components/WeekCalendar';
+import ClickableWeekCalendar from '../../components/ClickableWeekCalendar';
 import CustomButton from '../../components/CustomButton';
 import LeftArrow from '../../../assets/left-arrow.png'
 import RightArrow from '../../../assets/right-arrow.png'
@@ -160,7 +160,7 @@ const UntrackedScreen = ({ route }) => {
                             </TouchableOpacity>
 
                             <View style={styles.calendar}>
-                                <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
+                                <ClickableWeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
                             </View>
                             <View>
                                 <Image
@@ -182,7 +182,7 @@ const UntrackedScreen = ({ route }) => {
                                 />
                             </View>
                             <View style={{ paddingHorizontal: 10 }}>
-                                <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
+                                <ClickableWeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
                             </View>
 
                             <TouchableOpacity onPress={() => { onCurrentDatePressed(true); setShowingArrow(true); }}>
