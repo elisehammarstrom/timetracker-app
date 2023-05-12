@@ -12,6 +12,7 @@ import SignOutIcon from '../../../assets/signout.png'
 const ProfileScreen = ({route}) => {
   const {token} = route.params;
   const {courses} = route.params;
+  const {courseIDs} = route.params;
   const navigation = useNavigation();
   // const profile = [];
   const [profile, setProfile] = useState([]);
@@ -43,7 +44,7 @@ const ProfileScreen = ({route}) => {
   };
 
   const onEditCoursePressed = () => {
-    navigation.navigate('StartCourses', {token: token, originalCourses: courses});  
+    navigation.navigate('StartCourses', {token: token, originalCourseIDs: courseIDs});  
   };
           //make separate words bold
   const B = (props) => <Text style={{fontWeight: 'bold'}}>{props.children}</Text>
