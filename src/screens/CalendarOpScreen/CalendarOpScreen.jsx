@@ -63,7 +63,7 @@ const CalendarOpScreen = ({route}) => {
 
         </View>
         <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
-        <View style={{height: 500}}> 
+        <View style={{height: '100%'}}> 
           <ScrollView >
                 
                 {courses.map((option, i) => (

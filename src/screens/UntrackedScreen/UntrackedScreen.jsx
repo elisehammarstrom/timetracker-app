@@ -9,6 +9,7 @@ import LeftArrow from '../../../assets/left-arrow.png'
 import RightArrow from '../../../assets/right-arrow.png'
 import Invisible from '../../../assets/invisible-box.png'
 import ArrowBack from '../../../assets/arrowBack.png'
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
 
@@ -22,6 +23,8 @@ const UntrackedScreen = ({route}) => {
     const [selectedMinute, setSelectedMinute] = React.useState("00");
 
     const [isShowingArrow, setShowingArrow] = React.useState(true)
+
+    const navigation = useNavigation();
 
     // var day = new Date().getDate();
     // var month = new Date().getMonth()+1;
@@ -203,6 +206,7 @@ const UntrackedScreen = ({route}) => {
                 save="value"
                 search={false}
                 placeholder='Choose course'
+                dropdownStyles={styles.dropDown}
             />
         </View>
 
@@ -287,6 +291,7 @@ const styles = StyleSheet.create({
     },
     boxStyles: {
         width: 0.75 * Dimensions.get('window').width,
+        backgroundColor: '#0376C2'
     },
     boxTimeStyles: {
         width: 0.18 * Dimensions.get('window').width,
@@ -363,6 +368,9 @@ const styles = StyleSheet.create({
     middleContainer: {
         justifyContent: 'space-between',
         backgroundColor: 'red'
+    },
+    dropDown: {
+        backgroundColor: '#0376C2'
     }
 
 })
