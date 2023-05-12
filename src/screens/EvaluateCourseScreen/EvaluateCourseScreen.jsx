@@ -15,7 +15,7 @@ const EvaluationScreen = ({route}) => {
 
     const navigation = useNavigation();
     const [questions, setQuestions] = useState('');
-    const [submit, setSubmit] = useState('');
+    const [submit, setSubmit] = useState(false);
 
     // Create evaluation method
     const formData = new FormData();
@@ -38,20 +38,20 @@ const EvaluationScreen = ({route}) => {
             .catch(function (response) {
                 //handle error
                 console.log(response);
-            //   alert('You have already evaluated this course')
-            //     navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token, courseIDs: courseIDs})
+                alert('You have already evaluated this course')
+                navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token, courseIDs: courseIDs})
             });
     }
+    // if (submit === true) {
+    //     navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token, courseIDs: courseIDs})
+    // }
     
 
     const onSubmitPressed = () => {
-        setSubmit(true)
-        // navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token, courseIDs: courseIDs})
-        
-
+        setSubmit(true)        
     }
     
-    if (`${questions}`.length > 1) {
+    if (`${questions}`.length > 1 ) {
 
         return (
             
