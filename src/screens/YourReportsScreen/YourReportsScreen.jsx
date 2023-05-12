@@ -27,8 +27,10 @@ const YourReportsScreen = ({route}) => {
   const [courses, setCourses] = useState([]);
   const [timeStudied, setTimeStudied] = useState([]); 
   const [state, setState] = useState('');
-
-
+  const fetchedStress = [];
+  const [stress, setStress]= useState('');
+  
+  const smileys = [0, Ett, Två, Tre, Fyra, Fem];
   //Fetching the first dates for the graph 
   axios.get('http://127.0.0.1:8000/api/tracking/get_dates_in_week/', {
     headers: {
@@ -75,7 +77,7 @@ const YourReportsScreen = ({route}) => {
   if (endDate) {
 
     const formData = new FormData();
-    console.log("startDate= ", startDate)
+    // console.log("startDate= ", startDate)
     
     formData.append('startDate', startDate)
     formData.append('endDate', endDate)
@@ -92,7 +94,7 @@ const YourReportsScreen = ({route}) => {
       for (let i=0; i<res.data.results.length; i++) {
         fetchedTimeStudied.push(res.data.results[i].timeStudied)
         fetchedCourses.push(res.data.results[i].Course)
-        console.log("fetchedTimeStudied= ", fetchedTimeStudied)
+        // console.log("fetchedTimeStudied= ", fetchedTimeStudied)
       }
       if (`${fetchedTimeStudied}` != `${timeStudied}` ){
         setCourses(fetchedCourses);
@@ -105,35 +107,49 @@ const YourReportsScreen = ({route}) => {
       console.log("endDate i catch= ", endDate)
 
     })
-    // for (let i=0; i<courseIDs.length; i++){
-    //   const formData = new FormData();
-    //   formData.append('startDate', startDate)
-    //   formData.append('endDate', endDate)
-    //   formData.append('courseID', courseIDs[i])
+    for (let i=0; i<courseIDs.length; i++){
+      const formData = new FormData();
+      formData.append('startDate', startDate)
+      formData.append('endDate', endDate)
+      formData.append('courseID', courseIDs[i])
 
-    //   axios({
-    //     method: "post",
-    //     url: "http://127.0.0.1:8000/api/tracking/get_user_stress_period/",
-    //     data: formData,
-    //     headers: {
-    //       'Content-Type': 'multipart/form-data',
-    //       'Authorization': `token ` + token
-    //     }
-    //   })
-    //   .then((res) => {
-    //     console.log(res.data)
+      axios({
+        method: "post",
+        url: "http://127.0.0.1:8000/api/tracking/get_user_stress_period/",
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `token ` + token
+        }
+      })
+      .then((res) => {
+        console.log(res.data)
+        if (stress.length === 0) {
+          fetchedStress.push(res.data)
+          if (stress.length <courseIDs.length) {
+            setStress(fetchedStress)
+          }
+        }
         
-    //   })
-    //   .catch((error) => {
-    //     console.error(error)
-    //   })
-    // }
-    // console.log("fetchedStress utanför loop= ", fetchedStress)
-
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+    }
+    console.log('stress= ', stress)
 
   }
-
-
+  let stressNumbers = [];
+  if (stress.length === courseIDs.length) {
+    for (let i=0; i<courseIDs.length; i++){
+      for (let j=0; j<stress.length; j++) {
+        if (stress[j].courseObject.courseID === courseIDs[i]){
+          stressNumbers.push(Math.round(stress[j].avg_stress))
+        }
+      }
+    }
+    console.log("stressnumbers= ", stressNumbers)
+  }
   
   // Specifics for the graph 
   const fakeTime = ["10h", "12h", "11h"]
@@ -187,7 +203,7 @@ const YourReportsScreen = ({route}) => {
   for (let i=0; i<timeCourses.length; i++) {
     sum.push(Math.round(timeCourses[i].time.reduce((a, b) => a + b, 0)*10)/10);
   } */
-  console.log("timevar= ", timeVar)
+  // console.log("timevar= ", timeVar)
   if (timeVar.length > 0 & data.data != timeVar){
     setData({
       labels: initialLabels,
@@ -279,7 +295,7 @@ const YourReportsScreen = ({route}) => {
 
                   <View style={{flex: 1.5}}>
                    <Image 
-                    source={Tre} 
+                    source={smileys[stressNumbers[i]]} 
                     style={[ {height: 100 * 0.3},{width: 100*0.3}, {marginBottom:10}]} 
                     resizeMode="contain"
                     />
