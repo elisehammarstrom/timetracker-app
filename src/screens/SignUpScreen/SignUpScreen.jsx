@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react'
-import { View, Text, StyleSheet, Dimensions} from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { View, Text, StyleSheet, Dimensions } from 'react-native'
 import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
@@ -11,23 +11,23 @@ const EMAIL_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
 
 const SignUpScreen = () => {
 
-    const [courses, setCourses] = useState ( [ ] ) ;    
-    
-    const {control, handleSubmit, formState: {errors}, watch} = useForm();
+    const [courses, setCourses] = useState([]);
+
+    const { control, handleSubmit, formState: { errors }, watch } = useForm();
     const pwd = watch('password');
     // console.log(errors);
 
     const [selectedProgramme, setSelectedProgramme] = useState("");
 
     const data = [
-        {key:'1', value:'STS'},
-        {key:'2', value:'Industriell ekonomi'}
+        { key: '1', value: 'STS' },
+        { key: '2', value: 'Industriell ekonomi' }
     ]
 
     const [selectedUni, setSelectedUni] = useState("");
 
     const universityData = [
-        {key:'1', value:'Uppsala University'}
+        { key: '1', value: 'Uppsala University' }
     ]
 
     const navigation = useNavigation();
@@ -41,7 +41,7 @@ const SignUpScreen = () => {
             university: selectedUni,
             pID: selectedProgramme,
             role: 'STUDENT'
-        } 
+        }
 
         const headers = {
             Accept: 'application/json',
@@ -57,29 +57,29 @@ const SignUpScreen = () => {
         formData.append('university', info.university);
         formData.append('pID', '1');
 
-        axios 
-        .post('http://127.0.0.1:8000/api/users/create_user/', formData, headers, {
-            timeout: 3000,
-        })
-        .then(async response => {
-            console.log(response.data);
-            axios.post('http://127.0.0.1:8000/auth/login/', formData)
-            .then((res) => {
-                // console.log(res.data.token)
-                // setToken(res.data.token)
-                navigation.navigate('StartCourses', {token: res.data.token, user: info})
-
-                
+        axios
+            .post('http://127.0.0.1:8000/api/users/create_user/', formData, headers, {
+                timeout: 3000,
             })
-            .catch((error) => {
-                console.error(error)
-            })
-        })
-        .catch(error=> {
-            console.log("error from image :");
-        })
+            .then(async response => {
+                console.log(response.data);
+                axios.post('http://127.0.0.1:8000/auth/login/', formData)
+                    .then((res) => {
+                        // console.log(res.data.token)
+                        // setToken(res.data.token)
+                        navigation.navigate('StartCourses', { token: res.data.token, user: info })
 
-        
+
+                    })
+                    .catch((error) => {
+                        console.error(error)
+                    })
+            })
+            .catch(error => {
+                console.log("error from image :");
+            })
+
+
 
 
 
@@ -89,48 +89,51 @@ const SignUpScreen = () => {
         navigation.navigate('SignIn')
 
     };
-  
+
     return (
         <View style={styles.root}>
             <Text style={styles.title}>Create an account</Text>
 
-            <CustomInput 
+            <CustomInput
                 name="firstname"
-                placeholder="First name" 
+                placeholder="First name"
                 control={control}
-                rules={{required: 'First name is required'}}
+                rules={{ required: 'First name is required' }}
             />
 
-            <CustomInput 
+            <CustomInput
                 name="lastname"
-                placeholder="Last name" 
+                placeholder="Last name"
                 control={control}
-                rules={{required: 'Last name is required'}}
+                rules={{ required: 'Last name is required' }}
             />
 
-            <CustomInput 
+            <CustomInput
                 name="email"
-                placeholder="Email" 
+                placeholder="Email"
                 control={control}
-                rules={{ pattern: {value: EMAIL_REGEX, message: 'Email is invalid'}}}
+                rules={{ pattern: { value: EMAIL_REGEX, message: 'Email is invalid' } }}
             />
 
-            <CustomInput 
+            <CustomInput
                 name="password"
-                placeholder={"Password"} 
+                placeholder={"Password"}
                 control={control}
-                rules={{required: 'Password is required', minLength: {value: 8, message: 'Password should be at least 8 characters long'}}}
+                rules={{ required: 'Password is required', minLength: { value: 8, message: 'Password should be at least 8 characters long' } }}
                 secureTextEntry
             />
-            <CustomInput 
+            <CustomInput
                 name="passwordrepeat"
-                placeholder={"Repeat password"} 
+                placeholder={"Repeat password"}
                 control={control}
-                rules={{validate: value => value === pwd || 'Password do not match'}}
+                rules={{ validate: value => value === pwd || 'Password do not match' }}
                 secureTextEntry
             />
+            <View style={styles.selectContainer}>
 
-            <SelectList
+
+
+                <SelectList
                     dropdownTextStyles={styles.selectList}
                     inputStyles={styles.selectList}
                     boxStyles={styles.boxStyles}
@@ -139,9 +142,12 @@ const SignUpScreen = () => {
                     save="value"
                     search={false}
                     placeholder='Choose University'
-            />
+                    dropdownStyles={styles.dropDown}
+                />
+            </View>
+            <View style={styles.selectContainer}>
 
-            <SelectList
+                <SelectList
                     dropdownTextStyles={styles.selectList}
                     inputStyles={styles.selectList}
                     boxStyles={styles.boxStyles}
@@ -150,15 +156,17 @@ const SignUpScreen = () => {
                     save="value"
                     search={true}
                     placeholder='Choose programme'
-            />
+                    dropdownStyles={styles.dropDown}
+                />
+            </View>
 
-            <CustomButton 
-                text="Register" 
+            <CustomButton
+                text="Register"
                 onPress={handleSubmit(onRegisterPressed)}
             />
 
-            <CustomButton    
-                text="Have an account? Sign in" 
+            <CustomButton
+                text="Have an account? Sign in"
                 onPress={onSignInPress}
                 type="TERTIARY"
             />
@@ -197,7 +205,13 @@ const styles = StyleSheet.create({
     boxStyles: {
         width: 0.75 * Dimensions.get('window').width,
     },
-    
+    dropDown: {
+        width: 0.75 * Dimensions.get('window').width,
+    },
+    selectContainer: {
+        paddingVertical: 5
+    }
+
 });
 
 export default SignUpScreen
