@@ -1,7 +1,7 @@
 // The screen where the student can track their stress each day for each course. 
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, Image, TouchableOpacity, PixelRatio, ScrollView } from 'react-native';
+import { Text, View, StyleSheet, Image, TouchableOpacity, PixelRatio, ScrollView, Dimensions } from 'react-native';
 import ButtonMenu from '../../components/ButtonMenu';
 import { SelectList } from 'react-native-dropdown-select-list'
 import CustomButton from '../../components/CustomButton';
@@ -135,12 +135,12 @@ const StressScreen = ({ route }) => {
                 </TouchableOpacity>
                 <Text style={styles.title}>Track your stress today</Text>
                 <View style={styles.dailyContainer}>
-                <Text style={styles.day}>{day}</Text>
-                <View>
-                    <View style={styles.circle}>
-                        <Text style={styles.date}>{thisDay}</Text>
+                    <Text style={styles.day}>{day}</Text>
+                    <View>
+                        <View style={styles.circle}>
+                            <Text style={styles.date}>{thisDay}</Text>
+                        </View>
                     </View>
-                </View>
                 </View>
 
             </View>
@@ -151,14 +151,14 @@ const StressScreen = ({ route }) => {
                     <View style={styles.selectListContainer}>
                         <SelectList
                             dropdownTextStyles={styles.selectList}
-                            dropdownStyles={{backgroundColor:'#0376C2'}}
+                            dropdownStyles={styles.dropDown}
                             inputStyles={styles.selectList}
                             setSelected={(val) => setSelected(val)}
                             data={courses}
                             save="value"
                             search={false}
                             placeholder='Choose course to track'
-                            boxStyles={{backgroundColor: '#0376C2'}}
+                            boxStyles={styles.boxStyle}
                         />
                     </View>
                 </View>
@@ -249,7 +249,8 @@ const styles = StyleSheet.create({
     smileys: {
         flexDirection: 'column',
         paddingHorizontal: 50,
-        paddingTop: 30
+        paddingTop: 30,
+        paddingBottom: 30
 
     },
     selectListContainer: {
@@ -282,7 +283,7 @@ const styles = StyleSheet.create({
     day: {
         color: 'white',
         alignSelf: 'center',
-               marginTop: 10,
+        marginTop: 10,
     },
     circle: {
         height: 40,
@@ -326,8 +327,17 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#EFEFEF',
         margin: 10,
-
     },
+
+    boxStyle: {
+        backgroundColor: '#0376C2',
+        width: 0.75 * Dimensions.get('window').width
+    },
+    dropDown: {
+        backgroundColor: '#0376C2',
+        width: 0.75 * Dimensions.get('window').width
+
+    }
 
 })
 

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity} from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity, ScrollView} from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list';
 import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
 import BackArrow from '../../../assets/arrowBack.png';
@@ -22,6 +22,8 @@ const CourseEvaluationsScreen = ({route}) => {
 
     return (
         <View style={styles.container}>
+             <View style={{justifyContent: 'flex-start'}}>
+            <View style={styles.topContainer}>
         
             <TouchableOpacity activeOpacity={0.5} style={styles.backArrow} onPress={onArrowPressed}>
                 <Image 
@@ -30,6 +32,9 @@ const CourseEvaluationsScreen = ({route}) => {
                     resizeMode="contain"
                 />
             </TouchableOpacity >
+            <Text style={styles.firstTitle}>Course Evaluations</Text>
+            </View>
+           
     
             <View style={styles.selectListContainer}>
 
@@ -43,19 +48,30 @@ const CourseEvaluationsScreen = ({route}) => {
                     search={false}
                     placeholder='Choose course to see evaluations'
                     defaultOption={{ key: course, value: course }}
+                    dropdownStyles={styles.dropDown}
+
                 />
 
             </View>
+           
 
-            <View>
+            <View style={styles.stats}>
                 <Text style={styles.title}>{selected} evaluation</Text>
+                <ScrollView>
 
                 <Text style={styles.breadtext}>80% of students recommend going to lectures</Text>
 
                 <Text style={styles.breadtext}>25% of students recommend doing voluntary assignments ...</Text>
 
+                <Text style={styles.breadtext}>25% of students are very stressed during this course</Text>
+
+                <Text style={styles.breadtext}>10% of students are not stressed at all during this course</Text>
+
+                <Text style={styles.breadtext}>35% of students think the workload is too high</Text>
+                </ScrollView>
+
             </View>
-            
+            </View>
 
             <View>
                 <ButtonMenu
@@ -76,14 +92,14 @@ const styles = StyleSheet.create({
     selectListContainer: {
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: '3%',
     },
     selectList: {
         fontWeight: 'bold',
         color: '#EFEFEF',
     },
     boxStyles: {
-        width: 0.9 * Dimensions.get('window').width,
+        width: 0.75 * Dimensions.get('window').width,
+        backgroundColor: '#0376C2'
     },
     header: {
         flexDirection: 'row',
@@ -93,43 +109,42 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         color: '#EFEFEF',
-        margin: 10,
-        marginBottom: 50,
+        padding: 20,
+        marginBottom: 20,
         justifyContent: 'flex-start'
-    },
-    dateButton: {
-        marginRight: '2%',
-    },
-    timeContainer: {
-        alignItems: 'center',
-    },
-    time: {
-        width: '90%',
-        height: 0.1 * Dimensions.get('window').height,
-        justifyContent: 'center',
-        paddingLeft: '5%',
-        margin: 4,
-        // borderRadius: 5,
-    },
-    yourTime: {
-        backgroundColor:'#AC7CE4'
-    },
-    averageTime: {
-        backgroundColor: '#5987CC'
-    },
-    evaluationButton: {
-        width: 0.6 * Dimensions.get('window').width,
-        justifyContent: 'center',
     },
     breadtext: {
         fontSize: 20,
-        color: "#EFEFEF"
+        color: "#EFEFEF",
+        padding: 20
     },
     backArrow: {
         width: '10%',
-        padding: 10
+        padding: 10,
+        flex: 0.5
+    },
+    dropDown: {
+        width: 0.75 * Dimensions.get('window').width,
+        backgroundColor: '#0376C2'
+    },
+    firstTitle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#EFEFEF',
+        padding: 10,
+        flex: 2.5
+
+    },
+    topContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 40
+    },
+    stats: {
+        marginTop: 40,
     }
  
+
 });
 
 
