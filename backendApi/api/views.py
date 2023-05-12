@@ -1136,21 +1136,22 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
             reponse = {"message": "Course doesn't exist"}
             return Response(data=response, status=status.HTTP_200_OK)
         queryresult = self.queryset.filter(course = course.id)
-        print("queryresult: ", queryresult)
         if len(queryresult) == 0:
             response = {"message": "No course evaluations exist for that course"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-
+        
         result = {"courseID" : course.id, 
-                  "questionAnswerResults": {}}
-        questionAnswerResults = {}
+                  "questionAnswerNumbers": {},
+                  "questionAnswerPercentages": {}}
+        questionAnswerNumbers = {}
+        questionAnswerPercentages = {}
 
         #initialize with empty values
         evaluation_to_initialize_with = queryresult[0]
         evaluation_qa_result = QuestionAnswer.objects.filter(courseEvaluation = evaluation_to_initialize_with.id)
         for qa in evaluation_qa_result: 
             #spara alla questions i en array
-            questionAnswerResults.update({qa.question.text: {
+            questionAnswerNumbers.update({qa.question.text: {
                     0:0,
                     1:0,
                     2:0,
@@ -1159,18 +1160,27 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                     5:0
                 }
             })
-
-        result.update({"questionAnswerResult":questionAnswerResults})
+            questionAnswerPercentages.update({qa.question.text: {
+                    0:0.0,
+                    1:0.0,
+                    2:0.0,
+                    3:0.0,
+                    4:0.0,
+                    5:0.0
+                }
+            })
+        result.update({"questionAnswerNumbers":questionAnswerNumbers})
+        result.update({"questionAnswerPercentages":questionAnswerPercentages})
 
         #add values
         for evaluation in queryresult:
             evaluation_qa_result = QuestionAnswer.objects.filter(courseEvaluation = evaluation.id)
-
             for qa in evaluation_qa_result: 
                 #få svaret för varje fråga
                 answerresult = Answer.objects.get(question=qa.question)
-                questionAnswerResults[qa.question.text][answerresult.number] += 1
-
+                if answerresult.number != 0: #doesnt take account unanswered evaluations
+                    questionAnswerNumbers[qa.question.text][answerresult.number] += 1
+                   
         response = {"message": "Success. Statistics retrieved.",
                     "result": result} 
         return Response(data=response, status=status.HTTP_200_OK)
