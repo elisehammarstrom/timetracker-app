@@ -26,6 +26,7 @@ const CourseStatsScreen = ({route}) =>{
     const [avgTime, setAvgTime] = useState('');
     const [time, setTime] = useState('');
 
+    // Get courseNames and IDs
     for (let i=0; i<courseIDs.length; i++) {
         axios({
             method: "get",
@@ -36,7 +37,7 @@ const CourseStatsScreen = ({route}) =>{
         })
             .then(function (response) {
             //handle success
-            // console.log(response.data);
+            //Setting the data
             fetchedCourseData.push(response.data)
             if (courseData.length < courseIDs.length) {
                 setCourseData(fetchedCourseData)
@@ -50,9 +51,9 @@ const CourseStatsScreen = ({route}) =>{
     
 
 if (courseData.length >1) {
-
+    
     for (let i=0; i<courseData.length; i++) {
-      
+      // Get the students timetracking for each course 
         if (selected === courseData[i].courseTitle) {
             const formData = new FormData();
             formData.append('courseID', courseData[i].id);
@@ -71,6 +72,7 @@ if (courseData.length >1) {
                 let newData = response.data.results;
                 let weeks = [];
                 let avgDuration = [];
+                // Push data to use later in return; weeks as labels for the graph and avgDuration as data for the graph
                 for (let i=0; i<newData.length; i++){
                     weeks.push(newData[i].weekNo)
                     avgDuration.push(newData[i].avgDuration)
@@ -86,7 +88,7 @@ if (courseData.length >1) {
                 //handle error
                 console.log(response);
             });
-
+            // Get the average timetracked per course/week for all students, basically the same as above
             axios({
                 method: "post",
                 url: "http://127.0.0.1:8000/api/tracking/get_total_timetracked_per_week/",
@@ -101,6 +103,7 @@ if (courseData.length >1) {
                     let newData = response.data.results;
                     let weeks = [];
                     let avgDuration = [];
+                    // Push data to use later in return; weeks as labels for the graph and avgDuration as data for the graph
                     for (let i=0; i<newData.length; i++){
                         weeks.push(newData[i].weekNo)
                         avgDuration.push(newData[i].avgDuration)
@@ -116,9 +119,30 @@ if (courseData.length >1) {
                     //handle error
                     console.log(response);
                 });
+
+                axios({
+                    method: "get",
+                    url: "http://127.0.0.1:8000/api/tracking/get_course_avg_time/",
+                    data: formData,
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'Authorization':`token ` + token
+                    }
+                    })
+                    .then(function (response) {
+                        //handle success
+                        console.log(response)
+                        console.log("hej")
+                    })
+                    .catch(function (response) {
+                        //handle error
+                        console.log(response);
+                    });
+            
         }
       }
 }
+// The graphs data. Before picking a course ther will be no data and no labels
     const [dataGraph, setDataGraph] = useState({
         labels: [],
         datasets: [
@@ -135,6 +159,7 @@ if (courseData.length >1) {
         ],
         // legend: ["Your time", "Average time"] // optional
         });
+        // When we have fecthed the data from backend we set the new dataGraph with the labels we have fetched and the data for the studytime
     if (label.length > 1 & userData.length > 1 & avgData.length > 1 & dataGraph.labels != label) {
         setDataGraph({
             labels: label,
@@ -153,8 +178,7 @@ if (courseData.length >1) {
             legend: legend// optional
             })
     }
-
-
+    // Settings for the graph
     const screenWidth = Dimensions.get("window").width;
     const chartConfig = {
         backgroundGradientFrom: "#313131",
@@ -166,8 +190,6 @@ if (courseData.length >1) {
         barPercentage: 0.5,
         useShadowColorFromDataset: false, // optional
     };
-
-
 
 
     const onReadCourseEvaluationsPressed = () => {
