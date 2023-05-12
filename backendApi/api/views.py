@@ -1097,6 +1097,56 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                 response = {"message": "That answerID does not exist"}
                 return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
+    @action(detail=False, methods=['POST'])
+    def get_course_statistics(self, request, **extra_fields):
+        courseID = request.POST.get('courseID')
+        if courseID is None: 
+            response = {"message": "You must add a courseID (e.g. 2)"}
+            return Response(data=response, status=status.HTTP_200_OK) 
+        course = Course.objects.get(id=courseID)
+        if course is None: 
+            reponse = {"message": "Course doesn't exist"}
+            return Response(data=response, status=status.HTTP_200_OK)
+        queryresult = self.queryset.filter(course = course.id)
+        print("queryresult: ", queryresult)
+        if len(queryresult) == 0:
+            response = {"message": "No course evaluations exist for that course"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+
+        result = {"courseID" : course.id, 
+                  "questionAnswerResults": {}}
+        questionAnswerResults = {}
+
+        #initialize with empty values
+        evaluation_to_initialize_with = queryresult[0]
+        evaluation_qa_result = QuestionAnswer.objects.filter(courseEvaluation = evaluation_to_initialize_with.id)
+        for qa in evaluation_qa_result: 
+            #spara alla questions i en array
+            questionAnswerResults.update({qa.question.text: {
+                    0:0,
+                    1:0,
+                    2:0,
+                    3:0,
+                    4:0,
+                    5:0
+                }
+            })
+
+        result.update({"questionAnswerResult":questionAnswerResults})
+
+        #add values
+        for evaluation in queryresult:
+            evaluation_qa_result = QuestionAnswer.objects.filter(courseEvaluation = evaluation.id)
+
+            for qa in evaluation_qa_result: 
+                #få svaret för varje fråga
+                answerresult = Answer.objects.get(question=qa.question)
+                questionAnswerResults[qa.question.text][answerresult.number] += 1
+
+        response = {"message": "Success. Statistics retrieved.",
+                    "result": result} 
+        return Response(data=response, status=status.HTTP_200_OK)
+
 class CourseCalendarViewset(viewsets.ModelViewSet):
     queryset = CourseCalendar.objects.all()
     serializer_class = CourseCalendarSerializer
