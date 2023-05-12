@@ -236,8 +236,6 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                 duration_new = timedelta(hours=add_duration.hour, minutes=add_duration.minute, seconds=add_duration.second)
 
                 updated_duration = duration_old + duration_new
-                
-
                 updated_time_in_time_format = datetime.strptime(str(updated_duration),"%H:%M:%S" ).time()
                 existing_record_object.duration = updated_time_in_time_format
                 existing_record_object.save(update_fields=['duration'])
@@ -281,9 +279,7 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             try:
                 date = datetime.strptime(request.POST.get('date'),"%Y-%m-%d").date()
                 existing_record_object = UserCourseTracking.objects.get(user=User.objects.get(id=user.id), course=Course.objects.get(id=courseID), date=date)
-                #print("INNAN ADD existing_record_object.duration: ",existing_record_object.duration)
                 existing_record_object.duration = duration
-                #print("EFTER ADD existing_record_object.duration: ",existing_record_object.duration)
                 
                 existing_record_object.save(update_fields=['duration'])
                 record = existing_record_object
@@ -350,13 +346,12 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                         j += 1
                 else:
                     i = 0 
-
                     while i < no_of_dates:
                         futureDate = str(startDate + timedelta(days=i))
                         dateDuration =  self.queryset.filter(user_id=this_user.id, course_id=courseID, date=futureDate).values_list('duration', flat=True)
                         if len(dateDuration) == 0:
                             durationArray.append(0)
-                        elif dateDuration is not None:
+                        elif len(dateDuration) is not 0:
                             for timetracked in dateDuration:
                                 if timetracked is not None:
                                     if str(timetracked) == "00:00:00":
@@ -366,9 +361,9 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                                         totalHours = round(totalSeconds/(60*60), 2)
                                         durationArray.append(totalHours)
                                 else: 
-                                    print("timetracked is None: ", type(timetracked), timetracked)
+                                    durationArray.append(0)
                         else: 
-                            print("dateDuration is None")
+                            print("dateDuration is empty")
                         i+=1
                 results.append({
                                 "Course" : course.courseTitle, 
