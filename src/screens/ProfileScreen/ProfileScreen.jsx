@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity} from 'react-native';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
-import CloseIcon from '../../../assets/close.png';
+/* import CloseIcon from '../../../assets/close.png'; */
+import ArrowBack from '../../../assets/arrowBack.png';
 import SettingIcon from '../../../assets/settings.png';
 import axios from 'axios';
 import SignOutIcon from '../../../assets/signout.png'
@@ -59,17 +60,16 @@ const ProfileScreen = ({route}) => {
     <View style={styles.topContainer}>
       <View style={styles.closeContainer}>
   
-      <TouchableOpacity activeOpacity={0.5} onPress={onSignOutPressed} >
+      <TouchableOpacity activeOpacity={0.5}  onPress={onClosedPress} >
         <Image 
-              source={SignOutIcon} 
+              source={ArrowBack} 
               style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
               resizeMode="contain"
           />
       </TouchableOpacity>
-
-      <TouchableOpacity activeOpacity={0.5}  onPress={onClosedPress} >
+      <TouchableOpacity activeOpacity={0.5} onPress={onSignOutPressed} >
         <Image 
-              source={CloseIcon} 
+              source={SignOutIcon} 
               style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
               resizeMode="contain"
           />
@@ -158,6 +158,8 @@ const ProfileScreen = ({route}) => {
         color: 'white',
         fontSize: 60,
         paddingBottom: 10,
-      }
+      },
+      
       });
+
 export default ProfileScreen

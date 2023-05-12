@@ -1,9 +1,8 @@
 import { StyleSheet, Text, View ,TouchableOpacity, Image, ScrollView} from 'react-native';
 import React , {useState} from 'react';
 import { useNavigation } from '@react-navigation/native';
-import CloseIcon from '../../../assets/close.png'
+import ArrowBack from '../../../assets/arrowBack.png'
 import CalendarBlock from '../../components/CalendarBlock';
-import DropDown from '../../components/DropDown';
 import WeekCalendar from '../../components/WeekCalendar';
 
 
@@ -36,10 +35,6 @@ const CalendarOpScreen = ({route}) => {
         navigation.navigate('Home', {options: courses})
       }
 
-
-
-     
-
       const colors = ['ONE','TWO','THREE','FOUR','FIVE','SIX']
 
       //get total study time per course from database
@@ -55,13 +50,15 @@ const CalendarOpScreen = ({route}) => {
     
 
       <View style={styles.topContainer}>
+        
          <TouchableOpacity activeOpacity={0.5} style={styles.close} onPress={onClosedPress} >
             <Image 
-              source={CloseIcon} 
+              source={ArrowBack} 
               style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
               resizeMode="contain"
             />
         </TouchableOpacity>
+        <Text style={styles.title}>Recommended study hours</Text>
         
 
         </View>
@@ -118,6 +115,13 @@ const styles = StyleSheet.create({
       box: {
         backgroundColor: 'pink'
       },
+      title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#EFEFEF',
+        margin: 10,
+        justifyContent: 'flex-start'
+    },
     
    
 })

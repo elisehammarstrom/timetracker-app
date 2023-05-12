@@ -4,11 +4,11 @@ import {Text, View,Dimensions,StyleSheet, Button, TouchableHighlight, TouchableO
 import { SelectList } from 'react-native-dropdown-select-list'
 import ButtonMenu from '../../components/ButtonMenu';
 import WeekCalendar from '../../components/WeekCalendar';
-/* import {ArrowLeftOutlined, ArrowRightOutlined} from '@ant-design/icons'; */
 import CustomButton from '../../components/CustomButton';
 import LeftArrow from '../../../assets/left-arrow.png'
 import RightArrow from '../../../assets/right-arrow.png'
 import Invisible from '../../../assets/invisible-box.png'
+import ArrowBack from '../../../assets/arrowBack.png'
 import axios from 'axios';
 
 
@@ -85,6 +85,10 @@ const UntrackedScreen = ({route}) => {
         
       }
 
+      const onClosedPress = () => {
+        navigation.navigate('Home', {options: courses}, {token: token})
+      }
+
     const onCurrentDatePressed = () => {       
     setDate(new Date())
     }
@@ -128,6 +132,16 @@ const UntrackedScreen = ({route}) => {
 
     return (
     <View style={styles.container}>
+        <View style={styles.topContainer}>
+        <TouchableOpacity activeOpacity={0.5} style={styles.close} onPress={onClosedPress} >
+            <Image 
+              source={ArrowBack} 
+              style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
+              resizeMode="contain"
+            />
+        </TouchableOpacity>
+            <Text style={styles.title}>Add untracked time</Text>
+        </View>
  
         {
             isShowingArrow ?
@@ -141,7 +155,7 @@ const UntrackedScreen = ({route}) => {
                         />
                     </TouchableOpacity>
 
-                    <View style={{paddingHorizontal: 10}}>
+                    <View style={styles.calendar}>
                     <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
                     </View>
                     <View>
@@ -177,6 +191,7 @@ const UntrackedScreen = ({route}) => {
                 </View>
             )
         } 
+        
 
         <View style={styles.selectListContainer}>
             <SelectList
@@ -228,6 +243,9 @@ const UntrackedScreen = ({route}) => {
                 text="Add time"
                 onPress={onAddTimePressed}
             />
+        </View>
+        <View>
+
         </View>
         <View>
             <ButtonMenu 
@@ -283,8 +301,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#EFEFEF',
         margin: 10,
-        marginBottom: 50,
-        justifyContent: 'flex-start'
+
     },
     dateButton: {
         marginRight: '2%',
@@ -308,15 +325,7 @@ const styles = StyleSheet.create({
     layout: {
         flexDirection: 'row',
         justifyContent: 'center',
-        alignItems: 'center'
-    },
-    plusIcon: {
-        color: 'white',
-        padding: 20,
-    },
-    minusIcon: {
-        color: 'white',
-        padding: 20,
+        alignItems: 'center',
     },
     addTime: {
         color: 'white',
@@ -332,6 +341,29 @@ const styles = StyleSheet.create({
         paddingHorizontal: 50,
         marginTop: 30,
       },
+      title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#EFEFEF',
+        margin: 10,
+        flex: 2.5
+    },
+    topContainer: {
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        padding: 10,
+        marginBottom: -90
+    },
+    close: {
+        flex: 0.5,
+    },
+    calendar: {
+        paddingHorizontal: 10,
+    },
+    middleContainer: {
+        justifyContent: 'space-between',
+        backgroundColor: 'red'
+    }
 
 })
 
