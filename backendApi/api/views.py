@@ -558,7 +558,7 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                 
         return Response(data=response, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=['GET'])
+    @action(detail=False, methods=['POST'])
     def get_course_avg_time(self, request, **extra_fields):
         courseID = request.POST.get('courseID')
         try: 
