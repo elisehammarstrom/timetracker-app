@@ -76,10 +76,10 @@ const EvaluationScreen = ({route}) => {
                         submit={submit}
 
                         firstOption="Don't know"
-                        secondOption="Difficult"
-                        thirdOption="Somewhat difficult"
-                        fourthOption="Somewhat easy"
-                        fifthOption="Easy"
+                        secondOption="No"
+                        thirdOption="Somehwat"
+                        fourthOption="A bit"
+                        fifthOption="Yes"
                     />
 
                     <CustomRadioButton
@@ -104,10 +104,10 @@ const EvaluationScreen = ({route}) => {
                         submit={submit}
 
                         firstOption="Don't know"
-                        secondOption="Very stressful"
-                        thirdOption="Somewhat stressful"
-                        fourthOption="Little stressful"
-                        fifthOption="No stress"
+                        secondOption="No"
+                        thirdOption="Somewhat"
+                        fourthOption="A bit"
+                        fifthOption="Yes"
                     />
 
                     <CustomRadioButton
