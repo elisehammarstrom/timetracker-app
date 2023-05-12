@@ -233,7 +233,7 @@ const CourseScreen = ({route}) => {
   
     return (
         <View style={styles.container}>
-          
+            <Text style={styles.title}>Choose courses to track:</Text>
             <View style={styles.options}>
                 
                   <TextInput
@@ -305,7 +305,13 @@ const styles = StyleSheet.create({
   customButtonContainer: {
     paddingHorizontal: 50,
   },
-
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#EFEFEF',
+    margin: 10,
+    justifyContent: 'flex-start'
+},
 })
 
 export default CourseScreen;
