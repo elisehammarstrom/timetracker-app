@@ -121,7 +121,7 @@ if (courseData.length >1) {
                 });
 
                 axios({
-                    method: "get",
+                    method: "post",
                     url: "http://127.0.0.1:8000/api/tracking/get_course_avg_time/",
                     data: formData,
                     headers: {
@@ -131,7 +131,11 @@ if (courseData.length >1) {
                     })
                     .then(function (response) {
                         //handle success
-                        console.log(response)
+                        if (avgTime.length <1 ){
+                            setAvgTime(response.data.avg_time + ' h')
+                        }
+                        // console.log(response.data.avg_time)
+                        console.log('avgTime= ',avgTime)
                         console.log("hej")
                     })
                     .catch(function (response) {
