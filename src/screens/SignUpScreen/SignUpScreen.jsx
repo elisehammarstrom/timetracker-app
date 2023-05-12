@@ -36,7 +36,7 @@ const SignUpScreen = () => {
         const info = {
             first_name: data.firstname,
             last_name: data.lastname,
-            email: data.email,
+            email: data.email.toLowerCase(),
             password: data.password,
             university: selectedUni,
             pID: selectedProgramme,

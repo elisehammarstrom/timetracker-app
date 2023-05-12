@@ -46,7 +46,14 @@ const CourseScreen = ({route}) => {
     // }
   }
   const navigation = useNavigation();
-  const [courses, setCourses] = useState(originalCourseIDs);
+  
+  const [courses, setCourses] = useState([]);
+  if (originalCourseIDs ) {
+    if (courses.length < 1){
+      setCourses(originalCourseIDs);
+    }
+  }
+
   const [courseCodes, setCourseCodes] = useState([]);
   const [search, setSearch] = useState('');
 
