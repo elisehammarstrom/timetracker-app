@@ -593,19 +593,19 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
     @action(detail=False, methods=['POST'])
     def get_course_avg_time(self, request, **extra_fields):
         courseID = request.POST.get('courseID')
-        try: 
-            courseInstance = Course.objects.get(id=courseID)
-        except:
-            response = {"message": "That course doesn't exist"}
-            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-
-        startDate = courseInstance.courseStartDateTime
-        endDate = courseInstance.courseEndDateTime
 
         if courseID is None:
             response = {"message": "You need to provide a courseID (courseID)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else:
+            try: 
+                courseInstance = Course.objects.get(id=courseID)
+                startDate = courseInstance.courseStartDateTime
+                endDate = courseInstance.courseEndDateTime
+            except:
+                response = {"message": "That course doesn't exist"}
+                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+            
             queryresult = self.queryset.filter(course = courseInstance, date__range=[startDate, endDate] )
 
             if len(queryresult) == 0:
@@ -613,16 +613,18 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                 return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
             durations = queryresult.values_list('duration', flat=True)
-            seconds = map(lambda time: (time.hour * 60 * 60 ) + (time.minute * 60.0) + time.second, durations)
-            total_seconds = sum(seconds)
-            no_of_instances = len(queryresult)
-            if no_of_instances == 0:
-                avg_time = 0
-            else:
-                hours = total_seconds /3600
-                avg_time = round(hours / no_of_instances, 2)
-
-            response = {
+            try:
+                print("durations: ", durations)
+                seconds = map(lambda time: (time.hour * 60 * 60 ) + (time.minute * 60.0) + time.second, durations)
+                
+                total_seconds = sum(seconds)
+                no_of_instances = len(queryresult)
+                if no_of_instances == 0:
+                    avg_time = 0
+                else:
+                    hours = total_seconds/3600
+                    avg_time = round(hours/no_of_instances, 2)
+                    response = {
                         "message": "Average time",  
                         "avg_time": avg_time,
                         "courseObj": {
@@ -632,7 +634,11 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                         }
                     }
             
-            return Response(data=response, status=status.HTTP_200_OK)
+                return Response(data=response, status=status.HTTP_200_OK)
+            except:
+                response = {"message": "Time isn't correctly tracked"}
+                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+                
         
     @action(detail=False, methods=['POST'])
     def get_user_stress_period(self, request, **extra_fields):
