@@ -220,6 +220,7 @@ if (courseData.length >1) {
                     save="value"
                     search={false}
                     placeholder='Choose course to see statistics'
+                    dropdownStyles={styles.dropDown}
                     
                 />
 
@@ -339,6 +340,9 @@ const styles = StyleSheet.create({
         width: '10%',
         padding: 10
     },
+    dropDown: {
+        width: 0.9 * Dimensions.get('window').width,
+    }
 })
 
 export default CourseStatsScreen;
