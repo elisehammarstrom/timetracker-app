@@ -50,9 +50,6 @@ const YourReportsScreen = ({route}) => {
 
   // If you have selected dates from the calendar the dates of the graph will change
   if (firstDate) {
-    // console.log("i firstDate if sats")
-    // console.log("firstDate= ", firstDate)
-    // console.log("startDate= ", startDate)
 
     if (startDate !== firstDate.dateString) {
       setStartDate(firstDate.dateString)
@@ -61,8 +58,6 @@ const YourReportsScreen = ({route}) => {
         setStress([]);
       }
     }
-    // console.log("firstDate efter= ", firstDate)
-    // console.log("startDate efter= ", startDate)
     console.log("endDate efter =", endDate)
   }
   if (firstDate) {
