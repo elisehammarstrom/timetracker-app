@@ -261,7 +261,6 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                 duration_old = timedelta(hours=old_duration.hour, minutes=old_duration.minute, seconds=old_duration.second)
                 updated_duration = duration_old + duration_new
             except:
-                old_duration = 0
                 updated_duration = duration_new
                 existing_record_object = UserCourseTracking.objects.create(user=User.objects.get(id=user.id), course=Course.objects.get(id=courseID), date=date)
                
@@ -664,29 +663,17 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             startDate = datetime.strptime(startDateInput,"%Y-%m-%d").date()
             endDate = datetime.strptime(endDateInput,"%Y-%m-%d").date()
             queryresult = self.queryset.filter(user = user, course = courseID, date__range=[startDate, endDate] )
-            print("queryresult: ", queryresult)
-            if len(queryresult) == 0:
-                response = {"message": "No results for those dates"}
-                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-            
-            #ta bort efter
-            for result in queryresult:
-                print("result: ", result)
-                print("result.date: ", result.date)
-                print("result.stress: ", result.stress)
 
             userStress = queryresult.values_list('stress', flat=True)
 
             totalStress = 0
             no_of_objects = 0
             for trackingObj in userStress:
-                print("trackingObj:", trackingObj)
                 if trackingObj is not None:
                     totalStress += trackingObj
                     no_of_objects += 1
             
             if no_of_objects == 0:
-                print("no stress is tracked")
                 averageStress = 0
             else:
                 averageStress = totalStress/no_of_objects
