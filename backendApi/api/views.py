@@ -632,14 +632,16 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def get_course_avg_time(self, request, **extra_fields):
-        courseID = request.POST.get('courseID')
+        #courseID = request.POST.get('courseID')
+        courseCode = request.POST.get('courseCode')
 
-        if courseID is None:
-            response = {"message": "You need to provide a courseID (courseID)"}
+        if courseCode is None:
+            response = {"message": "You need to provide a courseCode (courseCode)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else:
             try: 
-                courseInstance = Course.objects.get(id=courseID)
+                courseInstance = Course.objects.get(courseCode = courseCode)
+                #courseInstance = Course.objects.get(id = courseID)
                 startDate = courseInstance.courseStartDateTime
                 endDate = courseInstance.courseEndDateTime
             except:
@@ -685,6 +687,42 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             except:
                 response = {"message": "Time isn't correctly tracked"}
                 return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        
+    def get_average(self, iterable):
+        totalNumber = 0
+        no_of_objects = 0
+        average = 0
+        for obj in iterable:
+            if obj is not None:
+                totalNumber += obj
+                no_of_objects += 1
+            if no_of_objects == 0:
+                average = 0
+            else:
+                average = round(totalNumber/no_of_objects, 2)
+        return average
+    
+    def get_queryresult_based_on_dates_or_courseDates(self, course, user, startDateInput, endDateInput):
+        if (startDateInput is '') or (endDateInput is ''):
+            #use courseDates
+            startDate = course.startDate
+            endDate = course.endDate
+        else:
+            #use inputDates
+            startDate = datetime.strptime(startDateInput,"%Y-%m-%d").date()
+            endDate = datetime.strptime(endDateInput,"%Y-%m-%d").date()
+        
+        if user is False:
+            #get for general course
+            print("hej4")
+            queryresult = self.queryset.filter(course = course, date__range=[startDate, endDate] )
+        else:
+            #get for the specific user
+            queryresult = self.queryset.filter(user = user, course = course, date__range=[startDate, endDate] )
+            
+        return queryresult
+
+
                 
     @action(detail=False, methods=['POST'])
     def get_user_stress_period(self, request, **extra_fields):
@@ -711,23 +749,13 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                 response = {"message": "Course does not exist"}
                 return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
             
-            startDate = datetime.strptime(startDateInput,"%Y-%m-%d").date()
-            endDate = datetime.strptime(endDateInput,"%Y-%m-%d").date()
-            queryresult = self.queryset.filter(user = user, course = courseID, date__range=[startDate, endDate] )
+            #startDate = datetime.strptime(startDateInput,"%Y-%m-%d").date()
+            #endDate = datetime.strptime(endDateInput,"%Y-%m-%d").date()
+            #queryresult = self.queryset.filter(user = user, course = courseID, date__range=[startDate, endDate] )
 
+            queryresult = self.get_queryresult_based_on_dates_or_courseDates(course=courseInstance, user=user, startDateInput=startDateInput, endDateInput=endDateInput)
             userStress = queryresult.values_list('stress', flat=True)
-
-            totalStress = 0
-            no_of_objects = 0
-            for trackingObj in userStress:
-                if trackingObj is not None:
-                    totalStress += trackingObj
-                    no_of_objects += 1
-            
-            if no_of_objects == 0:
-                averageStress = 0
-            else:
-                averageStress = totalStress/no_of_objects
+            averageStress = self.get_average(userStress)
 
             response = {
                         "message": "Average stress",  
@@ -1220,6 +1248,7 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                     5:0.0
                 }
             })
+            
         result.update({"questionAnswerNumbers":questionAnswerNumbers})
         result.update({"questionAnswerPercentages":questionAnswerPercentages})
 
@@ -1229,10 +1258,18 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
             for qa in evaluation_qa_result: 
                 #få svaret för varje fråga
                 answerresult = Answer.objects.get(question=qa.question)
-                if answerresult.number != 0: #doesnt take account unanswered evaluations
-                    questionAnswerNumbers[qa.question.text][answerresult.number] += 1
-                   
+                #if answerresult.number != 0: #doesnt take account unanswered evaluations
+                   # questionAnswerNumbers[qa.question.text][answerresult.number] += 1
+                questionAnswerNumbers[qa.question.text][answerresult.number] += 1
+        
+        total_answers = 0
+        for question in questionAnswerNumbers:
+            total_answers = sum(questionAnswerNumbers[question].values())
+            for key, value in questionAnswerNumbers[question].items():
+                questionAnswerPercentages[question][key] = 100 * round(float(value) / float(total_answers), 3)
+
         response = {"message": "Success. Statistics retrieved.",
+                    "total_answers": total_answers,
                     "result": result} 
         return Response(data=response, status=status.HTTP_200_OK)
 
