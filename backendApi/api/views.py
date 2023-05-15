@@ -32,6 +32,10 @@ from django.contrib.auth import authenticate, login, logout, update_session_auth
 from django.contrib.auth.forms import PasswordChangeForm
 from datetime import time
 
+#fakkar detta med något?
+#from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
@@ -101,7 +105,7 @@ class LoginView(APIView):
         user = request.user
 
         if user is not None:
-            user.password = password
+            #user.password = password
             user.is_active = True
             try:
                 user = authenticate(email=email, password=password)
@@ -158,40 +162,64 @@ class PasswordChangeView(APIView):
         #new_password = request.data.get('new_password')
         print("PASSWORD CHANGE")
         user = request.user
-        password = request.POST['password']
-        print("user.password before change: ", user.password)
-        print("password: ", password)
+        #password = request.POST['password']
 
-        if password is not None:
-            try:
-                print("in IF")
-                #user = request.user
-                #u = request.user
-                user.set_password(password)
-                user.save() # Add this line   
-                #is_private = request.POST.get('is_private', False) 
-                #userInstance = User.objects.get(pk=u.pk)
-                #userInstance.set_password(password)
-                #userInstance.password = new_password
-                #userInstance.save()
-                update_session_auth_hash(request, user)
+        old_password = request.POST.get('old_password')
+        new_password = request.POST.get('new_password')
+        repeat_new_password = request.POST.get('repeat_new_password')
+        #print("user.password before change: ", user.password)
+        #print("password: ", password)
 
-                print("user.password: ", user.password)
+        if old_password is None:
+            response = {
+                    "message" : "You must provide old_password"
+                }
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif new_password is None:
+            response = {
+                    "message" : "You must provide new_password"
+                }
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        elif repeat_new_password is None:
+            response = {
+                    "message" : "You must provide repeat_new_password"
+                }
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        if user.check_password(old_password) is False:
+            response = {
+                    "message" : "Old password isn't correct"
+                }
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        
+        if new_password == repeat_new_password:
+            old_user_pw = user.password
+            #User = get_user_model()
+            print("i if")
+            userInstance = get_user_model().objects.get(pk=user.pk)
+            userInstance.set_password(new_password)
+            userInstance.save()
+
+            authUser = authenticate(email=userInstance.email, password=new_password)
+            #user = authenticate(email=email, password=password)
+
+            #user = authenticate(email=email, password=password)
+            #login(request, user)
     
-                response = {
-                    "message": "Password changed", 
-                    "LoggedIn": user.is_authenticated,
-                } 
-                return Response(data=response, status=status.HTTP_200_OK)
-            except: 
-                response = {
-                    "message": "Password change was unsuccessful. User does not exist"
-                } 
-                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+            response = {
+                "message": "Password changed", 
+                "user" : {
+                    "id" : userInstance.id,
+                    "email": userInstance.email
+                },
+                "loggedIn": authUser,
+                "new_password": userInstance.password,
+                "old_user_pw": old_user_pw
+            } 
+            return Response(data=response, status=status.HTTP_200_OK)
         else:
             response = {
-                    "message": "You must provide a new password (new_password)"
-                } 
+                    "message" : "New password and repeat password doesn't match"
+                }
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
 class StudentViewset(viewsets.ModelViewSet):
@@ -1108,21 +1136,22 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
             reponse = {"message": "Course doesn't exist"}
             return Response(data=response, status=status.HTTP_200_OK)
         queryresult = self.queryset.filter(course = course.id)
-        print("queryresult: ", queryresult)
         if len(queryresult) == 0:
             response = {"message": "No course evaluations exist for that course"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-
+        
         result = {"courseID" : course.id, 
-                  "questionAnswerResults": {}}
-        questionAnswerResults = {}
+                  "questionAnswerNumbers": {},
+                  "questionAnswerPercentages": {}}
+        questionAnswerNumbers = {}
+        questionAnswerPercentages = {}
 
         #initialize with empty values
         evaluation_to_initialize_with = queryresult[0]
         evaluation_qa_result = QuestionAnswer.objects.filter(courseEvaluation = evaluation_to_initialize_with.id)
         for qa in evaluation_qa_result: 
             #spara alla questions i en array
-            questionAnswerResults.update({qa.question.text: {
+            questionAnswerNumbers.update({qa.question.text: {
                     0:0,
                     1:0,
                     2:0,
@@ -1131,18 +1160,27 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                     5:0
                 }
             })
-
-        result.update({"questionAnswerResult":questionAnswerResults})
+            questionAnswerPercentages.update({qa.question.text: {
+                    0:0.0,
+                    1:0.0,
+                    2:0.0,
+                    3:0.0,
+                    4:0.0,
+                    5:0.0
+                }
+            })
+        result.update({"questionAnswerNumbers":questionAnswerNumbers})
+        result.update({"questionAnswerPercentages":questionAnswerPercentages})
 
         #add values
         for evaluation in queryresult:
             evaluation_qa_result = QuestionAnswer.objects.filter(courseEvaluation = evaluation.id)
-
             for qa in evaluation_qa_result: 
                 #få svaret för varje fråga
                 answerresult = Answer.objects.get(question=qa.question)
-                questionAnswerResults[qa.question.text][answerresult.number] += 1
-
+                if answerresult.number != 0: #doesnt take account unanswered evaluations
+                    questionAnswerNumbers[qa.question.text][answerresult.number] += 1
+                   
         response = {"message": "Success. Statistics retrieved.",
                     "result": result} 
         return Response(data=response, status=status.HTTP_200_OK)

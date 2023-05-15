@@ -14,7 +14,6 @@ const ProfileScreen = ({route}) => {
   const {courses} = route.params;
   const {courseIDs} = route.params;
   const navigation = useNavigation();
-  // const profile = [];
   const [profile, setProfile] = useState([]);
 
   axios({
@@ -68,10 +67,10 @@ const ProfileScreen = ({route}) => {
               resizeMode="contain"
           />
       </TouchableOpacity>
-      <TouchableOpacity activeOpacity={0.5} onPress={onSignOutPressed} >
+      <TouchableOpacity style={styles.signOut} activeOpacity={0.5} onPress={onSignOutPressed} >
         <Image 
               source={SignOutIcon} 
-              style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
+              style={[ {height: 120 * 0.3},{width: 120*0.3}]} 
               resizeMode="contain"
           />
       </TouchableOpacity>
@@ -154,12 +153,15 @@ const ProfileScreen = ({route}) => {
         justifyContent: 'space-between',
         flexDirection: 'row',
         padding: 10,
+        paddingHorizontal: 20
+
       },
       settingIcon: {
         color: 'white',
         fontSize: 60,
         paddingBottom: 10,
       },
+  
       
       });
 

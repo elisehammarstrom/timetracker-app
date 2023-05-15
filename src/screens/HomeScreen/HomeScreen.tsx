@@ -71,7 +71,7 @@ const HomeScreen: React.FC = ({ route }) => {
   }
 
   const onStressPressed = () => {
-    navigation.navigate('Test', { courses: courses, token: token, courseIDs: courseIDs });
+    navigation.navigate('Stress', { courses: courses, token: token, courseIDs: courseIDs });
   };
 
   const onSettingsPressed = () => {
