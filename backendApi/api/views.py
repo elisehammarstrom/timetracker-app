@@ -495,11 +495,11 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             
             firstMonday = find_first_monday(startDate.year, startDate.month, startDate.day)
 
-            endOfWeek = firstMonday + timedelta(days=6)
-
             #get all start of week numbers
             thisMonday = firstMonday
             startOfWeeks = []
+            weekNoArray = []
+            weekDurationArray = []
 
             endDateTime = datetime.combine(endDate, datetime.min.time())
             
@@ -507,17 +507,13 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                 startOfWeeks.append(thisMonday)
                 thisMonday += timedelta(days=7)
 
-            weekObjectArray = []
-
             for week in startOfWeeks:
+                weekNoArray.append(week.isocalendar()[1])
                 weekEndDate =  week + timedelta(days=6)
                 week_avg = 0
                 startDateTest = datetime(week.year, week.month, week.day)
                 endDateTest = datetime(weekEndDate.year, weekEndDate.month, weekEndDate.day)
-
-                #queryresult = self.queryset.filter(course = course, date__range=[week, weekEndDate]).values_list('duration', flat=True)
                 queryresult = self.queryset.filter(course = course, date__range=[startDateTest, endDateTest]).values_list('duration', flat=True)
-
                 no_of_tracking_instances = 0
                 zero_time =  timedelta(hours=0, minutes=0, seconds=0)
                 total_week_time = zero_time 
@@ -530,20 +526,13 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                     totalSeconds = total_week_time.total_seconds()
                     hours = total_week_time.total_seconds()/3600
                     week_avg = round(hours / no_of_tracking_instances, 2)
-                   
-                weekObjectArray.append({
-                    "weekNo": week.isocalendar()[1],
-                    "weekStartDate" : week,
-                    "weekEndDate": weekEndDate,
-                    "avgDuration" : week_avg
-
-                })
-
+                weekDurationArray.append(week_avg)
+            
             response = {
-                        "message": "Time studied per day",  
-                        "results" : weekObjectArray
-                        }
-                
+                    "message": "Time studied per day", 
+                    "weekNoArray" : weekNoArray,
+                    "weekDurationArray" : weekDurationArray
+                    }
             return Response(data=response, status=status.HTTP_200_OK)
          
     @action(detail=False, methods=['GET'])
