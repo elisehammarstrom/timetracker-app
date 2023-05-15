@@ -494,20 +494,18 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                 return d + timedelta(offset)
             
             firstMonday = find_first_monday(startDate.year, startDate.month, startDate.day)
-            endOfWeek = firstMonday + timedelta(days=6)
 
             #get all start of week numbers
             thisMonday = firstMonday
             startOfWeeks = []
+            weekNoArray = []
+            weekDurationArray = []
 
             endDateTime = datetime.combine(endDate, datetime.min.time())
             
             while thisMonday < endDateTime:
                 startOfWeeks.append(thisMonday)
                 thisMonday += timedelta(days=7)
-
-            weekNoArray = []
-            weekDurationArray = []
 
             for week in startOfWeeks:
                 weekNoArray.append(week.isocalendar()[1])
