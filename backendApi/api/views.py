@@ -604,7 +604,7 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                 endDate = courseInstance.courseEndDateTime
             except:
                 response = {"message": "That course doesn't exist"}
-                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+                return Response(data=response, status=status.HTTP_200_OK)
             
             queryresult = self.queryset.filter(course = courseInstance, date__range=[startDate, endDate] )
 
