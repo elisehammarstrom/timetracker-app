@@ -69,20 +69,16 @@ if (courseData.length >1) {
             })
             .then(function (response) {
                 //handle success
-                let newData = response.data.results;
-                let weeks = [];
-                let avgDuration = [];
+                // let newData = response.data.results;
+                // let weeks = [];
+                // let avgDuration = [];
                 // Push data to use later in return; weeks as labels for the graph and avgDuration as data for the graph
-                for (let i=0; i<newData.length; i++){
-                    weeks.push(newData[i].weekNo)
-                    avgDuration.push(newData[i].avgDuration)
+                console.log(response.data)
+                if (`${userData}` != `${response.data.weekDurationArray}`) {
+                    setUserData(response.data.weekDurationArray)
                 }
 
-                if (`${label}` != `${weeks}`) {
-                    setLabel(weeks)
-                    setUserData(avgDuration)
-                }
-                // console.log("userData= ", userData)
+                console.log("userData= ", userData)
             })
             .catch(function (response) {
                 //handle error
@@ -100,11 +96,10 @@ if (courseData.length >1) {
                 })
                 .then(function (response) {
                     //handle success
-                    console.log(response.data)
+                    console.log("response.data.weeknoarray= ", response.data.weekNoArray)
                     if (`${avgData}` !=`${response.data.weekDurationArray}` & `${label}` != `${response.data.weekNoArray}`) {
                         setAvgData(response.data.weekDurationArray)
                         setLabel(response.data.weekNoArray)
-
                     }
                     
                     console.log("avgdata= ", avgData)
