@@ -614,8 +614,9 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
 
             durations = queryresult.values_list('duration', flat=True)
             try:
-                seconds = map(lambda time: (time.hour * 60 * 60 ) + (time.minute * 60.0) + time.second, durations)
                 print("durations: ", durations)
+                seconds = map(lambda time: (time.hour * 60 * 60 ) + (time.minute * 60.0) + time.second, durations)
+                
                 total_seconds = sum(seconds)
                 no_of_instances = len(queryresult)
                 if no_of_instances == 0:
