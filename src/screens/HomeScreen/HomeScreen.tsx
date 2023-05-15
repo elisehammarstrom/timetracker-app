@@ -13,7 +13,6 @@ import CalendarIcon from '../../../assets/calendar.png';
 import SettingIcon from '../../../assets/settings.png';
 import axios from 'axios';
 
-
 const HomeScreen: React.FC = ({ route }) => {
 
   const { token } = route.params;

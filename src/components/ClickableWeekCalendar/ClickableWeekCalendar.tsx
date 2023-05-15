@@ -5,10 +5,13 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 type Props = {
     date: Date;
     onChange: (value: Date) => void;
+
 };
+
 
 const ClickableWeekCalendar: React.FC<Props> = ({ date, onChange }) => {
     const [week, setWeek] = useState<WeekDay[]>([]);
+
 
     useEffect(() => {
         const weekDays = getWeekDays(date);
