@@ -48,7 +48,11 @@ const EvaluationScreen = ({route}) => {
     
 
     const onSubmitPressed = () => {
-        setSubmit(true)        
+        setSubmit(true)
+        alert('Evaluation submitted')
+        setTimeout(() => {
+            navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token, courseIDs: courseIDs});
+        }, 1000);     
     }
     
     if (`${questions}`.length > 1 ) {
