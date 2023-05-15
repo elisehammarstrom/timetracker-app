@@ -33,7 +33,6 @@ from django.contrib.auth.forms import PasswordChangeForm
 from datetime import time
 
 #fakkar detta med något?
-#from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 
 class CourseViewset(viewsets.ModelViewSet):
@@ -253,24 +252,25 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             response = {"message": "You must provide a duratiom in format Time 'HH:MM:SS' (duration)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else:
-            try:
-                date = datetime.strptime(request.POST.get('date'),"%Y-%m-%d").date()
+            date = datetime.strptime(request.POST.get('date'),"%Y-%m-%d").date()
+            add_duration = datetime.strptime(duration, "%H:%M:%S")
+            duration_new = timedelta(hours=add_duration.hour, minutes=add_duration.minute, seconds=add_duration.second)
+            try: 
                 existing_record_object = UserCourseTracking.objects.get(user=User.objects.get(id=user.id), course=Course.objects.get(id=courseID), date=date)
-
                 old_duration = existing_record_object.duration
-                add_duration = datetime.strptime(duration, "%H:%M:%S")
-
                 duration_old = timedelta(hours=old_duration.hour, minutes=old_duration.minute, seconds=old_duration.second)
-                duration_new = timedelta(hours=add_duration.hour, minutes=add_duration.minute, seconds=add_duration.second)
-
                 updated_duration = duration_old + duration_new
-                updated_time_in_time_format = datetime.strptime(str(updated_duration),"%H:%M:%S" ).time()
-                existing_record_object.duration = updated_time_in_time_format
-                existing_record_object.save(update_fields=['duration'])
-                    
-                record = existing_record_object
-                    
-                response = {
+            except:
+                old_duration = 0
+                updated_duration = duration_new
+                existing_record_object = UserCourseTracking.objects.create(user=User.objects.get(id=user.id), course=Course.objects.get(id=courseID), date=date)
+               
+            updated_time_in_time_format = datetime.strptime(str(updated_duration),"%H:%M:%S").time()
+            existing_record_object.duration = updated_time_in_time_format
+            existing_record_object.save(update_fields=['duration'])     
+            record = existing_record_object
+            
+            response = {
                     "message": "Record updated",
                     "trackedData": 
                             {
@@ -280,12 +280,8 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                                 "duration": record.duration,
                             }       
                     }
-                return Response(data=response, status=status.HTTP_200_OK)
-            except:
-                response = {
-                    "message": "Error in updating record",      
-                    }
-                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data=response, status=status.HTTP_200_OK)
+                
 
     @action(detail=False, methods=['POST'])
     def track_time(self, request, **extra_fields):
@@ -346,13 +342,9 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
         endDateRequest = request.POST.get('endDate')
         if startDateRequest is None:
             response = {"message": "You need to provide a startDate (startDate). E.g. 2023-01-01"}
-            print("type(startDateRequest):", type(startDateRequest))
-            print("startDateRequest:", startDateRequest)
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         elif endDateRequest is None: 
             response = {"message": "You need to provide an endDate (endDate). E.g. 2023-01-01"}
-            print("type(endDateRequest):", type(endDateRequest))
-            print("endDateRequest:", endDateRequest)
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else:
             startDate = datetime.strptime(startDateRequest,"%Y-%m-%d").date()
@@ -361,7 +353,6 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             results = []
             for course in this_user.courses.all():
                 durationArray = []
-                print("course: ", course)
                 courseID = course.id
                 queryresult = self.queryset.filter(user_id=this_user.id, course_id = courseID, date__range=[startDate, endDate] )
                 no_of_dates = abs((endDate-startDate).days) + 1 
@@ -572,11 +563,9 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             response = {"message": "That date isn't in a week"}    
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         dates.append([monday + timedelta(days=x) for x in range(7)])
-        print(dates)
 
         #remaking dates to format for frontEnd
         dates_for_frontend = []
-        
 
         for item in dates[0]: 
             date_string = item.strftime("%d/%m")
@@ -610,7 +599,6 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             queryresult = self.queryset.filter(course = courseInstance, date__range=[startDate, endDate] )
 
             if len(queryresult) == 0:
-                #response = {"message": "No results for that course"}
                 avg_time = round(0, 2)
                 response = {
                         "message": "Average time",  
@@ -623,12 +611,8 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                     }
             
                 return Response(data=response, status=status.HTTP_200_OK)
-                #return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-                #return Response(data=response, status=status.HTTP_200_OK)
-
             durations = queryresult.values_list('duration', flat=True)
             try:
-                print("durations: ", durations)
                 seconds = map(lambda time: (time.hour * 60 * 60 ) + (time.minute * 60.0) + time.second, durations)
                 
                 total_seconds = sum(seconds)
@@ -647,7 +631,6 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                             "courseEndDate" : courseInstance.courseEndDateTime
                         }
                     }
-            
                 return Response(data=response, status=status.HTTP_200_OK)
             except:
                 response = {"message": "Time isn't correctly tracked"}
@@ -665,9 +648,6 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
         if courseID is None:
             response = {"message": "You need to provide a courseID (courseID)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-        elif courseInstance is None:
-            response = {"message": "Course does not exist"}
-            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         elif startDateInput is None:
             response = {"message": "You need to provide a startDate (startDate). E.g. 2023-01-01"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
@@ -675,6 +655,12 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             response = {"message": "You need to provide an endDate (endDate). E.g. 2023-01-01"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else:
+            try: 
+                courseInstance = Course.objects.get(id=courseID)
+            except: 
+                response = {"message": "Course does not exist"}
+                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+            
             startDate = datetime.strptime(startDateInput,"%Y-%m-%d").date()
             endDate = datetime.strptime(endDateInput,"%Y-%m-%d").date()
             queryresult = self.queryset.filter(user = user, course = courseID, date__range=[startDate, endDate] )
@@ -682,15 +668,23 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             if len(queryresult) == 0:
                 response = {"message": "No results for those dates"}
                 return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+            
+            #ta bort efter
+            for result in queryresult:
+                print("result: ", result)
+                print("result.date: ", result.date)
+                print("result.stress: ", result.stress)
 
             userStress = queryresult.values_list('stress', flat=True)
 
             totalStress = 0
             no_of_objects = 0
             for trackingObj in userStress:
+                print("trackingObj:", trackingObj)
                 if trackingObj is not None:
                     totalStress += trackingObj
                     no_of_objects += 1
+            
             if no_of_objects == 0:
                 print("no stress is tracked")
                 averageStress = 0
