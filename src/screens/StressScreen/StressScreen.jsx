@@ -63,7 +63,7 @@ const StressScreen = ({ route }) => {
     const [pressed5, setPressed5] = useState(false);
 
     const onClosedPress = () => {
-        navigation.navigate('Home', { options: courses }, { token: token })
+        navigation.navigate('Home', { options: courses, token: token })
     }
 
     const onSubmitPressed = () => {
