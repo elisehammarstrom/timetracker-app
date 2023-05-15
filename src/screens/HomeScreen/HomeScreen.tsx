@@ -8,7 +8,7 @@ import Timer from '../../components/Timer';
 import React, { useState } from 'react';
 import { Button, SafeAreaView, StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
 import ButtonMenu from '../../components/ButtonMenu';
-import Logo from '../../../assets/icon.png';
+import Logo from '../../../assets/logo.png';
 import CalendarIcon from '../../../assets/calendar.png';
 import SettingIcon from '../../../assets/settings.png';
 import axios from 'axios';
