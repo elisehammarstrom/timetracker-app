@@ -477,16 +477,23 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             response = {"message": "You need to provide a courseID (courseID). E.g. 2"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else:
-            #startDate = datetime.strptime(startDateRequest,"%Y-%m-%d").date()
-            #endDate = datetime.strptime(endDateRequest,"%Y-%m-%d").date()
-            course = Course.objects.get(id=courseID)
-            startDate = course.courseStartDateTime
-            endDate = course.courseEndDateTime
+            try: 
+                course = Course.objects.get(id=courseID)
+                startDate = course.courseStartDateTime
+                endDate = course.courseEndDateTime
+            except:
+                response = {"message": "That course doesn't exist"}
+                return Response(data=response, status=status.HTTP_200_OK)
+            
             firstWeek = date(startDate.year, startDate.month, startDate.day).isocalendar()[1]
             year_week_string = str(startDate.year) + "-W" + str(firstWeek)
 
-            d = year_week_string
-            firstMonday = datetime.strptime(d + '-1', "%Y-W%W-%w")
+            def find_first_monday(year, month, day):
+                d = datetime(year, int(month), 7)
+                offset = -d.weekday() #weekday = 0 means monday
+                return d + timedelta(offset)
+            
+            firstMonday = find_first_monday(startDate.year, startDate.month, startDate.day)
 
             endOfWeek = firstMonday + timedelta(days=6)
 
@@ -505,26 +512,24 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             for week in startOfWeeks:
                 weekEndDate =  week + timedelta(days=6)
                 week_avg = 0
-                print("week no", week.isocalendar()[1])
-                queryresult = self.queryset.filter(course = course, date__range=[week, weekEndDate]).values_list('duration', flat=True)
+                startDateTest = datetime(week.year, week.month, week.day)
+                endDateTest = datetime(weekEndDate.year, weekEndDate.month, weekEndDate.day)
+
+                #queryresult = self.queryset.filter(course = course, date__range=[week, weekEndDate]).values_list('duration', flat=True)
+                queryresult = self.queryset.filter(course = course, date__range=[startDateTest, endDateTest]).values_list('duration', flat=True)
 
                 no_of_tracking_instances = 0
-
                 zero_time =  timedelta(hours=0, minutes=0, seconds=0)
-
                 total_week_time = zero_time 
                 zero_time_string = "0" + str(zero_time)
 
                 for timetracked in queryresult:
                    if str(timetracked) != zero_time_string:
-                    print(zero_time)
-                    print("timetracked", timetracked)
                     no_of_tracking_instances += 1
                     total_week_time += timedelta(hours=timetracked.hour, minutes=timetracked.minute, seconds=timetracked.second )
                     totalSeconds = total_week_time.total_seconds()
                     hours = total_week_time.total_seconds()/3600
-
-                    week_avg = hours / no_of_tracking_instances
+                    week_avg = round(hours / no_of_tracking_instances, 2)
                    
                 weekObjectArray.append({
                     "weekNo": week.isocalendar()[1],
