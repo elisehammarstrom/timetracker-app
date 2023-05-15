@@ -79,7 +79,8 @@ const SignUpScreen = () => {
                     })
             })
             .catch(error => {
-                console.log("error from image :");
+                //console.log("error from image :");
+                console.log("error in creating user :");
             })
 
 
