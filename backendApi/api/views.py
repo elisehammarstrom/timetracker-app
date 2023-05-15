@@ -412,62 +412,69 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
     def get_user_timetracked_per_week(self, request, **extra_fields):
         user = request.user
         this_user = User.objects.get(id=user.id)
-        #startDateRequest = request.POST.get('startDate')
-        #endDateRequest = request.POST.get('endDate')
         courseID = request.POST.get('courseID')
         if courseID is None: 
             response = {"message": "You need to provide a courseID (courseID). E.g. 2"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else:
-            course = Course.objects.get(id=courseID)
-            startDate = course.courseStartDateTime
-            endDate = course.courseEndDateTime
-            #print("startDate.year: ", startDate.year)
+            try: 
+                course = Course.objects.get(id=courseID)
+                startDate = course.courseStartDateTime
+                endDate = course.courseEndDateTime
+            except:
+                response = {"message": "That course doesn't exist"}
+                return Response(data=response, status=status.HTTP_200_OK)
+            
             firstWeek = date(startDate.year, startDate.month, startDate.day).isocalendar()[1]
             year_week_string = str(startDate.year) + "-W" + str(firstWeek)
-            d = year_week_string
-            firstMonday = datetime.strptime(d + '-1', "%Y-W%W-%w")
-            #print("firstMonday: ", firstMonday)
-            endOfWeek = firstMonday + timedelta(days=6)
+
+            def find_first_monday(year, month, day):
+                d = datetime(year, int(month), 7)
+                offset = -d.weekday() #weekday = 0 means monday
+                return d + timedelta(offset)
+            
+            firstMonday = find_first_monday(startDate.year, startDate.month, startDate.day)
 
             #get all start of week numbers
             thisMonday = firstMonday
             startOfWeeks = []
+            weekNoArray = []
+            weekDurationArray = []
+
             endDateTime = datetime.combine(endDate, datetime.min.time())
             
             while thisMonday < endDateTime:
                 startOfWeeks.append(thisMonday)
                 thisMonday += timedelta(days=7)
-            weekObjectArray = []
 
             for week in startOfWeeks:
+                weekNoArray.append(week.isocalendar()[1])
                 weekEndDate =  week + timedelta(days=6)
                 week_avg = 0
-                queryresult = self.queryset.filter(user=this_user, course = course, date__range=[week, weekEndDate]).values_list('duration', flat=True)
+                startDateTest = datetime(week.year, week.month, week.day)
+                endDateTest = datetime(weekEndDate.year, weekEndDate.month, weekEndDate.day)
+                queryresult = self.queryset.filter(user = this_user, course = course, date__range=[startDateTest, endDateTest]).values_list('duration', flat=True)
                 no_of_tracking_instances = 0
-                total_week_time = timedelta(hours=0, minutes=0, seconds=0)
-                
+                zero_time =  timedelta(hours=0, minutes=0, seconds=0)
+                total_week_time = zero_time 
+                zero_time_string = "0" + str(zero_time)
+
                 for timetracked in queryresult:
-                   no_of_tracking_instances += 1
-                   total_week_time += timedelta(hours=timetracked.hour, minutes=timetracked.minute, seconds=timetracked.second )
-                   totalSeconds = total_week_time.total_seconds()
-                   hours = total_week_time.total_seconds()/3600
-                   week_avg = hours / no_of_tracking_instances
-                
-                weekObjectArray.append({
-                    "weekNo": week.isocalendar()[1],
-                    "weekStartDate" : week,
-                    "weekEndDate": weekEndDate,
-                    "avgDuration" : week_avg
-                })
-
+                   if str(timetracked) != zero_time_string:
+                    no_of_tracking_instances += 1
+                    total_week_time += timedelta(hours=timetracked.hour, minutes=timetracked.minute, seconds=timetracked.second )
+                    totalSeconds = total_week_time.total_seconds()
+                    hours = total_week_time.total_seconds()/3600
+                    week_avg = round(hours / no_of_tracking_instances, 2)
+                weekDurationArray.append(week_avg)
+            
             response = {
-                        "message": "Time studied per day",  
-                        "userID": this_user.id,
-                        "user" : this_user.email,
-                        "results" : weekObjectArray
-                        }
-
+                    "message": "Time studied per day", 
+                    "userID": this_user.id,
+                    "user" : this_user.email,
+                    "weekNoArray" : weekNoArray,
+                    "weekDurationArray" : weekDurationArray
+                    }
             return Response(data=response, status=status.HTTP_200_OK)
         
     @action(detail=False, methods=['POST'])
