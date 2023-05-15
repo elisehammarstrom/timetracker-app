@@ -609,9 +609,21 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             queryresult = self.queryset.filter(course = courseInstance, date__range=[startDate, endDate] )
 
             if len(queryresult) == 0:
-                response = {"message": "No results for that course"}
-                #return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+                #response = {"message": "No results for that course"}
+                avg_time = round(0, 2)
+                response = {
+                        "message": "Average time",  
+                        "avg_time": avg_time,
+                        "courseObj": {
+                            "courseID": courseInstance.id,
+                            "courseStartDate" : courseInstance.courseStartDateTime,
+                            "courseEndDate" : courseInstance.courseEndDateTime
+                        }
+                    }
+            
                 return Response(data=response, status=status.HTTP_200_OK)
+                #return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+                #return Response(data=response, status=status.HTTP_200_OK)
 
             durations = queryresult.values_list('duration', flat=True)
             try:
