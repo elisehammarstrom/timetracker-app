@@ -818,6 +818,8 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                             }     
                     }
             return Response(data=response, status=status.HTTP_200_OK)
+        
+
 
 
 class UserViewset(viewsets.ModelViewSet):
@@ -885,6 +887,35 @@ class UserViewset(viewsets.ModelViewSet):
             return Response({'status': 'ProgrammeHead added'})
         else:
            return Response({'status': 'Role does not exist'})
+    
+    @action(detail=False, methods=['POST'])
+    def change_programme(self, request, **extra_fields):
+        user = request.user
+
+        if 'programmeID' in request.data: 
+            programmeID = request.POST.get('programmeID')
+            programmeInstance = Programme.objects.get(id=programmeID)
+
+            userInstance = Student.objects.get(pk=user.id)
+            Student.objects.filter(pk=user.id).update(programme=programmeInstance)
+            userInstance.save()
+
+            serializer = self.serializer_class(request.user, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+            response = {'Programme assigned to user': str(user.email),
+                        "userID" : user.id,
+                        "Programme": {
+                            "systemID": userInstance.programme.id,
+                            "programmeName": userInstance.programme.programmeName,
+                            "shortProgrammeName": userInstance.programme.shortProgrammeName,
+                            }
+            }
+            return Response(response, status = status.HTTP_200_OK)
+        else:
+            response = {"message": "You need to provide a programmeID (e.g. '2' for the programme STS)"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
     
     @action(detail=False, methods=['POST'])
     def add_course(self, request, **extra_fields):
@@ -969,38 +1000,7 @@ class UserViewset(viewsets.ModelViewSet):
             } 
         return Response(data=response, status=status.HTTP_200_OK)
     
-    @action(detail=False, methods=['POST'])
-    def change_programme(self, request, **extra_fields):
-        user = request.user
-
-        if 'programmeID' in request.data: 
-            programmeID = request.POST.get('programmeID')
-            programmeInstance = Programme.objects.get(id=programmeID)
-
-            userInstance = Student.objects.get(id=user.id)
-            userInstance.programme = programmeInstance
-            userInstance.save()
-
-            serializer = self.serializer_class(request.user, data=request.data, partial=True)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-
-            response = {'Programme assigned to user: ': str(user.email),
-                        "user" : {
-                            "first_name" : userInstance.first_name,
-                            "programme": userInstance.programme.shortProgrammeName
-
-                        }, 
-                        "Programme: ": {
-                            "systemID: ": programmeInstance.id,
-                            "programmeName: ": programmeInstance.programmeName,
-                            "shortProgrammeName: ": programmeInstance.shortProgrammeName,
-                            }
-            }
-            return Response(response, status = status.HTTP_200_OK)
-        else:
-            response = {"message": "You need to provide a programmeID (e.g. '2' for the programme STS)"}
-            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+    
     
     @action(detail=False, methods=['GET'])
     def get_courses(self, request, **extra_fields):
@@ -1025,9 +1025,9 @@ class UserViewset(viewsets.ModelViewSet):
                 "userObject": {
                     "fullName" : userInstance.first_name + " " + userInstance.last_name,
                     "email": userInstance.email,
-                   "programmeName": userInstance.programme.programmeName,
-                   "programmeShortName": userInstance.programme.shortProgrammeName,
-                   "university" : userInstance.university
+                    "programmeName": userInstance.programme.programmeName,
+                    "programmeShortName": userInstance.programme.shortProgrammeName,
+                    "university" : userInstance.university
 
                 }
             } 

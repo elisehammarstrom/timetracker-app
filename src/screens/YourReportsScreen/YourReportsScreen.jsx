@@ -5,6 +5,7 @@ import CustomButton from '../../components/CustomButton/CustomButton';
 import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+import Noll from '../../../assets/transparent.png'
 import Ett from '../../../assets/ett.png'
 import Två from '../../../assets/2.png'
 import Tre from '../../../assets/3.png'
@@ -29,7 +30,7 @@ const YourReportsScreen = ({route}) => {
   const fetchedStress = [];
   const [stress, setStress]= useState('');
  
-  const smileys = [0, Ett, Två, Tre, Fyra, Fem];
+  const smileys = [Noll, Ett, Två, Tre, Fyra, Fem];
   //Fetching the first dates for the graph 
   axios.get('http://127.0.0.1:8000/api/tracking/get_dates_in_week/', {
     headers: {
@@ -74,7 +75,6 @@ const YourReportsScreen = ({route}) => {
   if (endDate) {
 
     const formData = new FormData();
-    // console.log("startDate= ", startDate)
     
     formData.append('startDate', startDate)
     formData.append('endDate', endDate)
@@ -122,7 +122,7 @@ const YourReportsScreen = ({route}) => {
         }
       })
       .then((res) => {
-        console.log(res.data)
+        // console.log(res.data)
         if (stress.length === 0) {
           fetchedStress.push(res.data)
           if (stress != fetchedStress) {
@@ -135,7 +135,6 @@ const YourReportsScreen = ({route}) => {
         console.error(error)
       })
     }
-    console.log('stress= ', stress)
 
   }
   let stressNumbers = [];
@@ -147,7 +146,6 @@ const YourReportsScreen = ({route}) => {
         }
       }
     }
-    console.log("stressnumbers= ", stressNumbers)
   }
   
   // Specifics for the graph 
@@ -191,14 +189,14 @@ const YourReportsScreen = ({route}) => {
 
   const [timeVar, setTimeVar] = useState("");
   const [data, setData] = useState('');
-  
+  console.log("time = ", time)
   // Set timeVar which can be varied to time if the user haven't picked to show only one course
   if (`${timeVar}` != `${time}` & state != 'pressed') {
       setTimeVar(time)    
   }
 
 
-  // console.log("timevar= ", timeVar)
+  console.log("timevar= ", timeVar)
   if (timeVar.length > 0 & data.data != timeVar){
     setData({
       labels: initialLabels,
@@ -238,8 +236,8 @@ const YourReportsScreen = ({route}) => {
   const onDatePressed = () => {
     navigation.navigate('Calendar', {courses: courses, token: token, courseIDs: courseIDs})
   }
-
-  if (data != '') {
+  if (data.data != undefined ) {
+    console.log("data.data.length= ", data.data.length)
 
     return (
         <View style={styles.container}>

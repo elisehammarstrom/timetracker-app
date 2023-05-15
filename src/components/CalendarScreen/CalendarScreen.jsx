@@ -1,9 +1,10 @@
 import React, {useState} from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
 import { Calendar } from 'react-native-calendars';
 import CustomButton from "../CustomButton/CustomButton";
-import Navigation from "../../navigation";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
+import BackArrow from '../../../assets/arrowBack.png';
 
 
 const CalendarScreen = ({route}) => {
@@ -11,11 +12,19 @@ const CalendarScreen = ({route}) => {
     const {token} = route.params;
     const {courseIDs} = route.params;
 
+
     const navigation = useNavigation();
     var [firstDate, setFirstDate] = useState('');
     var [lastDate, setLastDate] = useState('');
-    // console.log('first date=', firstDate)
-    // console.log('last date=', lastDate)
+    const [filledWithZeros, setFilledWithZeros] = useState(false)
+    console.log("firstDate= ", firstDate)
+
+    if (filledWithZeros === true) {
+        setFirstDate('');
+        setLastDate('');
+        alert('You have not tracked during this period, please pick other dates');
+        setFilledWithZeros(false)
+    } 
 
     const getMarked = () => {
         let marked = {};
@@ -89,14 +98,63 @@ const CalendarScreen = ({route}) => {
     const onSelectPressed = () => {
         if (lastDate.day - firstDate.day > 7) {
             alert('Choose up to a maximum of 7 days')
+        } else {
+            const formData = new FormData();
+            console.log('firstdate= ', firstDate)
+            console.log('lastdat= ', lastDate)
+            formData.append('startDate', firstDate.dateString)
+            formData.append('endDate', lastDate.dateString)
+            axios({
+            method: "post",
+            url: "http://127.0.0.1:8000/api/tracking/get_user_course_study_time/",
+            data: formData,
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `token ` + token
+            }
+            })
+            .then((res) => {
+            let totalTimeArray = [];
+            for (let i=0; i<res.data.results.length; i++) {
+                console.log(res.data.results[i].timeStudied)
+                for (let j=0; j<res.data.results[0].timeStudied.length; j++) {
+                    console.log(res.data.results[i].timeStudied[j])
+                    totalTimeArray.push(res.data.results[i].timeStudied[j])
+                }
+            }
+            for (let i=0; i<totalTimeArray.length; i++) {
+                if (totalTimeArray[i] != 0){
+                    setFilledWithZeros(false)
+                    navigation.navigate('YourReports', {firstDate: firstDate, lastDate: lastDate, courses: courses, token: token, courseIDs: courseIDs})
+                } else {
+                    setFilledWithZeros(true)
+                }
+            }
+            
+            })
+            .catch((error) => {
+            console.error(error)
+            })
         }
-        else {
-            navigation.navigate('YourReports', {firstDate: firstDate, lastDate: lastDate, courses: courses, token: token, courseIDs: courseIDs})
-        }
+
     }
+    const onArrowPressed = () => {
+        navigation.navigate('ChooseReport', {token: token, courseIDs: courseIDs, courses: courses})
+      }
+
     
     return (
         <View style={styles.container}>
+            <TouchableOpacity activeOpacity={0.5} style={styles.backArrow} onPress={onArrowPressed}>
+                <Image 
+                    source={BackArrow} 
+                    style={[{height: 100 * 0.3}, {width: 100 * 0.3}]} 
+                    resizeMode="contain"
+                />
+            </TouchableOpacity >
+            <Text style={styles.title}>
+                Choose dates to see your reports:
+            </Text>
             <Calendar
                 onDayPress={day => {
                     {if (day.dateString === firstDate.dateString){
@@ -147,7 +205,18 @@ const styles = StyleSheet.create({
     },
     button: {
         padding: 50,
-    }
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#EFEFEF',
+        margin: 10,
+        justifyContent: 'flex-start'
+    },
+    backArrow: {
+        width: '10%',
+        padding: 10
+    },
 })
 
 export default CalendarScreen;
