@@ -1,9 +1,10 @@
 import React, {useState} from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
 import { Calendar } from 'react-native-calendars';
 import CustomButton from "../CustomButton/CustomButton";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
+import BackArrow from '../../../assets/arrowBack.png';
 
 
 const CalendarScreen = ({route}) => {
@@ -113,7 +114,6 @@ const CalendarScreen = ({route}) => {
             }
             })
             .then((res) => {
-            console.log(res.data.results)  
             let totalTimeArray = [];
             for (let i=0; i<res.data.results.length; i++) {
                 console.log(res.data.results[i].timeStudied)
@@ -122,7 +122,6 @@ const CalendarScreen = ({route}) => {
                     totalTimeArray.push(res.data.results[i].timeStudied[j])
                 }
             }
-            console.log("totaltimarray= ",totalTimeArray)
             for (let i=0; i<totalTimeArray.length; i++) {
                 if (totalTimeArray[i] != 0){
                     setFilledWithZeros(false)
@@ -132,7 +131,6 @@ const CalendarScreen = ({route}) => {
                 }
             }
             
-            
             })
             .catch((error) => {
             console.error(error)
@@ -140,9 +138,23 @@ const CalendarScreen = ({route}) => {
         }
 
     }
+    const onArrowPressed = () => {
+        navigation.navigate('ChooseReport', {token: token, courseIDs: courseIDs, courses: courses})
+      }
+
     
     return (
         <View style={styles.container}>
+            <TouchableOpacity activeOpacity={0.5} style={styles.backArrow} onPress={onArrowPressed}>
+                <Image 
+                    source={BackArrow} 
+                    style={[{height: 100 * 0.3}, {width: 100 * 0.3}]} 
+                    resizeMode="contain"
+                />
+            </TouchableOpacity >
+            <Text style={styles.title}>
+                Choose dates to see your reports:
+            </Text>
             <Calendar
                 onDayPress={day => {
                     {if (day.dateString === firstDate.dateString){
@@ -193,7 +205,18 @@ const styles = StyleSheet.create({
     },
     button: {
         padding: 50,
-    }
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#EFEFEF',
+        margin: 10,
+        justifyContent: 'flex-start'
+    },
+    backArrow: {
+        width: '10%',
+        padding: 10
+    },
 })
 
 export default CalendarScreen;

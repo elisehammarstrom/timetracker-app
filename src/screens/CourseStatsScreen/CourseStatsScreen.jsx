@@ -24,7 +24,7 @@ const CourseStatsScreen = ({route}) =>{
     const [userData, setUserData] = useState('');
     const [avgData, setAvgData] = useState('');
     const [avgTime, setAvgTime] = useState('0 h');
-    const [time, setTime] = useState('');
+    const [time, setTime] = useState('0 h');
 
     // Get courseNames and IDs
     for (let i=0; i<courseIDs.length; i++) {
@@ -69,16 +69,10 @@ if (courseData.length >1) {
             })
             .then(function (response) {
                 //handle success
-                // let newData = response.data.results;
-                // let weeks = [];
-                // let avgDuration = [];
-                // Push data to use later in return; weeks as labels for the graph and avgDuration as data for the graph
-                console.log(response.data)
                 if (`${userData}` != `${response.data.weekDurationArray}`) {
                     setUserData(response.data.weekDurationArray)
                 }
 
-                console.log("userData= ", userData)
             })
             .catch(function (response) {
                 //handle error
@@ -96,14 +90,10 @@ if (courseData.length >1) {
                 })
                 .then(function (response) {
                     //handle success
-                    console.log("response.data.weeknoarray= ", response.data.weekNoArray)
                     if (`${avgData}` !=`${response.data.weekDurationArray}` & `${label}` != `${response.data.weekNoArray}`) {
                         setAvgData(response.data.weekDurationArray)
                         setLabel(response.data.weekNoArray)
                     }
-                    
-                    console.log("avgdata= ", avgData)
-                    console.log("label= ", label)
                 })
                 .catch(function (response) {
                     //handle error
@@ -124,8 +114,26 @@ if (courseData.length >1) {
                         if (response.data.avg_time != avgTime ){
                             setAvgTime(response.data.avg_time + ' h')
                         }
-                        // console.log(response.data.avg_time)
-                        console.log('avgTime= ',avgTime)
+                    })
+                    .catch(function (response) {
+                        //handle error
+                        console.log(response);
+                    });
+                axios({
+                    method: "post",
+                    url: "http://127.0.0.1:8000/api/tracking/get_user_course_avg_time/",
+                    data: formData,
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'Authorization':`token ` + token
+                    }
+                    })
+                    .then(function (response) {
+                        //handle success
+
+                        if (response.data.avg_time != time) {
+                            setTime(response.data.avg_time + ' h')
+                        }
                     })
                     .catch(function (response) {
                         //handle error
@@ -252,13 +260,6 @@ if (courseData.length >1) {
                     <Text style={{fontWeight: 'bold'}}> {avgTime} </Text> 
                 </View> 
 
-                <View style={styles.evaluationButton}>
-                    <CustomButton
-                        text="Read course evaluations"
-                        onPress={onReadCourseEvaluationsPressed}
-                    />
-                </View>
-
             </View>
 
             <View style={styles.ButtonMenu}>
@@ -296,19 +297,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'centers',
     },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#EFEFEF',
-        margin: 10,
-        marginBottom: 50,
-        justifyContent: 'flex-start',
-        overflowWrap: 'break-word',
-
-    },
-    dateButton: {
-        marginRight: '2%',
-    },
     timeContainer: {
         alignItems: 'center',
     },
@@ -316,7 +304,7 @@ const styles = StyleSheet.create({
         width: '90%',
         height: 0.1 * Dimensions.get('window').height,
         justifyContent: 'space-between',
-        paddingLeft: '5%',
+        paddingHorizontal: '5%',
         margin: 4,
         flexDirection: 'row',
         alignItems: 'center'
@@ -326,10 +314,6 @@ const styles = StyleSheet.create({
     },
     averageTime: {
         backgroundColor: '#5987CC'
-    },
-    evaluationButton: {
-        width: 0.6 * Dimensions.get('window').width,
-        justifyContent: 'center',
     },
     backArrow: {
         width: '10%',

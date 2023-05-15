@@ -24,7 +24,7 @@ const ProfileScreen = ({route}) => {
     }
   })
   .then((res) => {
-
+    console.log(res.data)
     if (`${profile}` != `${res.data.userObject}`) {
       setProfile(res.data.userObject)
     }
@@ -39,7 +39,7 @@ const ProfileScreen = ({route}) => {
   }
     
   const onEditPressed = () => {
-    navigation.navigate('EditProfile', {token: token});
+    navigation.navigate('EditProfile', {token: token, courseIDs: courseIDs});
   };
 
   const onEditCoursePressed = () => {
