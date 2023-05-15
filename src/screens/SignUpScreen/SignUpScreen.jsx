@@ -6,6 +6,9 @@ import { useNavigation } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
 import { SelectList } from 'react-native-dropdown-select-list';
 import axios from 'axios';
+import { LogBox } from 'react-native'; LogBox.ignoreLogs(['Warning: ...']);
+
+LogBox.ignoreAllLogs();
 
 const EMAIL_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
 

@@ -26,34 +26,6 @@ const UntrackedScreen = ({ route }) => {
 
     const navigation = useNavigation();
 
-    // var day = new Date().getDate();
-    // var month = new Date().getMonth()+1;
-    // var year = new Date().getFullYear();
-    // var thisDate = year + '-' + month + '-' + day;
-
-
-    var day = new Date().getDate();
-    var month = new Date().getMonth() + 1;
-    var year = new Date().getFullYear();
-
-    const [thisDate, setThisDate] = useState('');
-
-    if (thisDate.length < 1) {
-        if (`${day}`.length === 1 & `${month}`.length === 1) {
-            setThisDate(year + '-0' + month + '-0' + day)
-        }
-        else if (`${day}`.length === 1) {
-            setThisDate(year + '-' + month + '-0' + day)
-        }
-        else if (`${month}`.length === 1) {
-            setThisDate(year + '-0' + month + '-' + day)
-        }
-        else {
-            setThisDate(year + '-' + month + '-' + day)
-
-        }
-    }
-
 
     const hourData = [
         { key: '1', value: '00' },
@@ -89,8 +61,37 @@ const UntrackedScreen = ({ route }) => {
 
     }
 
+    var year = date.getFullYear()
+    var month = date.getMonth()+1
+    var day = date.getDate()
+
+   if (month && day <10 ) {
+        var month='0'+month
+        var day='0'+day
+        var newDate = year + '-' + month + '-' + day
+        console.log(newDate)
+        console.log('type:',typeof(newDate))
+    } 
+    else if (day <10 ) {
+        var day='0'+day
+        var newDate = year + '-' + month + '-' + day
+        console.log(newDate)
+        console.log('type:',typeof(newDate))
+    }
+    else if (month <10) {
+        var month='0'+month
+        var newDate = year + '-' + month + '-' + day
+        console.log(newDate)
+        console.log('type:',typeof(newDate))
+    }
+    else {
+        var newDate = year + '-' + month + '-' + day
+        console.log(newDate)
+        console.log('type:',typeof(newDate))
+    }
+
     const onClosedPress = () => {
-        navigation.navigate('Home', { options: courses }, { token: token })
+        navigation.navigate('Home', { options: courses, token: token })
     }
 
     const onCurrentDatePressed = () => {
@@ -101,10 +102,10 @@ const UntrackedScreen = ({ route }) => {
         for (let i = 0; i < courses.length; i++) {
             if (selectedCourse === courses[i]) {
                 let time = selectedHour + ':' + selectedMinute + ':' + '00';
-                console.log("date= ", thisDate)
+                console.log("date= ", newDate)
                 const formData = new FormData();
                 formData.append('courseID', courseIDs[i]);
-                formData.append('date', thisDate);
+                formData.append('date', newDate);
                 formData.append('duration', time);
 
                 axios({
@@ -161,6 +162,7 @@ const UntrackedScreen = ({ route }) => {
 
                             <View style={styles.calendar}>
                                 <ClickableWeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
+                                
                             </View>
                             <View>
                                 <Image
@@ -195,6 +197,7 @@ const UntrackedScreen = ({ route }) => {
                         </View>
                     )
             }
+            
 
 
             <View style={styles.selectListContainer}>
@@ -253,6 +256,7 @@ const UntrackedScreen = ({ route }) => {
 
             </View>
             <View>
+                
                 <ButtonMenu
                     screen='timeTracking'
                     token={token}
