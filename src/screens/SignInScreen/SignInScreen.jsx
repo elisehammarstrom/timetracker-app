@@ -50,15 +50,10 @@ const SignInScreen = () => {
   
         
     };
-    const onForgotPasswordPressed = () => {
-        navigation.navigate('ForgotPassword')
-    };
 
     const onSignUpPress = () => {
         navigation.navigate('SignUp')
     };
-
-      
 
     return (
         <View style={styles.container}>
@@ -100,11 +95,11 @@ const SignInScreen = () => {
                     onPress={handleSubmit(onSignInPressed)}
                 />
 
-                <CustomButton    
+                {/* <CustomButton    
                     text="Forgot password?" 
                     onPress={onForgotPasswordPressed}
                     type="TERTIARY"
-                />
+                /> */}
                 <CustomButton    
                     text="Don't have an account? Create one" 
                     onPress={onSignUpPress}
@@ -122,6 +117,7 @@ const styles = StyleSheet.create({
     container: {
         height: '100%',
         backgroundColor: '#313131',
+        justifyContent: 'center',
 
     },
     root: {

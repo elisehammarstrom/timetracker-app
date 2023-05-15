@@ -29,7 +29,7 @@ const YourReportsScreen = ({route}) => {
   const [state, setState] = useState('');
   const fetchedStress = [];
   const [stress, setStress]= useState('');
-  
+ 
   const smileys = [0, Ett, Två, Tre, Fyra, Fem];
   //Fetching the first dates for the graph 
   axios.get('http://127.0.0.1:8000/api/tracking/get_dates_in_week/', {
@@ -57,6 +57,9 @@ const YourReportsScreen = ({route}) => {
     if (startDate !== firstDate.dateString) {
       setStartDate(firstDate.dateString)
       setEndDate(lastDate.dateString)
+      if (stress.length > 0){
+        setStress([]);
+      }
     }
     // console.log("firstDate efter= ", firstDate)
     // console.log("startDate efter= ", startDate)
@@ -107,11 +110,13 @@ const YourReportsScreen = ({route}) => {
       console.log("endDate i catch= ", endDate)
 
     })
+
     for (let i=0; i<courseIDs.length; i++){
       const formData = new FormData();
       formData.append('startDate', startDate)
       formData.append('endDate', endDate)
       formData.append('courseID', courseIDs[i])
+
 
       axios({
         method: "post",
@@ -126,7 +131,7 @@ const YourReportsScreen = ({route}) => {
         console.log(res.data)
         if (stress.length === 0) {
           fetchedStress.push(res.data)
-          if (stress.length <courseIDs.length) {
+          if (stress != fetchedStress) {
             setStress(fetchedStress)
           }
         }
@@ -190,7 +195,7 @@ const YourReportsScreen = ({route}) => {
     timeCourses.push({course: courses[i], time: timeStudied[i]})
   };
 
-  const [timeVar, setTimeVar] = useState([]);
+  const [timeVar, setTimeVar] = useState("");
   const [data, setData] = useState('');
   
   // Set timeVar which can be varied to time if the user haven't picked to show only one course
@@ -198,11 +203,7 @@ const YourReportsScreen = ({route}) => {
       setTimeVar(time)    
   }
 
-/*   // Gets the sum of time studied of each course
-  let sum = [];
-  for (let i=0; i<timeCourses.length; i++) {
-    sum.push(Math.round(timeCourses[i].time.reduce((a, b) => a + b, 0)*10)/10);
-  } */
+
   // console.log("timevar= ", timeVar)
   if (timeVar.length > 0 & data.data != timeVar){
     setData({
@@ -259,7 +260,6 @@ const YourReportsScreen = ({route}) => {
                     <CustomButton
                         text="Select dates"
                         onPress={onDatePressed}
-
                     />
                 </View>
 
@@ -282,18 +282,17 @@ const YourReportsScreen = ({route}) => {
               <View style={styles.data}>
                 <Text style={styles.dataTextCourse}>Course</Text>
                 <Text style={styles.dataTextStress}>Stress</Text>
-                <Text style={styles.dataText}>Time</Text>
               </View>
              
               {courses.map((course,i) => (
                
                 <TouchableOpacity style={[styles.colors, {backgroundColor: colorsConst[i]}]} key={course} onPress={() => onCoursePressed(course)}>
 
-                  <View style={{flex: 4}}>
+                  <View style={{flex: 7}}>
                     <Text style={{fontWeight: 'bold'}}>{course}</Text>
                   </View>
 
-                  <View style={{flex: 1.5}}>
+                  <View style={{flex: 1}}>
                    <Image 
                     source={smileys[stressNumbers[i]]} 
                     style={[ {height: 100 * 0.3},{width: 100*0.3}, {marginBottom:10}]} 
@@ -301,16 +300,9 @@ const YourReportsScreen = ({route}) => {
                     />
                   </View>
 
-                  <View>
-                 {/*    <Text style={{fontWeight: 'bold'}}>{sum[i]} h</Text> */}
-                  </View>
-
                 </TouchableOpacity> 
    
               ))}
-             
-
-
                
             </View>
 
@@ -368,13 +360,13 @@ const styles=StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#EFEFEF',
-    flex: 1.5
+    flex: 1
   },
   dataTextCourse: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#EFEFEF',
-    flex: 4
+    flex: 5
   },
   data: {
     flexDirection: 'row',

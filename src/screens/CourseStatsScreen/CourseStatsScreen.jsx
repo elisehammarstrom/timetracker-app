@@ -23,7 +23,7 @@ const CourseStatsScreen = ({route}) =>{
     const [label, setLabel] = useState('');
     const [userData, setUserData] = useState('');
     const [avgData, setAvgData] = useState('');
-    const [avgTime, setAvgTime] = useState('');
+    const [avgTime, setAvgTime] = useState('0 h');
     const [time, setTime] = useState('');
 
     // Get courseNames and IDs
@@ -131,12 +131,11 @@ if (courseData.length >1) {
                     })
                     .then(function (response) {
                         //handle success
-                        if (avgTime.length <1 ){
+                        if (response.data.avg_time != avgTime ){
                             setAvgTime(response.data.avg_time + ' h')
                         }
                         // console.log(response.data.avg_time)
                         console.log('avgTime= ',avgTime)
-                        console.log("hej")
                     })
                     .catch(function (response) {
                         //handle error
@@ -231,12 +230,6 @@ if (courseData.length >1) {
 
             </View>
 
-            <View style={styles.header}>
-                
-                    <Text style={styles.title}>{selected}</Text>
-                
-            </View>
-
             <View>
                 <LineChart
                     data={dataGraph}
@@ -297,7 +290,7 @@ const styles = StyleSheet.create({
     selectListContainer: {
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: '3%',
+        // marginTop: '3%',
     },
     selectList: {
         fontWeight: 'bold',
