@@ -23,7 +23,7 @@ const CourseStatsScreen = ({route}) =>{
     const [label, setLabel] = useState('');
     const [userData, setUserData] = useState('');
     const [avgData, setAvgData] = useState('');
-    const [avgTime, setAvgTime] = useState('');
+    const [avgTime, setAvgTime] = useState('0 h');
     const [time, setTime] = useState('');
 
     // Get courseNames and IDs
@@ -100,20 +100,15 @@ if (courseData.length >1) {
                 })
                 .then(function (response) {
                     //handle success
-                    let newData = response.data.results;
-                    let weeks = [];
-                    let avgDuration = [];
-                    // Push data to use later in return; weeks as labels for the graph and avgDuration as data for the graph
-                    for (let i=0; i<newData.length; i++){
-                        weeks.push(newData[i].weekNo)
-                        avgDuration.push(newData[i].avgDuration)
+                    console.log(response.data)
+                    if (`${avgData}` !=`${response.data.weekDurationArray}` & `${label}` != `${response.data.weekNoArray}`) {
+                        setAvgData(response.data.weekDurationArray)
+                        setLabel(response.data.weekNoArray)
+
                     }
-    
-                    if (`${label}` != `${weeks}`) {
-                        // setLabel(weeks)
-                        setAvgData(avgDuration)
-                    }
-                    // console.log("avgdata= ", avgData)
+                    
+                    console.log("avgdata= ", avgData)
+                    console.log("label= ", label)
                 })
                 .catch(function (response) {
                     //handle error
@@ -131,12 +126,11 @@ if (courseData.length >1) {
                     })
                     .then(function (response) {
                         //handle success
-                        if (avgTime.length <1 ){
+                        if (response.data.avg_time != avgTime ){
                             setAvgTime(response.data.avg_time + ' h')
                         }
                         // console.log(response.data.avg_time)
                         console.log('avgTime= ',avgTime)
-                        console.log("hej")
                     })
                     .catch(function (response) {
                         //handle error
@@ -231,12 +225,6 @@ if (courseData.length >1) {
 
             </View>
 
-            <View style={styles.header}>
-                
-                    <Text style={styles.title}>{selected}</Text>
-                
-            </View>
-
             <View>
                 <LineChart
                     data={dataGraph}
@@ -297,7 +285,7 @@ const styles = StyleSheet.create({
     selectListContainer: {
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: '3%',
+        // marginTop: '3%',
     },
     selectList: {
         fontWeight: 'bold',
