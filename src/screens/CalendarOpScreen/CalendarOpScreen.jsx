@@ -28,7 +28,7 @@ const CalendarOpScreen = ({ route }) => {
   }
 
   const onClosedPress = () => {
-    navigation.navigate('Home', { options: courses })
+    navigation.navigate('Home', { options: courses, token:token })
   }
 
   const colors = ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX']
