@@ -610,7 +610,8 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
 
             if len(queryresult) == 0:
                 response = {"message": "No results for that course"}
-                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+                #return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+                return Response(data=response, status=status.HTTP_200_OK)
 
             durations = queryresult.values_list('duration', flat=True)
             try:
@@ -639,7 +640,6 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                 response = {"message": "Time isn't correctly tracked"}
                 return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
                 
-        
     @action(detail=False, methods=['POST'])
     def get_user_stress_period(self, request, **extra_fields):
         user = request.user
