@@ -13,28 +13,10 @@ class Course(models.Model):
     courseEndDateTime = models.DateTimeField(null=True, blank=True)
     filename = models.CharField(max_length=50, null=True)
     file = models.FileField(null=True)
-
-    #programmes = fields.ForeignKey(Programme, on_delete=models.CASCADE)
-
-    def no_of_evaluations(self):
-        courseEvaluations = CourseEvaluation.objects.filter(course = self)
-        return len(courseEvaluations)
-    
-    def avg_of_evaluations(self):
-        sum = 0
-        courseEvaluations = CourseEvaluation.objects.filter(course = self)
-
-        for evaluation in courseEvaluations:
-            sum += evaluation.stresslevel
-        if len(courseEvaluations) > 0:
-            return sum / len(courseEvaluations)
-        else:
-            return 0 
     
     def __str__(self):
         courseInfoString = self.courseTitle + " (" + self.courseCode + ")"
         return (courseInfoString)
-
 
 class CourseEvaluation(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, related_name="courseEvaluations") 
@@ -358,8 +340,18 @@ class CourseSchedule(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     yearGrade = models.ForeignKey(YearGrade, on_delete=models.CASCADE, null=True)
 
+
+    
+
+class MyAssignments(models.Model):
+    student = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+    assignment = models.ForeignKey(CourseCalendar, on_delete=models.CASCADE, null=True)
+    donewith = models.BooleanField(null=True)
+    hoursTracked = models.TimeField(blank=True, null=True)
+
 class UserSchedule(models.Model):
-   user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+   id = models.AutoField(primary_key=True)
+   user = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
    event = models.CharField(max_length=50 )
    startDateTime = models.DateTimeField(null=True)
    endDateTime = models.DateTimeField(null=True)
@@ -369,10 +361,3 @@ class UserSchedule(models.Model):
    def __str__(self):
         userScheduleInfoString = self.user + "'s schedule"
         return userScheduleInfoString
-    
-
-class MyAssignments(models.Model):
-    student = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
-    assignment = models.ForeignKey(CourseCalendar, on_delete=models.CASCADE, null=True)
-    donewith = models.BooleanField(null=True)
-    hoursTracked = models.TimeField(blank=True, null=True)

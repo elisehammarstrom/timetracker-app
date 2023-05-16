@@ -63,8 +63,6 @@ class CourseViewset(viewsets.ModelViewSet):
         else:
             response = {"message": "You need to provide a courseCode for the course (courseCode)"}
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
-            
-
 
 class ProgrammeViewset(viewsets.ModelViewSet):
     queryset = Programme.objects.all()
@@ -106,8 +104,7 @@ class ProgrammeViewset(viewsets.ModelViewSet):
             return JsonResponse(programmeObject, safe=False)
         else:
             response = {"message": "You need to provide a the system ID for the program (pID)"}
-            return Response(response, status = status.HTTP_400_BAD_REQUEST)
-        
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)   
 
 class LoginView(APIView):
     permission_classes = []
@@ -480,9 +477,29 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                     "weekDurationArray" : weekDurationArray
                     }
             return Response(data=response, status=status.HTTP_200_OK)
-    
-    def normalize_dates():
+        
+    def normalize_dates(self,courseCode):
         print("in method")
+
+        #queryresult = self.queryset.filter(courseCode = courseCode)
+
+        queryset = Course.objects.get_queryset()
+        #print(queryset)
+
+        filtered_queryresult = queryset.filter(courseCode = courseCode)
+
+        print(filtered_queryresult)
+
+        most_recent_course = filtered_queryresult[0]
+        print("most_recent_course: ", most_recent_course)
+
+        for course in filtered_queryresult:
+            print("course: ", course)
+            if course.courseEndDateTime > most_recent_course.courseEndDateTime:
+                most_recent_course = course
+
+
+        return "hej"
 
 
     @action(detail=False, methods=['POST'])
@@ -499,7 +516,7 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             except:
                 response = {"message": "That course doesn't exist"}
                 return Response(data=response, status=status.HTTP_200_OK)
-            
+            output = self.normalize_dates(course.courseCode)
             firstWeek = date(startDate.year, startDate.month, startDate.day).isocalendar()[1]
             year_week_string = str(startDate.year) + "-W" + str(firstWeek)
 
@@ -1252,7 +1269,7 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
         queryresult = self.queryset.filter(course = course.id)
         if len(queryresult) == 0:
             response = {"message": "No course evaluations exist for that course"}
-            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data=response, status=status.HTTP_200_OK)
         
         result = {"courseID" : course.id, 
                   "questionAnswerNumbers": {},
@@ -1390,11 +1407,12 @@ class YearGradeViewset(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, )
     @action(detail=False, methods=['GET'])
     def get_yearGrades(self, request, **extra_fields):
-        if 'programmeID' not in request.data: 
-            response = {"message": "You must provide a programmeID as foreinkey to get yearGrades"}
+        if 'programmeName' not in request.data: 
+            response = {"message": "You must provide a programmeName as foreinkey to get yearGrades"}
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
         else:
-            yearGradeNameList= list(YearGrade.objects.filter(programme_id=request.data.get("programmeID")).values_list('yearGradeClass', flat=True))
+            programme_id= Programme.objects.get(programmeName=request.data.get("programmeName")).id
+            yearGradeNameList= list(YearGrade.objects.filter(programme_id=programme_id).values_list('yearGradeClass', flat=True))
             response ={"message": "Success. YearGrades retrieved.",
                        "yearGrades": yearGradeNameList}
             return Response(data=response, status=status.HTTP_200_OK)
@@ -1539,14 +1557,17 @@ class UserScheduleViewset(viewsets.ModelViewSet):
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
         
         else:
-            course=Course.objects.get(request.data.get('courseID'))
+            course=Course.objects.get(id=request.data.get('courseID'))
             userObject = Student.objects.get(id=request.user.pk)
-            yearGrade = YearGrade.objects.get(id=userObject.yearGrade)
             print(userObject.email)
+            yearGrade = YearGrade.objects.get(yearGradeClass=userObject.yearGrade)
+            print("hej")
             courseScheduleList = list(CourseSchedule.objects.filter(course=course, yearGrade=yearGrade).values_list('id', flat=True))
             eventNameList=[]
-            for courseid in courseScheduleList():
-                courseSchedule=CourseSchedule.objects.get(id=courseid)
+            print("courseScheduleList: ", courseScheduleList)
+            for item in courseScheduleList:
+                print(item)
+                courseSchedule=CourseSchedule.objects.get(id=item)
                 obj = UserSchedule.objects.create(user=userObject, event=courseSchedule.courseEvent, startDateTime=courseSchedule.eventStartTime,
                                                   endDateTime=courseSchedule.eventEndTime, course=course)
                                                                       
