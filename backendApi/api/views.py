@@ -868,7 +868,8 @@ class UserViewset(viewsets.ModelViewSet):
             user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=Programme.objects.get(id=request.POST.get('pID')), yearGrade=None)
            else:
                #create with no programme or course
-               user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=pID, yearGrade=None)
+               yearGrade=YearGrade.objects.get(yearGradeClass =request.data.get('yearGradeClass'))
+               user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=pID, yearGrade=yearGrade)
            user.is_active = True
            user.save()
 
@@ -1539,14 +1540,17 @@ class UserScheduleViewset(viewsets.ModelViewSet):
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
         
         else:
-            course=Course.objects.get(request.data.get('courseID'))
+            course=Course.objects.get(id=request.data.get('courseID'))
             userObject = Student.objects.get(id=request.user.pk)
-            yearGrade = YearGrade.objects.get(id=userObject.yearGrade)
             print(userObject.email)
+            yearGrade = YearGrade.objects.get(yearGradeClass=userObject.yearGrade)
+            print("hej")
             courseScheduleList = list(CourseSchedule.objects.filter(course=course, yearGrade=yearGrade).values_list('id', flat=True))
             eventNameList=[]
-            for courseid in courseScheduleList():
-                courseSchedule=CourseSchedule.objects.get(id=courseid)
+            print("courseScheduleList: ", courseScheduleList)
+            for item in courseScheduleList:
+                print(item)
+                courseSchedule=CourseSchedule.objects.get(id=item)
                 obj = UserSchedule.objects.create(user=userObject, event=courseSchedule.courseEvent, startDateTime=courseSchedule.eventStartTime,
                                                   endDateTime=courseSchedule.eventEndTime, course=course)
                                                                       
