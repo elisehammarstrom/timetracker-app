@@ -11,7 +11,6 @@ import Två from '../../../assets/2.png'
 import Tre from '../../../assets/3.png'
 import Fyra from '../../../assets/4.png'
 import Fem from '../../../assets/5.png'
-import { ConsoleSqlOutlined } from '@ant-design/icons';
 
 
 const YourReportsScreen = ({route}) => {
@@ -275,6 +274,9 @@ const YourReportsScreen = ({route}) => {
                 <Text style={styles.dataTextCourse}>Course</Text>
                 <Text style={styles.dataTextStress}>Stress</Text>
               </View>
+              <ScrollView style={styles.scrollView}>
+                <View style={styles.center}>
+        
              
               {courses.map((course,i) => (
                
@@ -295,8 +297,10 @@ const YourReportsScreen = ({route}) => {
                 </TouchableOpacity> 
    
               ))}
-               
+              </View>
+               </ScrollView>
             </View>
+            
 
             <View>
               <ButtonMenu
@@ -365,6 +369,14 @@ const styles=StyleSheet.create({
     justifyContent: 'space-between',
     width: '85%'
   },
+  scrollView: {
+    width: Dimensions.get('window').width,
+  },
+  center: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 40
+  }
 })
 
 export default YourReportsScreen;
