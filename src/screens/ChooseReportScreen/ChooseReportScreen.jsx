@@ -14,7 +14,7 @@ const ChooseReportScreen = ({route}) => {
     console.log("courseIDs= ", courseIDs)
 
     const onYourReportsPressed = () => {
-        navigation.navigate("YourReports", {courses: courses, token: token, courseIDs: courseIDs})
+        navigation.navigate("Calendar", {courses: courses, token: token, courseIDs: courseIDs})
     }
 
     const onSeeCourseStatisticsPressed = () => {

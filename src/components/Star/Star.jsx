@@ -52,6 +52,8 @@ const Star = ({token, question, answerID, submit}) => {
             //handle error
             console.log(response);
         });
+
+
     }
 
     const CustomRatingBar = () => {

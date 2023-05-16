@@ -1,108 +1,128 @@
-import { Button,View, Text , TouchableOpacity,  StyleSheet,SafeAreaView,Dimensions, Image } from 'react-native';
-import React, {useState} from 'react';
-import {Stopwatch} from 'react-native-stopwatch-timer';
+import { Button, View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Dimensions, Image } from 'react-native';
+import React, { useState } from 'react';
+import { Stopwatch } from 'react-native-stopwatch-timer';
 import Play from '../../../assets/play.png'
 import Pause from '../../../assets/pause.png'
-import { secondsToMinutes } from 'date-fns';
 import axios from 'axios';
 
-const Timer = ({courseID, courseName, color}) => {
-    const [isStopwatchStart, setIsStopwatchStart] = useState(false);
-    const [resetStopwatch, setResetStopwatch] = useState(false);
-    const [isTimerStart, setIsTimerStart] = useState(false);
- 
-    const [timerDuration, setTimerDuration] = useState(90000);
-    const [resetTimer, setResetTimer] = useState(false);
-    const [active, setActive] = useState(false);
-    
-    var day = new Date().getDate();
-    var month = new Date().getMonth()+1;
-    var year = new Date().getFullYear();
-    var date = year + '-' + month + '-' + day;
 
-    const getTime = (time) => {
-      if (isStopwatchStart != true){
-        let data = {
-          courseID: courseID,
-          date: date,
-          duration: time,
-        };
-        // console.log(courseName)
-        const formData = new FormData();
-        formData.append('courseID', courseID);
-        formData.append('date', date);
-        formData.append('duration', time);
-        
-        axios({
-          method: "post",
-          url: "http://127.0.0.1:8000/api/tracking/track_time/",
-          data: formData,
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization':`token 53ba76420d512d53c7cca599cbda42c950d37996`
-          }
+const Timer = ({ courseID, courseName, color, token }) => {
+  const [isStopwatchStart, setIsStopwatchStart] = useState(false);
+  const [resetStopwatch, setResetStopwatch] = useState(false);
+
+
+  var day = new Date().getDate();
+  var month = new Date().getMonth() + 1;
+  var year = new Date().getFullYear();
+  var date = year + '-' + month + '-' + day;
+
+
+  function resetTimerMidnight(hour, minutes, seconds, func) {
+    const twentyFourHours = 86400000;
+    const now = new Date();
+    let eta_ms = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minutes, seconds, 0, 0, 0).getTime() - now;
+    if (eta_ms < 0) {
+      eta_ms += twentyFourHours;
+    }
+    setTimeout(function () {
+      //run once
+      func();
+      // run every 24 hours from now on
+      setInterval(func, twentyFourHours);
+    }, eta_ms);
+  }
+
+  //resets the timer at midnight
+  //ska också skicka med trackad tid
+  resetTimerMidnight(0, 0, 0, () => {
+    setResetStopwatch(true)
+  });
+
+  const getTime = (time) => {
+    if (isStopwatchStart != true & time != '00:00:00') {
+      let data = {
+        courseID: courseID,
+        date: date,
+        duration: time,
+      };
+      // console.log(courseName)
+      const formData = new FormData();
+      formData.append('courseID', courseID);
+      formData.append('date', date);
+      formData.append('duration', time);
+
+      axios({
+        method: "post",
+        url: "http://127.0.0.1:8000/api/tracking/track_time/",
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `token ` + token
+        }
+      })
+        .then(function (response) {
+          //handle success
+          console.log(response.data);
         })
-          .then(function (response) {
-            //handle success
-            // console.log(response.data);
-          })
-          .catch(function (response) {
-            //handle error
-            // console.log(response);
-          });
+        .catch(function (response) {
+          //handle error
+          console.log(response);
+        });
 
-        // console.log(data)
-      } 
-     
+      // console.log(data)
     }
 
-    return (
-        <SafeAreaView>
-           <View style={styles.container}>
+  }
 
-            <View style={[styles.sectionStyle, styles[`sectionStyle_${color}`]]}>
+  return (
+    <SafeAreaView>
+      <View style={styles.container}>
 
-              <View style={styles.titleContainer}>
-                <Text style={styles.title}>{courseName}</Text>
-              </View>
+        <View style={[styles.sectionStyle, styles[`sectionStyle_${color}`]]}>
 
-              <View style={styles.stopWatchContainer}>
-                <Stopwatch
-                  laps
-                  secs
-                  start={isStopwatchStart}// To start
-                  options={options} // Options for the styling
-                  getTime={(time) => {
-                    getTime(time);
-                  }}
-                />
-              </View>
-              <View style={styles.playPauseContainer}>
-                <TouchableOpacity activeOpacity={0.5}
-                  onPress={() => {
-                    setIsStopwatchStart(!isStopwatchStart);
-                    setResetStopwatch(false);
-                  }}>
-                  <Text style={styles.buttonText}>
-                    {!isStopwatchStart ? 
-                      <Image 
-                        source={Play} 
-                        style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
-                        resizeMode="contain" 
-                        />: 
-                      <Image 
-                        source={Pause}
-                        style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
-                        resizeMode="contain"/>}
-                  </Text>
-                </TouchableOpacity> 
-              </View>
-              
-            </View>
+          <View style={styles.titleContainer}>
 
+            {<Text style={styles.title}>{courseName}</Text> }
           </View>
-        </SafeAreaView>
-    )
+
+          <View style={styles.stopWatchContainer}>
+            <Stopwatch
+              laps
+              secs
+              start={isStopwatchStart}// To start
+              reset={resetStopwatch} // To reset
+              options={options} // Options for the styling
+              getTime={(time) => {
+                getTime(time);
+              }}
+            />
+          </View>
+          <View style={styles.playPauseContainer}>
+            <TouchableOpacity activeOpacity={0.5}
+              onPress={() => {
+                setIsStopwatchStart(!isStopwatchStart);
+                setResetStopwatch(false);
+              }}>
+              <Text style={styles.buttonText}>
+                {!isStopwatchStart ?
+                  <Image
+                    source={Play}
+                    style={[{ height: 100 * 0.3 }, { width: 100 * 0.3 }]}
+                    resizeMode="contain"
+                  /> :
+                  <Image
+                    source={Pause}
+                    style={[{ height: 100 * 0.3 }, { width: 100 * 0.3 }]}
+                    resizeMode="contain" />}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+        </View>
+
+      </View>
+    </SafeAreaView>
+  )
 }
 
 const styles = StyleSheet.create({
@@ -115,14 +135,14 @@ const styles = StyleSheet.create({
   },
 
   container: {
-/*     flex: 1, */
+    /*     flex: 1, */
     padding: 10,
     justifyContent: 'space-between',
     alignItems: 'center',
   },
 
   sectionStyle: {
- /*    flex: 5, */
+    /*    flex: 5, */
     flexDirection: 'row',
     alignIems: 'center',
     justifyContent: 'space-between',
@@ -136,13 +156,13 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
 
-  titleContainer:{
+  titleContainer: {
     alignItems: 'flex-start',
     justifyContent: 'center',
     flex: 5,
   },
 
-  stopWatchContainer:{
+  stopWatchContainer: {
     justifyContent: 'center',
     flex: 3
   },
@@ -155,23 +175,23 @@ const styles = StyleSheet.create({
     paddingTop: 25
 
   },
-  
-  sectionStyle_ONE:{
+
+  sectionStyle_ONE: {
     backgroundColor: '#66C7FD'
   },
-  sectionStyle_TWO:{
+  sectionStyle_TWO: {
     backgroundColor: '#5987CC'
   },
-  sectionStyle_THREE:{
+  sectionStyle_THREE: {
     backgroundColor: '#AC7CE4'
   },
-  sectionStyle_FOUR:{
+  sectionStyle_FOUR: {
     backgroundColor: '#FFB5E2'
   },
-  sectionStyle_FIVE:{
+  sectionStyle_FIVE: {
     backgroundColor: '#FFA9A3'
   },
-  sectionStyle_SIX:{
+  sectionStyle_SIX: {
     backgroundColor: '#FFC977'
   },
 
@@ -180,19 +200,19 @@ const styles = StyleSheet.create({
     padding: 13,
 
   },
-  });
-  
-  const options = {
-    text: {
-      fontSize: 14,
-      fontWeight: 'bold',
-      color: 'black',
-      padding: 13,
-      
-    },
-    
+});
+
+const options = {
+  text: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: 'black',
+    padding: 13,
+
+  },
 
 
-  };
+
+};
 
 export default Timer

@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
 import { LineChart } from 'react-native-chart-kit';
 import BackArrow from '../../../assets/arrowBack.png';
+import axios from 'axios';
 
 const CourseStatsScreen = ({route}) =>{
 
@@ -17,23 +18,168 @@ const CourseStatsScreen = ({route}) =>{
     const navigation = useNavigation();
     const [selected, setSelected] = useState("");
     const legend = ["Your time", "Average time"];
+    const [courseData, setCourseData] = useState('');
+    let fetchedCourseData = [];
+    const [label, setLabel] = useState('');
+    const [userData, setUserData] = useState('');
+    const [avgData, setAvgData] = useState('');
+    const [avgTime, setAvgTime] = useState('0 h');
+    const [time, setTime] = useState('0 h');
+
+    // Get courseNames and IDs
+    for (let i=0; i<courseIDs.length; i++) {
+        axios({
+            method: "get",
+            url: "http://127.0.0.1:8000/api/courses/" + `${courseIDs[i]}` + '/',
+            headers: {
+            'Authorization':`token ` + token
+            }
+        })
+            .then(function (response) {
+            //handle success
+            //Setting the data
+            fetchedCourseData.push(response.data)
+            if (courseData.length < courseIDs.length) {
+                setCourseData(fetchedCourseData)
+            }
+            })
+            .catch(function (response) {
+            //handle error
+            console.log(response);
+            });
+    }
+    
+
+if (courseData.length >1) {
+    
+    for (let i=0; i<courseData.length; i++) {
+      // Get the students timetracking for each course 
+        if (selected === courseData[i].courseTitle) {
+            const formData = new FormData();
+            formData.append('courseID', courseData[i].id);
+
+            axios({
+            method: "post",
+            url: "http://127.0.0.1:8000/api/tracking/get_user_timetracked_per_week/",
+            data: formData,
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization':`token ` + token
+            }
+            })
+            .then(function (response) {
+                //handle success
+                if (`${userData}` != `${response.data.weekDurationArray}`) {
+                    setUserData(response.data.weekDurationArray)
+                }
+
+            })
+            .catch(function (response) {
+                //handle error
+                console.log(response);
+            });
+            // Get the average timetracked per course/week for all students, basically the same as above
+            axios({
+                method: "post",
+                url: "http://127.0.0.1:8000/api/tracking/get_total_timetracked_per_week/",
+                data: formData,
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization':`token ` + token
+                }
+                })
+                .then(function (response) {
+                    //handle success
+                    if (`${avgData}` !=`${response.data.weekDurationArray}` & `${label}` != `${response.data.weekNoArray}`) {
+                        setAvgData(response.data.weekDurationArray)
+                        setLabel(response.data.weekNoArray)
+                    }
+                })
+                .catch(function (response) {
+                    //handle error
+                    console.log(response);
+                });
+
+                axios({
+                    method: "post",
+                    url: "http://127.0.0.1:8000/api/tracking/get_course_avg_time/",
+                    data: formData,
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'Authorization':`token ` + token
+                    }
+                    })
+                    .then(function (response) {
+                        //handle success
+                        if (response.data.avg_time != avgTime ){
+                            setAvgTime(response.data.avg_time + ' h')
+                        }
+                    })
+                    .catch(function (response) {
+                        //handle error
+                        console.log(response);
+                    });
+                axios({
+                    method: "post",
+                    url: "http://127.0.0.1:8000/api/tracking/get_user_course_avg_time/",
+                    data: formData,
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'Authorization':`token ` + token
+                    }
+                    })
+                    .then(function (response) {
+                        //handle success
+
+                        if (response.data.avg_time != time) {
+                            setTime(response.data.avg_time + ' h')
+                        }
+                    })
+                    .catch(function (response) {
+                        //handle error
+                        console.log(response);
+                    });
+            
+        }
+      }
+}
+// The graphs data. Before picking a course ther will be no data and no labels
     const [dataGraph, setDataGraph] = useState({
-        labels: ["Mon", "Tue", "Wen", "Thu", "Fri", "Sat", "Sun"],
+        labels: [],
         datasets: [
             {
             data: [0, 0, 0, 0, 0, 0, 0],
-            color: (opacity = 1) => `transparent`, // optional
+            color: (opacity = 1) => `#AC7CE4`, // optional
             strokeWidth: 2 // optional
             },
             {
             data: [0, 0, 0, 0, 0, 0, 0],
-            color: (opacity = 1) => `transparent`, // optional
+            color: (opacity = 1) => `#5987CC`, // optional
             strokeWidth: 2 // optional
             }
         ],
         // legend: ["Your time", "Average time"] // optional
         });
-
+        // When we have fecthed the data from backend we set the new dataGraph with the labels we have fetched and the data for the studytime
+    if (label.length > 1 & userData.length > 1 & avgData.length > 1 & dataGraph.labels != label) {
+        setDataGraph({
+            labels: label,
+            datasets: [
+                {
+                data: userData,
+                color: (opacity = 1) => `#AC7CE4`, // optional
+                strokeWidth: 2 // optional
+                },
+                {
+                data: avgData,
+                color: (opacity = 1) => `#5987CC`, // optional
+                strokeWidth: 2 // optional
+                }
+            ],
+            legend: legend// optional
+            })
+    }
+    // Settings for the graph
     const screenWidth = Dimensions.get("window").width;
     const chartConfig = {
         backgroundGradientFrom: "#313131",
@@ -46,82 +192,14 @@ const CourseStatsScreen = ({route}) =>{
         useShadowColorFromDataset: false, // optional
     };
 
-    let courses = [];
-    const length = chosenCourses.length;
-    const [avgTime, setAvgTime] = useState('');
-    const [time, setTime] = useState('');
-
-
-    for (let i=0; i<length; i++) {
-
-        courses.push( 
-            { course: `${chosenCourses[i]}`, data: 
-                {
-                    labels: ["Mon", "Tue", "Wen", "Thu", "Fri", "Sat", "Sun"],
-                    datasets: [
-                        {
-                        data: [2, 1, 2, 3, 4, 0, 0],
-                        color: (opacity = 1) => `#AC7CE4`, // optional
-                        strokeWidth: 2 // optional
-                        },
-                        {
-                        data: [2, 2, 0, 2, 1, 1, 1],
-                        color: (opacity = 1) => `#5987CC`, // optional
-                        strokeWidth: 2 // optional
-                        }
-                    ],
-                    legend: legend // optional
-                }
-            },
-        );
-        if (selected === chosenCourses[i]) {
-            if (time != "...your time"){
-                setAvgTime("...avg time")
-                setTime("...your time")
-            }
-        }
-    }
-
-
 
     const onReadCourseEvaluationsPressed = () => {
         navigation.navigate('CourseEvaluations', {course: selected, courses: chosenCourses, token: token})
     }
 
     const onArrowPressed = () => {
-        navigation.navigate('ChooseReport', {token: token, courseIDs: courseIDs})
+        navigation.navigate('ChooseReport', {token: token, courseIDs: courseIDs, courses: chosenCourses})
       }
-
-    const onSelectListPressed = () => {
-        
-        for (let i=0; i<length; i++) {
-            if (selected === courses[i].course) {
-                setDataGraph(courses[i].data)
-            }
-        }
-
-    }
-
-   
-
-    if (selected === "Mekanik") {
-        if (time != "12h"){
-            setAvgTime("9h")
-            setTime('12h')
-        }
-    }
-    if (selected === "Miljöteknik") {
-        if (time != "15h"){
-            setAvgTime("12h")
-            setTime('15h')
-        }
-    }
-    if (selected === "Envariabelanalys") {
-        if (time != "8h"){
-            setAvgTime("10h")
-            setTime('8h')
-        }
-    }
 
     return (
         <View style={styles.container}>
@@ -140,20 +218,15 @@ const CourseStatsScreen = ({route}) =>{
                     inputStyles={styles.selectList}
                     boxStyles={styles.boxStyles}
                     setSelected={(val) => setSelected(val)}
-                    onSelect={onSelectListPressed}
+                    // onSelect={onSelectListPressed}
                     data={chosenCourses}
                     save="value"
                     search={false}
                     placeholder='Choose course to see statistics'
+                    dropdownStyles={styles.dropDown}
                     
                 />
 
-            </View>
-
-            <View style={styles.header}>
-                
-                    <Text style={styles.title}>{selected}</Text>
-                
             </View>
 
             <View>
@@ -187,13 +260,6 @@ const CourseStatsScreen = ({route}) =>{
                     <Text style={{fontWeight: 'bold'}}> {avgTime} </Text> 
                 </View> 
 
-                <View style={styles.evaluationButton}>
-                    <CustomButton
-                        text="Read course evaluations"
-                        onPress={onReadCourseEvaluationsPressed}
-                    />
-                </View>
-
             </View>
 
             <View style={styles.ButtonMenu}>
@@ -216,7 +282,7 @@ const styles = StyleSheet.create({
     selectListContainer: {
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: '3%',
+        // marginTop: '3%',
     },
     selectList: {
         fontWeight: 'bold',
@@ -231,19 +297,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'centers',
     },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#EFEFEF',
-        margin: 10,
-        marginBottom: 50,
-        justifyContent: 'flex-start',
-        overflowWrap: 'break-word',
-
-    },
-    dateButton: {
-        marginRight: '2%',
-    },
     timeContainer: {
         alignItems: 'center',
     },
@@ -251,7 +304,7 @@ const styles = StyleSheet.create({
         width: '90%',
         height: 0.1 * Dimensions.get('window').height,
         justifyContent: 'space-between',
-        paddingLeft: '5%',
+        paddingHorizontal: '5%',
         margin: 4,
         flexDirection: 'row',
         alignItems: 'center'
@@ -262,14 +315,13 @@ const styles = StyleSheet.create({
     averageTime: {
         backgroundColor: '#5987CC'
     },
-    evaluationButton: {
-        width: 0.6 * Dimensions.get('window').width,
-        justifyContent: 'center',
-    },
     backArrow: {
         width: '10%',
         padding: 10
     },
+    dropDown: {
+        width: 0.9 * Dimensions.get('window').width,
+    }
 })
 
 export default CourseStatsScreen;

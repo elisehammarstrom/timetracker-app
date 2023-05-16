@@ -8,7 +8,7 @@ import { TextInput } from 'react-native-paper';
 
 
 const CourseScreen = ({route}) => {
-  const {originalCourses} = route.params;
+  const {originalCourseIDs} = route.params;
   const {token} = route.params;
   const [courseIDs, setCourseIDs] = useState('');
   // const [courses, setCourses] = useState([]);
@@ -16,26 +16,6 @@ const CourseScreen = ({route}) => {
 
   const [testCourses, setTestCourses] = useState('');
   const [filteredData, setFilteredData] = useState([]);
-  // var day = new Date().getDate();
-  // var month = new Date().getMonth()+1;
-  // var year = new Date().getFullYear();
-
-  // const [date, setDate] = useState('');
-
-  // if (date.length < 1) {
-  // if (`${day}`.length === 1 & `${month}`.length === 1) {
-  //   setDate(year + '-0' + month + '-0' + day + 'T00:00:00Z')
-  // }
-  // else if (`${day}`.length === 1) {
-  //   setDate(year + '-' + month + '-0' + day + 'T00:00:00Z')
-  // }
-  // else if (`${month}`.length === 1) {
-  //   setDate(year + '-0' + month + '-' + day + 'T00:00:00Z')
-  // }
-  // else {
-  //   setDate(year + '-' + month + '-' + day + 'T00:00:00Z')
-
-  // }}  
 
 
 // Get all courses from database
@@ -66,7 +46,14 @@ const CourseScreen = ({route}) => {
     // }
   }
   const navigation = useNavigation();
+  
   const [courses, setCourses] = useState([]);
+  if (originalCourseIDs ) {
+    if (courses.length < 1){
+      setCourses(originalCourseIDs);
+    }
+  }
+
   const [courseCodes, setCourseCodes] = useState([]);
   const [search, setSearch] = useState('');
 
@@ -95,17 +82,10 @@ const CourseScreen = ({route}) => {
         });
 
     }
-    let sameCourses = [];
-    for (let i=0; i<testCourses.length; i++) {
-      for (let j=0; j<courseCodes.length; j++) {
-        if (testCourses[i].courseCode === courseCodes[j]) {
-          sameCourses.push(courseCodes[j])
-        }
-      }
-    }
+ 
     // Remove courses from database of chosen courses if not picked
     for (let i=0; i<testCourses.length; i++) {
-        if (courseCodes.includes(testCourses[i].courseCode)) {
+        if (courses.includes(testCourses[i].id)) {
           console.log("samma")
         } else {
           const formData = new FormData();
@@ -150,10 +130,10 @@ const CourseScreen = ({route}) => {
       })
       .then((res) => {
         let newCourses = [];
-        for (let j=0; j<courseIDs.length; j++)
+        for (let j=0; j<courses.length; j++)
   
           for (let i=0; i<res.data.length; i++) {
-            if (`${res.data[i].id}` === `${courseIDs[j]}`) {
+            if (`${res.data[i].id}` === `${courses[j]}`) {
               newCourses.push(`${res.data[i].courseTitle}`)
             }
         }
@@ -169,10 +149,10 @@ const CourseScreen = ({route}) => {
     .catch((error) => {
       console.error(error)
     })
-    console.log("courses= ", courses)
   
     navigation.navigate('Home', {token: token, newCourseIDs: courses});
   };
+  
     
 
   function pickCourse(selectedCourse, courseCode) {
@@ -233,7 +213,7 @@ const CourseScreen = ({route}) => {
   
     return (
         <View style={styles.container}>
-          
+            <Text style={styles.title}>Choose courses to track:</Text>
             <View style={styles.options}>
                 
                   <TextInput
@@ -305,7 +285,13 @@ const styles = StyleSheet.create({
   customButtonContainer: {
     paddingHorizontal: 50,
   },
-
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#EFEFEF',
+    margin: 10,
+    justifyContent: 'flex-start'
+},
 })
 
 export default CourseScreen;

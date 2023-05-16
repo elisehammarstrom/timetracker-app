@@ -15,7 +15,8 @@ const EvaluationScreen = ({route}) => {
 
     const navigation = useNavigation();
     const [questions, setQuestions] = useState('');
-    const [submit, setSubmit] = useState('');
+    const [submit, setSubmit] = useState(false);
+   
 
     // Create evaluation method
     const formData = new FormData();
@@ -38,22 +39,24 @@ const EvaluationScreen = ({route}) => {
             .catch(function (response) {
                 //handle error
                 console.log(response);
-            //   alert('You have already evaluated this course')
-            //     navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token, courseIDs: courseIDs})
+                alert('You have already evaluated this course')
+                navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token, courseIDs: courseIDs})
             });
     }
+    // if (submit === true) {
+    //     navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token, courseIDs: courseIDs})
+    // }
     
 
     const onSubmitPressed = () => {
         setSubmit(true)
-        if (navigate === true) {
-            navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token, courseIDs: courseIDs})
-        }
-        let navigate = true;
-
+        alert('Evaluation submitted')
+        setTimeout(() => {
+            navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token, courseIDs: courseIDs});
+        }, 1000);     
     }
     
-    if (`${questions}`.length > 1) {
+    if (`${questions}`.length > 1 ) {
 
         return (
             
@@ -78,10 +81,10 @@ const EvaluationScreen = ({route}) => {
                         submit={submit}
 
                         firstOption="Don't know"
-                        secondOption="Difficult"
-                        thirdOption="Somewhat difficult"
-                        fourthOption="Somewhat easy"
-                        fifthOption="Easy"
+                        secondOption="No"
+                        thirdOption="Somehwat"
+                        fourthOption="A bit"
+                        fifthOption="Yes"
                     />
 
                     <CustomRadioButton
@@ -106,10 +109,10 @@ const EvaluationScreen = ({route}) => {
                         submit={submit}
 
                         firstOption="Don't know"
-                        secondOption="Very stressful"
-                        thirdOption="Somewhat stressful"
-                        fourthOption="Little stressful"
-                        fifthOption="No stress"
+                        secondOption="No"
+                        thirdOption="Somewhat"
+                        fourthOption="A bit"
+                        fifthOption="Yes"
                     />
 
                     <CustomRadioButton
@@ -171,9 +174,10 @@ const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 50,
+        padding: 10,
         backgroundColor: '#313131',
-        height: '100%'
+        height: '100%',
+        maxWidth: '100%'
     },
     title: {
         fontSize: 24,

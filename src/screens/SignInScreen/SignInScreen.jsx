@@ -1,10 +1,10 @@
-import React, {useState} from 'react'
-import { View, Text, Image, StyleSheet, useWindowDimensions, TextInput } from 'react-native'
-import Logo from '../../../assets/icon.png'
+import React from 'react'
+import { View, Image, StyleSheet, useWindowDimensions } from 'react-native'
+import Logo from '../../../assets/logo.png'
 import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import axios from 'axios';
 
 const SignInScreen = () => {
@@ -40,38 +40,32 @@ const SignInScreen = () => {
             if (response.data.token) {
                 navigation.navigate('Home', {token: response.data.token})
             }
-            else {
-                alert('Wrong email or password')
-            }
 
         })
         .catch(error=> {
-            console.log("error from image :");
+            //console.log("error from image :");
+            alert('Wrong email or password')
+
    })
   
         
-    };
-    const onForgotPasswordPressed = () => {
-        navigation.navigate('ForgotPassword')
     };
 
     const onSignUpPress = () => {
         navigation.navigate('SignUp')
     };
 
-      
-
     return (
         <View style={styles.container}>
 
-            <View style={styles.languageContainer}>
+            {/* <View style={styles.languageContainer}>
                 <View style={styles.languageButton}>
                     <CustomButton
                         text="Language"
                         type="TERTIARY"
                     />
                 </View>
-            </View>
+            </View> */}
                 
             <View style={styles.root}>
 
@@ -101,11 +95,11 @@ const SignInScreen = () => {
                     onPress={handleSubmit(onSignInPressed)}
                 />
 
-                <CustomButton    
+                {/* <CustomButton    
                     text="Forgot password?" 
                     onPress={onForgotPasswordPressed}
                     type="TERTIARY"
-                />
+                /> */}
                 <CustomButton    
                     text="Don't have an account? Create one" 
                     onPress={onSignUpPress}
@@ -123,6 +117,7 @@ const styles = StyleSheet.create({
     container: {
         height: '100%',
         backgroundColor: '#313131',
+        justifyContent: 'center',
 
     },
     root: {

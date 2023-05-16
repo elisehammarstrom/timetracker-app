@@ -50,11 +50,13 @@ const EvaluateCourseScreen = ({route}) => {
                 <View>
                     {courses.map(option => (
                         <View style={styles.button} key={option}>
-                            <RadioButton
+                            <RadioButton.Android
                                 text={option}
                                 value={option}
                                 status={ checked === option ? 'checked' : 'unchecked'}
                                 onPress={() => setChecked(option)}
+                                 
+                               
                             />
                             <Text style={styles.text}>{option}</Text>
                         </View>   
@@ -101,7 +103,8 @@ const styles = StyleSheet.create({
     button: {
         padding: 10,
         flexDirection: 'row',
-        alignItems: 'center',        
+        alignItems: 'center', 
+             
     },
     text: {
         color: '#EFEFEF',

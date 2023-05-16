@@ -5,20 +5,21 @@ import CustomButton from '../../components/CustomButton/CustomButton';
 import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+import Noll from '../../../assets/transparent.png'
 import Ett from '../../../assets/ett.png'
 import Två from '../../../assets/2.png'
 import Tre from '../../../assets/3.png'
 import Fyra from '../../../assets/4.png'
 import Fem from '../../../assets/5.png'
-import { ConsoleSqlOutlined } from '@ant-design/icons';
 
 
 const YourReportsScreen = ({route}) => {
   const {token} = route.params;
   const {firstDate} = route.params;
   const {lastDate} = route.params;
+  const {courseIDs} = route.params;
 
-  const [initialLabels, setInitialLabels] = useState([]);
+  const [labels, setLabels] = useState([]);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const fetchedCourses = [];
@@ -26,49 +27,39 @@ const YourReportsScreen = ({route}) => {
   const [courses, setCourses] = useState([]);
   const [timeStudied, setTimeStudied] = useState([]); 
   const [state, setState] = useState('');
-
-
-  //Fetching the first dates for the graph 
-  axios.get('http://127.0.0.1:8000/api/tracking/get_dates_in_week/', {
-    headers: {
-      'Authorization': `token ` + token
-    }
-  })
-  .then((res) => {
-    if (initialLabels.length < 1 ) {
-      setInitialLabels(res.data.dates)
-      setStartDate(`${res.data.startDate}`);
-      setEndDate(`${res.data.endDate}`);
-    }
-  })
-  .catch((error) => {
-    console.error(error)
-  })
+  const fetchedStress = [];
+  const [stress, setStress]= useState('');
+ 
+  const smileys = [Noll, Ett, Två, Tre, Fyra, Fem];
 
   // If you have selected dates from the calendar the dates of the graph will change
   if (firstDate) {
+
     if (startDate !== firstDate.dateString) {
-      setStartDate(firstDate.dateString)
-      setEndDate(lastDate.dateString)
+      setStartDate(firstDate.dateString);
+      setEndDate(lastDate.dateString);
+      if (stress.length > 0){
+        setStress([]);
+      }
     }
   }
   if (firstDate) {
     let newLabels = [];
 
     for (let i=firstDate.day; i<=lastDate.day; i++) {
-      newLabels.push(i + '/' + firstDate.month) 
+      newLabels.push(i + '/' + firstDate.month);
     }
-    if (`${initialLabels}` != `${newLabels}`) {
-      setInitialLabels(newLabels)
+    if (`${labels}` != `${newLabels}`) {
+      setLabels(newLabels);
     }
   }
   
   //Fetching the users study time on each course for the dates you have picked
-  const formData = new FormData();
-  formData.append('startDate', startDate)
-  formData.append('endDate', endDate)
-  
-  if (startDate) {
+  if (endDate) {
+
+    const formData = new FormData();
+    formData.append('startDate', startDate)
+    formData.append('endDate', endDate)
     axios({
       method: "post",
       url: "http://127.0.0.1:8000/api/tracking/get_user_course_study_time/",
@@ -82,21 +73,58 @@ const YourReportsScreen = ({route}) => {
       for (let i=0; i<res.data.results.length; i++) {
         fetchedTimeStudied.push(res.data.results[i].timeStudied)
         fetchedCourses.push(res.data.results[i].Course)
-        console.log("fetchedTimeStudied= ", fetchedTimeStudied)
       }
       if (`${fetchedTimeStudied}` != `${timeStudied}` ){
-        console.log('if sats')
         setCourses(fetchedCourses);
         setTimeStudied(fetchedTimeStudied);
-        console.log('courses= ', courses)
       }  
     })
     .catch((error) => {
       console.error(error)
+
     })
+
+    for (let i=0; i<courseIDs.length; i++){
+      const formData = new FormData();
+      formData.append('startDate', startDate)
+      formData.append('endDate', endDate)
+      formData.append('courseID', courseIDs[i])
+
+
+      axios({
+        method: "post",
+        url: "http://127.0.0.1:8000/api/tracking/get_user_stress_period/",
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `token ` + token
+        }
+      })
+      .then((res) => {
+        if (stress.length === 0) {
+          fetchedStress.push(res.data)
+          if (stress != fetchedStress) {
+            setStress(fetchedStress)
+          }
+        }
+        
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+    }
+
   }
-
-
+  let stressNumbers = [];
+  if (stress.length === courseIDs.length) {
+    for (let i=0; i<courseIDs.length; i++){
+      for (let j=0; j<stress.length; j++) {
+        if (stress[j].courseObject.courseID === courseIDs[i]){
+          stressNumbers.push(Math.round(stress[j].avg_stress))
+        }
+      }
+    }
+  }
   
   // Specifics for the graph 
   const fakeTime = ["10h", "12h", "11h"]
@@ -137,25 +165,23 @@ const YourReportsScreen = ({route}) => {
     timeCourses.push({course: courses[i], time: timeStudied[i]})
   };
 
-  const [timeVar, setTimeVar] = useState([]);
+  const [timeVar, setTimeVar] = useState("");
+  const [data, setData] = useState('');
   // Set timeVar which can be varied to time if the user haven't picked to show only one course
   if (`${timeVar}` != `${time}` & state != 'pressed') {
       setTimeVar(time)    
   }
 
-/*   // Gets the sum of time studied of each course
-  let sum = [];
-  for (let i=0; i<timeCourses.length; i++) {
-    sum.push(Math.round(timeCourses[i].time.reduce((a, b) => a + b, 0)*10)/10);
-  } */
-  
-  const data = {
-    labels: initialLabels,
-    legend: [],
-    data: timeVar,
-    barColors: colors
-  };
 
+  if (timeVar.length > 0 & data.data != timeVar){
+    setData({
+      labels: labels,
+      legend: [],
+      data: timeVar,
+      barColors: colors
+    })
+  }
+ 
   // When you press a course you will only see data for that course
   const onCoursePressed = (course) => {
     for (let i=0; i<timeCourses.length; i++) {
@@ -184,8 +210,9 @@ const YourReportsScreen = ({route}) => {
   // Navigation to the calendar where you can pick other dates to display
   const navigation = useNavigation();
   const onDatePressed = () => {
-    navigation.navigate('Calendar', {courses: courses, token: token})
+    navigation.navigate('Calendar', {courses: courses, token: token, courseIDs: courseIDs})
   }
+  if (data.data != undefined ) {
 
     return (
         <View style={styles.container}>
@@ -200,7 +227,6 @@ const YourReportsScreen = ({route}) => {
                     <CustomButton
                         text="Select dates"
                         onPress={onDatePressed}
-
                     />
                 </View>
 
@@ -223,37 +249,34 @@ const YourReportsScreen = ({route}) => {
               <View style={styles.data}>
                 <Text style={styles.dataTextCourse}>Course</Text>
                 <Text style={styles.dataTextStress}>Stress</Text>
-                <Text style={styles.dataText}>Time</Text>
               </View>
+              <ScrollView style={styles.scrollView}>
+                <View style={styles.center}>
+        
              
               {courses.map((course,i) => (
                
                 <TouchableOpacity style={[styles.colors, {backgroundColor: colorsConst[i]}]} key={course} onPress={() => onCoursePressed(course)}>
 
-                  <View style={{flex: 4}}>
+                  <View style={{flex: 7}}>
                     <Text style={{fontWeight: 'bold'}}>{course}</Text>
                   </View>
 
-                  <View style={{flex: 1.5}}>
+                  <View style={{flex: 1}}>
                    <Image 
-                    source={Tre} 
+                    source={smileys[stressNumbers[i]]} 
                     style={[ {height: 100 * 0.3},{width: 100*0.3}, {marginBottom:10}]} 
                     resizeMode="contain"
                     />
                   </View>
 
-                  <View>
-                 {/*    <Text style={{fontWeight: 'bold'}}>{sum[i]} h</Text> */}
-                  </View>
-
                 </TouchableOpacity> 
    
               ))}
-             
-
-
-               
+              </View>
+               </ScrollView>
             </View>
+            
 
             <View>
               <ButtonMenu
@@ -264,6 +287,7 @@ const YourReportsScreen = ({route}) => {
             
         </View>
     )
+              }
 };
 
 const styles=StyleSheet.create({
@@ -308,19 +332,27 @@ const styles=StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#EFEFEF',
-    flex: 1.5
+    flex: 1
   },
   dataTextCourse: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#EFEFEF',
-    flex: 4
+    flex: 5
   },
   data: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '85%'
   },
+  scrollView: {
+    width: Dimensions.get('window').width,
+  },
+  center: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 40
+  }
 })
 
 export default YourReportsScreen;

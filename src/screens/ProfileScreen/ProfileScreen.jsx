@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity} from 'react-native';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
-import CloseIcon from '../../../assets/close.png';
+/* import CloseIcon from '../../../assets/close.png'; */
+import ArrowBack from '../../../assets/arrowBack.png';
 import SettingIcon from '../../../assets/settings.png';
 import axios from 'axios';
 import SignOutIcon from '../../../assets/signout.png'
@@ -11,8 +12,8 @@ import SignOutIcon from '../../../assets/signout.png'
 const ProfileScreen = ({route}) => {
   const {token} = route.params;
   const {courses} = route.params;
+  const {courseIDs} = route.params;
   const navigation = useNavigation();
-  // const profile = [];
   const [profile, setProfile] = useState([]);
 
   axios({
@@ -23,7 +24,7 @@ const ProfileScreen = ({route}) => {
     }
   })
   .then((res) => {
-
+    console.log(res.data)
     if (`${profile}` != `${res.data.userObject}`) {
       setProfile(res.data.userObject)
     }
@@ -38,11 +39,11 @@ const ProfileScreen = ({route}) => {
   }
     
   const onEditPressed = () => {
-    navigation.navigate('EditProfile', {token: token});
+    navigation.navigate('EditProfile', {token: token, courseIDs: courseIDs});
   };
 
   const onEditCoursePressed = () => {
-    navigation.navigate('StartCourses', {token: token, originalCourses: courses});  
+    navigation.navigate('StartCourses', {token: token, originalCourseIDs: courseIDs});  
   };
           //make separate words bold
   const B = (props) => <Text style={{fontWeight: 'bold'}}>{props.children}</Text>
@@ -59,18 +60,17 @@ const ProfileScreen = ({route}) => {
     <View style={styles.topContainer}>
       <View style={styles.closeContainer}>
   
-      <TouchableOpacity activeOpacity={0.5} onPress={onSignOutPressed} >
+      <TouchableOpacity activeOpacity={0.5}  onPress={onClosedPress} >
         <Image 
-              source={SignOutIcon} 
+              source={ArrowBack} 
               style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
               resizeMode="contain"
           />
       </TouchableOpacity>
-
-      <TouchableOpacity activeOpacity={0.5}  onPress={onClosedPress} >
+      <TouchableOpacity style={styles.signOut} activeOpacity={0.5} onPress={onSignOutPressed} >
         <Image 
-              source={CloseIcon} 
-              style={[ {height: 100 * 0.3},{width: 100*0.3}]} 
+              source={SignOutIcon} 
+              style={[ {height: 120 * 0.3},{width: 120*0.3}]} 
               resizeMode="contain"
           />
       </TouchableOpacity>
@@ -153,11 +153,16 @@ const ProfileScreen = ({route}) => {
         justifyContent: 'space-between',
         flexDirection: 'row',
         padding: 10,
+        paddingHorizontal: 20
+
       },
       settingIcon: {
         color: 'white',
         fontSize: 60,
         paddingBottom: 10,
-      }
+      },
+  
+      
       });
+
 export default ProfileScreen
