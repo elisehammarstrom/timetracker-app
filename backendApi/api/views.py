@@ -1405,7 +1405,7 @@ class YearGradeViewset(viewsets.ModelViewSet):
     serializer_class = YearGradeSerializer
     authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAuthenticated, )
-    @action(detail=False, methods=['GET'])
+    @action(detail=False, methods=['POST'])
     def get_yearGrades(self, request, **extra_fields):
         if 'programmeName' not in request.data: 
             response = {"message": "You must provide a programmeName as foreinkey to get yearGrades"}
