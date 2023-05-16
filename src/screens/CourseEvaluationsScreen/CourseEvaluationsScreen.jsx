@@ -36,7 +36,10 @@ const CourseEvaluationsScreen = ({route}) => {
             })
                 .then(function (response) {
                 //handle success
-                if (`${data}` !=`${response.data.result}`) {
+                console.log("data= ", data)
+                console.log("responase.dta.raesltk= ", response.data.result)
+                if (`${data.courseID}` !=`${response.data.result.courseID}`) {
+                    console.log("HEJ")
                     setData(response.data.result)
                 }
                 })
@@ -47,23 +50,42 @@ const CourseEvaluationsScreen = ({route}) => {
 
         }
     }
-    console.log("data= ", data)
-
-    let starNumbers = [];
-    let sum = 0;
-    let avgRating = 0;
-    if (Object.keys(data).length > 1) {
-        starNumbers.push(data.questionAnswerNumbers["What is your general opinion of the course?"])
-        for (let i=0;i<starNumbers[0].length; i++) {
-            sum = sum + starNumbers[0][i]
-        }
-        avgRating = sum/Object.keys(data).length
-        
-    }
-   
+  
     const onArrowPressed = () => {
         navigation.navigate('Courses', {courses: courses, token: token, courseIDs: courseIDs})
       }
+
+    let starNumbers = [];
+    let sum = 0;
+    let numberOfRatings = 0;
+    let avgRating = 0;
+    let questionPercentages = [];
+    if (Object.keys(data).length > 1) {
+        starNumbers.push(data.questionAnswerNumbers["What is your general opinion of the course?"])
+        console.log("starnumberslengt= ", Object.keys(starNumbers[0]).length)
+        for (let i=1;i<=Object.keys(starNumbers[0]).length; i++) {
+            console.log("starNumbers= ", starNumbers)
+            sum = sum + i*starNumbers[0][i]
+            numberOfRatings = numberOfRatings + starNumbers[0][i]
+        }
+        console.log("sum= ", sum)
+        console.log("numberofRatings= ", numberOfRatings)
+
+        avgRating = sum/numberOfRatings;
+
+        // console.log("avgRating =", avgRating)
+        questionPercentages.push({percentage: Math.round(data.questionAnswerPercentages["Does this course have a reasonable workload?"][4] + data.questionAnswerPercentages["Does this course have a reasonable workload?"][5]) , text: " felt the course had a reasonable workload."});
+        questionPercentages.push({percentage: Math.round(data.questionAnswerPercentages["If you’ve been to any lectures, were they worth it?"][4] + data.questionAnswerPercentages["If you’ve been to any lectures, were they worth it?"][5]) , text: " felt the lectures were worth attending."});
+        questionPercentages.push({percentage: Math.round(data.questionAnswerPercentages["If you’ve been to any lesson, were they worth it?"][4] + data.questionAnswerPercentages["If you’ve been to any lesson, were they worth it?"][5]) , text: " felt the lessons were worth attending."});
+        questionPercentages.push({percentage: Math.round(data.questionAnswerPercentages["If you’ve done any assignments, were they worth it?"][4] + data.questionAnswerPercentages["If you’ve done any assignments, were they worth it?"][5]) , text: " felt the assignments were worth doing."});
+        questionPercentages.push({percentage: Math.round(data.questionAnswerPercentages["Was this course difficult?"][4] + data.questionAnswerPercentages["Was this course difficult?"][5]) , text: " felt the course was not too difficult."});
+        questionPercentages.push({percentage: Math.round(data.questionAnswerPercentages["Was this course stressful in general?"][4] + data.questionAnswerPercentages["Was this course stressful in general?"][5]) , text: " felt the course was not too stressful."});
+
+        console.log(questionPercentages)
+        
+    }
+
+ 
 
     return (
         <View style={styles.container}>
@@ -110,6 +132,11 @@ const CourseEvaluationsScreen = ({route}) => {
                             tintColor='#313131'
                         />
                     </View>
+                    {questionPercentages.map(option => (
+                        <Text key={option.text} style={styles.results}>
+                            {option.percentage} % {option.text}
+                        </Text>
+                    ))}
                     
 
 
@@ -146,23 +173,6 @@ const styles = StyleSheet.create({
         width: 0.75 * Dimensions.get('window').width,
         backgroundColor: '#0376C2'
     },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#EFEFEF',
-        padding: 20,
-        marginBottom: 20,
-        justifyContent: 'flex-start'
-    },
-    breadtext: {
-        fontSize: 20,
-        color: "#EFEFEF",
-        padding: 20
-    },
     backArrow: {
         width: '10%',
         padding: 10,
@@ -187,13 +197,19 @@ const styles = StyleSheet.create({
     },
     stats: {
         // marginTop: 40,
-        alignItems: 'center'
+        alignItems: 'center',
     },
     star: {
         backgroundColor: '#313131',
         // width: '50%',
         padding: 5,
         borderRadius: 5,
+    },
+    results: {
+        // fontWeight: 'bold',
+        color: '#EFEFEF',
+        fontSize: 15,
+
     }
  
 
