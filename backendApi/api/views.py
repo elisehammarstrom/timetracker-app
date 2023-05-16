@@ -345,6 +345,40 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             return Response(data=response, status=status.HTTP_200_OK)
         
     @action(detail=False, methods=['POST'])
+    def get_user_day_study_time(self, request, **extra_fields):
+        user = request.user
+        this_user = User.objects.get(id=user.id)
+        today = datetime.today()
+
+        user_courses_qs = User.objects.get(id=request.user.pk).courses.all()
+
+        resultArray = []
+        for course in user_courses_qs:
+            queryresult = self.queryset.filter(user_id=this_user.id, date=today, course=course)
+            if len(queryresult) > 0:
+                duration = str(queryresult[0].duration)
+            else:
+                zero_time =  timedelta(hours=0, minutes=0, seconds=0)
+                zero_time_string = "0" + str(zero_time)
+                duration = zero_time_string
+            resultArray.append({
+                "courseID" : course.id,
+                "coursecourseTitle": course.courseTitle,
+               "duration": duration
+            })
+
+        response = {
+                            "message": "Time studied today",  
+                            "userID": this_user.id,
+                            "user" : this_user.email,
+                            "results" : resultArray
+                            }
+                
+        return Response(data=response, status=status.HTTP_200_OK)
+
+
+        
+    @action(detail=False, methods=['POST'])
     def get_user_course_study_time(self, request, **extra_fields):
         user = request.user
         this_user = User.objects.get(id=user.id)
@@ -1283,7 +1317,7 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
         for qa in evaluation_qa_result: 
             #spara alla questions i en array
             questionAnswerNumbers.update({qa.question.text: {
-                    0:0,
+                    #0:0,
                     1:0,
                     2:0,
                     3:0,
@@ -1292,7 +1326,7 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
                 }
             })
             questionAnswerPercentages.update({qa.question.text: {
-                    0:0.0,
+                    #0:0.0,
                     1:0.0,
                     2:0.0,
                     3:0.0,
@@ -1310,15 +1344,16 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
             for qa in evaluation_qa_result: 
                 #få svaret för varje fråga
                 answerresult = Answer.objects.get(question=qa.question)
-                #if answerresult.number != 0: #doesnt take account unanswered evaluations
-                   # questionAnswerNumbers[qa.question.text][answerresult.number] += 1
-                questionAnswerNumbers[qa.question.text][answerresult.number] += 1
+                if answerresult.number != 0: #doesnt take account unanswered evaluations
+                   questionAnswerNumbers[qa.question.text][answerresult.number] += 1
+                #questionAnswerNumbers[qa.question.text][answerresult.number] += 1
         
         total_answers = 0
         for question in questionAnswerNumbers:
             total_answers = sum(questionAnswerNumbers[question].values())
             for key, value in questionAnswerNumbers[question].items():
-                questionAnswerPercentages[question][key] = 100 * round(float(value) / float(total_answers), 3)
+                if total_answers != 0:
+                    questionAnswerPercentages[question][key] = 100 * round(float(value) / float(total_answers), 3)
 
         response = {"message": "Success. Statistics retrieved.",
                     "total_answers": total_answers,
