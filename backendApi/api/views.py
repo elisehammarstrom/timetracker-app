@@ -1,7 +1,7 @@
 #from msilib import sequence
 from django.shortcuts import render
-from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer, CourseCalendarSerializer, UserFreetimeSerializer, CourseScheduleSerializer, YearGradeSerializer, CourseEvaluationSerializer, QuestionAnswerSerializer, QuestionSerializer
-from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking, CourseCalendar, UserFreetime, ExcelFile, CourseSchedule, YearGrade, CourseEvaluation, Question, Answer, QuestionAnswer
+from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer, CourseCalendarSerializer, UserFreetimeSerializer, CourseScheduleSerializer, YearGradeSerializer, CourseEvaluationSerializer, QuestionAnswerSerializer, QuestionSerializer, MyAssignmentsSerializer, UserScheduleSerializer
+from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking, CourseCalendar, UserFreetime, ExcelFile, CourseSchedule, YearGrade, CourseEvaluation, Question, Answer, QuestionAnswer, MyAssignments, UserSchedule
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -31,9 +31,15 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from datetime import time
+from rest_framework.decorators import api_view, permission_classes as view_permission_classes, authentication_classes as view_authentication_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
+import numpy as np
+
 
 #fakkar detta med något?
 from django.contrib.auth import get_user_model
+
 
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -63,12 +69,15 @@ class CourseViewset(viewsets.ModelViewSet):
 class ProgrammeViewset(viewsets.ModelViewSet):
     queryset = Programme.objects.all()
     serializer_class = ProgrammeSerializer
+    permission_classes =[AllowAny,]
     authentication_classes = (TokenAuthentication, )
-    #permission_classes =(IsAuthenticated, )
-    permission_classes =[IsAuthenticated, ]
 
     @action(detail=False, methods=['POST'])
     def add_course(self, request, *args, **kwargs):
+        user = request.user
+        if not user.is_authenticated:
+            response = {"message": "You must be authenticated"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
         if 'pID' in request.data:
             pk = self.kwargs.get('pk')
             pID = request.data['pID']
@@ -86,6 +95,11 @@ class ProgrammeViewset(viewsets.ModelViewSet):
         
     @action(detail=False, methods=['GET'])
     def get_programme_data_from_id(self, request, *args, **kwargs):
+        user = request.user
+        if not user.is_authenticated:
+            response = {"message": "You must be authenticated"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        
         if 'id' in request.data:
             id = request.data.get('id')
             programmeObject = Programme.objects.get(id=id)
@@ -466,7 +480,11 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                     "weekDurationArray" : weekDurationArray
                     }
             return Response(data=response, status=status.HTTP_200_OK)
-        
+    
+    def normalize_dates():
+        print("in method")
+
+
     @action(detail=False, methods=['POST'])
     def get_total_timetracked_per_week(self, request, **extra_fields):
         courseID = request.POST.get('courseID')
@@ -607,7 +625,6 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                     }
                 return Response(data=response, status=status.HTTP_200_OK)
             
-            
             durations = queryresult.values_list('duration', flat=True)
             zero_time =  timedelta(hours=0, minutes=0, seconds=0)
             total_week_time = zero_time 
@@ -719,10 +736,7 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
         else:
             #get for the specific user
             queryresult = self.queryset.filter(user = user, course = course, date__range=[startDate, endDate] )
-            
         return queryresult
-
-
                 
     @action(detail=False, methods=['POST'])
     def get_user_stress_period(self, request, **extra_fields):
@@ -818,9 +832,6 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                             }     
                     }
             return Response(data=response, status=status.HTTP_200_OK)
-        
-
-
 
 class UserViewset(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -887,7 +898,30 @@ class UserViewset(viewsets.ModelViewSet):
             return Response({'status': 'ProgrammeHead added'})
         else:
            return Response({'status': 'Role does not exist'})
-    
+        
+    @action(detail=False, methods=['POST'])
+    def update_yearGrade(self, request, **extra_fields):
+        if 'yearGradeID' not in request.data:
+            response = {"message": "You must provide a yearGradeID as foreinkey to update yearGrade"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            userObject = Student.objects.get(id=request.user.pk)
+            yearGrade = YearGrade.objects.get(id=request.data.get('yearGradeID'))
+            userObject.yearGrade = yearGrade
+            Student.objects.filter(id=request.user.pk).update(yearGrade=yearGrade)
+            response = {
+                    "message": "Success. User yearGrade updated.", 
+                    "userObject": {
+                        "user.id": userObject.id,
+                        "user.email": userObject.email,
+                        "user.yeargrade": userObject.yearGrade.yearGradeClass,
+                        "added yeargrade": yearGrade.yearGradeClass
+                    }
+                } 
+            return Response(data=response, status=status.HTTP_200_OK)
+
+
+
     @action(detail=False, methods=['POST'])
     def change_programme(self, request, **extra_fields):
         user = request.user
@@ -1025,9 +1059,10 @@ class UserViewset(viewsets.ModelViewSet):
                 "userObject": {
                     "fullName" : userInstance.first_name + " " + userInstance.last_name,
                     "email": userInstance.email,
-                    "programmeName": userInstance.programme.programmeName,
-                    "programmeShortName": userInstance.programme.shortProgrammeName,
-                    "university" : userInstance.university
+                   "programmeName": userInstance.programme.programmeName,
+                   "programmeShortName": userInstance.programme.shortProgrammeName,
+                   "university" : userInstance.university,
+                   "yearGrade": userInstance.yearGrade
 
                 }
             } 
@@ -1278,6 +1313,18 @@ class CourseCalendarViewset(viewsets.ModelViewSet):
     serializer_class = CourseCalendarSerializer
     authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAuthenticated, )
+    # df=pd.read_excel("C:\Users\PC\OneDrive\Dokument\testladdaupp.xlsx",skiprows=5) #, usecols=["Slutdatum"])
+    # dbframe= df
+    # for dbframe in dbframe.itertuples():
+    #     obj = CourseCalendar.objects.create(courseEvent = dbframe.Moment, 
+    #                                                 eventStartTime =datetime.strptime(startDateTime, '%Y-%m-%d %H:%M:%S'), 
+    #                                                 eventEndTime = datetime.strptime(endtDateTime, '%Y-%m-%d %H:%M:%S'),
+    #                                                 course = course, yearGrade=yearGrade
+                                                    
+    #                                                 )                         
+    #     obj.save()
+
+
 
 
 class UserFreetimeViewset(viewsets.ModelViewSet):
@@ -1340,7 +1387,19 @@ class YearGradeViewset(viewsets.ModelViewSet):
     queryset = YearGrade.objects.all()
     serializer_class = YearGradeSerializer
     authentication_classes = (TokenAuthentication, )
-    permission_classes = (IsAuthenticated, )        
+    permission_classes = (IsAuthenticated, )
+    @action(detail=False, methods=['GET'])
+    def get_yearGrades(self, request, **extra_fields):
+        if 'programmeID' not in request.data: 
+            response = {"message": "You must provide a programmeID as foreinkey to get yearGrades"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            yearGradeNameList= list(YearGrade.objects.filter(programme_id=request.data.get("programmeID")).values_list('yearGradeClass', flat=True))
+            response ={"message": "Success. YearGrades retrieved.",
+                       "yearGrades": yearGradeNameList}
+            return Response(data=response, status=status.HTTP_200_OK)
+
+
 
 class CourseScheduleViewset(viewsets.ModelViewSet):
     queryset = CourseSchedule.objects.all()
@@ -1391,6 +1450,123 @@ class CourseScheduleViewset(viewsets.ModelViewSet):
             return Response(data=response, status=status.HTTP_200_OK)
 
                     
+class MyAssignmentsViewset(viewsets.ModelViewSet):
+    queryset = MyAssignments.objects.all()
+    serializer_class = MyAssignmentsSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
+    @action(detail=False, methods=['POST'])
+    def add_assignment(self, request, **extra_fields):
+        if 'assignmentID' not in request.data: 
+            response = {"message": "You must provide a assignmentID as foreinkey to add assignment"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            userObject = User.objects.get(id=request.user.pk)
+            print(userObject.email)
+            newAssignment= MyAssignments.objects.create(student=userObject, assignment=CourseCalendar.objects.get(id=request.data.get('assignmentID')),
+                                                        donewith=False, hoursTracked='00:00:00')
+            newAssignment.save()
+            response ={ "message": "Success. Assignment added to user.", 
+                        "userObject": {
+                            "user.id": userObject.id,
+                            "user.email": userObject.email,
+                        },
+                        "assignmentObject":{
+                            "assignment.id": newAssignment.id,
+                            "assigment added": newAssignment.assignment.eventName
+                        } }
+            return Response(data=response, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=['GET'])
+    def get_assignment(self, request, **extra_fields):
+        if 'assignmentID' not in request.data: 
+            response = {"message": "You must provide an assignmentID"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            assignment = MyAssignments.objects.get(assignment=request.data.get('assignmentID'))
+            assignmentName = CourseCalendar.objects.get(id=request.data.get('assignmentID')).eventName
+            response = {
+                    "message": "Success. Assignments retrieved.", 
+                    "userObject":{
+                    },
+                    "assignmentData": {
+                        "assignmentName": assignmentName,
+                        "user_assignment_id": assignment.id, 
+                        "doneWith": assignment.donewith,
+                        "hoursTracked": assignment.hoursTracked,
+                    }
+                } 
+            return Response(data=response, status=status.HTTP_200_OK)
+         
+    @action(detail=False, methods=['GET'])
+    def get_assignments_course(self, request, **extra_fields):
+        if 'courseID' not in request.data: 
+            response = {"message": "You must provide an courseID"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            userInstance = Student.objects.get(id=request.user.pk)
+            myAssignments=[]
+            gradAssignments = list(CourseCalendar.objects.filter(course_id=request.data.get('courseID'), grade = userInstance.yearGrade.yearGradeClass).values_list('id', flat=True))
+            myAssignments.extend(gradAssignments)
+            otherAssignments = list(CourseCalendar.objects.filter(course_id=request.data.get('courseID'),grade__isnull=True).values_list('id', flat=True))
+            myAssignments.extend(otherAssignments)
+            assignmentData =[]
+
+
+            for assignment in myAssignments:
+                newAssignment=CourseCalendar.objects.get(id=assignment)
+                newObj ={"assignmentName": newAssignment.eventName,
+                         "assignment.id": assignment }
+                assignmentData.append(newObj)
+            response = {
+                    "message": "Success. Assignments retrieved.", 
+                    "assignmentData": assignmentData
+                } 
+            return Response(data=response, status=status.HTTP_200_OK)
+
+class UserScheduleViewset(viewsets.ModelViewSet):
+    queryset = UserSchedule.objects.all()
+    serializer_class = UserScheduleSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
+
+    @action(detail=False, methods=['POST'])
+    def create_user_schedule_course(self, request, **extra_fields):
+        if 'courseID' not in request.data: 
+            response = {"message": "You must provide a courseID as foreinkey to create schedule"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        
+        else:
+            course=Course.objects.get(request.data.get('courseID'))
+            userObject = Student.objects.get(id=request.user.pk)
+            yearGrade = YearGrade.objects.get(id=userObject.yearGrade)
+            print(userObject.email)
+            courseScheduleList = list(CourseSchedule.objects.filter(course=course, yearGrade=yearGrade).values_list('id', flat=True))
+            eventNameList=[]
+            for courseid in courseScheduleList():
+                courseSchedule=CourseSchedule.objects.get(id=courseid)
+                obj = UserSchedule.objects.create(user=userObject, event=courseSchedule.courseEvent, startDateTime=courseSchedule.eventStartTime,
+                                                  endDateTime=courseSchedule.eventEndTime, course=course)
+                                                                      
+                obj.save()
+                eventNameList.append(obj.event)
+            
+            response ={"message": "Success. Schedule created.",
+                       "userObject": {
+                            "user.id": userObject.id,
+                            "user.email": userObject.email,
+                        },
+                         "scheduleObjects": {
+                            "events added list": eventNameList,
+                            "course": course.courseTitle,
+                        },}
+            return Response(data=response, status=status.HTTP_200_OK)
+
+
+            
+
 
 
     

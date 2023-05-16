@@ -109,7 +109,7 @@ class YearGrade(models.Model):
     programme= models.ForeignKey(Programme,  on_delete=models.CASCADE, blank=True)
 
     def __str__(self):
-        yearGradeInfoString =  self.yearGradeName
+        yearGradeInfoString =  self.yearGradeClass
         return yearGradeInfoString 
 
 class User(AbstractUser):
@@ -196,53 +196,30 @@ class CourseCalendar(models.Model):
         SEMINAR = "SEMINAR", "Seminar"
         LABB = "LABB", "Labb"
         ASSIGNMENT = "ASSIGNMENT", "Assignment"
-        LECTURE ="LECTURE", "Lecture"
-        LESSON = "LESSON", "Lesson"
         PRESENTATION = "PRESENTATION", "Presentation"
         EXAMINATION = "EXAMINATION", "Examination"
+        PROJECT = "PROJECT", "Project"
+        PAPER = "PAPER", "Paper"
     
     course = models.ForeignKey (Course, on_delete=models.CASCADE, null=True)
     eventType = models.CharField(max_length=20, choices=EventType.choices)
     eventName = models.CharField(max_length=50, null = True)
-    startDateTime = models.DateTimeField()
-    endDateTime = models.DateTimeField()
+    startDateTime = models.DateTimeField(blank=True, null=True)
     expectedHours= models.IntegerField(blank=True, null=True)
-    dueTime = models.DateTimeField(blank=True, null=True)
+    dueTime = models.DateTimeField()
     mandatory= models.BooleanField(null=True)
+    avgHoursDone = models.IntegerField(blank=True, null=True)
+    grade = models.CharField(max_length=10, null=True, blank=True)
+    eventNumber = models.IntegerField(blank=True, null=True)
 
-
-    def save(self, *args, **kwargs):
-        print("self.eventType: ", self.eventType)
-        if self.eventType == "SEMINAR":
-            #or "Seminar" or "LABB" or "Labb" or "PRESENTATION" or "Presentation":
-            print("self.eventType: ", self.eventType)
-            self.dueTime = self.startDateTime
-            return super().save(*args, **kwargs)
-        elif self.eventType == "LABB":
-            #or "Seminar" or "LABB" or "Labb" or "PRESENTATION" or "Presentation":
-            print("self.eventType: ", self.eventType)
-            self.dueTime = self.startDateTime
-            return super().save(*args, **kwargs)
-        elif self.eventType == "PRESENTATION":
-            print("self.eventType: ", self.eventType)
-            self.dueTime = self.startDateTime
-            return super().save(*args, **kwargs)
-        elif self.eventType == "EXAMINATION":
-            print("self.eventType: ", self.eventType)
-            self.dueTime = self.startDateTime
-            return super().save(*args, **kwargs)
-        
-        elif self.eventType == "ASSIGNMENT":
-            print("hej")
-            self.dueTime = self.endDateTime
-            return super().save(*args, **kwargs)  
              
     
     def __str__(self):
-        return self
+        infoString = self.eventName 
+        return infoString
 
 
-class SeminarManager(BaseUserManager):
+class SeminarManager(models.Manager):
     def get_queryset(self, *args, **kwargs):
         results = super().get_queryset(*args, **kwargs)
         return results.filter(eventType=CourseCalendar.EventType.SEMINAR)
@@ -259,7 +236,7 @@ class Seminar(CourseCalendar):
         return seminarInfoString
 
 
-class LabbManager(BaseUserManager):
+class LabbManager(models.Manager):
     def get_queryset(self, *args, **kwargs):
         results = super().get_queryset(*args, **kwargs)
         return results.filter(eventType=CourseCalendar.EventType.LABB)
@@ -278,7 +255,7 @@ class Labb(CourseCalendar):
         return labbInfoString
 
 
-class AssignmentManager(BaseUserManager):
+class AssignmentManager(models.Manager):
     def get_queryset(self, *args, **kwargs):
         results = super().get_queryset(*args, **kwargs)
         return results.filter(eventType=CourseCalendar.EventType.ASSIGNMENT)
@@ -292,41 +269,9 @@ class Assignment(CourseCalendar):
     
     def __str__(self):
         assignmentInfoString =  self.eventType + ", DueTime: " + self.dueTime
-        return assignmentInfoString
+        return assignmentInfoString 
 
-class LessonManager(BaseUserManager):
-    def get_queryset(self, *args, **kwargs):
-        results = super().get_queryset(*args, **kwargs)
-        return results.filter(eventType=CourseCalendar.EventType.LESSON)
-
-
-class Lesson(CourseCalendar):
-    class Meta:
-        proxy = True
-
-    lesson = LessonManager()
-    
-    def __str__(self):
-        lessonInfoString =  self.eventType + ", DueTime: " + self.dueTime
-        return lessonInfoString
-
-class LectureManager(BaseUserManager):
-    def get_queryset(self, *args, **kwargs):
-        results = super().get_queryset(*args, **kwargs)
-        return results.filter(eventType=CourseCalendar.EventType.LECTURE)
-
-
-class Lecture(CourseCalendar):
-    class Meta:
-        proxy = True
-
-    lecture = LectureManager()
-    
-    def __str__(self):
-        lectureInfoString =  self.eventType + ", DueTime: " + self.dueTime
-        return lectureInfoString
-
-class PresentationManager(BaseUserManager):
+class PresentationManager(models.Manager):
     def get_queryset(self, *args, **kwargs):
         results = super().get_queryset(*args, **kwargs)
         return results.filter(eventType=CourseCalendar.EventType.PRESENTATION)
@@ -342,10 +287,10 @@ class Presentation(CourseCalendar):
         presentationInfoString =  self.eventType + ", DueTime: " + self.dueTime
         return presentationInfoString
 
-class ExaminationManager(BaseUserManager):
+class ExaminationManager(models.Manager):
     def get_queryset(self, *args, **kwargs):
         results = super().get_queryset(*args, **kwargs)
-        return results.filter(eventType=CourseCalendar.EventType.PRESENTATION)
+        return results.filter(eventType=CourseCalendar.EventType.EXAMINATION)
 
 
 class Examination(CourseCalendar):
@@ -358,6 +303,38 @@ class Examination(CourseCalendar):
         examinationInfoString =  self.eventType + ", DueTime: " + self.dueTime
         return examinationInfoString
 
+class ProjectManager(models.Manager):
+    def get_queryset(self, *args, **kwargs):
+        results = super().get_queryset(*args, **kwargs)
+        return results.filter(eventType=CourseCalendar.EventType.PROJECT)
+
+
+class Project(CourseCalendar):
+    class Meta:
+        proxy = True
+
+    project = ProjectManager()
+    
+    def __str__(self):
+        projectInfoString =  self.eventType + ", DueTime: " + self.dueTime
+        return projectInfoString
+
+class PaperManager(models.Manager):
+    def get_queryset(self, *args, **kwargs):
+        results = super().get_queryset(*args, **kwargs)
+        return results.filter(eventType=CourseCalendar.EventType.PAPER)
+
+
+class Paper(CourseCalendar):
+    class Meta:
+        proxy = True
+
+    paper = PaperManager()
+    
+    def __str__(self):
+        paperInfoString =  self.eventType + ", DueTime: " + self.dueTime
+        return paperInfoString
+
 class UserFreetime (models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     eventType = "Freetime"
@@ -369,16 +346,7 @@ class UserFreetime (models.Model):
         return userFreetime
 
 
-# class UserSchedule(models.Model):
-#    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-#    event = models.CharField(max_length=30 )
-#    startDateTime = models.DateTimeField()
-#    endDateTime = models.DateTimeField()
-   
-   
-#    def __str__(self):
-#         userScheduleInfoString = self.user + "'s schedule"
-#         return userScheduleInfoString
+
 class ExcelFile (models.Model):
    filename = models.CharField(max_length=50)
    file = models.FileField()
@@ -389,10 +357,22 @@ class CourseSchedule(models.Model):
     eventEndTime = models.DateTimeField()
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     yearGrade = models.ForeignKey(YearGrade, on_delete=models.CASCADE, null=True)
+
+class UserSchedule(models.Model):
+   user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+   event = models.CharField(max_length=50 )
+   startDateTime = models.DateTimeField(null=True)
+   endDateTime = models.DateTimeField(null=True)
+   course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+   
+   
+   def __str__(self):
+        userScheduleInfoString = self.user + "'s schedule"
+        return userScheduleInfoString
     
 
-# class MyAssignments(models.Model):
-#     student = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True) to=settings.AUTH_USER_MODEL,
-#     assignment = models.ForeignKey(CourseCalendar, on_delete=models.CASCADE, null=True)
-#     donewith = models.BooleanField(null=True)
-#     hoursTracked = models.TimeField(blank=True, null=True)
+class MyAssignments(models.Model):
+    student = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+    assignment = models.ForeignKey(CourseCalendar, on_delete=models.CASCADE, null=True)
+    donewith = models.BooleanField(null=True)
+    hoursTracked = models.TimeField(blank=True, null=True)
