@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import ArrowBack from '../../../assets/arrowBack.png'
 import CalendarBlock from '../../components/CalendarBlock';
 import ClickableWeekCalendar from '../../components/ClickableWeekCalendar';
+import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
 
 const CalendarOpScreen = ({ route }) => {
 
@@ -75,6 +76,13 @@ const CalendarOpScreen = ({ route }) => {
         </ScrollView>
 
       </View>
+
+      <View>
+              <ButtonMenu
+                screen="yourReports"
+                token={token}
+              />
+            </View>
 
 
     </View>
