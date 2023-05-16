@@ -868,8 +868,7 @@ class UserViewset(viewsets.ModelViewSet):
             user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=Programme.objects.get(id=request.POST.get('pID')), yearGrade=None)
            else:
                #create with no programme or course
-               yearGrade=YearGrade.objects.get(yearGradeClass =request.data.get('yearGradeClass'))
-               user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=pID, yearGrade=yearGrade)
+               user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=pID, yearGrade=None)
            user.is_active = True
            user.save()
 
@@ -1391,11 +1390,12 @@ class YearGradeViewset(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, )
     @action(detail=False, methods=['GET'])
     def get_yearGrades(self, request, **extra_fields):
-        if 'programmeID' not in request.data: 
-            response = {"message": "You must provide a programmeID as foreinkey to get yearGrades"}
+        if 'programmeName' not in request.data: 
+            response = {"message": "You must provide a programmeName as foreinkey to get yearGrades"}
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
         else:
-            yearGradeNameList= list(YearGrade.objects.filter(programme_id=request.data.get("programmeID")).values_list('yearGradeClass', flat=True))
+            programme_id= Programme.objects.get(programmeName=request.data.get("programmeName")).id
+            yearGradeNameList= list(YearGrade.objects.filter(programme_id=programme_id).values_list('yearGradeClass', flat=True))
             response ={"message": "Success. YearGrades retrieved.",
                        "yearGrades": yearGradeNameList}
             return Response(data=response, status=status.HTTP_200_OK)
