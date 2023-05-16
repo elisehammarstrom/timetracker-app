@@ -63,8 +63,6 @@ class CourseViewset(viewsets.ModelViewSet):
         else:
             response = {"message": "You need to provide a courseCode for the course (courseCode)"}
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
-            
-
 
 class ProgrammeViewset(viewsets.ModelViewSet):
     queryset = Programme.objects.all()
@@ -106,8 +104,7 @@ class ProgrammeViewset(viewsets.ModelViewSet):
             return JsonResponse(programmeObject, safe=False)
         else:
             response = {"message": "You need to provide a the system ID for the program (pID)"}
-            return Response(response, status = status.HTTP_400_BAD_REQUEST)
-        
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)   
 
 class LoginView(APIView):
     permission_classes = []
@@ -480,9 +477,29 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                     "weekDurationArray" : weekDurationArray
                     }
             return Response(data=response, status=status.HTTP_200_OK)
-    
-    def normalize_dates():
+        
+    def normalize_dates(self,courseCode):
         print("in method")
+
+        #queryresult = self.queryset.filter(courseCode = courseCode)
+
+        queryset = Course.objects.get_queryset()
+        #print(queryset)
+
+        filtered_queryresult = queryset.filter(courseCode = courseCode)
+
+        print(filtered_queryresult)
+
+        most_recent_course = filtered_queryresult[0]
+        print("most_recent_course: ", most_recent_course)
+
+        for course in filtered_queryresult:
+            print("course: ", course)
+            if course.courseEndDateTime > most_recent_course.courseEndDateTime:
+                most_recent_course = course
+
+
+        return "hej"
 
 
     @action(detail=False, methods=['POST'])
@@ -499,7 +516,7 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             except:
                 response = {"message": "That course doesn't exist"}
                 return Response(data=response, status=status.HTTP_200_OK)
-            
+            output = self.normalize_dates(course.courseCode)
             firstWeek = date(startDate.year, startDate.month, startDate.day).isocalendar()[1]
             year_week_string = str(startDate.year) + "-W" + str(firstWeek)
 
@@ -1252,7 +1269,7 @@ class CourseEvaluationViewset(viewsets.ModelViewSet):
         queryresult = self.queryset.filter(course = course.id)
         if len(queryresult) == 0:
             response = {"message": "No course evaluations exist for that course"}
-            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data=response, status=status.HTTP_200_OK)
         
         result = {"courseID" : course.id, 
                   "questionAnswerNumbers": {},
