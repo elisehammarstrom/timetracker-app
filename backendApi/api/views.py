@@ -918,12 +918,12 @@ class UserViewset(viewsets.ModelViewSet):
         
     @action(detail=False, methods=['POST'])
     def update_yearGrade(self, request, **extra_fields):
-        if 'yearGradeID' not in request.data:
-            response = {"message": "You must provide a yearGradeID as foreinkey to update yearGrade"}
+        if 'yearGradeClass' not in request.data:
+            response = {"message": "You must provide a yearGradeClass as foreinkey to update yearGrade"}
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
         else:
             userObject = Student.objects.get(id=request.user.pk)
-            yearGrade = YearGrade.objects.get(id=request.data.get('yearGradeID'))
+            yearGrade = YearGrade.objects.get(yearGradeClass=request.data.get('yearGradeClass'))
             userObject.yearGrade = yearGrade
             Student.objects.filter(id=request.user.pk).update(yearGrade=yearGrade)
             response = {
