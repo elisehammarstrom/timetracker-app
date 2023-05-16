@@ -340,8 +340,18 @@ class CourseSchedule(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     yearGrade = models.ForeignKey(YearGrade, on_delete=models.CASCADE, null=True)
 
+
+    
+
+class MyAssignments(models.Model):
+    student = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+    assignment = models.ForeignKey(CourseCalendar, on_delete=models.CASCADE, null=True)
+    donewith = models.BooleanField(null=True)
+    hoursTracked = models.TimeField(blank=True, null=True)
+
 class UserSchedule(models.Model):
-   user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+   id = models.AutoField(primary_key=True)
+   user = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
    event = models.CharField(max_length=50 )
    startDateTime = models.DateTimeField(null=True)
    endDateTime = models.DateTimeField(null=True)
@@ -351,10 +361,3 @@ class UserSchedule(models.Model):
    def __str__(self):
         userScheduleInfoString = self.user + "'s schedule"
         return userScheduleInfoString
-    
-
-class MyAssignments(models.Model):
-    student = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
-    assignment = models.ForeignKey(CourseCalendar, on_delete=models.CASCADE, null=True)
-    donewith = models.BooleanField(null=True)
-    hoursTracked = models.TimeField(blank=True, null=True)
