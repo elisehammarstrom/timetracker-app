@@ -62,7 +62,7 @@ const EditProfileScreen = ({ route }) => {
       }
     })
       .then(function (response) {
-        console.log('yearGrades:',response.data.yearGrades)
+        console.log('yearGrades:', response.data.yearGrades)
         //handle success
 
         setYearGradeInfo(response.data)
@@ -96,7 +96,7 @@ const EditProfileScreen = ({ route }) => {
           .then(function (response) {
             //handle success
             console.log(response.data);
-           
+
           })
           .catch(function (response) {
             //handle error
@@ -104,26 +104,26 @@ const EditProfileScreen = ({ route }) => {
           });
       }
     }
-        const formData = new FormData();
-        formData.append('yearGradeClass', selectedYearGrade);
-        axios({
-          method: "post",
-          url: "http://127.0.0.1:8000/api/users/update_yearGrade/",
-          data: formData,
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': `token ` + token
-          }
-        })
-          .then(function (response) {
-            //handle success
-            console.log(response.data);
-          })
-          .catch(function (response) {
-            //handle error
-            console.log(response);
-          });
-          
+    const formData = new FormData();
+    formData.append('yearGradeClass', selectedYearGrade);
+    axios({
+      method: "post",
+      url: "http://127.0.0.1:8000/api/users/update_yearGrade/",
+      data: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `token ` + token
+      }
+    })
+      .then(function (response) {
+        //handle success
+        console.log(response.data);
+      })
+      .catch(function (response) {
+        //handle error
+        console.log(response);
+      });
+
     navigation.navigate('Profile', { token: token })
 
   };
@@ -196,7 +196,7 @@ const EditProfileScreen = ({ route }) => {
           onSelect={() => getYearGrades(selectedProgramme)}
         />
 
-<Text style={styles.selectLabel}><B>Year Grade:</B> </Text>
+        <Text style={styles.selectLabel}><B>Year Grade:</B> </Text>
         <SelectList
           dropdownTextStyles={styles.selectList}
           inputStyles={styles.selectList}
@@ -207,7 +207,7 @@ const EditProfileScreen = ({ route }) => {
           search={true}
           placeholder='Choose Year Grade'
           dropdownStyles={styles.dropDown}
-          
+
         />
 
         {/* <Text style={styles.selectLabel}><B>Language:</B></Text>  
