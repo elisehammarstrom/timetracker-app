@@ -31,6 +31,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from datetime import time
+from rest_framework.decorators import api_view, permission_classes as view_permission_classes, authentication_classes as view_authentication_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
 
 #fakkar detta med något?
 from django.contrib.auth import get_user_model
@@ -63,12 +66,15 @@ class CourseViewset(viewsets.ModelViewSet):
 class ProgrammeViewset(viewsets.ModelViewSet):
     queryset = Programme.objects.all()
     serializer_class = ProgrammeSerializer
+    permission_classes =[AllowAny,]
     authentication_classes = (TokenAuthentication, )
-    #permission_classes =(IsAuthenticated, )
-    permission_classes =[IsAuthenticated, ]
 
     @action(detail=False, methods=['POST'])
     def add_course(self, request, *args, **kwargs):
+        user = request.user
+        if not user.is_authenticated:
+            response = {"message": "You must be authenticated"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
         if 'pID' in request.data:
             pk = self.kwargs.get('pk')
             pID = request.data['pID']
@@ -86,6 +92,11 @@ class ProgrammeViewset(viewsets.ModelViewSet):
         
     @action(detail=False, methods=['GET'])
     def get_programme_data_from_id(self, request, *args, **kwargs):
+        user = request.user
+        if not user.is_authenticated:
+            response = {"message": "You must be authenticated"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        
         if 'id' in request.data:
             id = request.data.get('id')
             programmeObject = Programme.objects.get(id=id)
@@ -466,7 +477,11 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                     "weekDurationArray" : weekDurationArray
                     }
             return Response(data=response, status=status.HTTP_200_OK)
-        
+    
+    def normalize_dates():
+        print("in method")
+
+
     @action(detail=False, methods=['POST'])
     def get_total_timetracked_per_week(self, request, **extra_fields):
         courseID = request.POST.get('courseID')
@@ -607,7 +622,6 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                     }
                 return Response(data=response, status=status.HTTP_200_OK)
             
-            
             durations = queryresult.values_list('duration', flat=True)
             zero_time =  timedelta(hours=0, minutes=0, seconds=0)
             total_week_time = zero_time 
@@ -719,10 +733,7 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
         else:
             #get for the specific user
             queryresult = self.queryset.filter(user = user, course = course, date__range=[startDate, endDate] )
-            
         return queryresult
-
-
                 
     @action(detail=False, methods=['POST'])
     def get_user_stress_period(self, request, **extra_fields):
@@ -818,9 +829,6 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                             }     
                     }
             return Response(data=response, status=status.HTTP_200_OK)
-        
-
-
 
 class UserViewset(viewsets.ModelViewSet):
     queryset = User.objects.all()
