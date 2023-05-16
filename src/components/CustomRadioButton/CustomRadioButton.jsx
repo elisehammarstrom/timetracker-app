@@ -3,57 +3,84 @@ import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { RadioButton } from 'react-native-paper';
 import axios from 'axios';
 
+
 const CustomRadioButton = ({token, question, answerID, submit, firstOption, secondOption, thirdOption, fourthOption, fifthOption}) => {
   const [checked, setChecked] = React.useState(1);
-  const answer = [];
+  var answer = [];
+  var answerid =[];
+  var answernumber = [];
 
   if (submit === true) {
-    const formData = new FormData();
-    formData.append('answerID', answerID)
-    formData.append('answerNumber', checked)
+    //const formData = new FormData();
+    
     if (checked === 1) {
       answer.push(firstOption)
+      answerid.push(answerID)
+      answernumber.push(checked)
       //formData.append('answerText', firstOption)
     }
     if (checked === 2) {
       answer.push(secondOption)
+      answerid.push(answerID)
+      answernumber.push(checked)
       //formData.append('answerText', secondOption)
     }
     if (checked === 3) {
       answer.push(thirdOption)
+      answerid.push(answerID)
+      answernumber.push(checked)
       //formData.append('answerText', thirdOption)
     }
     if (checked === 4) {
       answer.push(fourthOption)
+      answerid.push(answerID)
+      answernumber.push(checked)
       //formData.append('answerText', fourthOption)
     }
     if (checked === 5) {
       answer.push(fifthOption)
+      answerid.push(answerID)
+      answernumber.push(checked)
       //formData.append('answerText', fifthOption)
     }
 
     for (let i=0; i< answer.length; i++){
+      var formData = new FormData();
       formData.append('answerText', answer[i])
+      formData.append('answerID', answerid[i])
+      formData.append('answerNumber', answernumber[i])
+      console.log("----formData", formData)
+
+      axios({
+        method: "post",
+        url: "http://127.0.0.1:8000/api/evaluate/update_answer/",
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization':`token ` + token,
+          
+         
+        }
+
+        
+
+      })
+        .then(function (response) {
+            //handle success
+            console.log(response.data);
+        })
+        .catch(function (response) {
+          //handle error
+          console.log(response);
+        });
     }
 
-    axios({
-      method: "post",
-      url: " http://127.0.0.1:8000/api/evaluate/update_answer/",
-      data: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        'Authorization':`token ` + token
-      }
-    })
-      .then(function (response) {
-          //handle success
-          console.log(response.data);
-      })
-      .catch(function (response) {
-        //handle error
-        console.log(response);
-      });
-  }
+    }
+
+   
+
+
+  
   
   return (
 
