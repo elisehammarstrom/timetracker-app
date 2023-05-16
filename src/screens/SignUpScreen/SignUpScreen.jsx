@@ -49,7 +49,6 @@ const SignUpScreen = () => {
         });
 
     // Get the different year grades from the database
-
     const getYearGrades = (selectedProgramme) => {
         const formData = new FormData();
         formData.append('programmeName', selectedProgramme);
@@ -60,27 +59,23 @@ const SignUpScreen = () => {
             url: "http://127.0.0.1:8000/api/yearGrade/get_yearGrades/",
             data: formData,
             headers: {
-            'Content-Type': 'multipart/form-data',
-        }
+                'Content-Type': 'multipart/form-data',
+            }
         })
             .then(function (response) {
                 //handle success
-         
-                    setYearGradeInfo(response.data)
-                    setYearGrades(response.data.yearGrades)
-            
-                    
-            
+
+                setYearGradeInfo(response.data)
+                setYearGrades(response.data.yearGrades)
+
             })
             .catch(function (response) {
                 //handle error
                 console.log(response);
             });
-            
+
 
     };
-
-
     const [selectedUni, setSelectedUni] = useState("");
 
     const universityData = [
