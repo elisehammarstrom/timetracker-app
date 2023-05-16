@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Course, Programme, User, Student, UserCourseTracking, CourseCalendar, UserFreetime, CourseSchedule, YearGrade, CourseEvaluation, QuestionAnswer
+from .models import Course, Programme, User, Student, UserCourseTracking, CourseCalendar, UserFreetime, CourseSchedule, YearGrade, CourseEvaluation, QuestionAnswer, MyAssignments, UserSchedule
 from rest_framework.authtoken.models import Token
 
 class UserSerializer(serializers.ModelSerializer):
@@ -63,8 +63,8 @@ class CourseCalendarSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CourseCalendar
-        fields = ("id", "course","eventType", "eventName", "startDateTime", "endDateTime", "expectedHours", "dueTime", "mandatory")
-
+        fields = ("id", "course","eventType", "eventName", "startDateTime", "expectedHours", "dueTime", "mandatory", "avgHoursDone", "grade", "eventNumber")
+    
 class UserFreetimeSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -82,3 +82,16 @@ class YearGradeSerializer(serializers.ModelSerializer):
     class Meta:
         model =YearGrade
         fields = ( "yearGrade", "yearGradeClass", "programme")
+
+
+class MyAssignmentsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model =MyAssignments
+        fields = ( "student", "assignment", "donewith", "hoursTracked")
+
+class UserScheduleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserSchedule
+        fields = ("user", "event", "startDateTime", "endDateTime", "course")
+        
