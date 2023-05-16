@@ -1403,8 +1403,6 @@ class ExcelFileViewset(viewsets.ModelViewSet):
 class YearGradeViewset(viewsets.ModelViewSet):
     queryset = YearGrade.objects.all()
     serializer_class = YearGradeSerializer
-    authentication_classes = (TokenAuthentication, )
-    permission_classes = (IsAuthenticated, )
     @action(detail=False, methods=['POST'])
     def get_yearGrades(self, request, **extra_fields):
         if 'programmeName' not in request.data: 
