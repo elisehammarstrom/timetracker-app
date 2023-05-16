@@ -76,7 +76,7 @@ const ButtonMenu = ({ screen, token }) => {
   };
 
   const onComparePress = type => {
-    navigation.navigate("CourseStats", { courses: courses, token: token, courseIDs: courseIDs })
+    navigation.navigate("CourseStats", { chosenCourses: courses, token: token, courseIDs: courseIDs })
   };
 
   return (

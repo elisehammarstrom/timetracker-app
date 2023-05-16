@@ -1,19 +1,17 @@
 import { useState } from 'react';
 import React from 'react';
-import {StyleSheet, View, Text, Dimensions, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, Dimensions, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list';
-import CustomButton from '../../components/CustomButton/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
 import { LineChart } from 'react-native-chart-kit';
-import BackArrow from '../../../assets/arrowBack.png';
 import axios from 'axios';
 
-const CourseStatsScreen = ({route}) =>{
+const CourseStatsScreen = ({ route }) => {
 
-    const {chosenCourses} = route.params;
-    const {token} = route.params;
-    const {courseIDs} = route.params;
+    const { chosenCourses } = route.params;
+    const { token } = route.params;
+    const { courseIDs } = route.params;
 
     const navigation = useNavigation();
     const [selected, setSelected] = useState("");
@@ -27,78 +25,78 @@ const CourseStatsScreen = ({route}) =>{
     const [time, setTime] = useState('0 h');
 
     // Get courseNames and IDs
-    for (let i=0; i<courseIDs.length; i++) {
+    for (let i = 0; i < courseIDs.length; i++) {
         axios({
             method: "get",
             url: "http://127.0.0.1:8000/api/courses/" + `${courseIDs[i]}` + '/',
             headers: {
-            'Authorization':`token ` + token
+                'Authorization': `token ` + token
             }
         })
             .then(function (response) {
-            //handle success
-            //Setting the data
-            fetchedCourseData.push(response.data)
-            if (courseData.length < courseIDs.length) {
-                setCourseData(fetchedCourseData)
-            }
-            })
-            .catch(function (response) {
-            //handle error
-            console.log(response);
-            });
-    }
-    
-
-if (courseData.length >1) {
-    
-    for (let i=0; i<courseData.length; i++) {
-      // Get the students timetracking for each course 
-        if (selected === courseData[i].courseTitle) {
-            const formData = new FormData();
-            formData.append('courseID', courseData[i].id);
-
-            axios({
-            method: "post",
-            url: "http://127.0.0.1:8000/api/tracking/get_user_timetracked_per_week/",
-            data: formData,
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                'Authorization':`token ` + token
-            }
-            })
-            .then(function (response) {
                 //handle success
-                if (`${userData}` != `${response.data.weekDurationArray}`) {
-                    setUserData(response.data.weekDurationArray)
+                //Setting the data
+                fetchedCourseData.push(response.data)
+                if (courseData.length < courseIDs.length) {
+                    setCourseData(fetchedCourseData)
                 }
-
             })
             .catch(function (response) {
                 //handle error
                 console.log(response);
             });
-            // Get the average timetracked per course/week for all students, basically the same as above
-            axios({
-                method: "post",
-                url: "http://127.0.0.1:8000/api/tracking/get_total_timetracked_per_week/",
-                data: formData,
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'Authorization':`token ` + token
-                }
-                })
-                .then(function (response) {
-                    //handle success
-                    if (`${avgData}` !=`${response.data.weekDurationArray}` & `${label}` != `${response.data.weekNoArray}`) {
-                        setAvgData(response.data.weekDurationArray)
-                        setLabel(response.data.weekNoArray)
+    }
+
+
+    if (courseData.length > 1) {
+
+        for (let i = 0; i < courseData.length; i++) {
+            // Get the students timetracking for each course 
+            if (selected === courseData[i].courseTitle) {
+                const formData = new FormData();
+                formData.append('courseID', courseData[i].id);
+
+                axios({
+                    method: "post",
+                    url: "http://127.0.0.1:8000/api/tracking/get_user_timetracked_per_week/",
+                    data: formData,
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'Authorization': `token ` + token
                     }
                 })
-                .catch(function (response) {
-                    //handle error
-                    console.log(response);
-                });
+                    .then(function (response) {
+                        //handle success
+                        if (`${userData}` != `${response.data.weekDurationArray}`) {
+                            setUserData(response.data.weekDurationArray)
+                        }
+
+                    })
+                    .catch(function (response) {
+                        //handle error
+                        console.log(response);
+                    });
+                // Get the average timetracked per course/week for all students, basically the same as above
+                axios({
+                    method: "post",
+                    url: "http://127.0.0.1:8000/api/tracking/get_total_timetracked_per_week/",
+                    data: formData,
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'Authorization': `token ` + token
+                    }
+                })
+                    .then(function (response) {
+                        //handle success
+                        if (`${avgData}` != `${response.data.weekDurationArray}` & `${label}` != `${response.data.weekNoArray}`) {
+                            setAvgData(response.data.weekDurationArray)
+                            setLabel(response.data.weekNoArray)
+                        }
+                    })
+                    .catch(function (response) {
+                        //handle error
+                        console.log(response);
+                    });
 
                 axios({
                     method: "post",
@@ -106,12 +104,12 @@ if (courseData.length >1) {
                     data: formData,
                     headers: {
                         'Content-Type': 'multipart/form-data',
-                        'Authorization':`token ` + token
+                        'Authorization': `token ` + token
                     }
-                    })
+                })
                     .then(function (response) {
                         //handle success
-                        if (response.data.avg_time != avgTime ){
+                        if (response.data.avg_time != avgTime) {
                             setAvgTime(response.data.avg_time + ' h')
                         }
                     })
@@ -125,9 +123,9 @@ if (courseData.length >1) {
                     data: formData,
                     headers: {
                         'Content-Type': 'multipart/form-data',
-                        'Authorization':`token ` + token
+                        'Authorization': `token ` + token
                     }
-                    })
+                })
                     .then(function (response) {
                         //handle success
 
@@ -139,45 +137,45 @@ if (courseData.length >1) {
                         //handle error
                         console.log(response);
                     });
-            
+
+            }
         }
-      }
-}
-// The graphs data. Before picking a course ther will be no data and no labels
+    }
+    // The graphs data. Before picking a course ther will be no data and no labels
     const [dataGraph, setDataGraph] = useState({
         labels: [],
         datasets: [
             {
-            data: [0, 0, 0, 0, 0, 0, 0],
-            color: (opacity = 1) => `#AC7CE4`, // optional
-            strokeWidth: 2 // optional
+                data: [0, 0, 0, 0, 0, 0, 0],
+                color: (opacity = 1) => `#AC7CE4`, // optional
+                strokeWidth: 2 // optional
             },
             {
-            data: [0, 0, 0, 0, 0, 0, 0],
-            color: (opacity = 1) => `#5987CC`, // optional
-            strokeWidth: 2 // optional
+                data: [0, 0, 0, 0, 0, 0, 0],
+                color: (opacity = 1) => `#5987CC`, // optional
+                strokeWidth: 2 // optional
             }
         ],
         // legend: ["Your time", "Average time"] // optional
-        });
-        // When we have fecthed the data from backend we set the new dataGraph with the labels we have fetched and the data for the studytime
+    });
+    // When we have fecthed the data from backend we set the new dataGraph with the labels we have fetched and the data for the studytime
     if (label.length > 1 & userData.length > 1 & avgData.length > 1 & dataGraph.labels != label) {
         setDataGraph({
             labels: label,
             datasets: [
                 {
-                data: userData,
-                color: (opacity = 1) => `#AC7CE4`, // optional
-                strokeWidth: 2 // optional
+                    data: userData,
+                    color: (opacity = 1) => `#AC7CE4`, // optional
+                    strokeWidth: 2 // optional
                 },
                 {
-                data: avgData,
-                color: (opacity = 1) => `#5987CC`, // optional
-                strokeWidth: 2 // optional
+                    data: avgData,
+                    color: (opacity = 1) => `#5987CC`, // optional
+                    strokeWidth: 2 // optional
                 }
             ],
             legend: legend// optional
-            })
+        })
     }
     // Settings for the graph
     const screenWidth = Dimensions.get("window").width;
@@ -192,24 +190,13 @@ if (courseData.length >1) {
         useShadowColorFromDataset: false, // optional
     };
 
-
-    const onReadCourseEvaluationsPressed = () => {
-        navigation.navigate('CourseEvaluations', {course: selected, courses: chosenCourses, token: token})
-    }
-
     const onArrowPressed = () => {
-        navigation.navigate('ChooseReport', {token: token, courseIDs: courseIDs, courses: chosenCourses})
-      }
+        navigation.navigate('ChooseReport', { token: token, courseIDs: courseIDs, courses: chosenCourses })
+    }
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity activeOpacity={0.5} style={styles.backArrow} onPress={onArrowPressed}>
-                <Image 
-                    source={BackArrow} 
-                    style={[{height: 100 * 0.3}, {width: 100 * 0.3}]} 
-                    resizeMode="contain"
-                />
-            </TouchableOpacity >
+            <Text style={styles.title}>Compare Course Stats</Text>
 
             <View style={styles.selectListContainer}>
 
@@ -224,7 +211,7 @@ if (courseData.length >1) {
                     search={false}
                     placeholder='Choose course to see statistics'
                     dropdownStyles={styles.dropDown}
-                    
+
                 />
 
             </View>
@@ -239,32 +226,34 @@ if (courseData.length >1) {
                     fromZero={true}
                 />
             </View>
-            
+
 
             <View style={styles.timeContainer}>
                 <ScrollView style={styles.scrollView}>
+                    <View style={styles.center}>
 
-                <View style={[styles.time, styles.yourTime]}>
-                    <View>
-                        <Text style={{fontWeight: 'bold'}}>Your time:</Text>
+                        <View style={[styles.time, styles.yourTime]}>
+                            <View>
+                                <Text style={{ fontWeight: 'bold' }}>Your time:</Text>
 
+                            </View>
+                            <View>
+                                <Text style={{ fontWeight: 'bold' }}> {time} </Text>
+
+                            </View>
+
+                        </View>
+
+                        <View style={[styles.time, styles.averageTime]}>
+                            <Text style={{ fontWeight: 'bold' }}>Average time:</Text>
+                            <Text style={{ fontWeight: 'bold' }}> {avgTime} </Text>
+                        </View>
                     </View>
-                    <View> 
-                        <Text style={{fontWeight: 'bold'}}> {time} </Text> 
-
-                    </View>
-
-                </View>  
-
-                <View style={[styles.time, styles.averageTime]}>
-                    <Text style={{fontWeight: 'bold'}}>Average time:</Text>
-                    <Text style={{fontWeight: 'bold'}}> {avgTime} </Text> 
-                </View> 
                 </ScrollView>
 
             </View>
 
-            <View style={styles.ButtonMenu}>
+            <View>
                 <ButtonMenu
                     screen="courseStats"
                     token={token}
@@ -284,7 +273,6 @@ const styles = StyleSheet.create({
     selectListContainer: {
         alignItems: 'center',
         justifyContent: 'center',
-        // marginTop: '3%',
     },
     selectList: {
         fontWeight: 'bold',
@@ -312,7 +300,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     yourTime: {
-        backgroundColor:'#AC7CE4'
+        backgroundColor: '#AC7CE4'
     },
     averageTime: {
         backgroundColor: '#5987CC'
@@ -326,7 +314,20 @@ const styles = StyleSheet.create({
     },
     scrollView: {
         width: Dimensions.get('window').width,
-      },
+    },
+    center: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 40
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#EFEFEF',
+        margin: 10,
+        alignSelf: 'center'
+
+    },
 })
 
 export default CourseStatsScreen;

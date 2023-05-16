@@ -127,7 +127,7 @@ const CalendarScreen = ({route}) => {
 
     }
     const onArrowPressed = () => {
-        navigation.navigate('ChooseReport', {token: token, courseIDs: courseIDs, courses: courses})
+        navigation.navigate('Home', {token: token, courseIDs: courseIDs, courses: courses})
       }
 
     

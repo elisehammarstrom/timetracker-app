@@ -513,27 +513,34 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             return Response(data=response, status=status.HTTP_200_OK)
         
     def normalize_dates(self,courseCode):
-        print("in method")
-
-        #queryresult = self.queryset.filter(courseCode = courseCode)
-
         queryset = Course.objects.get_queryset()
-        #print(queryset)
-
         filtered_queryresult = queryset.filter(courseCode = courseCode)
-
-        print(filtered_queryresult)
-
         most_recent_course = filtered_queryresult[0]
         print("most_recent_course: ", most_recent_course)
 
         for course in filtered_queryresult:
             print("course: ", course)
-            if course.courseEndDateTime > most_recent_course.courseEndDateTime:
-                most_recent_course = course
+            if (course.courseEndDateTime is not None) or (most_recent_course.courseEndDateTime is not None):
+                if course.courseEndDateTime > most_recent_course.courseEndDateTime:
+                    most_recent_course = course
+       
+
+                    
 
 
         return "hej"
+    
+   #utgå från antalet dagar på den senaste kursen
+   # för varje dag, få liknande timetracked per course
+   # [{course1, dag 1, dag 2, dag3}, {course2, dag 1, dag 2, dag3}] 
+   #ta fram queryset
+
+   #för varje kurs, ta fram queryset för kursen baserat på antalet dagar
+   #array av en viss längd som motsvarar senaste kursens längd
+   #ta fram week averages för varje kurs, spara i array med dict, key=vecka. 
+   #räkna fram averages för alla kurser
+   
+   
 
 
     @action(detail=False, methods=['POST'])

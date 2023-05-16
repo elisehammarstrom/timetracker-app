@@ -1,7 +1,6 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image, ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import ArrowBack from '../../../assets/arrowBack.png'
 import CalendarBlock from '../../components/CalendarBlock';
 import ClickableWeekCalendar from '../../components/ClickableWeekCalendar';
 import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
@@ -29,7 +28,7 @@ const CalendarOpScreen = ({ route }) => {
   }
 
   const onClosedPress = () => {
-    navigation.navigate('Home', { options: courses, token:token })
+    navigation.navigate('Home', { options: courses, token: token })
   }
 
   const colors = ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX']
@@ -47,21 +46,15 @@ const CalendarOpScreen = ({ route }) => {
 
 
       <View style={styles.topContainer}>
-
-        <TouchableOpacity activeOpacity={0.5} style={styles.close} onPress={onClosedPress} >
-          <Image
-            source={ArrowBack}
-            style={[{ height: 100 * 0.3 }, { width: 100 * 0.3 }]}
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
-        <Text style={styles.title}>Recommended study hours</Text>
+        <Text style={styles.title}>Recommended Study Hours</Text>
 
 
       </View>
+
       <ClickableWeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
-      <View style={{ height: '100%' }}>
-        <ScrollView >
+
+      <View style={styles.scroll}>
+        <ScrollView style={{ marginBottom: 80 }}>
 
           {courses.map((option, i) => (
 
@@ -75,14 +68,16 @@ const CalendarOpScreen = ({ route }) => {
           ))}
         </ScrollView>
 
+
+
+      </View>
+      <View>
+        <ButtonMenu
+          screen="courseStats"
+          token={token}
+        />
       </View>
 
-      <View>
-              <ButtonMenu
-                screen="yourReports"
-                token={token}
-              />
-            </View>
 
 
     </View>
@@ -96,9 +91,9 @@ export default CalendarOpScreen;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#313131',
-    height: '2000%',
+    height: '100%',
     alignitems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
 
   },
   text: {
@@ -107,10 +102,9 @@ const styles = StyleSheet.create({
     flex: 5
   },
   topContainer: {
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     flexDirection: 'row',
     padding: 10,
-
 
   },
   close: {
@@ -123,9 +117,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#EFEFEF',
-    margin: 10,
-    justifyContent: 'flex-start'
+
   },
+  scroll: {
+    height: '80%',
+
+  }
 
 
 })
