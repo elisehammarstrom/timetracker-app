@@ -12,19 +12,10 @@ const CalendarScreen = ({route}) => {
     const {token} = route.params;
     const {courseIDs} = route.params;
 
-
     const navigation = useNavigation();
     var [firstDate, setFirstDate] = useState('');
     var [lastDate, setLastDate] = useState('');
-    const [filledWithZeros, setFilledWithZeros] = useState(false)
-
-    if (filledWithZeros === true) {
-        setFirstDate('');
-        setLastDate('');
-        alert('You have not tracked during this period, please pick other dates');
-        setFilledWithZeros(false)
-    } 
-
+    
     const getMarked = () => {
         let marked = {};
         
@@ -115,13 +106,17 @@ const CalendarScreen = ({route}) => {
                     totalTimeArray.push(res.data.results[i].timeStudied[j])
                 }
             }
+            let sum = 0;
             for (let i=0; i<totalTimeArray.length; i++) {
-                if (totalTimeArray[i] != 0){
-                    setFilledWithZeros(false)
-                    navigation.navigate('YourReports', {firstDate: firstDate, lastDate: lastDate, courses: courses, token: token, courseIDs: courseIDs})
-                } else {
-                    setFilledWithZeros(true)
-                }
+                sum = sum + totalTimeArray[i];
+            }
+            console.log(sum)
+            if (sum != 0) {
+                navigation.navigate('YourReports', {firstDate: firstDate, lastDate: lastDate, courses: courses, token: token, courseIDs: courseIDs});
+            } else {
+                alert('You have not tracked during this perios, please choose another');
+                setFirstDate('');
+                setLastDate('');
             }
             
             })
