@@ -192,24 +192,20 @@ const CourseStatsScreen = ({ route }) => {
         useShadowColorFromDataset: false, // optional
     };
 
-
-    const onReadCourseEvaluationsPressed = () => {
-        navigation.navigate('CourseEvaluations', { course: selected, courses: chosenCourses, token: token })
-    }
-
     const onArrowPressed = () => {
         navigation.navigate('ChooseReport', { token: token, courseIDs: courseIDs, courses: chosenCourses })
     }
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity activeOpacity={0.5} style={styles.backArrow} onPress={onArrowPressed}>
+            <Text style={styles.title}>Compare Course Stats</Text>
+            {/* <TouchableOpacity activeOpacity={0.5} style={styles.backArrow} onPress={onArrowPressed}>
                 <Image
                     source={BackArrow}
                     style={[{ height: 100 * 0.3 }, { width: 100 * 0.3 }]}
                     resizeMode="contain"
                 />
-            </TouchableOpacity >
+            </TouchableOpacity > */}
 
             <View style={styles.selectListContainer}>
 
@@ -286,7 +282,6 @@ const styles = StyleSheet.create({
     selectListContainer: {
         alignItems: 'center',
         justifyContent: 'center',
-        // marginTop: '3%',
     },
     selectList: {
         fontWeight: 'bold',
@@ -333,7 +328,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 40
-      }
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#EFEFEF',
+        margin: 10,
+        alignSelf: 'center'
+
+    },
 })
 
 export default CourseStatsScreen;
