@@ -9,9 +9,10 @@ import React, { useState } from 'react';
 import { Button, SafeAreaView, StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
 import ButtonMenu from '../../components/ButtonMenu';
 import Logo from '../../../assets/logo.png';
-import CalendarIcon from '../../../assets/calendar.png';
+import InvisibleBox from '../../../assets/invisible-box.png';
 import SettingIcon from '../../../assets/settings.png';
 import axios from 'axios';
+
 
 const HomeScreen: React.FC = ({ route }) => {
 
@@ -77,8 +78,8 @@ const HomeScreen: React.FC = ({ route }) => {
   };
 
   const onSettingsPressed = () => {
-    navigation.navigate('Profile', {token: token, courseIDs: courseIDs});
-};
+    navigation.navigate('Profile', { token: token, courseIDs: courseIDs });
+  };
 
   const onCalendarPressed = () => {
     navigation.navigate('CalendarOpScreen', { courses: courses, token: token });
@@ -89,20 +90,19 @@ const HomeScreen: React.FC = ({ route }) => {
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.layout} >
-        <TouchableOpacity activeOpacity={0.5} style={{ padding: 10 }} onPress={onCalendarPressed}>
-          <Image
-            source={CalendarIcon}
-            style={[{ height: 100 * 0.3 }, { width: 100 * 0.3 }]}
-            resizeMode="contain"
-          />
 
-        </TouchableOpacity>
+        <Image
+          source={InvisibleBox}
+          style={[{ height: 100 * 0.3 }, { width: 100 * 0.3 }]}
+          resizeMode="contain"
+        />
 
         <Image
           source={Logo}
           style={[styles.logo, { height: 200 * 0.3 }]}
           resizeMode="contain"
         />
+
 
         <TouchableOpacity activeOpacity={0.5} style={{ padding: 10 }} onPress={onSettingsPressed}>
           <Image
@@ -188,6 +188,7 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 150,
     maxHeight: 200,
+
   },
   layout: {
     flexDirection: 'row',

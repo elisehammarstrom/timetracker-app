@@ -2,11 +2,9 @@ import { useState } from 'react';
 import React from 'react';
 import { StyleSheet, View, Text, Dimensions, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list';
-import CustomButton from '../../components/CustomButton/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
 import { LineChart } from 'react-native-chart-kit';
-import BackArrow from '../../../assets/arrowBack.png';
 import axios from 'axios';
 
 const CourseStatsScreen = ({ route }) => {
@@ -199,13 +197,6 @@ const CourseStatsScreen = ({ route }) => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Compare Course Stats</Text>
-            {/* <TouchableOpacity activeOpacity={0.5} style={styles.backArrow} onPress={onArrowPressed}>
-                <Image
-                    source={BackArrow}
-                    style={[{ height: 100 * 0.3 }, { width: 100 * 0.3 }]}
-                    resizeMode="contain"
-                />
-            </TouchableOpacity > */}
 
             <View style={styles.selectListContainer}>
 
@@ -262,7 +253,7 @@ const CourseStatsScreen = ({ route }) => {
 
             </View>
 
-            <View style={styles.ButtonMenu}>
+            <View>
                 <ButtonMenu
                     screen="courseStats"
                     token={token}
