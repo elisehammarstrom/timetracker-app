@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import React from 'react';
-import {StyleSheet, View, Text, Dimensions, TouchableOpacity, Image } from 'react-native';
+import {StyleSheet, View, Text, Dimensions, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import { useNavigation } from '@react-navigation/native';
@@ -242,6 +242,7 @@ if (courseData.length >1) {
             
 
             <View style={styles.timeContainer}>
+                <ScrollView style={styles.scrollView}>
 
                 <View style={[styles.time, styles.yourTime]}>
                     <View>
@@ -259,6 +260,7 @@ if (courseData.length >1) {
                     <Text style={{fontWeight: 'bold'}}>Average time:</Text>
                     <Text style={{fontWeight: 'bold'}}> {avgTime} </Text> 
                 </View> 
+                </ScrollView>
 
             </View>
 
@@ -321,7 +323,10 @@ const styles = StyleSheet.create({
     },
     dropDown: {
         width: 0.9 * Dimensions.get('window').width,
-    }
+    },
+    scrollView: {
+        width: Dimensions.get('window').width,
+      },
 })
 
 export default CourseStatsScreen;
