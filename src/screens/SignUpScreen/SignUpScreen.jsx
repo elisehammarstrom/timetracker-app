@@ -68,9 +68,7 @@ const SignUpScreen = () => {
          
                     setYearGradeInfo(response.data)
                     setYearGrades(response.data.yearGrades)
-            
-                    
-            
+        
             })
             .catch(function (response) {
                 //handle error
