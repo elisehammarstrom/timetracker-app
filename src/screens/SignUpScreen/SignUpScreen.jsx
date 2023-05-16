@@ -55,14 +55,13 @@ const SignUpScreen = () => {
         formData.append('programmeName', selectedProgramme);
         console.log('selectedProgramme:', selectedProgramme)
 
-        const headers = {
-            Accept: 'application/json',
+        axios({
+            method: "post",
+            url: "http://127.0.0.1:8000/api/yearGrade/get_yearGrades/",
+            data: formData,
+            headers: {
             'Content-Type': 'multipart/form-data',
         }
-
-        axios({
-            method: "get",
-            url: "http://127.0.0.1:8000/api/yearGrade/get_yearGrades/", formData, headers,
         })
             .then(function (response) {
                 //handle success
