@@ -39,7 +39,6 @@ const CourseEvaluationsScreen = ({route}) => {
                 if (`${data}` !=`${response.data.result}`) {
                     setData(response.data.result)
                 }
-                // console.log(response.data.result.questionAnswerNumbers["What is your general opinion of the course?"]);
                 })
                 .catch(function (response) {
                 //handle error
@@ -59,6 +58,7 @@ const CourseEvaluationsScreen = ({route}) => {
             sum = sum + starNumbers[0][i]
         }
         avgRating = sum/Object.keys(data).length
+        
     }
    
     const onArrowPressed = () => {
@@ -94,7 +94,6 @@ const CourseEvaluationsScreen = ({route}) => {
                     placeholder='Choose course to see evaluations'
                     defaultOption={{ key: course, value: course }}
                     dropdownStyles={styles.dropDown}
-
                 />
 
             </View>
