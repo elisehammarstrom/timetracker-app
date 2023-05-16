@@ -15,7 +15,10 @@ const EditProfileScreen = ({route}) => {
   const pwd = watch('password');
   const [programmeInfo, setProgrammeInfo] = useState('');
   const [programmeNames, setProgrammeNames] = useState('');
+  const navigation = useNavigation();
 
+
+  // Get the different programmes from the database
   axios({
     method: "get",
     url: "http://127.0.0.1:8000/api/programmes/",
@@ -27,6 +30,7 @@ const EditProfileScreen = ({route}) => {
       //handle success
       if (programmeNames.length<1) {
         let fetchedProgrammeNames = [];
+        //Push the info into an array to be able to use in the return 
         for (let i=0; i<response.data.length; i++){
           fetchedProgrammeNames.push(response.data[i].programmeName)
         }
@@ -40,9 +44,10 @@ const EditProfileScreen = ({route}) => {
     });
 
 
-
-   //här ska sedan den nya infon skickas till databasen och ersätta det gamla i ProfileScreen
+    // What happens when you press save
   const onSavePressed = data => {
+    // Compare the selected programme to the info fetched from the database
+    // If the same as one we send that ones id back to the database to save as new programme
     for (let i=0; i<programmeInfo.length; i++) {
       if (selectedProgramme === programmeInfo[i].programmeName) {
         const formData = new FormData();
@@ -74,10 +79,8 @@ const EditProfileScreen = ({route}) => {
     navigation.navigate('Profile', {token: token})
   }
 
-  const navigation = useNavigation();
 
-  const lang = ['English', 'Svenska']
-
+  // const lang = ['English', 'Svenska']
   // const [selectedLang,setSelectedLang] = useState('');
   const [selectedProgramme, setSelectedProgramme] = useState("");
 

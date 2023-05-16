@@ -19,7 +19,7 @@ const YourReportsScreen = ({route}) => {
   const {lastDate} = route.params;
   const {courseIDs} = route.params;
 
-  const [initialLabels, setInitialLabels] = useState([]);
+  const [labels, setLabels] = useState([]);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const fetchedCourses = [];
@@ -31,43 +31,26 @@ const YourReportsScreen = ({route}) => {
   const [stress, setStress]= useState('');
  
   const smileys = [Noll, Ett, Två, Tre, Fyra, Fem];
-  //Fetching the first dates for the graph 
-  axios.get('http://127.0.0.1:8000/api/tracking/get_dates_in_week/', {
-    headers: {
-      'Authorization': `token ` + token
-    }
-  })
-  .then((res) => {
-    if (initialLabels.length < 1 ) {
-      setInitialLabels(res.data.dates)
-      setStartDate(`${res.data.startDate}`);
-      setEndDate(`${res.data.endDate}`);
-    }
-  })
-  .catch((error) => {
-    console.error(error)
-  })
 
   // If you have selected dates from the calendar the dates of the graph will change
   if (firstDate) {
 
     if (startDate !== firstDate.dateString) {
-      setStartDate(firstDate.dateString)
-      setEndDate(lastDate.dateString)
+      setStartDate(firstDate.dateString);
+      setEndDate(lastDate.dateString);
       if (stress.length > 0){
         setStress([]);
       }
     }
-    console.log("endDate efter =", endDate)
   }
   if (firstDate) {
     let newLabels = [];
 
     for (let i=firstDate.day; i<=lastDate.day; i++) {
-      newLabels.push(i + '/' + firstDate.month) 
+      newLabels.push(i + '/' + firstDate.month);
     }
-    if (`${initialLabels}` != `${newLabels}`) {
-      setInitialLabels(newLabels)
+    if (`${labels}` != `${newLabels}`) {
+      setLabels(newLabels);
     }
   }
   
@@ -75,7 +58,6 @@ const YourReportsScreen = ({route}) => {
   if (endDate) {
 
     const formData = new FormData();
-    
     formData.append('startDate', startDate)
     formData.append('endDate', endDate)
     axios({
@@ -91,7 +73,6 @@ const YourReportsScreen = ({route}) => {
       for (let i=0; i<res.data.results.length; i++) {
         fetchedTimeStudied.push(res.data.results[i].timeStudied)
         fetchedCourses.push(res.data.results[i].Course)
-        // console.log("fetchedTimeStudied= ", fetchedTimeStudied)
       }
       if (`${fetchedTimeStudied}` != `${timeStudied}` ){
         setCourses(fetchedCourses);
@@ -100,8 +81,6 @@ const YourReportsScreen = ({route}) => {
     })
     .catch((error) => {
       console.error(error)
-      console.log("startDate i catch= ", startDate)
-      console.log("endDate i catch= ", endDate)
 
     })
 
@@ -122,7 +101,6 @@ const YourReportsScreen = ({route}) => {
         }
       })
       .then((res) => {
-        // console.log(res.data)
         if (stress.length === 0) {
           fetchedStress.push(res.data)
           if (stress != fetchedStress) {
@@ -189,17 +167,15 @@ const YourReportsScreen = ({route}) => {
 
   const [timeVar, setTimeVar] = useState("");
   const [data, setData] = useState('');
-  console.log("time = ", time)
   // Set timeVar which can be varied to time if the user haven't picked to show only one course
   if (`${timeVar}` != `${time}` & state != 'pressed') {
       setTimeVar(time)    
   }
 
 
-  console.log("timevar= ", timeVar)
   if (timeVar.length > 0 & data.data != timeVar){
     setData({
-      labels: initialLabels,
+      labels: labels,
       legend: [],
       data: timeVar,
       barColors: colors
@@ -237,7 +213,6 @@ const YourReportsScreen = ({route}) => {
     navigation.navigate('Calendar', {courses: courses, token: token, courseIDs: courseIDs})
   }
   if (data.data != undefined ) {
-    console.log("data.data.length= ", data.data.length)
 
     return (
         <View style={styles.container}>

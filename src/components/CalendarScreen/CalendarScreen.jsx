@@ -12,20 +12,10 @@ const CalendarScreen = ({route}) => {
     const {token} = route.params;
     const {courseIDs} = route.params;
 
-
     const navigation = useNavigation();
     var [firstDate, setFirstDate] = useState('');
     var [lastDate, setLastDate] = useState('');
-    const [filledWithZeros, setFilledWithZeros] = useState(false)
-    console.log("firstDate= ", firstDate)
-
-    if (filledWithZeros === true) {
-        setFirstDate('');
-        setLastDate('');
-        alert('You have not tracked during this period, please pick other dates');
-        setFilledWithZeros(false)
-    } 
-
+    
     const getMarked = () => {
         let marked = {};
         
@@ -49,7 +39,6 @@ const CalendarScreen = ({route}) => {
             let year = firstDate.year;
             let dayLength = `${day}`.length;
             let monthLength = `${firstDate.month}`.length;
-            // console.log(day)
 
             
             if (monthLength < 2 & dayLength < 2 ) {
@@ -90,7 +79,6 @@ const CalendarScreen = ({route}) => {
             }
   
         }
-        // console.log(marked)
 
         return marked;
     };
@@ -100,8 +88,6 @@ const CalendarScreen = ({route}) => {
             alert('Choose up to a maximum of 7 days')
         } else {
             const formData = new FormData();
-            console.log('firstdate= ', firstDate)
-            console.log('lastdat= ', lastDate)
             formData.append('startDate', firstDate.dateString)
             formData.append('endDate', lastDate.dateString)
             axios({
@@ -116,19 +102,21 @@ const CalendarScreen = ({route}) => {
             .then((res) => {
             let totalTimeArray = [];
             for (let i=0; i<res.data.results.length; i++) {
-                console.log(res.data.results[i].timeStudied)
                 for (let j=0; j<res.data.results[0].timeStudied.length; j++) {
-                    console.log(res.data.results[i].timeStudied[j])
                     totalTimeArray.push(res.data.results[i].timeStudied[j])
                 }
             }
+            let sum = 0;
             for (let i=0; i<totalTimeArray.length; i++) {
-                if (totalTimeArray[i] != 0){
-                    setFilledWithZeros(false)
-                    navigation.navigate('YourReports', {firstDate: firstDate, lastDate: lastDate, courses: courses, token: token, courseIDs: courseIDs})
-                } else {
-                    setFilledWithZeros(true)
-                }
+                sum = sum + totalTimeArray[i];
+            }
+            console.log(sum)
+            if (sum != 0) {
+                navigation.navigate('YourReports', {firstDate: firstDate, lastDate: lastDate, courses: courses, token: token, courseIDs: courseIDs});
+            } else {
+                alert('You have not tracked during this perios, please choose another');
+                setFirstDate('');
+                setLastDate('');
             }
             
             })

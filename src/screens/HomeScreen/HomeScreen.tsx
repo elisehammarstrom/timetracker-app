@@ -19,6 +19,8 @@ const HomeScreen: React.FC = ({ route }) => {
   const [courseIDs, setCourseIDs] = useState('');
   const [courses, setCourses] = useState([]);
 
+
+
   axios.get('http://127.0.0.1:8000/api/users/get_courses/', {
     headers: {
       'Authorization': `token ` + token
@@ -56,6 +58,7 @@ const HomeScreen: React.FC = ({ route }) => {
     .catch((error) => {
       console.error(error)
     })
+
 
 
   const navigation = useNavigation();
