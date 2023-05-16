@@ -65,20 +65,18 @@ const SignUpScreen = () => {
         })
             .then(function (response) {
                 //handle success
-                if (yearGrades.length < 1) {
-                    let fetchedYearGrades = [];
-                    //Push the info into an array to be able to use in the return 
-                    for (let i = 0; i < response.data.length; i++) {
-                        fetchedYearGrades.push(response.data[i].yearGrades)
-                    }
+         
                     setYearGradeInfo(response.data)
-                    setYearGrades(fetchedYearGrades)
-                }
+                    setYearGrades(response.data.yearGrades)
+            
+                    
+            
             })
             .catch(function (response) {
                 //handle error
                 console.log(response);
             });
+            
 
     };
 
