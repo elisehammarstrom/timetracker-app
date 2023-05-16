@@ -13,14 +13,36 @@ LogBox.ignoreAllLogs();
 const EMAIL_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
 
 const SignUpScreen = () => {
-
-    const [courses, setCourses] = useState([]);
-
     const { control, handleSubmit, formState: { errors }, watch } = useForm();
     const pwd = watch('password');
-    // console.log(errors);
-
     const [selectedProgramme, setSelectedProgramme] = useState("");
+    const [programmeInfo, setProgrammeInfo] = useState('');
+    const [programmeNames, setProgrammeNames] = useState('');
+
+    // Get the different programmes from the database
+  axios({
+    method: "get",
+    url: "http://127.0.0.1:8000/api/programmes/",
+    headers: {
+      'Authorization':`token ` + token
+    }
+  })
+    .then(function (response) {
+      //handle success
+      if (programmeNames.length<1) {
+        let fetchedProgrammeNames = [];
+        //Push the info into an array to be able to use in the return 
+        for (let i=0; i<response.data.length; i++){
+          fetchedProgrammeNames.push(response.data[i].programmeName)
+        }
+        setProgrammeInfo(response.data)
+        setProgrammeNames(fetchedProgrammeNames)
+      }
+    })
+    .catch(function (response) {
+      //handle error
+      console.log(response);
+    });
 
     const data = [
         { key: '1', value: 'STS' },
@@ -68,10 +90,7 @@ const SignUpScreen = () => {
                 console.log(response.data);
                 axios.post('http://127.0.0.1:8000/auth/login/', formData)
                     .then((res) => {
-                        // console.log(res.data.token)
-                        // setToken(res.data.token)
                         navigation.navigate('StartCourses', { token: res.data.token, user: info })
-
 
                     })
                     .catch((error) => {
@@ -79,7 +98,6 @@ const SignUpScreen = () => {
                     })
             })
             .catch(error => {
-                //console.log("error from image :");
                 console.log("error in creating user :");
             })
 
@@ -134,9 +152,6 @@ const SignUpScreen = () => {
                 secureTextEntry
             />
             <View style={styles.selectContainer}>
-
-
-
                 <SelectList
                     dropdownTextStyles={styles.selectList}
                     inputStyles={styles.selectList}
@@ -156,7 +171,7 @@ const SignUpScreen = () => {
                     inputStyles={styles.selectList}
                     boxStyles={styles.boxStyles}
                     setSelected={(val) => setSelectedProgramme(val)}
-                    data={data}
+                    data={programmeNames}
                     save="value"
                     search={true}
                     placeholder='Choose programme'
