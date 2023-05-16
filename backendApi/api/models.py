@@ -13,28 +13,10 @@ class Course(models.Model):
     courseEndDateTime = models.DateTimeField(null=True, blank=True)
     filename = models.CharField(max_length=50, null=True)
     file = models.FileField(null=True)
-
-    #programmes = fields.ForeignKey(Programme, on_delete=models.CASCADE)
-
-    def no_of_evaluations(self):
-        courseEvaluations = CourseEvaluation.objects.filter(course = self)
-        return len(courseEvaluations)
-    
-    def avg_of_evaluations(self):
-        sum = 0
-        courseEvaluations = CourseEvaluation.objects.filter(course = self)
-
-        for evaluation in courseEvaluations:
-            sum += evaluation.stresslevel
-        if len(courseEvaluations) > 0:
-            return sum / len(courseEvaluations)
-        else:
-            return 0 
     
     def __str__(self):
         courseInfoString = self.courseTitle + " (" + self.courseCode + ")"
         return (courseInfoString)
-
 
 class CourseEvaluation(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, related_name="courseEvaluations") 

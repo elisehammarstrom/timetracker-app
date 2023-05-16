@@ -15,32 +15,67 @@ const EMAIL_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
 const SignUpScreen = () => {
     const { control, handleSubmit, formState: { errors }, watch } = useForm();
     const pwd = watch('password');
+
     const [selectedProgramme, setSelectedProgramme] = useState("");
     const [programmeInfo, setProgrammeInfo] = useState('');
     const [programmeNames, setProgrammeNames] = useState('');
 
-    // Get the different programmes from the database
-  axios({
-    method: "get",
-    url: "http://127.0.0.1:8000/api/programmes/",
-  })
-    .then(function (response) {
-      //handle success
-      if (programmeNames.length<1) {
-        let fetchedProgrammeNames = [];
-        //Push the info into an array to be able to use in the return 
-        for (let i=0; i<response.data.length; i++){
-          fetchedProgrammeNames.push(response.data[i].programmeName)
-        }
-        setProgrammeInfo(response.data)
-        setProgrammeNames(fetchedProgrammeNames)
-      }
-    })
-    .catch(function (response) {
-      //handle error
-      console.log(response);
-    });
+    const [selectedYearGrade, setSelectedYearGrade] = useState("");
+    const [yearGradeInfo, setYearGradeInfo] = useState('');
+    const [yearGrades, setYearGrades] = useState('');
 
+
+
+    // Get the different programmes from the database
+    axios({
+        method: "get",
+        url: "http://127.0.0.1:8000/api/programmes/",
+    })
+        .then(function (response) {
+            //handle success
+            if (programmeNames.length < 1) {
+                let fetchedProgrammeNames = [];
+                //Push the info into an array to be able to use in the return 
+                for (let i = 0; i < response.data.length; i++) {
+                    fetchedProgrammeNames.push(response.data[i].programmeName)
+                }
+                setProgrammeInfo(response.data)
+                setProgrammeNames(fetchedProgrammeNames)
+            }
+        })
+        .catch(function (response) {
+            //handle error
+            console.log(response);
+        });
+
+    // Get the different year grades from the database
+    const getYearGrades = (selectedProgramme) => {
+        const formData = new FormData();
+        formData.append('programmeName', selectedProgramme);
+        console.log('selectedProgramme:', selectedProgramme)
+
+        axios({
+            method: "post",
+            url: "http://127.0.0.1:8000/api/yearGrade/get_yearGrades/",
+            data: formData,
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            }
+        })
+            .then(function (response) {
+                //handle success
+
+                setYearGradeInfo(response.data)
+                setYearGrades(response.data.yearGrades)
+
+            })
+            .catch(function (response) {
+                //handle error
+                console.log(response);
+            });
+
+
+    };
     const [selectedUni, setSelectedUni] = useState("");
 
     const universityData = [
@@ -51,7 +86,7 @@ const SignUpScreen = () => {
 
     const onRegisterPressed = data => {
         let pID = [];
-        for (let i=0; i<programmeInfo.length; i++) {
+        for (let i = 0; i < programmeInfo.length; i++) {
             if (selectedProgramme === programmeInfo[i].programmeName) {
                 pID.push(programmeInfo[i].id)
             }
@@ -63,6 +98,7 @@ const SignUpScreen = () => {
             password: data.password,
             university: selectedUni,
             pID: pID[0],
+            yearGradeClass: data.selectedYearGrade,
             role: 'STUDENT'
         }
 
@@ -79,6 +115,7 @@ const SignUpScreen = () => {
         formData.append('role', info.role);
         formData.append('university', info.university);
         formData.append('pID', '1');
+        formData.append('yearGradeClass', info.yearGradeClass);
 
         axios
             .post('http://127.0.0.1:8000/api/users/create_user/', formData, headers, {
@@ -173,6 +210,22 @@ const SignUpScreen = () => {
                     save="value"
                     search={true}
                     placeholder='Choose programme'
+                    dropdownStyles={styles.dropDown}
+                    onSelect={() => getYearGrades(selectedProgramme)}
+                />
+            </View>
+
+            <View style={styles.selectContainer}>
+
+                <SelectList
+                    dropdownTextStyles={styles.selectList}
+                    inputStyles={styles.selectList}
+                    boxStyles={styles.boxStyles}
+                    setSelected={(val) => setSelectedYearGrade(val)}
+                    data={yearGrades}
+                    save="value"
+                    search={true}
+                    placeholder='Choose Year Grade'
                     dropdownStyles={styles.dropDown}
                 />
             </View>
