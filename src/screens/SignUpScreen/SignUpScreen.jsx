@@ -23,9 +23,6 @@ const SignUpScreen = () => {
   axios({
     method: "get",
     url: "http://127.0.0.1:8000/api/programmes/",
-    headers: {
-      'Authorization':`token ` + token
-    }
   })
     .then(function (response) {
       //handle success
@@ -44,11 +41,6 @@ const SignUpScreen = () => {
       console.log(response);
     });
 
-    const data = [
-        { key: '1', value: 'STS' },
-        { key: '2', value: 'Industriell ekonomi' }
-    ]
-
     const [selectedUni, setSelectedUni] = useState("");
 
     const universityData = [
@@ -58,13 +50,19 @@ const SignUpScreen = () => {
     const navigation = useNavigation();
 
     const onRegisterPressed = data => {
+        let pID = [];
+        for (let i=0; i<programmeInfo.length; i++) {
+            if (selectedProgramme === programmeInfo[i].programmeName) {
+                pID.push(programmeInfo[i].id)
+            }
+        }
         const info = {
             first_name: data.firstname,
             last_name: data.lastname,
             email: data.email.toLowerCase(),
             password: data.password,
             university: selectedUni,
-            pID: selectedProgramme,
+            pID: pID[0],
             role: 'STUDENT'
         }
 
