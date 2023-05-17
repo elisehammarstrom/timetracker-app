@@ -514,102 +514,64 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                     "weekDurationArray" : weekDurationArray
                     }
             return Response(data=response, status=status.HTTP_200_OK)
-        
-    def normalize_dates(self,courseCode):
-        queryset = Course.objects.get_queryset()
-        filtered_queryresult = queryset.filter(courseCode = courseCode)
-        most_recent_course = filtered_queryresult[0]
-        print("most_recent_course: ", most_recent_course)
-
-        for course in filtered_queryresult:
-            print("course: ", course)
-            if (course.courseEndDateTime is not None) or (most_recent_course.courseEndDateTime is not None):
-                if course.courseEndDateTime > most_recent_course.courseEndDateTime:
-                    most_recent_course = course
-       
-
-                    
-
-
-        return "hej"
     
-   #utgå från antalet dagar på den senaste kursen
-   # för varje dag, få liknande timetracked per course
-   # [{course1, dag 1, dag 2, dag3}, {course2, dag 1, dag 2, dag3}] 
-   #ta fram queryset
 
-   #för varje kurs, ta fram queryset för kursen baserat på antalet dagar
-   #array av en viss längd som motsvarar senaste kursens längd
-   #ta fram week averages för varje kurs, spara i array med dict, key=vecka. 
-   #räkna fram averages för alla kurser
+    def get_weekdates(self, startDate):
+        dates_of_week = []
+        if startDate.isoweekday() == 1:
+            #monday
+            monday = startDate
+        elif startDate.isoweekday() == 2:
+            #tuesday
+            monday = startDate - timedelta(days=1)
+        elif startDate.isoweekday() == 3:
+            #wednesday
+            monday = startDate - timedelta(days=2)
+        elif startDate.isoweekday() == 4:
+            #thursday
+            monday = startDate - timedelta(days=3)
+        elif startDate.isoweekday() == 5:
+            #friday
+            monday = startDate - timedelta(days=4)
+        elif startDate.isoweekday() == 6:
+            #saturday
+            monday = startDate - timedelta(days=5)
+        elif startDate.isoweekday() == 7:
+            #sunday
+            monday = startDate - timedelta(days=6)
+        else: 
+            print("Weekday doesn't exist")  
 
-   #samla alla kurser med samma kurskod
-   #ta fram antal dagar i användarens kurs
-   # för alla andra kurser med samma kurskod
-   #ta fram dag för dag avg trackad tid
-   # spara i en array, tillsammans med antal objekt 
-   #typ courseResultArray= {day1avg:05:00:00} {day2avg:03:30:00}
-   #gruppera i veckor
+        dates_of_week.append([monday + timedelta(days=x) for x in range(7)])
+        return dates_of_week
+
 
     @action(detail=False, methods=['POST'])
     def get_compared_total_timetracked_per_week(self, request, **extra_fields):
         courseID = request.POST.get('courseID')
         user = request.user
         userInstance = Student.objects.get(id=user.pk)
-        #om detta failas så säg att användaren inte har den kursen
-        userCourse = userInstance.courses.get(id=courseID)
+        try: 
+            userCourse = userInstance.courses.get(id=courseID)
+        except:
+            response = {
+                    "message": "Course with that id doesn't exist"
+                    }
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        
         delta = userCourse.courseEndDateTime - userCourse.courseStartDateTime
         daylist = list(range(0,delta.days))
 
-        #men alla kurser har inte samma längd i antalet dagar?
-        #ta avg av varje kurs vecka å sen avg på antalet kurser - nej
-        # ta fram alla timetracked å ta avg av det på en veckobasis - ja
-
         filtered_queryresult = Course.objects.get_queryset().filter(courseCode = userCourse.courseCode)
-        print("filtered_queryresult: ", filtered_queryresult)
-
-        dates_first_week = []
-        print("userCourse.courseStartDateTime: ", userCourse.courseStartDateTime)
         firstDate = userCourse.courseStartDateTime
-        if firstDate.isoweekday() == 1:
-            #monday
-            monday = firstDate
-        elif firstDate.isoweekday() == 2:
-            #tuesday
-            monday = firstDate - timedelta(days=1)
-        elif firstDate.isoweekday() == 3:
-            #wednesday
-            monday = firstDate - timedelta(days=2)
-        elif firstDate.isoweekday() == 4:
-            #thursday
-            monday = firstDate - timedelta(days=3)
-        elif firstDate.isoweekday() == 5:
-            #friday
-            monday = firstDate - timedelta(days=4)
-        elif firstDate.isoweekday() == 6:
-            #saturday
-            monday = firstDate - timedelta(days=5)
-        elif firstDate.isoweekday() == 7:
-            #sunday
-            monday = firstDate - timedelta(days=6)
-        else:
-            response = {"message": "That date isn't in a week"}    
-            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-        dates_first_week.append([monday + timedelta(days=x) for x in range(7)])
-
+        dates_first_week = self.get_weekdates(firstDate)
         weekArray = []
         
-
-        #get no of weeks in base course
-        weekStart = dates_first_week[0][0]
-
+        #get no of weeks in base course & populate with base course timetrackings
+        d = dates_first_week[0][0].date()
+        d2 = userCourse.courseEndDateTime.date()
         step = timedelta(days=7)
         week_no = 1
-
-        d = weekStart.date()
-        d2 = userCourse.courseEndDateTime.date()
-
-        print("course start & end dates", userCourse.courseStartDateTime.date(), userCourse.courseEndDateTime.date())
         
         while d < d2:
             weekStart = d
@@ -620,55 +582,67 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                 weekArray[week_no-1][week_no].append(timetracked)
             week_no += 1
             d += step
-        print("weekArray: ", weekArray)
-
+        maximum_nr_of_weeks = len(weekArray)
         last_day_first_week = dates_first_week[0][-1]
-        
 
-        #för varje kursobjekt, ta fram första dagen, kolla veckodag, ta fram första veckan,
-        #sen gör samma whileloop ba
+        for courseObj in filtered_queryresult:
+            if courseObj.id is not userCourse.id:
+                dates_first_week = self.get_weekdates(courseObj.courseStartDateTime)
+                d = dates_first_week[0][0].date()
+                week_no = 1
 
-        #sen kan vi börja göra averages per vecka
-
-
-
-        #get timetracked for those dates for that first week, then append them to weekArray
-
-
-        
-
-
-        
-
-        #ta för andra i samma kurs (samma id) och få fram averages per week (ej week no)
-
-        #bättre att utgå ifrån antal veckor än antal dagar exakt
-        #ta fram anv. kursens antal veckor
-        #kolla vilken veckodag anv. kursen börjar på
-        #dela upp i veckor som tidigare (vecka 1, vecka 2)
-        #i nästa kursobjekt, 
-        #kolla vilken veckodag nästa kursobj börjar på
-        #bedöm den tiden som vecka 1
-        #spara alla durations objekt på en veckobasis å ta average på den arrayen
-    
+                while week_no <= maximum_nr_of_weeks:
+                    weekStart = d
+                    weekEnd = d+timedelta(days=6)
+                    timetrackedObj_per_week = self.queryset.filter(course = courseObj, date__range=[weekStart, weekEnd]).values_list('duration', flat=True)
+                    for timetracked in timetrackedObj_per_week: 
+                        weekArray[week_no-1][week_no].append(timetracked)
+                    week_no += 1
+                    d += step
 
 
+        #NOW GET AVERAGES PER WEEK
+        avgTimePerWeek = []
+
+        for weekObj in weekArray:
+            print(weekObj)
+            zero_time = timedelta(hours=0, minutes=0, seconds=0)
+            zero_time_string = "0" + str(zero_time)
+            total_week_time = zero_time
+            timetracked_count = 0
+            week_avg = zero_time
+            weekKey = next(iter(weekObj))
+            print("weekObj: ", weekObj)
+            for timetracked in weekObj[weekKey]:
+                if str(timetracked) != zero_time_string:
+                    total_week_time += timedelta(hours=timetracked.hour, minutes=timetracked.minute, seconds=timetracked.second )
+                    timetracked_count += 1          
+            totalSeconds = total_week_time.total_seconds()
+            hours = total_week_time.total_seconds()/3600
+            if timetracked_count is 0:
+                week_avg = zero_time
+                week_avg_string = zero_time_string
+            else:
+                week_avg = round(hours / timetracked_count, 2)
+                week_avg_string = str(timedelta(hours=week_avg))
+            avgTimePerWeek.append(week_avg_string)
+            weekDurationArray = avgTimePerWeek 
+
+            weekNoArray = list(range(1, maximum_nr_of_weeks+1))
 
         response = {
-                    "message": "Time studied per day", 
+                    "message": "Avg time studied per week for courses with same courseCode", 
                     "user" : {
                         "email": user.email
                     },
-                    "userCourse": userCourse.courseTitle
-                    #"weekNoArray" : weekNoArray,
-                    #"weekDurationArray" : weekDurationArray
+                    "userCourse": userCourse.courseTitle,
+                    "weekNoArray" : weekNoArray,
+                    "weekDurationArray" : weekDurationArray
                     }
         return Response(data=response, status=status.HTTP_200_OK)
 
-   
-   
 
-
+# TA BORT efter frontend gett ok
     @action(detail=False, methods=['POST'])
     def get_total_timetracked_per_week(self, request, **extra_fields):
         courseID = request.POST.get('courseID')
@@ -737,33 +711,7 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'])
     def get_dates_in_week(self, request, **extra_fields):
         today = date.today()
-        dates = []
-
-        if today.isoweekday() == 1:
-            #monday
-            monday = today
-        elif today.isoweekday() == 2:
-            #tuesday
-            monday = today - timedelta(days=1)
-        elif today.isoweekday() == 3:
-            #wednesday
-            monday = today - timedelta(days=2)
-        elif today.isoweekday() == 4:
-            #thursday
-            monday = today - timedelta(days=3)
-        elif today.isoweekday() == 5:
-            #friday
-            monday = today - timedelta(days=4)
-        elif today.isoweekday() == 6:
-            #saturday
-            monday = today - timedelta(days=5)
-        elif today.isoweekday() == 7:
-            #sunday
-            monday = today - timedelta(days=6)
-        else:
-            response = {"message": "That date isn't in a week"}    
-            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-        dates.append([monday + timedelta(days=x) for x in range(7)])
+        dates = self.get_weekdates(today)
 
         #remaking dates to format for frontEnd
         dates_for_frontend = []
