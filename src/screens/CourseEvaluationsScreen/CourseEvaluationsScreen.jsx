@@ -1,3 +1,5 @@
+// On this screen you can see the evaluations of the courses you have picked.
+
 import React, {useState} from 'react';
 import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity, ScrollView} from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list';
@@ -19,6 +21,7 @@ const CourseEvaluationsScreen = ({route}) => {
     const [selected, setSelected] = useState("");
     const [data, setData] = useState("");
 
+    // Depending on what course you pick in the dropdown list
     for (let i=0; i<courses.length; i++) {
         if (selected === courses[i]) {
             const formData = new FormData();
@@ -36,10 +39,9 @@ const CourseEvaluationsScreen = ({route}) => {
             })
                 .then(function (response) {
                 //handle success
-                console.log("data= ", data)
-                console.log("responase.dta.raesltk= ", response.data.result)
+                // We set data to the data (of statistics) we got from the database. 
+                // To avoid an infinite loop we only set it once by using an if statement
                 if (`${data.courseID}` !=`${response.data.result.courseID}`) {
-                    console.log("HEJ")
                     setData(response.data.result)
                 }
                 })
@@ -54,38 +56,33 @@ const CourseEvaluationsScreen = ({route}) => {
     const onArrowPressed = () => {
         navigation.navigate('Courses', {courses: courses, token: token, courseIDs: courseIDs})
       }
-
+    // We want the average of stars from the evaluations. From the data we get how many who gave 1 star, 2 stars etc.
     let starNumbers = [];
     let sum = 0;
     let numberOfRatings = 0;
     let avgRating = 0;
     let questionPercentages = [];
     if (Object.keys(data).length > 1) {
+        // starNumbers is an array with the statistics for the first question in the evaluations, i.e. the one where you fill in stars
         starNumbers.push(data.questionAnswerNumbers["What is your general opinion of the course?"])
-        console.log("starnumberslengt= ", Object.keys(starNumbers[0]).length)
         for (let i=1;i<=Object.keys(starNumbers[0]).length; i++) {
-            console.log("starNumbers= ", starNumbers)
+            // To the sum we add i*starNumber[0][i], which means that a 1-star rating gets the value of 1, a 2-star rating the value of 2...
             sum = sum + i*starNumbers[0][i]
             numberOfRatings = numberOfRatings + starNumbers[0][i]
         }
-        console.log("sum= ", sum)
-        console.log("numberofRatings= ", numberOfRatings)
-
+        // The average rating is the sum divided by the number of ratings.
         avgRating = sum/numberOfRatings;
 
-        // console.log("avgRating =", avgRating)
+        // We push the percentages who chose answers 4 and 5 on the evaluation to an array, these are for all questions to most positive answers.
+        // We also push a text to be displayed for each question (this could be made much more efficient if we had more time)
         questionPercentages.push({percentage: Math.round(data.questionAnswerPercentages["Does this course have a reasonable workload?"][4] + data.questionAnswerPercentages["Does this course have a reasonable workload?"][5]) , text: " felt the course had a reasonable workload."});
         questionPercentages.push({percentage: Math.round(data.questionAnswerPercentages["If you’ve been to any lectures, were they worth it?"][4] + data.questionAnswerPercentages["If you’ve been to any lectures, were they worth it?"][5]) , text: " felt the lectures were worth attending."});
         questionPercentages.push({percentage: Math.round(data.questionAnswerPercentages["If you’ve been to any lesson, were they worth it?"][4] + data.questionAnswerPercentages["If you’ve been to any lesson, were they worth it?"][5]) , text: " felt the lessons were worth attending."});
         questionPercentages.push({percentage: Math.round(data.questionAnswerPercentages["If you’ve done any assignments, were they worth it?"][4] + data.questionAnswerPercentages["If you’ve done any assignments, were they worth it?"][5]) , text: " felt the assignments were worth doing."});
         questionPercentages.push({percentage: Math.round(data.questionAnswerPercentages["Was this course difficult?"][4] + data.questionAnswerPercentages["Was this course difficult?"][5]) , text: " felt the course was not too difficult."});
         questionPercentages.push({percentage: Math.round(data.questionAnswerPercentages["Was this course stressful in general?"][4] + data.questionAnswerPercentages["Was this course stressful in general?"][5]) , text: " felt the course was not too stressful."});
-
-        console.log(questionPercentages)
-        
     }
 
- 
 
     return (
         <View style={styles.container}>
@@ -104,7 +101,6 @@ const CourseEvaluationsScreen = ({route}) => {
            
     
             <View style={styles.selectListContainer}>
-
                 <SelectList
                     dropdownTextStyles={styles.selectList}
                     inputStyles={styles.selectList}
@@ -124,6 +120,7 @@ const CourseEvaluationsScreen = ({route}) => {
             <View style={styles.stats}>
                 <ScrollView>
                     <View style={styles.star}>
+                        {/* The stars are displayed here */}
                         <Rating 
                             fractions="{1}" 
                             startingValue={avgRating} 
@@ -132,6 +129,7 @@ const CourseEvaluationsScreen = ({route}) => {
                             tintColor='#313131'
                         />
                     </View>
+                    {/* We loop/map the array with percentages and text to render them here */}
                     {questionPercentages.map(option => (
                         <Text key={option.text} style={styles.results}>
                             {option.percentage} % {option.text}

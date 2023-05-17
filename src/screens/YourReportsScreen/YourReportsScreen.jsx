@@ -1,3 +1,5 @@
+// On this screen the student will see their own statistics for a max period of 7 days.
+
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image, ScrollView} from 'react-native';
 import { StackedBarChart } from "react-native-chart-kit";
@@ -29,40 +31,68 @@ const YourReportsScreen = ({route}) => {
   const [state, setState] = useState('');
   const fetchedStress = [];
   const [stress, setStress]= useState('');
- 
+  // This array contains the sources of the pictures that wil be displayed depending on the avg stress of each course
   const smileys = [Noll, Ett, Två, Tre, Fyra, Fem];
 
-  // If you have selected dates from the calendar the dates of the graph will change
-  if (firstDate) {
-
-    if (startDate !== firstDate.dateString) {
-      setStartDate(firstDate.dateString);
-      setEndDate(lastDate.dateString);
-      if (stress.length > 0){
-        setStress([]);
-      }
+  // Here we set the start- and enddate. To avoid infinite loop we put it inside a if condition. 
+  if (startDate !== firstDate.dateString) {
+    setStartDate(firstDate.dateString);
+    setEndDate(lastDate.dateString);
+    if (stress.length > 0){
+      setStress([]);
     }
   }
-  if (firstDate) {
-    let newLabels = [];
-
-    for (let i=firstDate.day; i<=lastDate.day; i++) {
-      newLabels.push(i + '/' + firstDate.month);
-    }
-    if (`${labels}` != `${newLabels}`) {
-      setLabels(newLabels);
-    }
+  // Setting the labels for the graph, i.e. the dates of which you have chosen. We want it in the format of d/m so it fits on the screen
+  let newLabels = [];
+  for (let i=firstDate.day; i<=lastDate.day; i++) {
+    newLabels.push(i + '/' + firstDate.month);
   }
+  // if condition to avoid infinite loop when we set the labels
+  if (`${labels}` != `${newLabels}`) {
+    setLabels(newLabels);
+  }
+ 
   
   //Fetching the users study time on each course for the dates you have picked
-  if (endDate) {
+  const formData = new FormData();
+  formData.append('startDate', startDate)
+  formData.append('endDate', endDate)
+  axios({
+    method: "post",
+    url: "http://127.0.0.1:8000/api/tracking/get_user_course_study_time/",
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      'Authorization': `token ` + token
+    }
+  })
+  .then((res) => {
+    // We push the data of the timestudied and the courses the an array each
+    for (let i=0; i<res.data.results.length; i++) {
+      fetchedTimeStudied.push(res.data.results[i].timeStudied)
+      fetchedCourses.push(res.data.results[i].Course)
+    }
+    // Setting the courses and timestudied to the fetched data
+    if (`${fetchedTimeStudied}` != `${timeStudied}` ){
+      setCourses(fetchedCourses);
+      setTimeStudied(fetchedTimeStudied);
+    }  
+  })
+  .catch((error) => {
+    console.error(error)
 
+  })
+
+  // Getting the avg stress for each course and the timespan chosen
+  for (let i=0; i<courseIDs.length; i++){
     const formData = new FormData();
     formData.append('startDate', startDate)
     formData.append('endDate', endDate)
+    formData.append('courseID', courseIDs[i])
+
     axios({
       method: "post",
-      url: "http://127.0.0.1:8000/api/tracking/get_user_course_study_time/",
+      url: "http://127.0.0.1:8000/api/tracking/get_user_stress_period/",
       data: formData,
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -70,51 +100,20 @@ const YourReportsScreen = ({route}) => {
       }
     })
     .then((res) => {
-      for (let i=0; i<res.data.results.length; i++) {
-        fetchedTimeStudied.push(res.data.results[i].timeStudied)
-        fetchedCourses.push(res.data.results[i].Course)
+      // fetching the stress and setting it to a number for each course
+      if (stress.length === 0) {
+        fetchedStress.push(res.data)
+        if (stress != fetchedStress) {
+          setStress(fetchedStress)
+        }
       }
-      if (`${fetchedTimeStudied}` != `${timeStudied}` ){
-        setCourses(fetchedCourses);
-        setTimeStudied(fetchedTimeStudied);
-      }  
+      
     })
     .catch((error) => {
       console.error(error)
-
     })
-
-    for (let i=0; i<courseIDs.length; i++){
-      const formData = new FormData();
-      formData.append('startDate', startDate)
-      formData.append('endDate', endDate)
-      formData.append('courseID', courseIDs[i])
-
-
-      axios({
-        method: "post",
-        url: "http://127.0.0.1:8000/api/tracking/get_user_stress_period/",
-        data: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `token ` + token
-        }
-      })
-      .then((res) => {
-        if (stress.length === 0) {
-          fetchedStress.push(res.data)
-          if (stress != fetchedStress) {
-            setStress(fetchedStress)
-          }
-        }
-        
-      })
-      .catch((error) => {
-        console.error(error)
-      })
-    }
-
   }
+  // Getting an array of the stress (rounded up), so we can compare to the stress smileys
   let stressNumbers = [];
   if (stress.length === courseIDs.length) {
     for (let i=0; i<courseIDs.length; i++){
@@ -126,8 +125,7 @@ const YourReportsScreen = ({route}) => {
     }
   }
   
-  // Specifics for the graph 
-  const fakeTime = ["10h", "12h", "11h"]
+  // Specifics for the graph ...
   const screenWidth = Dimensions.get("window").width;
   const chartConfig = {
       decimalPlaces: 0,
@@ -141,7 +139,7 @@ const YourReportsScreen = ({route}) => {
       useShadowColorFromDataset: false, // optional
   };
 
-  // Colors for the graph and for the boxes
+  // Colors for the graph and for the boxes, needing to color arrays since if we change to only one course we want the color in the graph to be consistent
   const colorsConst = ['#66C7FD', '#5987CC', '#AC7CE4', '#FFB5E2', '#FFA9A3', '#FFC977'];
   const [colors, setColors] = useState(['#66C7FD', '#5987CC', '#AC7CE4', '#FFB5E2', '#FFA9A3', '#FFC977']);
   const [legend, setLegend] = useState(courses);
@@ -149,7 +147,7 @@ const YourReportsScreen = ({route}) => {
   var time = [];
   var timeCourses = [];
 
-  // Get the right format for the timeStudied to fit in to the graph
+  // Get the right format for the timeStudied to fit in to the graph, i.e. an array with data for each day instead of one array for each course
   if (timeStudied.length > 0) {
     for (let i=0; i<timeStudied[0].length; i++) {
       let timeSplit = [];
@@ -168,10 +166,11 @@ const YourReportsScreen = ({route}) => {
   const [timeVar, setTimeVar] = useState("");
   const [data, setData] = useState('');
   // Set timeVar which can be varied to time if the user haven't picked to show only one course
+ 
+
   if (`${timeVar}` != `${time}` & state != 'pressed') {
       setTimeVar(time)    
   }
-
 
   if (timeVar.length > 0 & data.data != timeVar){
     setData({
@@ -184,27 +183,42 @@ const YourReportsScreen = ({route}) => {
  
   // When you press a course you will only see data for that course
   const onCoursePressed = (course) => {
+    
     for (let i=0; i<timeCourses.length; i++) {
+      // If you already have pressed the course, the data will go back to all courses if you press again
       if (legend.length === 1 & legend[0] === course) {
         setLegend([timeCourses[i].course])
         setLegend(courses)
         setColors(colorsConst)
         setTimeVar(time)
       }
-      
+      // If you pick a course we set the data to only show for that course, and the legend and colors sets to correspond 
       else if (course === timeCourses[i].course & legend.length != 1){
-        setLegend([timeCourses[i].course])
-        setColors([colors[i]])
+       
         var timeChange = [];
-
         for (let j=0;j<timeCourses[i].time.length; j++){
           timeChange.push([timeCourses[i].time[j]])
         }
-
-        setTimeVar(timeChange)
-        setState('pressed')
+        // If the course you pick don't have any data you will get an alert, to check we sum up the array of data and check if it is =0
+        let sum = 0;
+        for (let i=0; i<timeChange.length; i++) {
+          for (let j=0; j<timeChange[0].length; j++) {
+            sum = sum + timeChange[i][j];
+          }
+        }
+      
+        if (sum != 0) {
+          setTimeVar(timeChange)
+          setState('pressed')
+          setLegend([timeCourses[i].course])
+          setColors([colors[i]])
+        } else {
+          alert('You have not tracked time for this course')
+        }
+        
       }
     }
+    
   };
 
   // Navigation to the calendar where you can pick other dates to display

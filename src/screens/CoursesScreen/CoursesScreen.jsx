@@ -1,9 +1,11 @@
+// This is the screen you get to after choosing the option 'Evaulations' on the menu
+// You will choose if you want to read evaluations or if you want to add an evaluation
+
 import React from "react";
 import { View, Text, StyleSheet } from 'react-native';
 import CustomButton from "../../components/CustomButton/CustomButton";
 import { useNavigation } from '@react-navigation/native';
 import ButtonMenu from "../../components/ButtonMenu/ButtonMenu";
-
 
 
 const CourseStatsScreen = ({route}) => {

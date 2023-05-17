@@ -4,21 +4,21 @@ import { useNavigation } from '@react-navigation/native';
 import CustomButton from '../../components/CustomButton';
 import axios from 'axios';
 import { TextInput } from 'react-native-paper';
-// import { FlatList } from 'react-native-gesture-handler/lib/typescript/components/GestureComponents';
 
 
 const CourseScreen = ({route}) => {
   const {originalCourseIDs} = route.params;
   const {token} = route.params;
+  const navigation = useNavigation();
+
   const [courseIDs, setCourseIDs] = useState('');
-  // const [courses, setCourses] = useState([]);
-
-
   const [testCourses, setTestCourses] = useState('');
   const [filteredData, setFilteredData] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const [courseCodes, setCourseCodes] = useState([]);
+  const [search, setSearch] = useState('');
 
-
-// Get all courses from database
+  // Get all courses from database
   axios.get('http://127.0.0.1:8000/api/courses/', {
     headers: {
       'Authorization': `token ` + token
@@ -37,25 +37,18 @@ const CourseScreen = ({route}) => {
 
   let data = [];
   for (let i=0; i<testCourses.length; i++){
-    // if (testCourses[i].courseEndDateTime >= date) {
-      data.push({
-        id: testCourses[i].id,
-        courseTitle: testCourses[i].courseTitle,
-        courseCode: testCourses[i].courseCode,
-      })
-    // }
+    data.push({
+      id: testCourses[i].id,
+      courseTitle: testCourses[i].courseTitle,
+      courseCode: testCourses[i].courseCode,
+    })
   }
-  const navigation = useNavigation();
   
-  const [courses, setCourses] = useState([]);
   if (originalCourseIDs ) {
     if (courses.length < 1){
       setCourses(originalCourseIDs);
     }
   }
-
-  const [courseCodes, setCourseCodes] = useState([]);
-  const [search, setSearch] = useState('');
 
   const onTimerPressed = () => {
     for (let i=0; i<courseCodes.length; i++) {
@@ -152,8 +145,6 @@ const CourseScreen = ({route}) => {
   
     navigation.navigate('Home', {token: token, newCourseIDs: courses});
   };
-  
-    
 
   function pickCourse(selectedCourse, courseCode) {
       if(courses.includes(selectedCourse)){
@@ -175,7 +166,6 @@ const CourseScreen = ({route}) => {
     else {
       alert('You cannot track more than six courses at a time, please deselect a course to select another one')
     }
-    
     
   }
 

@@ -6,7 +6,7 @@ import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import Timer from '../../components/Timer';
 import React, { useState } from 'react';
-import { Button, SafeAreaView, StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { SafeAreaView, StyleSheet, View, Image, TouchableOpacity, ScrollView } from 'react-native';
 import ButtonMenu from '../../components/ButtonMenu';
 import Logo from '../../../assets/logo.png';
 import InvisibleBox from '../../../assets/invisible-box.png';

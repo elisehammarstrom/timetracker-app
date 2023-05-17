@@ -1,7 +1,10 @@
+// This is the screen you get to first when you want to view your own reports.
+// At first you have to choose a date span, this is where you do that.
+
 import React, {useState} from "react";
 import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
 import { Calendar } from 'react-native-calendars';
-import CustomButton from "../CustomButton/CustomButton";
+import CustomButton from "../../components/CustomButton/CustomButton";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import BackArrow from '../../../assets/arrowBack.png';
@@ -15,7 +18,8 @@ const CalendarScreen = ({route}) => {
     const navigation = useNavigation();
     var [firstDate, setFirstDate] = useState('');
     var [lastDate, setLastDate] = useState('');
-    
+
+    // This function gets the chosen datespan when you press a first date and a lastdate.
     const getMarked = () => {
         let marked = {};
         
@@ -40,7 +44,8 @@ const CalendarScreen = ({route}) => {
             let dayLength = `${day}`.length;
             let monthLength = `${firstDate.month}`.length;
 
-            
+            // Depending on if the dates chosen are in the format d or dd, we want them in dd. 
+            // This means that if we chose a span of days from 8-11, we want it to be 08, 09, 10, 11, and the same for months.
             if (monthLength < 2 & dayLength < 2 ) {
                 marked[`${year}-0${month}-0${day}`] = {
                     startingDay: i == firstDate.day,
@@ -82,11 +87,13 @@ const CalendarScreen = ({route}) => {
 
         return marked;
     };
-
+    // When you press on the 'select¨'-button
     const onSelectPressed = () => {
+        // For the sake of keeping the graph clean we decided to only allow choosing a span of 7 days
         if (lastDate.day - firstDate.day > 7) {
             alert('Choose up to a maximum of 7 days')
         } else {
+            // We are fetching the studytime data from backend to see if their is any data
             const formData = new FormData();
             formData.append('startDate', firstDate.dateString)
             formData.append('endDate', lastDate.dateString)
@@ -100,17 +107,20 @@ const CalendarScreen = ({route}) => {
             }
             })
             .then((res) => {
+            // We push the data for all the courses in to an array with the total time.
             let totalTimeArray = [];
             for (let i=0; i<res.data.results.length; i++) {
                 for (let j=0; j<res.data.results[0].timeStudied.length; j++) {
                     totalTimeArray.push(res.data.results[i].timeStudied[j])
                 }
             }
+            // We check the sum of the array
             let sum = 0;
             for (let i=0; i<totalTimeArray.length; i++) {
                 sum = sum + totalTimeArray[i];
             }
-            console.log(sum)
+            // If the sum of the array is =0, there is no tracked data. 
+            // If there is no data, the next page is worthless and therefore will only be navigate if the chosen datespan contains tracked data
             if (sum != 0) {
                 navigation.navigate('YourReports', {firstDate: firstDate, lastDate: lastDate, courses: courses, token: token, courseIDs: courseIDs});
             } else {
@@ -143,6 +153,7 @@ const CalendarScreen = ({route}) => {
             <Text style={styles.title}>
                 Choose dates to see your reports:
             </Text>
+            {/* A Calendar component fetched from the react native calendar library */}
             <Calendar
                 onDayPress={day => {
                     {if (day.dateString === firstDate.dateString){

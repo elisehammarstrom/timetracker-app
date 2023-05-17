@@ -28,7 +28,7 @@ const Timer = ({ courseID, courseName, color, token }) => {
   })
     .then(function (response) {
     //handle success
-    console.log(response.data.results)
+    // console.log(response.data.results)
     for (let i=0; i<Object.keys(response.data.results).length; i++){
       if (response.data.results[i].courseID === courseID) {
         if (duration.length < 1) {
@@ -41,7 +41,6 @@ const Timer = ({ courseID, courseName, color, token }) => {
     //handle error
     console.log(response);
     });
-    console.log("dureation= ", duration)
 
 
   function resetTimerMidnight(hour, minutes, seconds, func) {
@@ -93,7 +92,6 @@ const Timer = ({ courseID, courseName, color, token }) => {
           console.log(response);
         });
 
-      // console.log(data)
     }
 
   }

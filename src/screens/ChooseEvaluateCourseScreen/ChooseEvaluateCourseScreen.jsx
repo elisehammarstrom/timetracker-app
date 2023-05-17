@@ -1,3 +1,5 @@
+// This is the screen were you choose which course you want to evaluate
+
 import { StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
 import React, {useState} from 'react';
 import { useNavigation } from '@react-navigation/native';
@@ -17,8 +19,8 @@ const EvaluateCourseScreen = ({route}) => {
 
     const onArrowPressed = () => {
         navigation.navigate('Courses', {courses: courses, token: token, courseIDs: courseIDs})
-      }
-
+    }
+    // Check which course has been chosen, if none chosen - alert, else - navigate.
     const onEvaluateCoursePressed = () => {
         let checkedID = [];
         for (let i=0; i<courses.length; i++) {

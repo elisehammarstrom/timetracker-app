@@ -1,3 +1,5 @@
+// On this screen the student can compare their own data to the rest of the studetns who have been partaking in tracking a course.
+
 import { useState } from 'react';
 import React from 'react';
 import { StyleSheet, View, Text, Dimensions, TouchableOpacity, Image, ScrollView } from 'react-native';
@@ -49,7 +51,6 @@ const CourseStatsScreen = ({ route }) => {
 
 
     if (courseData.length > 1) {
-
         for (let i = 0; i < courseData.length; i++) {
             // Get the students timetracking for each course 
             if (selected === courseData[i].courseTitle) {
@@ -67,6 +68,7 @@ const CourseStatsScreen = ({ route }) => {
                 })
                     .then(function (response) {
                         //handle success
+                        //Setting the users time tracking data
                         if (`${userData}` != `${response.data.weekDurationArray}`) {
                             setUserData(response.data.weekDurationArray)
                         }
@@ -88,6 +90,7 @@ const CourseStatsScreen = ({ route }) => {
                 })
                     .then(function (response) {
                         //handle success
+                        // Setting the average time tracking the data for all students who have tracked
                         if (`${avgData}` != `${response.data.weekDurationArray}` & `${label}` != `${response.data.weekNoArray}`) {
                             setAvgData(response.data.weekDurationArray)
                             setLabel(response.data.weekNoArray)
@@ -97,7 +100,7 @@ const CourseStatsScreen = ({ route }) => {
                         //handle error
                         console.log(response);
                     });
-
+                // Getting the average time spent on a course/week for the whole course
                 axios({
                     method: "post",
                     url: "http://127.0.0.1:8000/api/tracking/get_course_avg_time/",
@@ -117,6 +120,7 @@ const CourseStatsScreen = ({ route }) => {
                         //handle error
                         console.log(response);
                     });
+                // Getting the average time spent on a course/week for the student
                 axios({
                     method: "post",
                     url: "http://127.0.0.1:8000/api/tracking/get_user_course_avg_time/",
@@ -190,9 +194,6 @@ const CourseStatsScreen = ({ route }) => {
         useShadowColorFromDataset: false, // optional
     };
 
-    const onArrowPressed = () => {
-        navigation.navigate('ChooseReport', { token: token, courseIDs: courseIDs, courses: chosenCourses })
-    }
 
     return (
         <View style={styles.container}>
