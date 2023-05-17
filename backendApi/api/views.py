@@ -38,7 +38,8 @@ import numpy as np
 
 
 #fakkar detta med något?
-from django.contrib.auth import get_user_model
+#from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user
 
 
 class CourseViewset(viewsets.ModelViewSet):
@@ -165,8 +166,9 @@ class LogoutView(APIView):
             return Response(data=response, status=status.HTTP_200_OK)
         
 class PasswordChangeView(APIView):
-    #permission_classes = [IsAuthenticated]
-    permission_classes = []
+    #permission_classes = []
+    permission_classes = [IsAuthenticated]
+    authentication_classes = (TokenAuthentication, )
 
     def post(self, request:Request):
         #new_password = request.data.get('new_password')
@@ -205,11 +207,12 @@ class PasswordChangeView(APIView):
             old_user_pw = user.password
             #User = get_user_model()
             print("i if")
-            userInstance = get_user_model().objects.get(pk=user.pk)
+            #userInstance = get_user_model().objects.get(pk=user.pk)
+            userInstance = get_user(request)
             userInstance.set_password(new_password)
             userInstance.save()
 
-            authUser = authenticate(email=userInstance.email, password=new_password)
+            #authUser = authenticate(email=userInstance.email, password=new_password)
             #user = authenticate(email=email, password=password)
 
             #user = authenticate(email=email, password=password)
@@ -221,7 +224,7 @@ class PasswordChangeView(APIView):
                     "id" : userInstance.id,
                     "email": userInstance.email
                 },
-                "loggedIn": authUser,
+                #"loggedIn": authUser,
                 "new_password": userInstance.password,
                 "old_user_pw": old_user_pw
             } 
