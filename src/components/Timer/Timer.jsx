@@ -4,17 +4,44 @@ import { Stopwatch } from 'react-native-stopwatch-timer';
 import Play from '../../../assets/play.png'
 import Pause from '../../../assets/pause.png'
 import axios from 'axios';
+import { add } from 'timelite/time'
+import { str } from 'timelite/time'
 
 
 const Timer = ({ courseID, courseName, color, token }) => {
   const [isStopwatchStart, setIsStopwatchStart] = useState(false);
   const [resetStopwatch, setResetStopwatch] = useState(false);
+  const [duration, setDuration]= useState('');
 
 
   var day = new Date().getDate();
   var month = new Date().getMonth() + 1;
   var year = new Date().getFullYear();
   var date = year + '-' + month + '-' + day;
+
+  axios({
+    method: "post",
+    url: "http://127.0.0.1:8000/api/tracking/get_user_day_study_time/",
+    headers: {
+    'Authorization':`token ` + token
+    }
+  })
+    .then(function (response) {
+    //handle success
+    console.log(response.data.results)
+    for (let i=0; i<Object.keys(response.data.results).length; i++){
+      if (response.data.results[i].courseID === courseID) {
+        if (duration.length < 1) {
+          setDuration(response.data.results[i].duration)
+        }
+      }
+    }
+    })
+    .catch(function (response) {
+    //handle error
+    console.log(response);
+    });
+    console.log("dureation= ", duration)
 
 
   function resetTimerMidnight(hour, minutes, seconds, func) {
@@ -38,18 +65,15 @@ const Timer = ({ courseID, courseName, color, token }) => {
     setResetStopwatch(true)
   });
 
-  const getTime = (time) => {
+  const getTime = (time, totalDuration) => {
     if (isStopwatchStart != true & time != '00:00:00') {
-      let data = {
-        courseID: courseID,
-        date: date,
-        duration: time,
-      };
-      // console.log(courseName)
+      let sum = add([time, totalDuration]);
+      let sumString = str(sum);
+
       const formData = new FormData();
       formData.append('courseID', courseID);
       formData.append('date', date);
-      formData.append('duration', time);
+      formData.append('duration', sumString);
 
       axios({
         method: "post",
@@ -93,7 +117,7 @@ const Timer = ({ courseID, courseName, color, token }) => {
               reset={resetStopwatch} // To reset
               options={options} // Options for the styling
               getTime={(time) => {
-                getTime(time);
+                getTime(time, duration);
               }}
             />
           </View>
