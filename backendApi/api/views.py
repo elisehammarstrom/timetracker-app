@@ -542,6 +542,129 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
    #array av en viss längd som motsvarar senaste kursens längd
    #ta fram week averages för varje kurs, spara i array med dict, key=vecka. 
    #räkna fram averages för alla kurser
+
+   #samla alla kurser med samma kurskod
+   #ta fram antal dagar i användarens kurs
+   # för alla andra kurser med samma kurskod
+   #ta fram dag för dag avg trackad tid
+   # spara i en array, tillsammans med antal objekt 
+   #typ courseResultArray= {day1avg:05:00:00} {day2avg:03:30:00}
+   #gruppera i veckor
+
+    @action(detail=False, methods=['POST'])
+    def get_compared_total_timetracked_per_week(self, request, **extra_fields):
+        courseID = request.POST.get('courseID')
+        user = request.user
+        userInstance = Student.objects.get(id=user.pk)
+        #om detta failas så säg att användaren inte har den kursen
+        userCourse = userInstance.courses.get(id=courseID)
+        delta = userCourse.courseEndDateTime - userCourse.courseStartDateTime
+        daylist = list(range(0,delta.days))
+
+        #men alla kurser har inte samma längd i antalet dagar?
+        #ta avg av varje kurs vecka å sen avg på antalet kurser - nej
+        # ta fram alla timetracked å ta avg av det på en veckobasis - ja
+
+        filtered_queryresult = Course.objects.get_queryset().filter(courseCode = userCourse.courseCode)
+        print("filtered_queryresult: ", filtered_queryresult)
+
+        dates_first_week = []
+        print("userCourse.courseStartDateTime: ", userCourse.courseStartDateTime)
+        firstDate = userCourse.courseStartDateTime
+        if firstDate.isoweekday() == 1:
+            #monday
+            monday = firstDate
+        elif firstDate.isoweekday() == 2:
+            #tuesday
+            monday = firstDate - timedelta(days=1)
+        elif firstDate.isoweekday() == 3:
+            #wednesday
+            monday = firstDate - timedelta(days=2)
+        elif firstDate.isoweekday() == 4:
+            #thursday
+            monday = firstDate - timedelta(days=3)
+        elif firstDate.isoweekday() == 5:
+            #friday
+            monday = firstDate - timedelta(days=4)
+        elif firstDate.isoweekday() == 6:
+            #saturday
+            monday = firstDate - timedelta(days=5)
+        elif firstDate.isoweekday() == 7:
+            #sunday
+            monday = firstDate - timedelta(days=6)
+        else:
+            response = {"message": "That date isn't in a week"}    
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        dates_first_week.append([monday + timedelta(days=x) for x in range(7)])
+
+        weekArray = []
+        
+
+        #get no of weeks in base course
+        weekStart = dates_first_week[0][0]
+
+        step = timedelta(days=7)
+        week_no = 1
+
+        d = weekStart.date()
+        d2 = userCourse.courseEndDateTime.date()
+
+        print("course start & end dates", userCourse.courseStartDateTime.date(), userCourse.courseEndDateTime.date())
+        
+        while d < d2:
+            weekStart = d
+            weekEnd = d+timedelta(days=6)
+            timetrackedObj_per_week = self.queryset.filter(course = userCourse, date__range=[weekStart, weekEnd]).values_list('duration', flat=True)
+            weekArray.append({week_no: []})
+            for timetracked in timetrackedObj_per_week: 
+                weekArray[week_no-1][week_no].append(timetracked)
+            week_no += 1
+            d += step
+        print("weekArray: ", weekArray)
+
+        last_day_first_week = dates_first_week[0][-1]
+        
+
+        #för varje kursobjekt, ta fram första dagen, kolla veckodag, ta fram första veckan,
+        #sen gör samma whileloop ba
+
+        #sen kan vi börja göra averages per vecka
+
+
+
+        #get timetracked for those dates for that first week, then append them to weekArray
+
+
+        
+
+
+        
+
+        #ta för andra i samma kurs (samma id) och få fram averages per week (ej week no)
+
+        #bättre att utgå ifrån antal veckor än antal dagar exakt
+        #ta fram anv. kursens antal veckor
+        #kolla vilken veckodag anv. kursen börjar på
+        #dela upp i veckor som tidigare (vecka 1, vecka 2)
+        #i nästa kursobjekt, 
+        #kolla vilken veckodag nästa kursobj börjar på
+        #bedöm den tiden som vecka 1
+        #spara alla durations objekt på en veckobasis å ta average på den arrayen
+    
+
+
+
+        response = {
+                    "message": "Time studied per day", 
+                    "user" : {
+                        "email": user.email
+                    },
+                    "userCourse": userCourse.courseTitle
+                    #"weekNoArray" : weekNoArray,
+                    #"weekDurationArray" : weekDurationArray
+                    }
+        return Response(data=response, status=status.HTTP_200_OK)
+
    
    
 
