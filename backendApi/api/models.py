@@ -4,11 +4,13 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
+from datetime import date, datetime, timedelta
 
 
 class Course(models.Model):
     courseCode = models.CharField(max_length=10, null=True, blank=True)
     courseTitle = models.CharField(max_length=100, null=True, blank=True)
+    courseTitleEng = models.CharField(max_length=100, null=True, blank=True)
     courseStartDateTime = models.DateTimeField(null=True, blank=True)
     courseEndDateTime = models.DateTimeField(null=True, blank=True)
     filename = models.CharField(max_length=50, null=True)
@@ -61,9 +63,9 @@ class UserCourseTracking(models.Model):
 
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     date = models.DateField()
-    duration = models.TimeField(blank=True, null=True)
+    duration = models.TimeField(blank=True, null=True, default=datetime(2023,3,30).time())
 
-    stress = models.IntegerField(blank=True, null=True)
+    stress = models.IntegerField(blank=True, null=True, default=0)
 
     #def __str__(self):
     #   return self

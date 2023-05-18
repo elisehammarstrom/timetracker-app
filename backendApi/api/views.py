@@ -64,6 +64,58 @@ class CourseViewset(viewsets.ModelViewSet):
         else:
             response = {"message": "You need to provide a courseCode for the course (courseCode)"}
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        
+    @action(detail=False, methods=['POST'])
+    def update_course(self, request, *args, **kwargs):
+        courseID = request.POST.get('courseID')
+        courseTitle = request.POST.get('courseTitle')
+        courseTitleEng = request.POST.get('courseTitleEng')
+        courseStartDateTime = request.POST.get('courseStartDateTime')
+        courseEndDateTime = request.POST.get('courseEndDateTime')
+
+        print("courseTitleEng", courseTitleEng)
+
+        if courseID is None:
+            response = {"message": "You must provide a courseID (courseID)"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            courseInstance = Course.objects.get(id=courseID)
+        except:
+            response = {"message": "Course with that courseID doesn't exist"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        
+        if courseTitle is not None:
+            courseInstance.courseTitle = courseTitle
+            courseInstance.save()
+        
+        if courseTitleEng is not None:
+            courseInstance.courseTitleEng = courseTitleEng
+            courseInstance.save()
+        
+        if courseStartDateTime is not None:
+            courseInstance.courseStartDateTime = courseStartDateTime
+            courseInstance.save()
+        
+        if courseEndDateTime is not None:
+            courseInstance.courseEndDateTime = courseEndDateTime
+            courseInstance.save()
+
+        if (courseTitle is None) and (courseTitleEng is None) and (courseStartDateTime is None) and (courseEndDateTime is None):
+            response = {"message": "Provide either courseTitle, courseTitleEng, courseStartDateTime or courseEndDateTime to update the course"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+
+        response = {"message": "Course data updated",
+                    "courseObj": {
+                        "id": courseInstance.id,
+                        "courseCode": courseInstance.courseCode,
+                        "courseTitle": courseInstance.courseTitle,
+                        "courseTitleEng": courseInstance.courseTitleEng,
+                        "courseStartDateTime": courseInstance.courseStartDateTime,
+                        "courseEndDateTime": courseInstance.courseEndDateTime,
+
+                    }}
+        return Response(response, status = status.HTTP_200_OK)
 
 class ProgrammeViewset(viewsets.ModelViewSet):
     queryset = Programme.objects.all()
@@ -605,18 +657,17 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
         avgTimePerWeek = []
 
         for weekObj in weekArray:
-            print(weekObj)
             zero_time = timedelta(hours=0, minutes=0, seconds=0)
             zero_time_string = "0" + str(zero_time)
             total_week_time = zero_time
             timetracked_count = 0
             week_avg = zero_time
             weekKey = next(iter(weekObj))
-            print("weekObj: ", weekObj)
             for timetracked in weekObj[weekKey]:
                 if str(timetracked) != zero_time_string:
-                    total_week_time += timedelta(hours=timetracked.hour, minutes=timetracked.minute, seconds=timetracked.second )
-                    timetracked_count += 1          
+                    if timetracked is not None:
+                        total_week_time += timedelta(hours=timetracked.hour, minutes=timetracked.minute, seconds=timetracked.second )
+                        timetracked_count += 1          
             hours = total_week_time.total_seconds()/3600
             if timetracked_count is 0:
                 week_avg = zero_time
@@ -954,19 +1005,17 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             courseQueryset = Course.objects.get_queryset().filter(courseCode = courseInstance.courseCode)
             allCourseObjStress = []
             for courseObj in courseQueryset:
-                queryresult = self.queryset.filter(course = courseObj, date__range=[startDate, endDate]).values_list('stress', flat=True)
+                courseObjInstance = Course.objects.get(id=courseObj.id)
+                queryresult = self.queryset.filter(course = courseObjInstance, date__range=[startDate, endDate]).values('stress')
                 for stresstracked in queryresult:
-                    allCourseObjStress.append(stresstracked)
-            zero_time =  timedelta(hours=0, minutes=0, seconds=0)
-            zero_time_string = "0" + str(zero_time)
+                    if stresstracked['stress'] is not None:
+                        allCourseObjStress.append(stresstracked['stress'])
 
-            print("---allCourseObjStress: ", allCourseObjStress)
-
-            if len(queryresult) == 0:
-                avg_time = zero_time_string
+            if len(allCourseObjStress) == 0:
+                avg_stress = 0
                 response = {
-                        "message": "Average time",  
-                        "avg_time": avg_time,
+                        "message": "Average stress",  
+                        "avg_time": avg_stress,
                         "courseObj": {
                             "courseID": courseInstance.id,
                             "courseStartDate" : courseInstance.courseStartDateTime,
@@ -978,24 +1027,22 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             
             stressArray = allCourseObjStress
             try:
-                no_of_instances = len(queryresult)
+                no_of_instances = len(stressArray)
 
                 if no_of_instances == 0:
-                    avg_time = 0
+                    avg_stress = 0
                 else:
                     no_of_tracking_instances = 0
                     total_stress = 0
           
                     for stress in stressArray:
-                        if str(stress) != zero_time_string:
-                            no_of_tracking_instances += 1
-                            total_stress += stress
+                        no_of_tracking_instances += 1
+                        total_stress += stress
                             
                     avg_stress = round(total_stress/no_of_instances, 2)
-
-                    response = {
+                response = {
                         "message": "Average time",  
-                        "avg_time": avg_stress,
+                        "avg_stress": avg_stress,
                         "courseObj": {
                             "courseID": courseInstance.id,
                             "courseStartDate" : courseInstance.courseStartDateTime,
