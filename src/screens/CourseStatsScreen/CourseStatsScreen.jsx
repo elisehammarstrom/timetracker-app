@@ -94,6 +94,7 @@ const CourseStatsScreen = ({ route }) => {
                         if (`${avgData}` != `${response.data.weekDurationArray}` & `${label}` != `${response.data.weekNoArray}`) {
                             setAvgData(response.data.weekDurationArray)
                             setLabel(response.data.weekNoArray)
+                            console.log(response.data.weekDurationArray)
                         }
                     })
                     .catch(function (response) {
