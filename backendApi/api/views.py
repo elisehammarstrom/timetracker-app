@@ -617,7 +617,6 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                 if str(timetracked) != zero_time_string:
                     total_week_time += timedelta(hours=timetracked.hour, minutes=timetracked.minute, seconds=timetracked.second )
                     timetracked_count += 1          
-            totalSeconds = total_week_time.total_seconds()
             hours = total_week_time.total_seconds()/3600
             if timetracked_count is 0:
                 week_avg = zero_time
@@ -747,10 +746,12 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                 response = {"message": "That course doesn't exist"}
                 return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
             
+            zero_time =  timedelta(hours=0, minutes=0, seconds=0)
+            zero_time_string = "0" + str(zero_time)
             queryresult = self.queryset.filter(user=this_user, course = courseInstance, date__range=[startDate, endDate] )
-
+            print("queryresult: ", queryresult)
             if len(queryresult) == 0:
-                avg_time = round(0, 2)
+                avg_time = zero_time_string
                 response = {
                         "message": "Average time",  
                         "avg_time": avg_time,
@@ -758,9 +759,7 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                 return Response(data=response, status=status.HTTP_200_OK)
             
             durations = queryresult.values_list('duration', flat=True)
-            zero_time =  timedelta(hours=0, minutes=0, seconds=0)
             total_week_time = zero_time 
-            zero_time_string = "0" + str(zero_time)
             no_of_tracking_instances = 0
             total_time = zero_time
 
@@ -769,38 +768,39 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                     no_of_tracking_instances += 1
                     total_time += timedelta(hours=duration.hour, minutes=duration.minute, seconds=duration.second )
             hours = total_time.total_seconds()/3600
+            
             if no_of_tracking_instances == 0:
                 avg_time = 0
             avg_time = round(hours / no_of_tracking_instances, 2)
+            avg_time_string = str(timedelta(hours=avg_time))            
 
             response = {
                     "message": "Average time",  
-                    "avg_time": avg_time,
+                    "avg_time": avg_time_string,
                  }
             return Response(data=response, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['POST'])
     def get_course_avg_time(self, request, **extra_fields):
-        #courseID = request.POST.get('courseID')
-        courseCode = request.POST.get('courseCode')
+        courseID = request.POST.get('courseID')
 
-        if courseCode is None:
-            response = {"message": "You need to provide a courseCode (courseCode)"}
+        if courseID is None:
+            response = {"message": "You need to provide a courseID (courseID)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         else:
             try: 
-                courseInstance = Course.objects.get(courseCode = courseCode)
-                #courseInstance = Course.objects.get(id = courseID)
+                courseInstance = Course.objects.get(id=courseID)
                 startDate = courseInstance.courseStartDateTime
                 endDate = courseInstance.courseEndDateTime
             except:
                 response = {"message": "That course doesn't exist"}
-                return Response(data=response, status=status.HTTP_200_OK)
-            
+                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
             queryresult = self.queryset.filter(course = courseInstance, date__range=[startDate, endDate] )
+            zero_time =  timedelta(hours=0, minutes=0, seconds=0)
+            zero_time_string = "0" + str(zero_time)
 
             if len(queryresult) == 0:
-                avg_time = round(0, 2)
+                avg_time = zero_time_string
                 response = {
                         "message": "Average time",  
                         "avg_time": avg_time,
@@ -818,14 +818,18 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                 
                 total_seconds = sum(seconds)
                 no_of_instances = len(queryresult)
+
                 if no_of_instances == 0:
                     avg_time = 0
                 else:
                     hours = total_seconds/3600
+                    print("hours/no_of_instance", hours/no_of_instances)
                     avg_time = round(hours/no_of_instances, 2)
+                    avg_time_string = str(timedelta(hours=avg_time))
+                    #avg_time_string = 
                     response = {
                         "message": "Average time",  
-                        "avg_time": avg_time,
+                        "avg_time": avg_time_string,
                         "courseObj": {
                             "courseID": courseInstance.id,
                             "courseStartDate" : courseInstance.courseStartDateTime,
