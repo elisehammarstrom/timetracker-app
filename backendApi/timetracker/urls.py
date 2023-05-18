@@ -39,7 +39,7 @@ urlpatterns = [
     #path('auth/password-change/', views.LoginView.as_view(), name="login"),
     path('auth/password-change/', views.PasswordChangeView.as_view(), name='password_change'),
     
-    #path('auth/logout/', views.LogoutView.as_view(), name="logout"),
+    path('auth/logout/', views.LogoutView.as_view(), name="logout"),
     #path('accounts/logout/', auth_views.LogoutView.as_view(), name="logout"),
     
     #path('auth/password/', views.PasswordChangeView.as_view()),

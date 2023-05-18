@@ -53,7 +53,6 @@ const Navigation = () => {
                 <Stack.Screen name="Timer" component={TimerScreen}/>
                 <Stack.Screen name="Test" component={TestScreen}/>
                 <Stack.Screen name="CalendarOpScreen" component={CalendarOpScreen} />
-                <Stack.Screen name="ChooseReport" component={ChooseReportScreen} />
 
             </Stack.Navigator>
 
