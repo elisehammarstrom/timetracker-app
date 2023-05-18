@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react'
+//This is the screen where you sign up
+
+import React, { useState } from 'react'
 import { View, Text, StyleSheet, Dimensions } from 'react-native'
 import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
@@ -9,7 +11,7 @@ import axios from 'axios';
 import { LogBox } from 'react-native'; LogBox.ignoreLogs(['Warning: ...']);
 
 LogBox.ignoreAllLogs();
-
+// The 
 const EMAIL_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
 
 const SignUpScreen = () => {
@@ -19,12 +21,7 @@ const SignUpScreen = () => {
     const [selectedProgramme, setSelectedProgramme] = useState("");
     const [programmeInfo, setProgrammeInfo] = useState('');
     const [programmeNames, setProgrammeNames] = useState('');
-
-    const [selectedYearGrade, setSelectedYearGrade] = useState("");
-    const [yearGradeInfo, setYearGradeInfo] = useState('');
     const [yearGrades, setYearGrades] = useState('');
-
-
 
     // Get the different programmes from the database
     axios({
@@ -83,10 +80,11 @@ const SignUpScreen = () => {
     ]
 
     const navigation = useNavigation();
-
+    // When you register we send the data to the database
     const onRegisterPressed = data => {
         let pID = [];
         for (let i = 0; i < programmeInfo.length; i++) {
+            // We want the programmeID so we compare the data
             if (selectedProgramme === programmeInfo[i].programmeName) {
                 pID.push(programmeInfo[i].id)
             }
@@ -124,6 +122,7 @@ const SignUpScreen = () => {
             .then(async response => {
                 console.log(response.data);
                 axios.post('http://127.0.0.1:8000/auth/login/', formData)
+                //If successful you get navigated to choose your courses
                     .then((res) => {
                         navigation.navigate('StartCourses', { token: res.data.token, user: info })
 
@@ -135,11 +134,6 @@ const SignUpScreen = () => {
             .catch(error => {
                 console.log("error in creating user :");
             })
-
-
-
-
-
     };
 
     const onSignInPress = () => {

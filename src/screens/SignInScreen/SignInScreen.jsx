@@ -1,3 +1,4 @@
+// Screen where you sign in
 import React from 'react'
 import { View, Image, StyleSheet, useWindowDimensions } from 'react-native'
 import Logo from '../../../assets/logo.png'
@@ -7,14 +8,16 @@ import { useNavigation } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 
+
 const SignInScreen = () => {
     const {height} = useWindowDimensions();
     const navigation = useNavigation();
-
+    
+    // We use react-hook-form to save the data
     const {control, handleSubmit, formState: {errors}} = useForm();
-    // console.log(errors);
 
-
+    // When you press the sign in button we send the data to the database and check if it matches a user. 
+    // If the info matches a user you get a token and sends you to the home page
     const onSignInPressed = data => {
 
         const info = {
@@ -95,11 +98,6 @@ const SignInScreen = () => {
                     onPress={handleSubmit(onSignInPressed)}
                 />
 
-                {/* <CustomButton    
-                    text="Forgot password?" 
-                    onPress={onForgotPasswordPressed}
-                    type="TERTIARY"
-                /> */}
                 <CustomButton    
                     text="Don't have an account? Create one" 
                     onPress={onSignUpPress}

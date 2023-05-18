@@ -20,9 +20,7 @@ const StressScreen = ({ route }) => {
     const { courseIDs } = route.params;
 
     const navigation = useNavigation();
-
     const [selected, setSelected] = useState("");
-
 
     // get today's date
     var thisDay = new Date().getDate(); //To get the Current Date
@@ -102,8 +100,7 @@ const StressScreen = ({ route }) => {
         formData.append('stress', stressTracked.stress);
         formData.append('date', stressTracked.date)
 
-
-
+        // posting the stress to the database
         axios({
             method: "post",
             url: "http://127.0.0.1:8000/api/tracking/track_stress/",
