@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework import routers
 from django.conf.urls import include
-from .views import CourseViewset, ProgrammeViewset, UserViewset, StudentViewset, UserCourseTrackingViewset, CourseCalendarViewset, UserFreetimeViewset, CourseScheduleViewset, YearGradeViewset, CourseEvaluationViewset, QuestionAnswerViewset, QuestionViewset, MyAssignmentsViewset, UserScheduleViewset
+from .views import CourseViewset, ProgrammeViewset, UserViewset, StudentViewset, UserCourseTrackingViewset, CourseCalendarViewset, UserFreetimeViewset, CourseScheduleViewset, YearGradeViewset, CourseEvaluationViewset, QuestionAnswerViewset, QuestionViewset, MyAssignmentsViewset, UserScheduleViewset, AvailableHoursViewset
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -20,7 +20,7 @@ router.register("courseSchedule", CourseScheduleViewset)
 router.register("yearGrade", YearGradeViewset)
 router.register("myAssignments", MyAssignmentsViewset)
 router.register("userSchedule", UserScheduleViewset)
-
+router.register("availableHours", AvailableHoursViewset)
 
 urlpatterns = [
     path('', include(router.urls))

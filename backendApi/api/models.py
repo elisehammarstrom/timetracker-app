@@ -368,3 +368,8 @@ class AvailableHours(models.Model):
     student =models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
     theDate = models.DateField(null=True)
     availableHours = models.IntegerField(null=True)
+    
+    def __str__(self):
+        user =Student.objects.get(email=self.student)
+        AvailableHoursInfoStrng =  user.first_name + user.last_name + ", Date: " + str(self.theDate) + ", available hours: " + str(self.availableHours)
+        return AvailableHoursInfoStrng

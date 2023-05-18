@@ -3,6 +3,8 @@ from django.db import models
 from .views import UserScheduleViewset
 from .models import UserSchedule
 import pandas
+import holidays
+print(holidays.__version__)
 
 # Create your tests here.
 
@@ -10,20 +12,34 @@ import pandas as pd
 import numpy as np
 from datetime import date, datetime, timedelta
 class newTest (TestCase):
+    # Select country
+   uk_holidays = holidays.Sweden(years=2023)
+   #print("year: ", date.today().year)
+   holidaysList=[]
+   # Print all the holidays in UnitedKingdom in year 2018
+   sweden_holidays = holidays.Sweden(years=int(date.today().year))
+   for date in holidays.Sweden(years=int(date.today().year)).items():
+      #print("holiday: ", str(date[1]))
+      if "Sunday" not in str(date[1]):
+         holidaysList.append(str(date[0]))
+         print("date: ", str(date[0]))
+
+   #print(holidaysList)
    startTime = datetime(2023, 3, 20, 13, 15, 00)
    endTime = datetime(2023, 3, 20, 15, 00, 00)
    newV= endTime - startTime
-   print("tidsskillnad. ", newV)
+  # print("tidsskillnad. ", newV)
    early = UserSchedule.objects.filter(user_id=26).values_list('startDateTime', flat=True).earliest("startDateTime")
    late = UserSchedule.objects.filter(user_id=26).values_list('startDateTime', flat=True).latest("startDateTime")
-   print("late: ", late)
-   print("early: ", early)
+   #print("late: ", late)
+   #print("early: ", early)
    days = pandas.bdate_range(start=early.date(), end=late.date())
-   print("days: ", days)
+   for date in holidaysList:
+    # print("date", date)
+     if early.date() <= datetime.strptime(date, '%Y-%m-%d').date() <= late.date():
+        days=days.drop(labels=date)
    for day in days:
-      print("day", day)
       newDays = UserSchedule.objects.filter(user_id=26, startDateTime__contains=day.date()).values_list('id', flat=True)
-      print("newDays: ", newDays)
       freeHoursOfDay =8
       for item in newDays:
          userScheduleObject = UserSchedule.objects.get(id=item)
@@ -39,12 +55,12 @@ class newTest (TestCase):
          #    differenceHour =differenceHour.replace(second=0, minute=0)
          # # if differenceHour < 0:
          # #    differenceHour=0
-         print ("differenceHour: ",differenceHour)
-         print("I timmar: ", td_in_hours)
+         #print ("differenceHour: ",differenceHour)
+         #print("I timmar: ", td_in_hours)
          freeHoursOfDay = freeHoursOfDay - td_in_hours
          if freeHoursOfDay < 0:
             freeHoursOfDay = 0
-         print("Day: ", day.date(), " ", "freeHours: ", freeHoursOfDay)
+         #print("Day: ", day.date(), " ", "freeHours: ", freeHoursOfDay)
       
 
 
