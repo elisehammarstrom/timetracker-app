@@ -59,7 +59,7 @@ const CourseEvaluationsScreen = ({route}) => {
     // We want the average of stars from the evaluations. From the data we get how many who gave 1 star, 2 stars etc.
     let starNumbers = [];
     let sum = 0;
-    let numberOfRatings = 0;
+    let numberOfRatings = 0.1;
     let avgRating = 0;
     let questionPercentages = [];
     if (Object.keys(data).length > 1) {
