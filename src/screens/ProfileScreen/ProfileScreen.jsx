@@ -1,13 +1,13 @@
+// On this screen you can see your own info and also navigate to where you can edit courses, programme adn year grade
+
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity} from 'react-native';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
-/* import CloseIcon from '../../../assets/close.png'; */
 import ArrowBack from '../../../assets/arrowBack.png';
 import SettingIcon from '../../../assets/settings.png';
 import axios from 'axios';
 import SignOutIcon from '../../../assets/signout.png'
-
 
 const ProfileScreen = ({route}) => {
   const {token} = route.params;
@@ -16,6 +16,7 @@ const ProfileScreen = ({route}) => {
   const navigation = useNavigation();
   const [profile, setProfile] = useState([]);
 
+  // Fetching the userdata from the database
   axios({
     method: "get",
     url: "http://127.0.0.1:8000/api/users/get_user_data/",
@@ -24,6 +25,7 @@ const ProfileScreen = ({route}) => {
     }
   })
   .then((res) => {
+    //Setting the profileinfo, if-condtition to avoid inifinite loop
     if (`${profile}` != `${res.data.userObject}`) {
       setProfile(res.data.userObject)
     }
@@ -32,7 +34,7 @@ const ProfileScreen = ({route}) => {
   .catch((error) => {
     console.error(error)
   })
-  
+  // Navigate to edit screens
   const onEditPressed = () => {
     navigation.navigate('EditProfile', {token: token, courseIDs: courseIDs});
   };
@@ -46,7 +48,7 @@ const ProfileScreen = ({route}) => {
   const onClosedPress = () => {
     navigation.navigate('Home', {token: token})
   }
-
+  // This function logs ut the user
   const onSignOutPressed = () => {
     axios({
       method: "post",

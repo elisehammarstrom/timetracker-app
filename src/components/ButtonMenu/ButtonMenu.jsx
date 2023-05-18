@@ -1,7 +1,6 @@
 // Component for the buttons in the bottom of many screens
 
 import React, { useState } from "react";
-import CustomButton from "../CustomButton/CustomButton";
 import { View, StyleSheet, TouchableOpacity, Image, Text } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import axios from 'axios';
@@ -12,10 +11,11 @@ import LineChartIcon from '../../../assets/chart.png';
 import BarChartIcon from '../../../assets/bar-graph.png';
 
 
-const ButtonMenu = ({ screen, token }) => {
+const ButtonMenu = ({ token }) => {
   const [courseIDs, setCourseIDs] = useState('');
   const [courses, setCourses] = useState([]);
-
+  
+  // get the courses so we can send them to the different screens
   axios.get('http://127.0.0.1:8000/api/users/get_courses/', {
     headers: {
       'Authorization': `token ` + token
@@ -58,29 +58,29 @@ const ButtonMenu = ({ screen, token }) => {
   const navigation = useNavigation();
 
   // Navigation when you press each button
-  const onReportsPress = data => {
+  const onReportsPress = () => {
     console.log('token= ', token)
     navigation.navigate('Calendar', { courses: courses, token: token, courseIDs: courseIDs }) //Options is the courses youve picked
   };
 
-  const onTimetrackingPress = data => {
+  const onTimetrackingPress = () => {
     navigation.navigate('Home', { options: courses, token: token })
   };
 
-  const onCourseStatsPress = type => {
+  const onCourseStatsPress = () => {
     navigation.navigate('Courses', { courses: courses, token: token, courseIDs: courseIDs })
   };
 
-  const onCalendarPress = type => {
+  const onCalendarPress = () => {
     navigation.navigate('CalendarOpScreen', { courses: courses, token: token, courseIDs: courseIDs })
   };
 
-  const onComparePress = type => {
+  const onComparePress = () => {
     navigation.navigate("CourseStats", { chosenCourses: courses, token: token, courseIDs: courseIDs })
   };
 
   return (
-    // Three buttons for "Your reports", "Timetracing/homepage" and "Course stats"
+    // Five buttons for the five different screens you can navigate to
     <View style={styles.container}>
 
       <View style={styles.buttonContainer1}>
@@ -103,15 +103,8 @@ const ButtonMenu = ({ screen, token }) => {
           />
           <Text style={styles.buttonIcon}>Reports</Text>
         </TouchableOpacity>
-        {/*  <CustomButton
-                    text="Your reports"
-                    onPress={onYourReportsPress}
-                    type={screen==='yourReports' ? 'CURRENTPAGE' : 'TERTIARY'} //Depending on what page you are the buttons have a different style
-                /> */}
+      
       </View>
-
-
-
 
 
       <View style={styles.buttonContainer3}>
@@ -123,11 +116,7 @@ const ButtonMenu = ({ screen, token }) => {
           />
           <Text style={styles.buttonIcon}>Tracking</Text>
         </TouchableOpacity>
-        {/*   <CustomButton
-                    text="Tracking"
-                    onPress={onTimetrackingPress}
-                    type={screen==='timeTracking' ? 'CURRENTPAGE' : 'TERTIARY'}
-                />  */}
+
       </View>
 
 
@@ -153,11 +142,6 @@ const ButtonMenu = ({ screen, token }) => {
           />
           <Text style={styles.buttonIcon}>Evaluation</Text>
         </TouchableOpacity>
-        {/*    <CustomButton 
-                    text="Course stats"
-                    onPress={onCourseStatsPress}
-                    type={screen==='courseStats' ? 'CURRENTPAGE' : 'TERTIARY'}
-                />   */}
       </View>
 
     </View>

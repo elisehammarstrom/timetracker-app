@@ -20,8 +20,7 @@ const HomeScreen: React.FC = ({ route }) => {
   const [courseIDs, setCourseIDs] = useState('');
   const [courses, setCourses] = useState([]);
 
-
-
+  // We get the courses from the database
   axios.get('http://127.0.0.1:8000/api/users/get_courses/', {
     headers: {
       'Authorization': `token ` + token
@@ -65,10 +64,10 @@ const HomeScreen: React.FC = ({ route }) => {
   const navigation = useNavigation();
 
   const [date, setDate] = useState(new Date());
-
+  // To get colors for the courseboxes
   const colors = ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX']
 
-
+  // Navigate to different screens you only can reach from homeScreen
   const onTimePressed = () => {
     navigation.navigate('AddTime', { courses: courses, token: token, courseIDs: courseIDs });
   }
@@ -80,12 +79,6 @@ const HomeScreen: React.FC = ({ route }) => {
   const onSettingsPressed = () => {
     navigation.navigate('Profile', { token: token, courseIDs: courseIDs });
   };
-
-  const onCalendarPressed = () => {
-    navigation.navigate('CalendarOpScreen', { courses: courses, token: token });
-  };
-
-
 
   return (
     <SafeAreaView style={styles.root}>

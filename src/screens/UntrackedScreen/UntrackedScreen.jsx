@@ -1,3 +1,4 @@
+// This is the screen where you add untracked time
 
 import React, { useState } from 'react';
 import { Text, View, Dimensions, StyleSheet, Button, TouchableHighlight, TouchableOpacity, Image } from 'react-native';
@@ -21,12 +22,10 @@ const UntrackedScreen = ({ route }) => {
     const [selectedCourse, setSelectedCourse] = React.useState("");
     const [selectedHour, setSelectedHour] = React.useState("00");
     const [selectedMinute, setSelectedMinute] = React.useState("00");
-
     const [isShowingArrow, setShowingArrow] = React.useState(true)
-
     const navigation = useNavigation();
 
-
+    //The times you can pick to add
     const hourData = [
         { key: '1', value: '00' },
         { key: '2', value: '01' },
@@ -58,7 +57,6 @@ const UntrackedScreen = ({ route }) => {
 
     const onCalendarPressed = () => {
         setDate(ourDate)
-
     }
 
     var year = date.getFullYear()
@@ -99,6 +97,7 @@ const UntrackedScreen = ({ route }) => {
     }
 
     const onAddTimePressed = () => {
+        // We do a for-loop to get the right courseID for the selected course
         for (let i = 0; i < courses.length; i++) {
             if (selectedCourse === courses[i]) {
                 let time = selectedHour + ':' + selectedMinute + ':' + '00';

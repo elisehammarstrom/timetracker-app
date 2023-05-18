@@ -1,3 +1,5 @@
+// Radiobuttons which are used in course evaluations
+
 import * as React from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { RadioButton } from 'react-native-paper';
@@ -9,39 +11,17 @@ const CustomRadioButton = ({token, question, answerID, submit, firstOption, seco
   var answer = [];
   var answerid =[];
   var answernumber = [];
+  var options = [firstOption, secondOption, thirdOption, fourthOption, fifthOption]
 
+  // EvaluateCourseScreen sends submit=true so this component know to send the answer to the database
   if (submit === true) {
-    //const formData = new FormData();
     
-    if (checked === 1) {
-      answer.push(firstOption)
-      answerid.push(answerID)
-      answernumber.push(checked)
-      //formData.append('answerText', firstOption)
-    }
-    if (checked === 2) {
-      answer.push(secondOption)
-      answerid.push(answerID)
-      answernumber.push(checked)
-      //formData.append('answerText', secondOption)
-    }
-    if (checked === 3) {
-      answer.push(thirdOption)
-      answerid.push(answerID)
-      answernumber.push(checked)
-      //formData.append('answerText', thirdOption)
-    }
-    if (checked === 4) {
-      answer.push(fourthOption)
-      answerid.push(answerID)
-      answernumber.push(checked)
-      //formData.append('answerText', fourthOption)
-    }
-    if (checked === 5) {
-      answer.push(fifthOption)
-      answerid.push(answerID)
-      answernumber.push(checked)
-      //formData.append('answerText', fifthOption)
+    for (let i=1; i<options.length; i++) {
+      if (checked === i) {
+        answer.push(options[i-1]);
+        answerid.push(answerID);
+        answernumber.push(checked)
+      }
     }
 
     for (let i=0; i< answer.length; i++){
@@ -51,6 +31,7 @@ const CustomRadioButton = ({token, question, answerID, submit, firstOption, seco
       formData.append('answerNumber', answernumber[i])
       console.log("----formData", formData)
 
+      // We update the already created course evaluation with answers
       axios({
         method: "post",
         url: "http://127.0.0.1:8000/api/evaluate/update_answer/",
@@ -58,11 +39,8 @@ const CustomRadioButton = ({token, question, answerID, submit, firstOption, seco
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization':`token ` + token,
-          
-         
+                   
         }
-
-        
 
       })
         .then(function (response) {
@@ -75,12 +53,8 @@ const CustomRadioButton = ({token, question, answerID, submit, firstOption, seco
         });
     }
 
-    }
+  }
 
-   
-
-
-  
   
   return (
 

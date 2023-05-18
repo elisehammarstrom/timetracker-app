@@ -1,3 +1,5 @@
+// On this screen you can evaluate a course
+
 import {StyleSheet, View, ScrollView, Text} from 'react-native';
 import React, { useState } from 'react';
 import Star from '../../components/Star/Star';
@@ -34,23 +36,25 @@ const EvaluationScreen = ({route}) => {
             .then(function (response) {
                 //handle success
                 console.log(response.data);
+                // Setting the questions to the data from the database
                 setQuestions(response.data.array);
             })
             .catch(function (response) {
                 //handle error
                 console.log(response);
+                // If you have already evaluated the course you cannot do it again
                 alert('You have already evaluated this course')
                 navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token, courseIDs: courseIDs})
             });
     }
-    // if (submit === true) {
-    //     navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token, courseIDs: courseIDs})
-    // }
+
     
 
     const onSubmitPressed = () => {
+        // When you press the submit-button we set submit=true, so the components know to send the selected data to the database.
         setSubmit(true)
         alert('Evaluation submitted')
+        // For the components to have time to react to submit=true, we wait a bit before we navigate
         setTimeout(() => {
             navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token, courseIDs: courseIDs});
         }, 1000);     

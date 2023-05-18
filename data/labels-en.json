@@ -83,7 +83,7 @@
     "noMoreThan": "You cannot track more than six courses at a time, please deselect a course to select another one",
     "language": "Language",
     "swedish": "Swedish",
-    "english": "English"
-
+    "english": "English",
+	"languageFlag": "https://vectorflags.s3-us-west-2.amazonaws.com/flags/uk-circle-01.png"
 
 }

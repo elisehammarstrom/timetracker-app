@@ -26,6 +26,7 @@ const CourseStatsScreen = ({ route }) => {
     const [avgTime, setAvgTime] = useState('0 h');
     const [time, setTime] = useState('0 h');
 
+
     // Get courseNames and IDs
     for (let i = 0; i < courseIDs.length; i++) {
         axios({

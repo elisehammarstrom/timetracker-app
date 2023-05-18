@@ -29,6 +29,7 @@
     "react-native-dropdown-select-list": "^2.0.4",
     "react-native-gesture-handler": "~2.1.0",
     "react-native-grid-component": "^2.0.1",
+    "react-native-localization": "^2.3.1",
     "react-native-modern-datepicker": "^1.0.0-beta.91",
     "react-native-paper": "^5.6.0",
     "react-native-passmeter": "^0.0.5",

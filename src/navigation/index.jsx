@@ -6,7 +6,6 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack'
 import SignInScreen from '../screens/SignInScreen';
 import SignUpScreen from '../screens/SignUpScreen/SignUpScreen';
 import HomeScreen from '../screens/HomeScreen';
-import TimerScreen from '../screens/TimerScreen';
 import CourseScreen from '../screens/CourseScreen';
 import CoursesScreen from '../screens/CoursesScreen/CoursesScreen';
 import YourReportsScreen from '../screens/YourReportsScreen/YourReportsScreen';
@@ -16,7 +15,6 @@ import CourseStatsScreen from '../screens/CourseStatsScreen/CourseStatsScreen';
 import CourseEvaluationsScreen from '../screens/CourseEvaluationsScreen/CourseEvaluationsScreen';
 import UntrackedScreen from '../screens/UntrackedScreen';
 import StressScreen from '../screens/StressScreen';
-import TestScreen from '../screens/TestScreen';
 import EditProfileScreen from '../screens/EditProfileScreen'
 import ProfileScreen from '../screens/ProfileScreen'
 import CalendarScreen from '../screens/CalendarScreen/CalendarScreen'
@@ -50,8 +48,6 @@ const Navigation = () => {
                 <Stack.Screen name="CourseEvaluations" component={CourseEvaluationsScreen}/>
 
                 <Stack.Screen name="EditProfile" component={EditProfileScreen}/>
-                <Stack.Screen name="Timer" component={TimerScreen}/>
-                <Stack.Screen name="Test" component={TestScreen}/>
                 <Stack.Screen name="CalendarOpScreen" component={CalendarOpScreen} />
 
             </Stack.Navigator>
