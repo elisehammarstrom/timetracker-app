@@ -954,19 +954,17 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             courseQueryset = Course.objects.get_queryset().filter(courseCode = courseInstance.courseCode)
             allCourseObjStress = []
             for courseObj in courseQueryset:
-                queryresult = self.queryset.filter(course = courseObj, date__range=[startDate, endDate]).values_list('stress', flat=True)
+                courseObjInstance = Course.objects.get(id=courseObj.id)
+                queryresult = self.queryset.filter(course = courseObjInstance, date__range=[startDate, endDate]).values('stress')
                 for stresstracked in queryresult:
-                    allCourseObjStress.append(stresstracked)
-            zero_time =  timedelta(hours=0, minutes=0, seconds=0)
-            zero_time_string = "0" + str(zero_time)
+                    if stresstracked['stress'] is not None:
+                        allCourseObjStress.append(stresstracked['stress'])
 
-            print("---allCourseObjStress: ", allCourseObjStress)
-
-            if len(queryresult) == 0:
-                avg_time = zero_time_string
+            if len(allCourseObjStress) == 0:
+                avg_stress = 0
                 response = {
-                        "message": "Average time",  
-                        "avg_time": avg_time,
+                        "message": "Average stress",  
+                        "avg_time": avg_stress,
                         "courseObj": {
                             "courseID": courseInstance.id,
                             "courseStartDate" : courseInstance.courseStartDateTime,
@@ -978,24 +976,22 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             
             stressArray = allCourseObjStress
             try:
-                no_of_instances = len(queryresult)
+                no_of_instances = len(stressArray)
 
                 if no_of_instances == 0:
-                    avg_time = 0
+                    avg_stress = 0
                 else:
                     no_of_tracking_instances = 0
                     total_stress = 0
           
                     for stress in stressArray:
-                        if str(stress) != zero_time_string:
-                            no_of_tracking_instances += 1
-                            total_stress += stress
+                        no_of_tracking_instances += 1
+                        total_stress += stress
                             
                     avg_stress = round(total_stress/no_of_instances, 2)
-
-                    response = {
+                response = {
                         "message": "Average time",  
-                        "avg_time": avg_stress,
+                        "avg_stress": avg_stress,
                         "courseObj": {
                             "courseID": courseInstance.id,
                             "courseStartDate" : courseInstance.courseStartDateTime,
