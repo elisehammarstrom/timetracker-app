@@ -1,7 +1,7 @@
+// The rating star used in course evaluations
 // React Native Custom Star Rating Bar
 // https://aboutreact.com/react-native-custom-star-rating-bar/
 
-// import React in our code
 import React, {useState} from 'react';
 import axios from 'axios';
 
@@ -28,7 +28,7 @@ const Star = ({token, question, answerID, submit}) => {
     // Empty Star. You can also give the path from local
     const starImageCorner =
         'https://raw.githubusercontent.com/AboutReact/sampleresource/master/star_corner.png';
-
+    // When the submit-button is pressed on EvaluateCourseScreen we send the info to backend
     if (submit === true) {
         const formData = new FormData();
         formData.append('answerID', answerID)

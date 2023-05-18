@@ -1,5 +1,5 @@
 // This is the screen where the students picks the courses they want to track
-// 
+// Both when they first sign up and when they want to change courses
 
 import {StyleSheet, Text, View, TouchableOpacity, FlatList} from 'react-native';
 import React, {useState, useEffect} from 'react';
@@ -28,6 +28,8 @@ const CourseScreen = ({route}) => {
     }
   })
   .then((res) => {
+    // We set testCourses and filteredData to all courses from the database
+    // If condition to avoid infinite loop
     if (testCourses.length != res.data.length){
       setTestCourses(res.data);
       setFilteredData(res.data);
@@ -37,7 +39,7 @@ const CourseScreen = ({route}) => {
   .catch((error) => {
     console.error(error)
   })
-
+  // Set an array "data" with all the data from backend to make it easier for us to get it
   let data = [];
   for (let i=0; i<testCourses.length; i++){
     data.push({
@@ -46,14 +48,15 @@ const CourseScreen = ({route}) => {
       courseCode: testCourses[i].courseCode,
     })
   }
-  
+  // If the student already have courses, we want them to be checked when they choose new courses
   if (originalCourseIDs ) {
     if (courses.length < 1){
       setCourses(originalCourseIDs);
     }
   }
-
+  // When you press this button you go to the homescreen with your picked courses
   const onTimerPressed = () => {
+    // We add courses one at a time to the database, hence the for-loop
     for (let i=0; i<courseCodes.length; i++) {
       const formData = new FormData();
       formData.append('courseCode', courseCodes[i]);
@@ -80,6 +83,7 @@ const CourseScreen = ({route}) => {
     }
  
     // Remove courses from database of chosen courses if not picked
+    // This is mainly for when the student want to change courses
     for (let i=0; i<testCourses.length; i++) {
         if (courses.includes(testCourses[i].id)) {
           console.log("samma")
@@ -107,18 +111,18 @@ const CourseScreen = ({route}) => {
         }
       // }
     }
-
+    // We get all courses from the database to display them in a list
     axios.get('http://127.0.0.1:8000/api/users/get_courses/', {
       headers: {
         'Authorization': `token ` + token
       }
     })
     .then((res) => {
-    
+      // We set the courseIDs to the data we receive
       if (courseIDs.length === 0) {
         setCourseIDs(res.data.courses)
       }
-  
+      // This axios is to get the names of the courses picked, and not just the IDs
       axios.get('http://127.0.0.1:8000/api/courses/', {
       headers: {
         'Authorization': `token ` + token
@@ -149,7 +153,9 @@ const CourseScreen = ({route}) => {
     navigation.navigate('Home', {token: token, newCourseIDs: courses});
   };
 
+  // Function for when you press the courses checkboxes
   function pickCourse(selectedCourse, courseCode) {
+    // If you press a box that is already checked you remove it
       if(courses.includes(selectedCourse)){
         setCourses(courses.filter(Course => Course !== selectedCourse))
         setCourseCodes(courseCodes.filter(CourseCode => CourseCode !== courseCode))
@@ -166,12 +172,13 @@ const CourseScreen = ({route}) => {
     setCourses(Courses => Courses.concat(selectedCourse))
     
     }
+    // cannot pick more than 6 courses
     else {
       alert('You cannot track more than six courses at a time, please deselect a course to select another one')
     }
     
   }
-
+// Function for the searching of courses
   const searchFilter = (text) => {
     if (courseCodes.length < 6 ){
     if (text) {
@@ -191,6 +198,7 @@ const CourseScreen = ({route}) => {
     alert('You can pick a maximum of six courses')
   }
   }
+  // Just a line that separate each item in the list
   const ItemSeparatorView = () => {
     return (
       // Flat List Item Separator

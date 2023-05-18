@@ -1,3 +1,4 @@
+// this is the page were you edit you profile
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableHighlight, Image } from 'react-native';
 import CustomButton from '../../components/CustomButton';
@@ -106,6 +107,7 @@ const EditProfileScreen = ({ route }) => {
     }
     const formData = new FormData();
     formData.append('yearGradeClass', selectedYearGrade);
+    // If you change your year grade this is were it updates
     axios({
       method: "post",
       url: "http://127.0.0.1:8000/api/users/update_yearGrade/",
@@ -132,9 +134,6 @@ const EditProfileScreen = ({ route }) => {
     navigation.navigate('Profile', { token: token })
   }
 
-
-  // const lang = ['English', 'Svenska']
-  // const [selectedLang,setSelectedLang] = useState('');
 
   //make separate words bold
   const B = (props) => <Text style={{ fontWeight: 'bold' }}>{props.children}</Text>
