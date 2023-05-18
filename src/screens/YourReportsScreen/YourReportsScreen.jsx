@@ -267,7 +267,6 @@ const YourReportsScreen = ({route}) => {
               <ScrollView style={styles.scrollView}>
                 <View style={styles.center}>
         
-             
               {courses.map((course,i) => (
                
                 <TouchableOpacity style={[styles.colors, {backgroundColor: colorsConst[i]}]} key={course} onPress={() => onCoursePressed(course)}>
