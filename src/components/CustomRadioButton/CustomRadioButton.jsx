@@ -15,13 +15,39 @@ const CustomRadioButton = ({token, question, answerID, submit, firstOption, seco
 
   // EvaluateCourseScreen sends submit=true so this component know to send the answer to the database
   if (submit === true) {
+
+    // for (let i=1; i<options.length; i++) {
+    //   if (checked === i) {
+    //     answer.push(options[i-1]);
+    //     answerid.push(answerID);
+    //     answernumber.push(checked)
+    //   }
+    // }
     
-    for (let i=1; i<options.length; i++) {
-      if (checked === i) {
-        answer.push(options[i-1]);
-        answerid.push(answerID);
-        answernumber.push(checked)
-      }
+    if (checked === 1) {
+      answer.push(firstOption)
+      answerid.push(answerID)
+      answernumber.push(checked)
+    }
+    if (checked === 2) {
+      answer.push(secondOption)
+      answerid.push(answerID)
+      answernumber.push(checked)
+    }
+    if (checked === 3) {
+      answer.push(thirdOption)
+      answerid.push(answerID)
+      answernumber.push(checked)
+    }
+    if (checked === 4) {
+      answer.push(fourthOption)
+      answerid.push(answerID)
+      answernumber.push(checked)
+    }
+    if (checked === 5) {
+      answer.push(fifthOption)
+      answerid.push(answerID)
+      answernumber.push(checked)
     }
 
     for (let i=0; i< answer.length; i++){
