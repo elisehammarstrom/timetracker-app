@@ -795,11 +795,22 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
             except:
                 response = {"message": "That course doesn't exist"}
                 return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-            queryresult = self.queryset.filter(course = courseInstance, date__range=[startDate, endDate] )
+            
             zero_time =  timedelta(hours=0, minutes=0, seconds=0)
             zero_time_string = "0" + str(zero_time)
 
-            if len(queryresult) == 0:
+            #get all course Obj
+            courseQueryset = Course.objects.get_queryset().filter(courseCode = courseInstance.courseCode)
+            allCourseObjDurations = []
+            for courseObj in courseQueryset:
+                courseObjInstance = Course.objects.get(id=courseObj.id)
+                queryresult = self.queryset.filter(course = courseObjInstance, date__range=[startDate, endDate]).values_list('duration', flat=True)
+                for timetracked in queryresult:
+                    if str(timetracked) != zero_time_string:
+                        allCourseObjDurations.append(timetracked)
+            
+
+            if len(allCourseObjDurations) == 0:
                 avg_time = zero_time_string
                 response = {
                         "message": "Average time",  
@@ -812,21 +823,25 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                     }
             
                 return Response(data=response, status=status.HTTP_200_OK)
-            durations = queryresult.values_list('duration', flat=True)
+            
+            durations = allCourseObjDurations
             try:
-                seconds = map(lambda time: (time.hour * 60 * 60 ) + (time.minute * 60.0) + time.second, durations)
-                
-                total_seconds = sum(seconds)
-                no_of_instances = len(queryresult)
+                no_of_instances = len(allCourseObjDurations)
 
                 if no_of_instances == 0:
                     avg_time = 0
                 else:
-                    hours = total_seconds/3600
-                    print("hours/no_of_instance", hours/no_of_instances)
+                    no_of_tracking_instances = 0
+                    total_time = zero_time
+          
+                    for duration in durations:
+                        if str(duration) != zero_time_string:
+                            no_of_tracking_instances += 1
+                            total_time += timedelta(hours=duration.hour, minutes=duration.minute, seconds=duration.second )
+                    hours = total_time.total_seconds()/3600
                     avg_time = round(hours/no_of_instances, 2)
                     avg_time_string = str(timedelta(hours=avg_time))
-                    #avg_time_string = 
+
                     response = {
                         "message": "Average time",  
                         "avg_time": avg_time_string,
@@ -918,6 +933,79 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                         }
             
             return Response(data=response, status=status.HTTP_200_OK)
+        
+    @action(detail=False, methods=['POST'])
+    def get_stress_period_all(self, request, **extra_fields):
+        courseID = request.POST.get('courseID')
+
+        if courseID is None:
+            response = {"message": "You need to provide a courseID (courseID)"}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            try: 
+                courseInstance = Course.objects.get(id=courseID)
+                startDate = courseInstance.courseStartDateTime
+                endDate = courseInstance.courseEndDateTime
+            except:
+                response = {"message": "That course doesn't exist"}
+                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+            
+            #get all course Obj
+            courseQueryset = Course.objects.get_queryset().filter(courseCode = courseInstance.courseCode)
+            allCourseObjStress = []
+            for courseObj in courseQueryset:
+                queryresult = self.queryset.filter(course = courseObj, date__range=[startDate, endDate]).values_list('stress', flat=True)
+                for stresstracked in queryresult:
+                    allCourseObjStress.append(stresstracked)
+            zero_time =  timedelta(hours=0, minutes=0, seconds=0)
+            zero_time_string = "0" + str(zero_time)
+
+            print("---allCourseObjStress: ", allCourseObjStress)
+
+            if len(queryresult) == 0:
+                avg_time = zero_time_string
+                response = {
+                        "message": "Average time",  
+                        "avg_time": avg_time,
+                        "courseObj": {
+                            "courseID": courseInstance.id,
+                            "courseStartDate" : courseInstance.courseStartDateTime,
+                            "courseEndDate" : courseInstance.courseEndDateTime
+                        }
+                    }
+            
+                return Response(data=response, status=status.HTTP_200_OK)
+            
+            stressArray = allCourseObjStress
+            try:
+                no_of_instances = len(queryresult)
+
+                if no_of_instances == 0:
+                    avg_time = 0
+                else:
+                    no_of_tracking_instances = 0
+                    total_stress = 0
+          
+                    for stress in stressArray:
+                        if str(stress) != zero_time_string:
+                            no_of_tracking_instances += 1
+                            total_stress += stress
+                            
+                    avg_stress = round(total_stress/no_of_instances, 2)
+
+                    response = {
+                        "message": "Average time",  
+                        "avg_time": avg_stress,
+                        "courseObj": {
+                            "courseID": courseInstance.id,
+                            "courseStartDate" : courseInstance.courseStartDateTime,
+                            "courseEndDate" : courseInstance.courseEndDateTime
+                        }
+                    }
+                return Response(data=response, status=status.HTTP_200_OK)
+            except:
+                response = {"message": "Time isn't correctly tracked"}
+                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         
     @action(detail=False, methods=['POST'])
     def track_stress(self, request, **extra_fields):
