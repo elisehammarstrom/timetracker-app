@@ -24,7 +24,6 @@ const ProfileScreen = ({route}) => {
     }
   })
   .then((res) => {
-    console.log(res.data)
     if (`${profile}` != `${res.data.userObject}`) {
       setProfile(res.data.userObject)
     }
@@ -34,10 +33,6 @@ const ProfileScreen = ({route}) => {
     console.error(error)
   })
   
-  const handleSubmit = () => {
-
-  }
-    
   const onEditPressed = () => {
     navigation.navigate('EditProfile', {token: token, courseIDs: courseIDs});
   };
@@ -53,7 +48,22 @@ const ProfileScreen = ({route}) => {
   }
 
   const onSignOutPressed = () => {
-    navigation.navigate('SignIn')
+    axios({
+      method: "post",
+      url: "http://127.0.0.1:8000/auth/logout/",
+      headers: {
+        'Authorization':`token ` + token
+      }
+    })
+      .then(function (response) {
+        //handle success
+        navigation.navigate('SignIn')
+      })
+      .catch(function (response) {
+        //handle error
+        console.log(response);
+      });
+
   }
 
     return (

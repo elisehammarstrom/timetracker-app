@@ -81,7 +81,7 @@ const CourseStatsScreen = ({ route }) => {
                 // Get the average timetracked per course/week for all students, basically the same as above
                 axios({
                     method: "post",
-                    url: "http://127.0.0.1:8000/api/tracking/get_total_timetracked_per_week/",
+                    url: "http://127.0.0.1:8000/api/tracking/get_compared_total_timetracked_per_week/",
                     data: formData,
                     headers: {
                         'Content-Type': 'multipart/form-data',

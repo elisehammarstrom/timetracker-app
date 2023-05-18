@@ -37,7 +37,7 @@ const Star = ({token, question, answerID, submit}) => {
 
         axios({
         method: "post",
-        url: " http://127.0.0.1:8000/api/evaluate/update_answer/",
+        url: "http://127.0.0.1:8000/api/evaluate/update_answer/",
         data: formData,
         headers: {
             'Content-Type': 'multipart/form-data',
