@@ -1,3 +1,6 @@
+// This is the screen where the students picks the courses they want to track
+// 
+
 import {StyleSheet, Text, View, TouchableOpacity, FlatList} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import { useNavigation } from '@react-navigation/native';
