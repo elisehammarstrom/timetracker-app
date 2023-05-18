@@ -171,7 +171,7 @@ class Student(User):
         return "Only for students"
     
     def __str__(self):
-        studentInfoString =  self.email + ", Courses: " + self.courses
+        studentInfoString =  self.email #+ ", Courses: " + self.courses
         return studentInfoString
 
 class CourseCalendar(models.Model):
@@ -363,3 +363,8 @@ class UserSchedule(models.Model):
    def __str__(self):
         userScheduleInfoString = self.user + "'s schedule"
         return userScheduleInfoString
+
+class AvailableHours(models.Model):
+    student =models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+    theDate = models.DateField(null=True)
+    availableHours = models.IntegerField(null=True)

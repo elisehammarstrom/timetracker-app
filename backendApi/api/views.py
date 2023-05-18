@@ -1,7 +1,7 @@
 #from msilib import sequence
 from django.shortcuts import render
-from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer, CourseCalendarSerializer, UserFreetimeSerializer, CourseScheduleSerializer, YearGradeSerializer, CourseEvaluationSerializer, QuestionAnswerSerializer, QuestionSerializer, MyAssignmentsSerializer, UserScheduleSerializer
-from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking, CourseCalendar, UserFreetime, ExcelFile, CourseSchedule, YearGrade, CourseEvaluation, Question, Answer, QuestionAnswer, MyAssignments, UserSchedule
+from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer, CourseCalendarSerializer, UserFreetimeSerializer, CourseScheduleSerializer, YearGradeSerializer, CourseEvaluationSerializer, QuestionAnswerSerializer, QuestionSerializer, MyAssignmentsSerializer, UserScheduleSerializer, AvailableHoursSerializer
+from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking, CourseCalendar, UserFreetime, ExcelFile, CourseSchedule, YearGrade, CourseEvaluation, Question, Answer, QuestionAnswer, MyAssignments, UserSchedule, AvailableHours
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -1800,10 +1800,12 @@ class MyAssignmentsViewset(viewsets.ModelViewSet):
             return Response(data=response, status=status.HTTP_200_OK)
 
 class UserScheduleViewset(viewsets.ModelViewSet):
-    queryset = UserSchedule.objects.all()
+    queryset = UserSchedule.objects.all().order_by("-startDateTime")
     serializer_class = UserScheduleSerializer
     authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAuthenticated, )
+    newqueryset = UserSchedule.objects.filter(user_id=26).order_by("startDateTime").values_list('id', flat=True)
+    print("queryset: ", newqueryset)
 
     @action(detail=False, methods=['POST'])
     def create_user_schedule_course(self, request, **extra_fields):
@@ -1839,7 +1841,12 @@ class UserScheduleViewset(viewsets.ModelViewSet):
                             "course": course.courseTitle,
                         },}
             return Response(data=response, status=status.HTTP_200_OK)
-
+    
+class AvailableHoursViewset(viewsets.ModelViewSet):
+    queryset = AvailableHours.objects.all().order_by("-startDateTime")
+    serializer_class = AvailableHoursSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
 
             
 
