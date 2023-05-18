@@ -23,8 +23,8 @@ const CourseStatsScreen = ({ route }) => {
     const [label, setLabel] = useState('');
     const [userData, setUserData] = useState('');
     const [avgData, setAvgData] = useState('');
-    const [avgTime, setAvgTime] = useState('0 h');
-    const [time, setTime] = useState('0 h');
+    const [avgTime, setAvgTime] = useState('00:00:00');
+    const [time, setTime] = useState('00:00:00');
 
 
     // Get courseNames and IDs
@@ -115,7 +115,7 @@ const CourseStatsScreen = ({ route }) => {
                     .then(function (response) {
                         //handle success
                         if (response.data.avg_time != avgTime) {
-                            setAvgTime(response.data.avg_time + ' h')
+                            setAvgTime(response.data.avg_time)
                         }
                     })
                     .catch(function (response) {
@@ -136,7 +136,7 @@ const CourseStatsScreen = ({ route }) => {
                         //handle success
 
                         if (response.data.avg_time != time) {
-                            setTime(response.data.avg_time + ' h')
+                            setTime(response.data.avg_time)
                         }
                     })
                     .catch(function (response) {
