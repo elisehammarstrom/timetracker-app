@@ -277,9 +277,9 @@ const YourReportsScreen = ({route}) => {
 
                   <View style={{flex: 1}}>
                    <Image 
-                    source={smileys[stressNumbers[i]]} 
-                    style={[ {height: 100 * 0.3},{width: 100*0.3}, {marginBottom:10}]} 
-                    resizeMode="contain"
+                      source={smileys[stressNumbers[i]]} 
+                      style={[ {height: 100 * 0.3},{width: 100*0.3}, {marginBottom:10}]} 
+                      resizeMode="contain"
                     />
                   </View>
 
