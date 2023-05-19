@@ -1,6 +1,6 @@
 // this is the page were you edit you profile
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableHighlight, Image } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image, ScrollView } from 'react-native';
 import CustomButton from '../../components/CustomButton';
 import CustomInput from '../../components/CustomInput';
 import { useForm } from 'react-hook-form';
@@ -141,15 +141,15 @@ const EditProfileScreen = ({ route }) => {
   return (
     <View style={styles.container}>
       <View style={styles.closeContainer}>
-        <TouchableHighlight onPress={onClosedPress} >
+        <TouchableOpacity activeOpacity={0.5} onPress={onClosedPress} >
           <Image
             source={CloseIcon}
             style={[{ height: 100 * 0.3 }, { width: 100 * 0.3 }]}
             resizeMode="contain"
           />
-        </TouchableHighlight>
+        </TouchableOpacity>
       </View>
-
+      <ScrollView>
       <View style={styles.form}>
 
         <Text style={styles.topLabel}><B>Change password</B></Text>
@@ -208,26 +208,15 @@ const EditProfileScreen = ({ route }) => {
           dropdownStyles={styles.dropDown}
 
         />
-
-        {/* <Text style={styles.selectLabel}><B>Language:</B></Text>  
-              <SelectList
-                dropdownTextStyles={styles.selectList}
-                inputStyles={styles.selectList}
-                boxStyles={styles.boxStyles}
-                setSelected={(val) => setSelectedLang(val)}
-                data={lang}
-                save="value"
-                search={false}
-                placeholder='Choose language'
-              /> */}
-
-
+        <View style={styles.button}>
 
         <CustomButton
           text="Save changes"
           onPress={handleSubmit(onSavePressed)}
         />
+        </View>
       </View>
+      </ScrollView>
 
     </View>
   );
@@ -240,7 +229,7 @@ const styles = StyleSheet.create({
 
   },
   form: {
-    marginTop: '25%',
+    marginTop: '10%',
     paddingHorizontal: 50,
     justifyContent: 'space-between',
     width: '100%',
@@ -256,7 +245,8 @@ const styles = StyleSheet.create({
   },
   topLabel: {
     color: 'white',
-    fontSize: 20
+    fontSize: 20,
+    marginBottom: '5%'
   },
   selectList: {
     fontWeight: 'bold',
@@ -270,6 +260,9 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'flex-end',
   },
+  button: {
+    marginTop: '10%'
+  }
 
 });
 export default EditProfileScreen
