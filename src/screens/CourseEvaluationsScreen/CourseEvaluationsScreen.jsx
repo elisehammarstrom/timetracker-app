@@ -8,7 +8,12 @@ import BackArrow from '../../../assets/arrowBack.png';
 import { useNavigation } from '@react-navigation/native';
 import { Rating } from 'react-native-ratings';
 import axios from 'axios';
-
+import Noll from '../../../assets/transparent.png';
+import Ett from '../../../assets/ett.png';
+import Två from '../../../assets/2.png';
+import Tre from '../../../assets/3.png';
+import Fyra from '../../../assets/4.png';
+import Fem from '../../../assets/5.png';
 
 const CourseEvaluationsScreen = ({route}) => {
     const {course} = route.params;
@@ -20,6 +25,8 @@ const CourseEvaluationsScreen = ({route}) => {
 
     const [selected, setSelected] = useState("");
     const [data, setData] = useState("");
+    const smileys = [Noll, Ett, Två, Tre, Fyra, Fem];
+    const [stress, setStress] = useState(0);
 
     // Depending on what course you pick in the dropdown list
     for (let i=0; i<courses.length; i++) {
@@ -48,6 +55,32 @@ const CourseEvaluationsScreen = ({route}) => {
                 .catch(function (response) {
                 //handle error
                 console.log(response);
+                });
+
+            // Get the average stress for the whole course
+            axios({
+                method: "post",
+                url: "http://127.0.0.1:8000/api/tracking/get_stress_period_all/",
+                data: formData,
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `token ` + token
+                }
+            })
+                .then(function (response) {
+                    //handle success
+                    if (stress != response.data.avg_stress) {
+                        if (response.data.avg_stress != undefined) {
+                            setStress(Math.round(response.data.avg_stress))
+                        } else {
+                            setStress(0)
+                        }
+                    }
+                    console.log("stress= ", stress)
+                })
+                .catch(function (response) {
+                    //handle error
+                    console.log(response);
                 });
 
         }
@@ -83,64 +116,78 @@ const CourseEvaluationsScreen = ({route}) => {
         questionPercentages.push({percentage: Math.round(data.questionAnswerPercentages["Was this course stressful in general?"][4] + data.questionAnswerPercentages["Was this course stressful in general?"][5]) , text: " felt the course was not too stressful."});
     }
 
-
     return (
         <View style={styles.container}>
-             <View style={{justifyContent: 'flex-start'}}>
-            <View style={styles.topContainer}>
-        
-            <TouchableOpacity activeOpacity={0.5} style={styles.backArrow} onPress={onArrowPressed}>
-                <Image 
-                    source={BackArrow} 
-                    style={[{height: 100 * 0.3}, {width: 100 * 0.3}]} 
-                    resizeMode="contain"
-                />
-            </TouchableOpacity >
-            <Text style={styles.firstTitle}>Course Evaluations</Text>
-            </View>
+            <View style={{justifyContent: 'flex-start'}}>
+                <View style={styles.topContainer}>
+            
+                    <TouchableOpacity activeOpacity={0.5} style={styles.backArrow} onPress={onArrowPressed}>
+                        <Image 
+                            source={BackArrow} 
+                            style={[{height: 100 * 0.3}, {width: 100 * 0.3}]} 
+                            resizeMode="contain"
+                        />
+                    </TouchableOpacity >
+                    <Text style={styles.firstTitle}>Course Evaluations</Text>
+                </View>
            
     
-            <View style={styles.selectListContainer}>
-                <SelectList
-                    dropdownTextStyles={styles.selectList}
-                    inputStyles={styles.selectList}
-                    boxStyles={styles.boxStyles}
-                    setSelected={(val) => setSelected(val)}
-                    data={courses}
-                    save="value"
-                    search={false}
-                    placeholder='Choose course to see evaluations'
-                    defaultOption={{ key: course, value: course }}
-                    dropdownStyles={styles.dropDown}
-                />
+                <View style={styles.selectListContainer}>
+                    <SelectList
+                        dropdownTextStyles={styles.selectList}
+                        inputStyles={styles.selectList}
+                        boxStyles={styles.boxStyles}
+                        setSelected={(val) => setSelected(val)}
+                        data={courses}
+                        save="value"
+                        search={false}
+                        placeholder='Choose course to see evaluations'
+                        defaultOption={{ key: course, value: course }}
+                        dropdownStyles={styles.dropDown}
+                    />
 
-            </View>
+                </View>
            
+                <View style={styles.stats}>
+                    <ScrollView>
+                        <View style={styles.star}>
+                            {/* The stars are displayed here */}
+                            <Rating 
+                                fractions="{1}" 
+                                startingValue={avgRating} 
+                                readonly="{true}"
+                                style={{backgroundColor: '#313131'}} 
+                                tintColor='#313131'
+                                imageSize={55}
+                            />
+                        </View>
+                        { stress != 0 ? 
+                        <View style={styles.stress}>
+                            <Text style={styles.results}>
+                                This is how stressed the average student felt:
+                            </Text>
+                            <Image 
+                                source={smileys[stress]} 
+                                style={[ {height: 100 * 0.4},{width: 100*0.4}, {marginBottom:10}]} 
+                                resizeMode="contain"
+                            /> 
+                        </View>
+                        
+                        : null }
+                        
+                        {/* We loop/map the array with percentages and text to render them here */}
+                        {questionPercentages.map(option => (
+                            <View style={styles.resultContainer}>
+                                <Text key={option.text} style={styles.results}>
+                                    {option.percentage} % {option.text}
+                                </Text>
+                            </View>
+                            
+                        ))}
 
-            <View style={styles.stats}>
-                <ScrollView>
-                    <View style={styles.star}>
-                        {/* The stars are displayed here */}
-                        <Rating 
-                            fractions="{1}" 
-                            startingValue={avgRating} 
-                            readonly="{true}"
-                            style={{backgroundColor: '#313131'}} 
-                            tintColor='#313131'
-                        />
-                    </View>
-                    {/* We loop/map the array with percentages and text to render them here */}
-                    {questionPercentages.map(option => (
-                        <Text key={option.text} style={styles.results}>
-                            {option.percentage} % {option.text}
-                        </Text>
-                    ))}
-                    
+                    </ScrollView>
 
-
-                </ScrollView>
-
-            </View>
+                </View>
             </View>
 
             <View>
@@ -194,20 +241,23 @@ const styles = StyleSheet.create({
         marginBottom: 40
     },
     stats: {
-        // marginTop: 40,
         alignItems: 'center',
+        justifyContent: 'space-around',
     },
     star: {
         backgroundColor: '#313131',
-        // width: '50%',
         padding: 5,
         borderRadius: 5,
     },
     results: {
-        // fontWeight: 'bold',
         color: '#EFEFEF',
-        fontSize: 15,
-
+        fontSize: 18,
+    },
+    stress: {
+        alignItems: 'center',
+    },
+    resultContainer: {
+        padding: 10
     }
  
 
