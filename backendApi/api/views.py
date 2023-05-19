@@ -1,7 +1,7 @@
 #from msilib import sequence
 from django.shortcuts import render
-from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer, CourseCalendarSerializer, UserFreetimeSerializer, CourseScheduleSerializer, YearGradeSerializer, CourseEvaluationSerializer, QuestionAnswerSerializer, QuestionSerializer, MyAssignmentsSerializer, UserScheduleSerializer
-from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking, CourseCalendar, UserFreetime, ExcelFile, CourseSchedule, YearGrade, CourseEvaluation, Question, Answer, QuestionAnswer, MyAssignments, UserSchedule
+from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer, CourseCalendarSerializer, UserFreetimeSerializer, CourseScheduleSerializer, YearGradeSerializer, CourseEvaluationSerializer, QuestionAnswerSerializer, QuestionSerializer, MyAssignmentsSerializer, UserScheduleSerializer, AvailableHoursSerializer
+from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking, CourseCalendar, UserFreetime, ExcelFile, CourseSchedule, YearGrade, CourseEvaluation, Question, Answer, QuestionAnswer, MyAssignments, UserSchedule, AvailableHours
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -35,6 +35,7 @@ from rest_framework.decorators import api_view, permission_classes as view_permi
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 import numpy as np
+import holidays
 
 
 #fakkar detta med något?
@@ -1819,6 +1820,7 @@ class UserScheduleViewset(viewsets.ModelViewSet):
     serializer_class = UserScheduleSerializer
     authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAuthenticated, )
+   
 
     @action(detail=False, methods=['POST'])
     def create_user_schedule_course(self, request, **extra_fields):
@@ -1854,9 +1856,80 @@ class UserScheduleViewset(viewsets.ModelViewSet):
                             "course": course.courseTitle,
                         },}
             return Response(data=response, status=status.HTTP_200_OK)
+    
+class AvailableHoursViewset(viewsets.ModelViewSet):
+    queryset = AvailableHours.objects.all()
+    serializer_class = AvailableHoursSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
 
 
-            
+    @action(detail=False, methods=['POST'])
+    def create_avaiableHours(self, request, **extra_fields):
+        userObject = Student.objects.get(id=request.user.pk)
+        print(userObject.email)
+        #      user_courses_qs = User.objects.get(id=request.user.pk).courses.all()
+
+        # user_courses = []
+        # for course in user_courses_qs:
+        #     user_courses.append(course.id)
+        print("user.courses: ", userObject.courses.all())
+        if len(userObject.courses.all()) < 3:
+            response = {"message": "You have added less than three courses, if you study three courses or more you should add them all before creating schedule"}
+            return Response(data=response, status=status.HTTP_200_OK)
+        else:   
+            early = UserSchedule.objects.filter(user_id=userObject.id).values_list('startDateTime', flat=True).earliest("startDateTime")
+            late = UserSchedule.objects.filter(user_id=userObject.id).values_list('startDateTime', flat=True).latest("startDateTime")
+            print("late: ", late)
+            print("early: ", early)
+            days = pd.bdate_range(start=early.date(), end=late.date())
+            print("days: ", days)
+            holidaysList=[]
+            for date in holidays.Sweden(years=int(date.today().year)).items():
+                if "Sunday" not in str(date[1]):
+                    holidaysList.append(str(date[0]))
+
+            for date in holidaysList:
+                print("date", date)
+                if early.date() <= datetime.strptime(date, '%Y-%m-%d').date() <= late.date():
+                    days=days.drop(labels=date)
+            availableHoursList =[]
+            for day in days:
+                print("day", day)
+                newDays = UserSchedule.objects.filter(user_id=userObject.id, startDateTime__contains=day.date()).values_list('id', flat=True)
+                print("newDays: ", newDays)
+                freeHoursOfDay =8
+                for item in newDays:
+                    userScheduleObject = UserSchedule.objects.get(id=item)
+                    startTime = userScheduleObject.startDateTime
+                    endTime = userScheduleObject.endDateTime
+                    differenceHour = endTime -startTime
+                    total_seconds = differenceHour.total_seconds()                # Convert timedelta into seconds
+                    seconds_in_hour = 60 * 60                         # Set the number of seconds in an hour
+                    td_in_hours = total_seconds / seconds_in_hour
+                    td_in_hours=round(td_in_hours+0.49) 
+                    print ("differenceHour: ",differenceHour)
+                    print("I timmar: ", td_in_hours)
+                    freeHoursOfDay = freeHoursOfDay - td_in_hours
+                    if freeHoursOfDay < 0:
+                        freeHoursOfDay = 0
+                    print("Day: ", day.date(), " ", "freeHours: ", freeHoursOfDay)
+                obj = AvailableHours.objects.create(student=userObject, theDate=day, availableHours=freeHoursOfDay)
+                obj.save() 
+                dataObj = {"date": day,
+                           "availableHours": freeHoursOfDay}
+                availableHoursList.append(dataObj)
+            response ={"message": "Success. AvailableHours created.",
+                       "userObject": {
+                            "user.id": userObject.id,
+                            "user.email": userObject.email,
+                        },
+                         "availableHours": availableHoursList,
+                        }
+            return Response(data=response, status=status.HTTP_200_OK)
+                    
+
+                    
 
 
 
