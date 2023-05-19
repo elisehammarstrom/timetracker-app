@@ -11,19 +11,11 @@ const CustomRadioButton = ({token, question, answerID, submit, firstOption, seco
   var answer = [];
   var answerid =[];
   var answernumber = [];
-  var options = [firstOption, secondOption, thirdOption, fourthOption, fifthOption]
 
   // EvaluateCourseScreen sends submit=true so this component know to send the answer to the database
   if (submit === true) {
-
-    // for (let i=1; i<options.length; i++) {
-    //   if (checked === i) {
-    //     answer.push(options[i-1]);
-    //     answerid.push(answerID);
-    //     answernumber.push(checked)
-    //   }
-    // }
     
+    // We want to send the option that is checked to the database. (Tried doing a for-loop but somehow we couldn't send the data to backend)
     if (checked === 1) {
       answer.push(firstOption)
       answerid.push(answerID)
@@ -64,10 +56,8 @@ const CustomRadioButton = ({token, question, answerID, submit, firstOption, seco
         data: formData,
         headers: {
           'Content-Type': 'multipart/form-data',
-          'Authorization':`token ` + token,
-                   
+          'Authorization':`token ` + token,   
         }
-
       })
         .then(function (response) {
             //handle success
@@ -78,7 +68,6 @@ const CustomRadioButton = ({token, question, answerID, submit, firstOption, seco
           console.log(response);
         });
     }
-
   }
 
   

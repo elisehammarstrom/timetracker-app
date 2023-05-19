@@ -21,7 +21,6 @@ const styles =StyleSheet.create({
     },
     container_PRIMARY: {
         backgroundColor: '#80CAFF',
-        // marginTop: 25
     },
 
     container_SECONDARY: {

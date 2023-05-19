@@ -161,6 +161,7 @@ const CourseEvaluationsScreen = ({route}) => {
                                 imageSize={55}
                             />
                         </View>
+                        {/* Show only when a course is chosen and that course has an avg stress */}
                         { stress != 0 ? 
                         <View style={styles.stress}>
                             <Text style={styles.results}>
