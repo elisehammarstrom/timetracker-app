@@ -8,7 +8,9 @@ import EvaluationIcon from '../../../assets/evaluationIcon.png';
 import TimeIcon from '../../../assets/timeIcon.png';
 import CalendarIcon from '../../../assets/calendar.png';
 import LineChartIcon from '../../../assets/chart.png';
+//Line chart icons created by ibobicon
 import BarChartIcon from '../../../assets/bar-graph.png';
+//Graph icons created by fjstudio
 
 
 const ButtonMenu = ({ token }) => {

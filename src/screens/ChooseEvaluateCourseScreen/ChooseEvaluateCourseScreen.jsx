@@ -1,7 +1,7 @@
 // This is the screen were you choose which course you want to evaluate
 
-import { StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
-import React, {useState} from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
+import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import CustomButton from '../../components/CustomButton';
 import { RadioButton } from 'react-native-paper';
@@ -9,21 +9,21 @@ import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
 import BackArrow from '../../../assets/arrowBack.png';
 
 
-const EvaluateCourseScreen = ({route}) => {
+const EvaluateCourseScreen = ({ route }) => {
     const navigation = useNavigation();
-    const {courses} = route.params;
-    const {token} = route.params;
-    const {courseIDs} = route.params;
+    const { courses } = route.params;
+    const { token } = route.params;
+    const { courseIDs } = route.params;
 
     const [checked, setChecked] = useState('');
 
     const onArrowPressed = () => {
-        navigation.navigate('Courses', {courses: courses, token: token, courseIDs: courseIDs})
+        navigation.navigate('Courses', { courses: courses, token: token, courseIDs: courseIDs })
     }
     // Check which course has been chosen, if none chosen - alert, else - navigate.
     const onEvaluateCoursePressed = () => {
         let checkedID = [];
-        for (let i=0; i<courses.length; i++) {
+        for (let i = 0; i < courses.length; i++) {
             if (checked === courses[i]) {
                 checkedID.push(courseIDs[i])
             }
@@ -31,23 +31,23 @@ const EvaluateCourseScreen = ({route}) => {
         if (checked === '') {
             alert("Please choose a course to evaluate")
         } else {
-            navigation.navigate('EvaluateCourse', {course: checked, courses: courses, token: token, checkedID: checkedID, courseIDs: courseIDs});
+            navigation.navigate('EvaluateCourse', { course: checked, courses: courses, token: token, checkedID: checkedID, courseIDs: courseIDs });
         }
     };
-    
+
     return (
         <View style={styles.container}>
 
             <TouchableOpacity activeOpacity={0.5} style={styles.backArrow} onPress={onArrowPressed}>
-                <Image 
-                    source={BackArrow} 
-                    style={[{height: 100 * 0.3}, {width: 100 * 0.3}]} 
+                <Image
+                    source={BackArrow}
+                    style={[{ height: 100 * 0.3 }, { width: 100 * 0.3 }]}
                     resizeMode="contain"
                 />
             </TouchableOpacity >
 
             <View style={styles.options}>
-                <Text style={styles.title}>Select course to Evaluate</Text>
+                <Text style={styles.title}>Select course to evaluate</Text>
 
                 <View>
                     {courses.map(option => (
@@ -55,24 +55,24 @@ const EvaluateCourseScreen = ({route}) => {
                             <RadioButton.Android
                                 text={option}
                                 value={option}
-                                status={ checked === option ? 'checked' : 'unchecked'}
+                                status={checked === option ? 'checked' : 'unchecked'}
                                 onPress={() => setChecked(option)}
-                                 
-                               
+
+
                             />
                             <Text style={styles.text}>{option}</Text>
-                        </View>   
+                        </View>
                     ))}
                 </View>
-                
+
                 <View style={styles.evaluateButton}>
-                    <CustomButton 
-                        text="Evaluate course" 
+                    <CustomButton
+                        text="Evaluate course"
                         onPress={onEvaluateCoursePressed}
                     />
                 </View>
             </View>
-            
+
 
             <View>
                 <ButtonMenu
@@ -80,7 +80,7 @@ const EvaluateCourseScreen = ({route}) => {
                     token={token}
                 />
             </View>
-            
+
         </View>
     );
 };
@@ -92,21 +92,19 @@ const styles = StyleSheet.create({
         height: '100%'
     },
     options: {
-        alignItems: 'center'
+        alignItems: 'center',
     },
     title: {
-        marginTop: '25%',
         fontSize: 24,
         fontWeight: 'bold',
         color: '#EFEFEF',
-        margin: 10,
-        marginBottom: 50,
+        marginBottom: 40,
     },
     button: {
         padding: 10,
         flexDirection: 'row',
-        alignItems: 'center', 
-             
+        alignItems: 'center',
+
     },
     text: {
         color: '#EFEFEF',
@@ -118,7 +116,8 @@ const styles = StyleSheet.create({
     },
     backArrow: {
         width: '10%',
-        padding: 10
+        padding: 10,
+        marginBottom: -80
     },
 })
 

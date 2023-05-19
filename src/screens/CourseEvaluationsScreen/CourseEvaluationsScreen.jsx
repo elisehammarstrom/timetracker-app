@@ -161,19 +161,6 @@ const CourseEvaluationsScreen = ({route}) => {
                                 imageSize={55}
                             />
                         </View>
-                        { stress != 0 ? 
-                        <View style={styles.stress}>
-                            <Text style={styles.results}>
-                                This is how stressed the average student felt:
-                            </Text>
-                            <Image 
-                                source={smileys[stress]} 
-                                style={[ {height: 100 * 0.4},{width: 100*0.4}, {marginBottom:10}]} 
-                                resizeMode="contain"
-                            /> 
-                        </View>
-                        
-                        : null }
                         
                         {/* We loop/map the array with percentages and text to render them here */}
                         {questionPercentages.map(option => (
@@ -184,6 +171,20 @@ const CourseEvaluationsScreen = ({route}) => {
                             </View>
                             
                         ))}
+
+                        { stress != 0 ? 
+                        <View style={styles.stress}>
+                            <Text style={styles.results}>
+                                This is how stressed the average student felt:
+                            </Text>
+                            <Image 
+                                source={smileys[stress]} 
+                                style={[ {height: 150 * 0.4},{width: 150*0.4}, {marginTop:10}]} 
+                                resizeMode="contain"
+                            /> 
+                        </View>
+                        
+                        : null }
 
                     </ScrollView>
 
@@ -255,6 +256,7 @@ const styles = StyleSheet.create({
     },
     stress: {
         alignItems: 'center',
+        marginTop: 10
     },
     resultContainer: {
         padding: 10

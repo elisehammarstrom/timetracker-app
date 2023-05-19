@@ -1,7 +1,7 @@
 // This is the screen where you add untracked time
 
 import React, { useState } from 'react';
-import { Text, View, Dimensions, StyleSheet, Button, TouchableHighlight, TouchableOpacity, Image } from 'react-native';
+import { Text, View, Dimensions, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list'
 import ButtonMenu from '../../components/ButtonMenu';
 import ClickableWeekCalendar from '../../components/ClickableWeekCalendar';
@@ -60,32 +60,32 @@ const UntrackedScreen = ({ route }) => {
     }
 
     var year = date.getFullYear()
-    var month = date.getMonth()+1
+    var month = date.getMonth() + 1
     var day = date.getDate()
 
-   if (month && day <10 ) {
-        var month='0'+month
-        var day='0'+day
+    if (month && day < 10) {
+        var month = '0' + month
+        var day = '0' + day
         var newDate = year + '-' + month + '-' + day
         console.log(newDate)
-        console.log('type:',typeof(newDate))
-    } 
-    else if (day <10 ) {
-        var day='0'+day
-        var newDate = year + '-' + month + '-' + day
-        console.log(newDate)
-        console.log('type:',typeof(newDate))
+        console.log('type:', typeof (newDate))
     }
-    else if (month <10) {
-        var month='0'+month
+    else if (day < 10) {
+        var day = '0' + day
         var newDate = year + '-' + month + '-' + day
         console.log(newDate)
-        console.log('type:',typeof(newDate))
+        console.log('type:', typeof (newDate))
+    }
+    else if (month < 10) {
+        var month = '0' + month
+        var newDate = year + '-' + month + '-' + day
+        console.log(newDate)
+        console.log('type:', typeof (newDate))
     }
     else {
         var newDate = year + '-' + month + '-' + day
         console.log(newDate)
-        console.log('type:',typeof(newDate))
+        console.log('type:', typeof (newDate))
     }
 
     const onClosedPress = () => {
@@ -161,7 +161,7 @@ const UntrackedScreen = ({ route }) => {
 
                             <View style={styles.calendar}>
                                 <ClickableWeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
-                                
+
                             </View>
                             <View>
                                 <Image
@@ -196,66 +196,71 @@ const UntrackedScreen = ({ route }) => {
                         </View>
                     )
             }
-            
 
-
-            <View style={styles.selectListContainer}>
-                <SelectList
-                    dropdownTextStyles={styles.selectList}
-                    inputStyles={styles.selectList}
-                    boxStyles={styles.boxStyles}
-                    setSelected={(val) => setSelectedCourse(val)}
-                    data={courses}
-                    save="value"
-                    search={false}
-                    placeholder='Choose course'
-                    dropdownStyles={styles.dropDown}
-                />
-            </View>
-
-            <View style={styles.timeLayout}>
-                <View style={styles.selectListTimeContainer}>
-                    <Text style={styles.addTime}>Add time:</Text>
-
+            <ScrollView>
+                <View style={styles.selectListContainer}>
                     <SelectList
                         dropdownTextStyles={styles.selectList}
                         inputStyles={styles.selectList}
-                        boxStyles={styles.boxTimeStyles}
-                        setSelected={(val) => setSelectedHour(val)}
-                        data={hourData}
+                        boxStyles={styles.boxStyles}
+                        setSelected={(val) => setSelectedCourse(val)}
+                        data={courses}
                         save="value"
                         search={false}
-                        placeholder='00'
-                        dropdownStyles={{ width: 0.18 * Dimensions.get('window').width, borderColor: '#313131' }}
-
-                    />
-                    <Text style={{ color: 'white', fontSize: 30 }}>:</Text>
-
-                    <SelectList
-                        dropdownTextStyles={styles.selectList}
-                        inputStyles={styles.selectList}
-                        boxStyles={styles.boxTimeStyles}
-                        setSelected={(val) => setSelectedMinute(val)}
-                        data={minuteData}
-                        save="value"
-                        search={false}
-                        placeholder='00'
-                        dropdownStyles={{ width: 0.18 * Dimensions.get('window').width, borderColor: '#313131' }}
+                        placeholder='Choose course'
+                        dropdownStyles={styles.dropDown}
                     />
                 </View>
-            </View>
 
-            <View style={styles.customButtonContainer}>
-                <CustomButton
-                    text="Add time"
-                    onPress={onAddTimePressed}
-                />
-            </View>
+
+
+                <View style={styles.timeLayout}>
+                    <View style={styles.selectListTimeContainer}>
+                        <Text style={styles.addTime}>Add time:</Text>
+
+                        <SelectList
+                            dropdownTextStyles={styles.selectList}
+                            inputStyles={styles.selectList}
+                            boxStyles={styles.boxTimeStyles}
+                            setSelected={(val) => setSelectedHour(val)}
+                            data={hourData}
+                            save="value"
+                            search={false}
+                            placeholder='00'
+                            dropdownStyles={{ width: 0.18 * Dimensions.get('window').width, borderColor: '#313131' }}
+
+                        />
+                        <Text style={{ color: 'white', fontSize: 30 }}>:</Text>
+
+                        <SelectList
+                            dropdownTextStyles={styles.selectList}
+                            inputStyles={styles.selectList}
+                            boxStyles={styles.boxTimeStyles}
+                            setSelected={(val) => setSelectedMinute(val)}
+                            data={minuteData}
+                            save="value"
+                            search={false}
+                            placeholder='00'
+                            dropdownStyles={{ width: 0.18 * Dimensions.get('window').width, borderColor: '#313131' }}
+                        />
+                    </View>
+                </View>
+
+                <View style={styles.customButtonContainer}>
+                    <CustomButton
+                        text="Add time"
+                        onPress={onAddTimePressed}
+                    />
+                </View>
+            </ScrollView>
+
+
+
             <View>
 
             </View>
             <View>
-                
+
                 <ButtonMenu
                     screen='timeTracking'
                     token={token}
@@ -291,6 +296,7 @@ const styles = StyleSheet.create({
     selectList: {
         fontWeight: 'bold',
         color: '#EFEFEF',
+
     },
     boxStyles: {
         width: 0.75 * Dimensions.get('window').width,
@@ -343,11 +349,12 @@ const styles = StyleSheet.create({
     },
     timeLayout: {
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        marginTop: '10%'
     },
     customButtonContainer: {
         paddingHorizontal: 50,
-        marginTop: 30,
+        marginTop: '20%',
     },
     title: {
         fontSize: 24,
@@ -360,7 +367,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         flexDirection: 'row',
         padding: 10,
-        marginBottom: -90
+
     },
     close: {
         flex: 0.5,

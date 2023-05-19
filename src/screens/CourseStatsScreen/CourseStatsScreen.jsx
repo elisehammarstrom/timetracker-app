@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#EFEFEF',
         margin: 10,
-        alignSelf: 'center'
+        alignSelf: 'center',
 
     },
 })
