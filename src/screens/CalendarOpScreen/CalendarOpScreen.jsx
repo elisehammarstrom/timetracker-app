@@ -10,7 +10,7 @@ const CalendarOpScreen = ({ route }) => {
 
   const { token } = route.params;
   const { courses } = route.params;
-  const [isShowingInfo, setShowingInfo] = React.useState(true)
+  const [isShowingInfo, setShowingInfo] = useState(true)
   const [name, setname] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
   const [date, setDate] = useState(new Date());

@@ -43,7 +43,8 @@ const styles = StyleSheet.create({
         padding: 10
     },
     input: {
-        fontSize: 20
+        fontSize: 20,
+        fontFamily: 'Trebuchet MS'
     }
 });
 

@@ -18,11 +18,13 @@ const EMAIL_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
 const SignUpScreen = () => {
     const { control, handleSubmit, formState: { errors }, watch } = useForm();
     const pwd = watch('password');
+    const [yearGrades, setYearGrades] = useState('');
+    const [selectedYearGrade, setSelectedYearGrade] = useState("");
+    const [yearGradeInfo, setYearGradeInfo] = useState('');
 
     const [selectedProgramme, setSelectedProgramme] = useState("");
     const [programmeInfo, setProgrammeInfo] = useState('');
     const [programmeNames, setProgrammeNames] = useState('');
-    const [yearGrades, setYearGrades] = useState('');
 
     // Get the different programmes from the database
     axios({
@@ -266,6 +268,7 @@ const styles = StyleSheet.create({
     selectList: {
         fontWeight: 'bold',
         color: '#EFEFEF',
+        fontFamily: 'Trebuchet MS'
     },
     boxStyles: {
         width: 0.75 * Dimensions.get('window').width,

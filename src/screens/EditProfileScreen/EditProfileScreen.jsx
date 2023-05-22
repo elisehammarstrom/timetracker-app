@@ -252,6 +252,7 @@ const styles = StyleSheet.create({
   selectList: {
     fontWeight: 'bold',
     color: '#EFEFEF',
+    fontFamily: 'Trebuchet MS'
   },
   boxStyles: {
     width: 0.75 * Dimensions.get('window').width,
