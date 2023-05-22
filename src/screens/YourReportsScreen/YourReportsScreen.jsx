@@ -81,7 +81,7 @@ const YourReportsScreen = ({ route }) => {
       }
     })
     .catch((error) => {
-      console.error(error)
+      //console.error(error)
 
     })
 
@@ -112,7 +112,7 @@ const YourReportsScreen = ({ route }) => {
 
       })
       .catch((error) => {
-        console.error(error)
+        //console.error(error)
       })
   }
   // Getting an array of the stress (rounded up), so we can compare to the stress smileys

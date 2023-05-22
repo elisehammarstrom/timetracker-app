@@ -39,7 +39,7 @@ const CalendarOpScreen = ({ route }) => {
 
   const showInfo = (option) => {
     let name = option
-    console.log(name)
+   // console.log(name)
   }
 
   return (
@@ -59,7 +59,7 @@ const CalendarOpScreen = ({ route }) => {
 
           {courses.map((option, i) => (
 
-            <TouchableOpacity key={option} onPress={() => { setShowingInfo(false); console.log({ option }); showInfo({ option }) }} >
+            <TouchableOpacity key={option} onPress={() => { setShowingInfo(false); showInfo({ option }) }} >
 
               <CalendarBlock
                 color={colors[i]}

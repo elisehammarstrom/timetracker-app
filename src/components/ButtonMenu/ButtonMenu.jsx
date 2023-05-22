@@ -50,7 +50,7 @@ const ButtonMenu = ({ token }) => {
 
         })
         .catch((error) => {
-          console.error(error)
+          //console.error(error)
         })
 
     })
@@ -62,7 +62,6 @@ const ButtonMenu = ({ token }) => {
 
   // Navigation when you press each button
   const onReportsPress = () => {
-    console.log('token= ', token)
     navigation.navigate('Calendar', { courses: courses, token: token, courseIDs: courseIDs }) //Options is the courses youve picked
   };
 
