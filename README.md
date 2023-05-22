@@ -8,9 +8,9 @@
 KLAR!
 
 # Dependencies
-# To start our app there are a few packets needed.
+To start our app there are a few packets needed.
 
-# Frontend
+Frontend
 - @react-navigation/native
 - @react-navigation/native
 - axios
