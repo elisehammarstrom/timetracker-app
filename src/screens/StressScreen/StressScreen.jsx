@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     selectList: {
         fontWeight: 'bold',
         color: '#EFEFEF',
-
+        fontFamily: 'Trebuchet MS'
 
     },
     title: {
