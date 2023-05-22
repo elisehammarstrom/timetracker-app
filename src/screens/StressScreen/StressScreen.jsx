@@ -79,7 +79,7 @@ const StressScreen = ({ route }) => {
             date: thisDate,
             stress: selectedValue
         }
-        console.log("stressTracked.course= ", stressTracked.course)
+        //console.log("stressTracked.course= ", stressTracked.course)
         if (stressTracked.course === undefined) {
             alert('Please choose a course')
         }
@@ -114,11 +114,11 @@ const StressScreen = ({ route }) => {
         })
             .then(function (response) {
                 //handle success
-                console.log(response.data);
+                //console.log(response.data);
             })
             .catch(function (response) {
                 //handle error
-                console.log(response);
+                //console.log(response);
             });
     }
     return (

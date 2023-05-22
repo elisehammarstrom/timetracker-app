@@ -33,7 +33,7 @@ const ProfileScreen = ({ route }) => {
 
     })
     .catch((error) => {
-      console.error(error)
+      //console.error(error)
     })
   // Navigate to edit screens
   const onEditPressed = () => {
@@ -64,7 +64,7 @@ const ProfileScreen = ({ route }) => {
       })
       .catch(function (response) {
         //handle error
-        console.log(response);
+       // console.log(response);
       });
 
   }
