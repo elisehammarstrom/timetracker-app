@@ -1,6 +1,6 @@
 // this is the page were you edit you profile
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, StyleSheet, Dimensions, TouchableOpacity, Image, ScrollView } from 'react-native';
 import CustomButton from '../../components/CustomButton';
 import CustomInput from '../../components/CustomInput';
 import { useForm } from 'react-hook-form';
@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { SelectList } from 'react-native-dropdown-select-list';
 import CloseIcon from '../../../assets/close.png';
 import axios from 'axios';
+import Text from '../../components/Text';
 
 
 const EditProfileScreen = ({ route }) => {
@@ -150,72 +151,72 @@ const EditProfileScreen = ({ route }) => {
         </TouchableOpacity>
       </View>
       <ScrollView>
-      <View style={styles.form}>
+        <View style={styles.form}>
 
-        <Text style={styles.topLabel}><B>Change password</B></Text>
+          <Text style={styles.topLabel}><B>Change password</B></Text>
 
 
-        <Text style={styles.label}><B>Old password:</B></Text>
-        <CustomInput
-          name="oldpassword"
-          control={control}
-          rules={{ minLength: { value: 8, message: 'Password should be at least 8 characters long' } }}
-          secureTextEntry
-          placeholder='Old Password'
-          minLength='30'
-        />
+          <Text style={styles.label}><B>Old password:</B></Text>
+          <CustomInput
+            name="oldpassword"
+            control={control}
+            rules={{ minLength: { value: 8, message: 'Password should be at least 8 characters long' } }}
+            secureTextEntry
+            placeholder='Old Password'
+            minLength='30'
+          />
 
-        <Text style={styles.label}><B>New password:</B></Text>
-        <CustomInput
-          name="password"
-          control={control}
-          rules={{ minLength: { value: 8, message: 'Password should be at least 8 characters long' } }}
-          secureTextEntry
-          placeholder='New Password'
-        />
-        <Text style={styles.label}><B>Repeat new password:</B></Text>
-        <CustomInput
-          name="passwordrepeat"
-          control={control}
-          rules={{ validate: value => value === pwd || 'Password do not match' }}
-          secureTextEntry
-          placeholder='New password'
-        />
+          <Text style={styles.label}><B>New password:</B></Text>
+          <CustomInput
+            name="password"
+            control={control}
+            rules={{ minLength: { value: 8, message: 'Password should be at least 8 characters long' } }}
+            secureTextEntry
+            placeholder='New Password'
+          />
+          <Text style={styles.label}><B>Repeat new password:</B></Text>
+          <CustomInput
+            name="passwordrepeat"
+            control={control}
+            rules={{ validate: value => value === pwd || 'Password do not match' }}
+            secureTextEntry
+            placeholder='New password'
+          />
 
-        <Text style={styles.selectLabel}><B>Programme:</B> </Text>
-        <SelectList
-          dropdownTextStyles={styles.selectList}
-          inputStyles={styles.selectList}
-          boxStyles={styles.boxStyles}
-          setSelected={(val) => setSelectedProgramme(val)}
-          data={programmeNames}
-          save="value"
-          search={false}
-          placeholder='Choose programme'
-          onSelect={() => getYearGrades(selectedProgramme)}
-        />
+          <Text style={styles.selectLabel}><B>Programme:</B> </Text>
+          <SelectList
+            dropdownTextStyles={styles.selectList}
+            inputStyles={styles.selectList}
+            boxStyles={styles.boxStyles}
+            setSelected={(val) => setSelectedProgramme(val)}
+            data={programmeNames}
+            save="value"
+            search={false}
+            placeholder='Choose programme'
+            onSelect={() => getYearGrades(selectedProgramme)}
+          />
 
-        <Text style={styles.selectLabel}><B>Year Grade:</B> </Text>
-        <SelectList
-          dropdownTextStyles={styles.selectList}
-          inputStyles={styles.selectList}
-          boxStyles={styles.boxStyles}
-          setSelected={(val) => setSelectedYearGrade(val)}
-          data={yearGrades}
-          save="value"
-          search={true}
-          placeholder='Choose Year Grade'
-          dropdownStyles={styles.dropDown}
+          <Text style={styles.selectLabel}><B>Year Grade:</B> </Text>
+          <SelectList
+            dropdownTextStyles={styles.selectList}
+            inputStyles={styles.selectList}
+            boxStyles={styles.boxStyles}
+            setSelected={(val) => setSelectedYearGrade(val)}
+            data={yearGrades}
+            save="value"
+            search={true}
+            placeholder='Choose Year Grade'
+            dropdownStyles={styles.dropDown}
 
-        />
-        <View style={styles.button}>
+          />
+          <View style={styles.button}>
 
-        <CustomButton
-          text="Save changes"
-          onPress={handleSubmit(onSavePressed)}
-        />
+            <CustomButton
+              text="Save changes"
+              onPress={handleSubmit(onSavePressed)}
+            />
+          </View>
         </View>
-      </View>
       </ScrollView>
 
     </View>

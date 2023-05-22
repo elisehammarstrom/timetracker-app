@@ -2,31 +2,32 @@
 // You will choose if you want to read evaluations or if you want to add an evaluation
 
 import React from "react";
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import CustomButton from "../../components/CustomButton/CustomButton";
 import { useNavigation } from '@react-navigation/native';
 import ButtonMenu from "../../components/ButtonMenu/ButtonMenu";
+import Title from '../../components/Title';
 
 
-const CourseStatsScreen = ({route}) => {
-    const {courses} = route.params;
-    const {token} = route.params;
-    const {courseIDs} = route.params;
+const CourseStatsScreen = ({ route }) => {
+    const { courses } = route.params;
+    const { token } = route.params;
+    const { courseIDs } = route.params;
     const navigation = useNavigation();
     console.log("courseIDs= ", courseIDs)
 
     const onEvaluateCoursesPressed = () => {
-        navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token, courseIDs: courseIDs})
+        navigation.navigate("ChooseEvaluateCourse", { courses: courses, token: token, courseIDs: courseIDs })
     }
 
     const onCourseEvaluationsPressed = () => {
-        navigation.navigate("CourseEvaluations", {courses: courses, token: token, courseIDs: courseIDs})
+        navigation.navigate("CourseEvaluations", { courses: courses, token: token, courseIDs: courseIDs })
     }
 
     return (
         <View style={styles.container}>
             <View style={styles.buttonContainer}>
-                <Text style={styles.title}>What do you want to do?</Text>
+                <Title style={styles.title}>What do you want to do?</Title>
 
 
                 <CustomButton
@@ -37,7 +38,7 @@ const CourseStatsScreen = ({route}) => {
                     text="Evaluate courses"
                     onPress={onEvaluateCoursesPressed}
                 />
-               
+
 
             </View>
             <View>
@@ -54,7 +55,7 @@ const CourseStatsScreen = ({route}) => {
 }
 
 const styles = StyleSheet.create({
-    container:{
+    container: {
         flexDirection: 'column',
         height: '100%',
         backgroundColor: '#313131',

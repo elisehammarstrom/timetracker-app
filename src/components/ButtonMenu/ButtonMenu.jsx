@@ -1,7 +1,7 @@
 // Component for the buttons in the bottom of many screens
 
 import React, { useState } from "react";
-import { View, StyleSheet, TouchableOpacity, Image, Text } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import axios from 'axios';
 import EvaluationIcon from '../../../assets/evaluationIcon.png';
@@ -11,12 +11,13 @@ import LineChartIcon from '../../../assets/chart.png';
 //Line chart icons created by ibobicon
 import BarChartIcon from '../../../assets/bar-graph.png';
 //Graph icons created by fjstudio
+import Text from '../../components/Text';
 
 
 const ButtonMenu = ({ token }) => {
   const [courseIDs, setCourseIDs] = useState('');
   const [courses, setCourses] = useState([]);
-  
+
   // get the courses so we can send them to the different screens
   axios.get('http://127.0.0.1:8000/api/users/get_courses/', {
     headers: {
@@ -105,7 +106,7 @@ const ButtonMenu = ({ token }) => {
           />
           <Text style={styles.buttonIcon}>Reports</Text>
         </TouchableOpacity>
-      
+
       </View>
 
 

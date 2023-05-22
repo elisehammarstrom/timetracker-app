@@ -1,12 +1,14 @@
 // This is the screen were you choose which course you want to evaluate
 
-import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Image } from 'react-native';
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import CustomButton from '../../components/CustomButton';
 import { RadioButton } from 'react-native-paper';
 import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
 import BackArrow from '../../../assets/arrowBack.png';
+import Title from '../../components/Title';
+import Text from '../../components/Text';
 
 
 const EvaluateCourseScreen = ({ route }) => {
@@ -47,7 +49,7 @@ const EvaluateCourseScreen = ({ route }) => {
             </TouchableOpacity >
 
             <View style={styles.options}>
-                <Text style={styles.title}>Select course to evaluate</Text>
+                <Title style={styles.title}>Select course to evaluate</Title>
 
                 <View>
                     {courses.map(option => (

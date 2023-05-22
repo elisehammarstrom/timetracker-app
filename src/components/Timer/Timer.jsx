@@ -1,4 +1,4 @@
-import { Button, View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Dimensions, Image } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, SafeAreaView, Dimensions, Image } from 'react-native';
 import React, { useState } from 'react';
 import { Stopwatch } from 'react-native-stopwatch-timer';
 import Play from '../../../assets/play.png'
@@ -6,12 +6,14 @@ import Pause from '../../../assets/pause.png'
 import axios from 'axios';
 import { add } from 'timelite/time'
 import { str } from 'timelite/time'
+import Title from '../../components/Title';
+import Text from '../../components/Text';
 
 
 const Timer = ({ courseID, courseName, color, token }) => {
   const [isStopwatchStart, setIsStopwatchStart] = useState(false);
   const [resetStopwatch, setResetStopwatch] = useState(false);
-  const [duration, setDuration]= useState('');
+  const [duration, setDuration] = useState('');
 
 
   var day = new Date().getDate();
@@ -23,23 +25,23 @@ const Timer = ({ courseID, courseName, color, token }) => {
     method: "post",
     url: "http://127.0.0.1:8000/api/tracking/get_user_day_study_time/",
     headers: {
-    'Authorization':`token ` + token
+      'Authorization': `token ` + token
     }
   })
     .then(function (response) {
-    //handle success
-    // console.log(response.data.results)
-    for (let i=0; i<Object.keys(response.data.results).length; i++){
-      if (response.data.results[i].courseID === courseID) {
-        if (duration.length < 1) {
-          setDuration(response.data.results[i].duration)
+      //handle success
+      // console.log(response.data.results)
+      for (let i = 0; i < Object.keys(response.data.results).length; i++) {
+        if (response.data.results[i].courseID === courseID) {
+          if (duration.length < 1) {
+            setDuration(response.data.results[i].duration)
+          }
         }
       }
-    }
     })
     .catch(function (response) {
-    //handle error
-    console.log(response);
+      //handle error
+      console.log(response);
     });
 
 
@@ -104,7 +106,7 @@ const Timer = ({ courseID, courseName, color, token }) => {
 
           <View style={styles.titleContainer}>
 
-            {<Text style={styles.title}>{courseName}</Text> }
+            {<Title style={styles.title}>{courseName}</Title>}
           </View>
 
           <View style={styles.stopWatchContainer}>

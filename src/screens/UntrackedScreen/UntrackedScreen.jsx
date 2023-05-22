@@ -1,7 +1,7 @@
 // This is the screen where you add untracked time
 
 import React, { useState } from 'react';
-import { Text, View, Dimensions, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Dimensions, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list'
 import ButtonMenu from '../../components/ButtonMenu';
 import ClickableWeekCalendar from '../../components/ClickableWeekCalendar';
@@ -12,6 +12,8 @@ import Invisible from '../../../assets/invisible-box.png'
 import ArrowBack from '../../../assets/arrowBack.png'
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+import Title from '../../components/Title';
+import Text from '../../components/Text';
 
 
 const UntrackedScreen = ({ route }) => {
@@ -144,7 +146,7 @@ const UntrackedScreen = ({ route }) => {
                         resizeMode="contain"
                     />
                 </TouchableOpacity>
-                <Text style={styles.title}>Add untracked time</Text>
+                <Title style={styles.title}>Add untracked time</Title>
             </View>
 
             {

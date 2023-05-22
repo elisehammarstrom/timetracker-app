@@ -2,12 +2,15 @@
 
 import { useState } from 'react';
 import React from 'react';
-import { StyleSheet, View, Text, Dimensions, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { StyleSheet, View, Dimensions, ScrollView } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list';
 import { useNavigation } from '@react-navigation/native';
 import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
 import { LineChart } from 'react-native-chart-kit';
 import axios from 'axios';
+import Title from '../../components/Title';
+import Text from '../../components/Text';
+
 
 const CourseStatsScreen = ({ route }) => {
 
@@ -199,7 +202,7 @@ const CourseStatsScreen = ({ route }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Compare Course Stats</Text>
+            <Title style={styles.title}>Compare Course Stats</Title>
 
             <View style={styles.selectListContainer}>
 

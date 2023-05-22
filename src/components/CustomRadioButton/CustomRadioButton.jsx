@@ -1,20 +1,21 @@
 // Radiobuttons which are used in course evaluations
 
 import * as React from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet, Dimensions } from 'react-native';
 import { RadioButton } from 'react-native-paper';
 import axios from 'axios';
+import Text from '../../components/Text';
 
 
-const CustomRadioButton = ({token, question, answerID, submit, firstOption, secondOption, thirdOption, fourthOption, fifthOption}) => {
+const CustomRadioButton = ({ token, question, answerID, submit, firstOption, secondOption, thirdOption, fourthOption, fifthOption }) => {
   const [checked, setChecked] = React.useState(1);
   var answer = [];
-  var answerid =[];
+  var answerid = [];
   var answernumber = [];
 
   // EvaluateCourseScreen sends submit=true so this component know to send the answer to the database
   if (submit === true) {
-    
+
     // We want to send the option that is checked to the database. (Tried doing a for-loop but somehow we couldn't send the data to backend)
     if (checked === 1) {
       answer.push(firstOption)
@@ -42,7 +43,7 @@ const CustomRadioButton = ({token, question, answerID, submit, firstOption, seco
       answernumber.push(checked)
     }
 
-    for (let i=0; i< answer.length; i++){
+    for (let i = 0; i < answer.length; i++) {
       var formData = new FormData();
       formData.append('answerText', answer[i])
       formData.append('answerID', answerid[i])
@@ -56,12 +57,12 @@ const CustomRadioButton = ({token, question, answerID, submit, firstOption, seco
         data: formData,
         headers: {
           'Content-Type': 'multipart/form-data',
-          'Authorization':`token ` + token,   
+          'Authorization': `token ` + token,
         }
       })
         .then(function (response) {
-            //handle success
-            console.log(response.data);
+          //handle success
+          console.log(response.data);
         })
         .catch(function (response) {
           //handle error
@@ -70,7 +71,7 @@ const CustomRadioButton = ({token, question, answerID, submit, firstOption, seco
     }
   }
 
-  
+
   return (
 
     <View style={styles.container}>
@@ -80,7 +81,7 @@ const CustomRadioButton = ({token, question, answerID, submit, firstOption, seco
         <Text style={styles.optionText}>{firstOption}</Text>
 
         <Text style={styles.optionText}>{secondOption}</Text>
-        
+
         <Text style={styles.optionText}>{thirdOption}</Text>
 
         <Text style={styles.optionText}>{fourthOption}</Text>
@@ -90,30 +91,30 @@ const CustomRadioButton = ({token, question, answerID, submit, firstOption, seco
       </View>
 
       <View style={styles.radioButtonContainer}>
-        
+
         <RadioButton.Android
           value={1}
-          status={ checked === 1 ? 'checked' : 'unchecked' }
+          status={checked === 1 ? 'checked' : 'unchecked'}
           onPress={() => setChecked(1)}
         />
         <RadioButton.Android
           value={2}
-          status={ checked === 2 ? 'checked' : 'unchecked' }
+          status={checked === 2 ? 'checked' : 'unchecked'}
           onPress={() => setChecked(2)}
         />
         <RadioButton.Android
           value={3}
-          status={ checked === 3 ? 'checked' : 'unchecked' }
+          status={checked === 3 ? 'checked' : 'unchecked'}
           onPress={() => setChecked(3)}
         />
         <RadioButton.Android
           value={4}
-          status={ checked === 4 ? 'checked' : 'unchecked' }
+          status={checked === 4 ? 'checked' : 'unchecked'}
           onPress={() => setChecked(4)}
         />
         <RadioButton.Android
           value={5}
-          status={ checked === 5 ? 'checked' : 'unchecked' }
+          status={checked === 5 ? 'checked' : 'unchecked'}
           onPress={() => setChecked(5)}
         />
 
@@ -122,7 +123,7 @@ const CustomRadioButton = ({token, question, answerID, submit, firstOption, seco
   );
 };
 
-const styles=StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
@@ -130,12 +131,12 @@ const styles=StyleSheet.create({
     textAlign: 'center',
     overflowWrap: 'break-word',
     width: 0.9 * Dimensions.get('window').width,
-   
+
   },
-  radioButtonContainer:{
+  radioButtonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    
+
   },
   title: {
     fontSize: 20,
@@ -147,7 +148,7 @@ const styles=StyleSheet.create({
     color: '#EFEFEF',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    
+
   },
   optionText: {
     fontSize: 10,

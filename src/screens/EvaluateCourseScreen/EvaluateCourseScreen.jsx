@@ -1,38 +1,39 @@
 // On this screen you can evaluate a course
 
-import {StyleSheet, View, ScrollView, Text} from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import Star from '../../components/Star/Star';
 import CustomRadioButton from '../../components/CustomRadioButton/CustomRadioButton';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+import Title from '../../components/Title';
 
-const EvaluationScreen = ({route}) => {
-    const {course} = route.params;
-    const {courses} = route.params;
-    const {token} = route.params;
-    const {checkedID} = route.params;
-    const {courseIDs} = route.params;
+const EvaluationScreen = ({ route }) => {
+    const { course } = route.params;
+    const { courses } = route.params;
+    const { token } = route.params;
+    const { checkedID } = route.params;
+    const { courseIDs } = route.params;
 
     const navigation = useNavigation();
     const [questions, setQuestions] = useState('');
     const [submit, setSubmit] = useState(false);
-   
+
 
     // Create evaluation method
     const formData = new FormData();
     formData.append('courseID', checkedID[0])
-    if (`${questions.length}` <1) {
+    if (`${questions.length}` < 1) {
         axios({
             method: "post",
             url: "http://127.0.0.1:8000/api/evaluate/create_evaluation/",
             data: formData,
             headers: {
                 'Content-Type': 'multipart/form-data',
-                'Authorization':`token ` + token
+                'Authorization': `token ` + token
             }
-          })
+        })
             .then(function (response) {
                 //handle success
                 console.log(response.data);
@@ -44,11 +45,11 @@ const EvaluationScreen = ({route}) => {
                 console.log(response);
                 // If you have already evaluated the course you cannot do it again
                 alert('You have already evaluated this course')
-                navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token, courseIDs: courseIDs})
+                navigation.navigate("ChooseEvaluateCourse", { courses: courses, token: token, courseIDs: courseIDs })
             });
     }
 
-    
+
 
     const onSubmitPressed = () => {
         // When you press the submit-button we set submit=true, so the components know to send the selected data to the database.
@@ -56,16 +57,16 @@ const EvaluationScreen = ({route}) => {
         alert('Evaluation submitted')
         // For the components to have time to react to submit=true, we wait a bit before we navigate
         setTimeout(() => {
-            navigation.navigate("ChooseEvaluateCourse", {courses: courses, token: token, courseIDs: courseIDs});
-        }, 1000);     
+            navigation.navigate("ChooseEvaluateCourse", { courses: courses, token: token, courseIDs: courseIDs });
+        }, 1000);
     }
-    
-    if (`${questions}`.length > 1 ) {
+
+    if (`${questions}`.length > 1) {
 
         return (
-            
+
             <View style={styles.container}>
-                <Text style={styles.title}> Evaluating {course} </Text>
+                <Title style={styles.title}> Evaluating {course} </Title>
 
                 <ScrollView>
 
@@ -86,8 +87,8 @@ const EvaluationScreen = ({route}) => {
 
                         firstOption="Don't know"
                         secondOption="No"
-                        thirdOption="Somehwat"
-                        fourthOption="A bit"
+                        thirdOption="Not really"
+                        fourthOption="Somewhat"
                         fifthOption="Yes"
                     />
 
@@ -114,8 +115,8 @@ const EvaluationScreen = ({route}) => {
 
                         firstOption="Don't know"
                         secondOption="No"
-                        thirdOption="Somewhat"
-                        fourthOption="A bit"
+                        thirdOption="Not really"
+                        fourthOption="Somewhat"
                         fifthOption="Yes"
                     />
 
@@ -128,8 +129,8 @@ const EvaluationScreen = ({route}) => {
 
                         firstOption="Don't know"
                         secondOption="No"
-                        thirdOption="Somewhat"
-                        fourthOption="A bit"
+                        thirdOption="Not really"
+                        fourthOption="Somewhat"
                         fifthOption="Yes"
                     />
 
@@ -142,8 +143,8 @@ const EvaluationScreen = ({route}) => {
 
                         firstOption="Don't know"
                         secondOption="No"
-                        thirdOption="Somewhat"
-                        fourthOption="A bit"
+                        thirdOption="Not really"
+                        fourthOption="Somewhat"
                         fifthOption="Yes"
                     />
 
@@ -156,8 +157,8 @@ const EvaluationScreen = ({route}) => {
 
                         firstOption="Don't know"
                         secondOption="No"
-                        thirdOption="Somewhat"
-                        fourthOption="A bit"
+                        thirdOption="Not really"
+                        fourthOption="Somewhat"
                         fifthOption="Yes"
                     />
 
@@ -166,12 +167,12 @@ const EvaluationScreen = ({route}) => {
                         onPress={onSubmitPressed}
                     />
 
-                </ScrollView>   
+                </ScrollView>
 
             </View>
-    
+
         )
-    } 
+    }
 }
 
 const styles = StyleSheet.create({

@@ -1,7 +1,7 @@
 // The screen where the student can track their stress each day for each course. 
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, Image, TouchableOpacity, PixelRatio, ScrollView, Dimensions } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, PixelRatio, ScrollView, Dimensions } from 'react-native';
 import ButtonMenu from '../../components/ButtonMenu';
 import { SelectList } from 'react-native-dropdown-select-list'
 import CustomButton from '../../components/CustomButton';
@@ -12,6 +12,8 @@ import Fyra from '../../../assets/4.png'
 import Fem from '../../../assets/5.png'
 import ArrowBack from '../../../assets/arrowBack.png'
 import axios from 'axios';
+import Text from '../../components/Text';
+import Title from '../../components/Title';
 
 
 const StressScreen = ({ route }) => {
@@ -130,7 +132,7 @@ const StressScreen = ({ route }) => {
                         resizeMode="contain"
                     />
                 </TouchableOpacity>
-                <Text style={styles.title}>Track your stress today</Text>
+                <Title style={styles.title}>Track your stress today</Title>
                 <View style={styles.dailyContainer}>
                     <Text style={styles.day}>{day}</Text>
                     <View>

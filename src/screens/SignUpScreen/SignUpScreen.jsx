@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { SelectList } from 'react-native-dropdown-select-list';
 import axios from 'axios';
 import { LogBox } from 'react-native'; LogBox.ignoreLogs(['Warning: ...']);
+import Title from '../../components/Title';
 
 LogBox.ignoreAllLogs();
 // The 
@@ -122,7 +123,7 @@ const SignUpScreen = () => {
             .then(async response => {
                 console.log(response.data);
                 axios.post('http://127.0.0.1:8000/auth/login/', formData)
-                //If successful you get navigated to choose your courses
+                    //If successful you get navigated to choose your courses
                     .then((res) => {
                         navigation.navigate('StartCourses', { token: res.data.token, user: info })
 
@@ -143,7 +144,7 @@ const SignUpScreen = () => {
 
     return (
         <View style={styles.root}>
-            <Text style={styles.title}>Create an account</Text>
+            <Title style={styles.title}>Create an account</Title>
 
             <CustomInput
                 name="firstname"

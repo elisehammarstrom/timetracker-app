@@ -1,29 +1,30 @@
 // Custom input field for use in various places in the app.
 
 import React from 'react'
-import { View, Text, TextInput, StyleSheet } from 'react-native'
+import { View, TextInput, StyleSheet } from 'react-native'
 import { Controller } from 'react-hook-form';
+import Text from '../../components/Text';
 
-const CustomInput = ({control, name, rules, placeholder, secureTextEntry}) => {
+const CustomInput = ({ control, name, rules, placeholder, secureTextEntry }) => {
     return (
-            <Controller 
+        <Controller
             control={control}
             name={name}
             rules={rules}
-            render={({field: {value, onChange, onBlur}, fieldState: {error}}) => (
+            render={({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
                 <>
-                    <View style={[styles.container, {borderColor: error ? 'red' : '#e8e8e8'}]} >
-                    <TextInput 
-                        value={value} 
-                        onChangeText={onChange} 
-                        onBlur={onBlur} 
-                        placeholder={placeholder} 
-                        style={styles.input}
-                        secureTextEntry={secureTextEntry}
-                        autoCapitalize="none"
-                    />
+                    <View style={[styles.container, { borderColor: error ? 'red' : '#e8e8e8' }]} >
+                        <TextInput
+                            value={value}
+                            onChangeText={onChange}
+                            onBlur={onBlur}
+                            placeholder={placeholder}
+                            style={styles.input}
+                            secureTextEntry={secureTextEntry}
+                            autoCapitalize="none"
+                        />
                     </View>
-                    {error && (<Text style={{color: 'red', alignSelf: 'stretch'}}>{error.message || 'Error'} </Text>)}
+                    {error && (<Text style={{ color: 'red', alignSelf: 'stretch' }}>{error.message || 'Error'} </Text>)}
                 </>
             )}
         />

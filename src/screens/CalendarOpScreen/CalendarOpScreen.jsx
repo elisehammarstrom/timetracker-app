@@ -1,9 +1,10 @@
-import { StyleSheet, Text, View, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import CalendarBlock from '../../components/CalendarBlock';
 import ClickableWeekCalendar from '../../components/ClickableWeekCalendar';
 import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
+import Title from '../../components/Title';
 
 const CalendarOpScreen = ({ route }) => {
 
@@ -34,7 +35,7 @@ const CalendarOpScreen = ({ route }) => {
   const colors = ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX']
 
   //get total study time per course from database
-  const studyTime = [4, 5, 2]
+  const studyTime = [5, 1, 2]
 
   const showInfo = (option) => {
     let name = option
@@ -46,7 +47,7 @@ const CalendarOpScreen = ({ route }) => {
 
 
       <View style={styles.topContainer}>
-        <Text style={styles.title}>Recommended Study Hours</Text>
+        <Title style={styles.title}>Recommended Study Hours</Title>
 
 
       </View>

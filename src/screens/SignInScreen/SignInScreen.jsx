@@ -10,11 +10,11 @@ import axios from 'axios';
 
 
 const SignInScreen = () => {
-    const {height} = useWindowDimensions();
+    const { height } = useWindowDimensions();
     const navigation = useNavigation();
-    
+
     // We use react-hook-form to save the data
-    const {control, handleSubmit, formState: {errors}} = useForm();
+    const { control, handleSubmit, formState: { errors } } = useForm();
 
     // When you press the sign in button we send the data to the database and check if it matches a user. 
     // If the info matches a user you get a token and sends you to the home page
@@ -23,7 +23,7 @@ const SignInScreen = () => {
         const info = {
             email: data.email,
             password: data.password,
-        } 
+        }
 
         const headers = {
             Accept: 'application/json',
@@ -34,24 +34,24 @@ const SignInScreen = () => {
         formData.append('email', info.email);
         formData.append('password', info.password);
 
-        axios 
-        .post('http://127.0.0.1:8000/auth/login/', formData, headers, {
-            timeout: 3000,
-        })
-        .then(async response => {
+        axios
+            .post('http://127.0.0.1:8000/auth/login/', formData, headers, {
+                timeout: 3000,
+            })
+            .then(async response => {
 
-            if (response.data.token) {
-                navigation.navigate('Home', {token: response.data.token})
-            }
+                if (response.data.token) {
+                    navigation.navigate('Home', { token: response.data.token })
+                }
 
-        })
-        .catch(error=> {
-            //console.log("error from image :");
-            alert('Wrong email or password')
+            })
+            .catch(error => {
+                //console.log("error from image :");
+                alert('Wrong email or password')
 
-   })
-  
-        
+            })
+
+
     };
 
     const onSignUpPress = () => {
@@ -61,45 +61,36 @@ const SignInScreen = () => {
     return (
         <View style={styles.container}>
 
-            {/* <View style={styles.languageContainer}>
-                <View style={styles.languageButton}>
-                    <CustomButton
-                        text="Language"
-                        type="TERTIARY"
-                    />
-                </View>
-            </View> */}
-                
             <View style={styles.root}>
 
-                <Image 
-                    source={Logo} 
-                    style={[styles.logo, {height: height * 0.3}]} 
+                <Image
+                    source={Logo}
+                    style={[styles.logo, { height: height * 0.3 }]}
                     resizeMode="contain"
                 />
 
-                <CustomInput 
+                <CustomInput
                     name="email"
-                    placeholder="Email" 
-                    control={control} 
-                    rules={{required: 'Email is required'}}
+                    placeholder="Email"
+                    control={control}
+                    rules={{ required: 'Email is required' }}
                 />
-                <CustomInput 
+                <CustomInput
                     name="password"
-                    placeholder={"Password"} 
+                    placeholder={"Password"}
                     secureTextEntry
-                    control={control} 
-                    rules={{required: 'Password is required'}}
+                    control={control}
+                    rules={{ required: 'Password is required' }}
                 />
 
 
-                <CustomButton 
-                    text="Sign in" 
+                <CustomButton
+                    text="Sign in"
                     onPress={handleSubmit(onSignInPressed)}
                 />
 
-                <CustomButton    
-                    text="Don't have an account? Create one" 
+                <CustomButton
+                    text="Don't have an account? Create one"
                     onPress={onSignUpPress}
                     type="TERTIARY"
                 />
@@ -120,7 +111,6 @@ const styles = StyleSheet.create({
     },
     root: {
         alignItems: 'center',
-        // justifyContent: 'center',
         paddingHorizontal: 50,
 
     },

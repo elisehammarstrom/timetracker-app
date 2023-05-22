@@ -1,9 +1,10 @@
 //Button component to make it easier to implement the same styles. Implementing a "type" to have a few different styles
 
 import React from "react";
-import { Text, StyleSheet, Pressable } from 'react-native';
+import { StyleSheet, Pressable } from 'react-native';
+import Text from '../../components/Text';
 
-const CustomButton = ({onPress, text, type = "PRIMARY"}) => {
+const CustomButton = ({ onPress, text, type = "PRIMARY" }) => {
     return (
         <Pressable onPress={onPress} style={[styles.container, styles[`container_${type}`]]}>
             <Text style={[styles.text, styles[`text_${type}`]]}>{text}</Text>
@@ -11,7 +12,7 @@ const CustomButton = ({onPress, text, type = "PRIMARY"}) => {
     );
 };
 
-const styles =StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         width: '100%',
         padding: 15,
@@ -37,7 +38,7 @@ const styles =StyleSheet.create({
     },
 
     container_HOMESCREEN: {
-        backgroundColor: '#6B6B6B' 
+        backgroundColor: '#6B6B6B'
     },
 
     text: {
