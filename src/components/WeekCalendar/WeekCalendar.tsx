@@ -1,3 +1,5 @@
+//Unclickable weekly calendar component
+
 import { addDays, format, getDate, isSameDay, startOfWeek } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';

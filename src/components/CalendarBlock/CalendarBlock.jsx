@@ -1,3 +1,4 @@
+//Calendar block component used on the calendarOp screen
 import { View, StyleSheet, SafeAreaView, Dimensions } from 'react-native';
 import React, { useState } from 'react';
 import axios from 'axios';

@@ -18,12 +18,6 @@ const CalendarOpScreen = ({ route }) => {
 
   const navigation = useNavigation();
 
-  let fruits = [
-    { id: 1, name: 'mango' },
-    { id: 2, name: 'banana' },
-    { id: 3, name: 'cherry' }
-  ]
-
   const onSelect = (item) => {
     setSelectedItem(item)
   }

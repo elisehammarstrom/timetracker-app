@@ -1,3 +1,5 @@
+//Timer component
+
 import { View, TouchableOpacity, StyleSheet, SafeAreaView, Dimensions, Image } from 'react-native';
 import React, { useState } from 'react';
 import { Stopwatch } from 'react-native-stopwatch-timer';
@@ -21,6 +23,7 @@ const Timer = ({ courseID, courseName, color, token }) => {
   var year = new Date().getFullYear();
   var date = year + '-' + month + '-' + day;
 
+  //send user study time to database
   axios({
     method: "post",
     url: "http://127.0.0.1:8000/api/tracking/get_user_day_study_time/",

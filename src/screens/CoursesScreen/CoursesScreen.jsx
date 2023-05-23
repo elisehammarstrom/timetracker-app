@@ -14,7 +14,6 @@ const CourseStatsScreen = ({ route }) => {
     const { token } = route.params;
     const { courseIDs } = route.params;
     const navigation = useNavigation();
-    console.log("courseIDs= ", courseIDs)
 
     const onEvaluateCoursesPressed = () => {
         navigation.navigate("ChooseEvaluateCourse", { courses: courses, token: token, courseIDs: courseIDs })
