@@ -12,7 +12,7 @@ import { LogBox } from 'react-native'; LogBox.ignoreLogs(['Warning: ...']);
 import Title from '../../components/Title';
 
 LogBox.ignoreAllLogs();
-// The 
+// Email requirements
 const EMAIL_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
 
 const SignUpScreen = () => {

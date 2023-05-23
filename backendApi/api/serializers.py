@@ -12,13 +12,9 @@ class UserSerializer(serializers.ModelSerializer):
             "last_name": {"required": True},
                         }
 
-        #def create(self, validated_data):
-        #    user = User.objects.create_user
-
 class UserCourseTrackingSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserCourseTracking
-        #fields = ("userID", "course", "date", "timeTracked", "stress")
         fields = ("id", "user", "course", "date", "duration", "stress")
         extra_kwargs = {
             "course": {"required": True}, 
@@ -31,28 +27,21 @@ class StudentSerializer(serializers.ModelSerializer):
         fields = ("id", "email", "first_name", "last_name", "role", "password", "courses")
         extra_kwargs = {"password": {"write_only": True, "required": True}}
 
-        #def create(self, validated_data):
-        #    user = User.objects.create_user
-
-
 class ProgrammeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Programme
         fields = ("id", "programmeID", "programmeName", "courses", "shortProgrammeName")
 
 class CourseSerializer(serializers.ModelSerializer):
-    #programmes = ProgrammeSerializer(many=True)
 
     class Meta:
         model = Course
-        #fields = ("id", "courseCode", "courseTitle", "programmes")
         fields = ("id", "courseCode", "courseTitle", "courseTitleEng", "courseStartDateTime", "courseEndDateTime")
 
 class CourseEvaluationSerializer(serializers.ModelSerializer):
     class Meta:
         model = CourseEvaluation
         fields = ("id", "course", "user")
-
 
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -63,7 +52,6 @@ class QuestionAnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuestionAnswer
         fields = ("id", "question", "answer", "courseEvaluation")
-
 
 class CourseCalendarSerializer(serializers.ModelSerializer):
 

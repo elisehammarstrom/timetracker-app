@@ -1,3 +1,4 @@
+//Clickable week calendar component used on the untracked time screen and calendarOp screen
 import { addDays, format, getDate, isSameDay, startOfWeek } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';

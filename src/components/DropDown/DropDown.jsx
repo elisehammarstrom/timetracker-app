@@ -1,3 +1,5 @@
+//Dropdown component used on calendarOp screen 
+
 import React, { Component, useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import DropdownArrow from '../../../assets/dropdownArrow.png'

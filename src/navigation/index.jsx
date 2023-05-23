@@ -15,10 +15,11 @@ import CourseStatsScreen from '../screens/CourseStatsScreen/CourseStatsScreen';
 import CourseEvaluationsScreen from '../screens/CourseEvaluationsScreen/CourseEvaluationsScreen';
 import UntrackedScreen from '../screens/UntrackedScreen';
 import StressScreen from '../screens/StressScreen';
-import EditProfileScreen from '../screens/EditProfileScreen'
-import ProfileScreen from '../screens/ProfileScreen'
-import CalendarScreen from '../screens/CalendarScreen/CalendarScreen'
-import CalendarOpScreen from '../screens/CalendarOpScreen'
+import EditProfileScreen from '../screens/EditProfileScreen';
+import ProfileScreen from '../screens/ProfileScreen';
+import CalendarScreen from '../screens/CalendarScreen/CalendarScreen';
+import CalendarOpScreen from '../screens/CalendarOpScreen';
+import ChooseAssignmentScreen from '../screens/ChooseAssignmentScreen/ChooseAssignmentScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -49,6 +50,7 @@ const Navigation = () => {
 
                 <Stack.Screen name="EditProfile" component={EditProfileScreen}/>
                 <Stack.Screen name="CalendarOpScreen" component={CalendarOpScreen} />
+                <Stack.Screen name="ChooseAssignment" component={ChooseAssignmentScreen}/>
 
             </Stack.Navigator>
 
