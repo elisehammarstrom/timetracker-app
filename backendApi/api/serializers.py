@@ -36,7 +36,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Course
-        fields = ("id", "courseCode", "courseTitle", "courseTitleEng", "courseStartDateTime", "courseEndDateTime")
+        fields = ("id", "courseCode", "courseTitle", "courseStartDateTime", "courseEndDateTime")
 
 class CourseEvaluationSerializer(serializers.ModelSerializer):
     class Meta:
