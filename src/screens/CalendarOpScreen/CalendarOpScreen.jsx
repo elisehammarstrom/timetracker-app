@@ -5,11 +5,14 @@ import CalendarBlock from '../../components/CalendarBlock';
 import ClickableWeekCalendar from '../../components/ClickableWeekCalendar';
 import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
 import Title from '../../components/Title';
+import CustomButton from '../../components/CustomButton/CustomButton';
 
 const CalendarOpScreen = ({ route }) => {
 
   const { token } = route.params;
   const { courses } = route.params;
+  const { courseIDs } = route.params;
+  // const { assignments } = route.params;
   const [isShowingInfo, setShowingInfo] = useState(true)
   const [name, setname] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
@@ -18,13 +21,6 @@ const CalendarOpScreen = ({ route }) => {
 
   const navigation = useNavigation();
 
-  const onSelect = (item) => {
-    setSelectedItem(item)
-  }
-
-  const onClosedPress = () => {
-    navigation.navigate('Home', { options: courses, token: token })
-  }
 
   const colors = ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX']
 
@@ -34,6 +30,10 @@ const CalendarOpScreen = ({ route }) => {
   const showInfo = (option) => {
     let name = option
    // console.log(name)
+  }
+
+  const onChooseAssignmentPressed = () => {
+    navigation.navigate('ChooseAssignment', {token: token, courses: courses, courseIDs: courseIDs})
   }
 
   return (
@@ -58,9 +58,16 @@ const CalendarOpScreen = ({ route }) => {
               <CalendarBlock
                 color={colors[i]}
                 courseName={option}
-                studyTime={studyTime[i]} />
+                studyTime={studyTime[i]}
+                courseID={courseIDs[i]} />
             </TouchableOpacity>
           ))}
+
+
+          <CustomButton
+            text="Choose assignments"
+            onPress={onChooseAssignmentPressed}
+          />
         </ScrollView>
 
 

@@ -5,14 +5,8 @@ import axios from 'axios';
 import DropDown from '../../components/DropDown';
 import Text from '../../components/Text';
 
-const CalendarBlock = ({ courseID, courseName, color, studyTime }) => {
-  const [isStopwatchStart, setIsStopwatchStart] = useState(false);
-  const [resetStopwatch, setResetStopwatch] = useState(false);
-  const [isTimerStart, setIsTimerStart] = useState(false);
-
-  const [timerDuration, setTimerDuration] = useState(90000);
-  const [resetTimer, setResetTimer] = useState(false);
-  const [active, setActive] = useState(false);
+const CalendarBlock = ({ courseID, courseName, color, studyTime, assignments }) => {
+  
   const [selectedItem, setSelectedItem] = useState(null);
 
 
@@ -36,41 +30,6 @@ const CalendarBlock = ({ courseID, courseName, color, studyTime }) => {
   var year = new Date().getFullYear();
   var date = year + '-' + month + '-' + day;
 
-  const getTime = (time) => {
-    if (isStopwatchStart != true) {
-      let data = {
-        courseID: courseID,
-        date: date,
-        duration: time,
-      };
-      // console.log(courseName)
-      const formData = new FormData();
-      formData.append('courseID', courseID);
-      formData.append('date', date);
-      formData.append('duration', time);
-
-      axios({
-        method: "post",
-        url: "http://127.0.0.1:8000/api/tracking/track_time/",
-        data: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `token 53ba76420d512d53c7cca599cbda42c950d37996`
-        }
-      })
-        .then(function (response) {
-          //handle success
-          // console.log(response.data);
-        })
-        .catch(function (response) {
-          //handle error
-          // console.log(response);
-        });
-
-      // console.log(data)
-    }
-
-  }
 
   return (
     <SafeAreaView>
