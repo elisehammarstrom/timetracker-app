@@ -373,3 +373,15 @@ class AvailableHours(models.Model):
         user =Student.objects.get(email=self.student)
         AvailableHoursInfoStrng =  user.first_name + user.last_name + ", Date: " + str(self.theDate) + ", available hours: " + str(self.availableHours)
         return AvailableHoursInfoStrng
+
+class OptimalSchedule(models.Model):
+    student =models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+    theDate = models.DateField(null=True)
+    hours = models.IntegerField(null=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+    assignmentName = models.CharField(max_length=50 )
+    
+    def __str__(self):
+        user =Student.objects.get(email=self.student)
+        OptimalSchdeuleInfoStrng =  user.first_name + user.last_name + ", Assignment: " + self.assignmentName + ", date: " + str(self.theDate) + ", hours: " + str(self.hours)+ ", course: "  + self.course.courseTitle
+        return OptimalSchdeuleInfoStrng
