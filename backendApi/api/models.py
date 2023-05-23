@@ -8,7 +8,6 @@ from datetime import datetime
 class Course(models.Model):
     courseCode = models.CharField(max_length=10, null=True, blank=True)
     courseTitle = models.CharField(max_length=100, null=True, blank=True)
-    courseTitleEng = models.CharField(max_length=100, null=True, blank=True)
     courseStartDateTime = models.DateTimeField(null=True, blank=True)
     courseEndDateTime = models.DateTimeField(null=True, blank=True)
     filename = models.CharField(max_length=50, null=True)
