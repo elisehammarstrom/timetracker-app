@@ -94,14 +94,14 @@ class MyAssignmentsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model =MyAssignments
-        fields = ( "student", "assignment", "donewith", "hoursTracked")
+        fields = ( "id", "student", "assignment", "donewith", "hoursTracked")
 
 class UserScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserSchedule
-        fields = ("user", "event", "startDateTime", "endDateTime", "course")
+        fields = ("id","user", "event", "startDateTime", "endDateTime", "course")
 
 class AvailableHoursSerializer(serializers.ModelSerializer):
     class Meta:
         model = AvailableHours
-        fields = ("student", "theDate", " availableHours")
+        fields = ("id","student", "theDate", " availableHours")
