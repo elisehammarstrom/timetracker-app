@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.db import models
 #from .views import UserScheduleViewset
-from .models import Course, Student, YearGrade, CourseSchedule, UserSchedule #AvailableHours, User, MyAssignments, CourseCalendar, Course
+from .models import Course, Student, OptimalSchedule, User #YearGrade, CourseSchedule, UserSchedule #AvailableHours, User, MyAssignments, CourseCalendar, Course
 import pandas
 import holidays
 print(holidays.__version__)
@@ -13,24 +13,78 @@ import numpy as np
 from datetime import date, datetime, timedelta
 
 class TestClass(TestCase):
-   course=Course.objects.get(id=18)
-   userObject = Student.objects.get(id=26)
-   print(userObject.email)
-   yearGrade = YearGrade.objects.get(yearGradeClass=userObject.yearGrade)
-   print("hej")
-   courseScheduleList = list(CourseSchedule.objects.filter(course=course, yearGrade=yearGrade).values_list('id', flat=True))
-   eventNameList=[]
-   print("courseScheduleList: ", courseScheduleList)
-   for item in courseScheduleList:
-      print(item)
-      courseSchedule=CourseSchedule.objects.get(id=item)
-      if not UserSchedule.objects.filter(user_id=26, startDateTime=courseSchedule.eventStartTime).exists():
-         obj = UserSchedule.objects.create(user=userObject, event=courseSchedule.courseEvent, startDateTime=courseSchedule.eventStartTime,
-                                          endDateTime=courseSchedule.eventEndTime, course=course)
+   userObject = Student.objects.get(id=33)
+   coursesList =[]
+   coursesIdList = list(User.objects.filter(id=33).values_list("courses", flat=True))
+   print(coursesIdList)
+   optimalAssignmentsList =[]
+   for course in coursesIdList:
+      thisCourse =Course.objects.get(id=int(course))
+      optimalAssignmentsIdList = list(OptimalSchedule.objects.filter(student=userObject, theDate=datetime.strptime('2023-04-25', "%Y-%m-%d").date(), course=thisCourse).values_list("id", flat=True))
+      print("optimalAssignmentsIdList: ", optimalAssignmentsIdList)
+      assignmentData =[]
+      courseStr=""
+      for assignment in optimalAssignmentsIdList:
+         optimalAssignment = OptimalSchedule.objects.get(id=assignment)
+         optimalAssignmentObj ={"assignmentName": optimalAssignment.assignmentName, "hours": optimalAssignment.hours}
+         assignmentData.append(optimalAssignmentObj)
+         courseStr= optimalAssignment.course.courseTitle
+      if assignmentData != []:
+         for item in assignmentData:
+            courseAssignmentObj={courseStr : item}
       else:
-            print("already exists")
-            continue
-   print("thisYear: ", datetime.now().year)
+         continue
+      optimalAssignmentsList.append(courseAssignmentObj)
+   print("optimalAssignmentsList: ", optimalAssignmentsList)
+         
+      
+      
+      
+      
+      
+      # myAssignments=[]
+      # gradAssignments = list(CourseCalendar.objects.filter(course_id=courseId, grade = userObject.yearGrade.yearGradeClass).values_list('id', "course_id"))
+      # myAssignments.extend(gradAssignments)
+      # otherAssignments = list(CourseCalendar.objects.filter(course_id=courseId,grade__isnull=True).values_list('id', "course_id"))
+      # myAssignments.extend(otherAssignments)
+      # for assignment in myAssignments:
+      #    print("hej")
+      #    print("assignment: ", assignment)
+      #    print("assignment id: ", assignment[0])
+      #    print("assignment course_id: ", assignment[1])
+      #    newAssignment=CourseCalendar.objects.get(id=assignment[0])
+      #    course = Course.objects.get(id=assignment[1])
+      #    newObj ={"assignmentName": newAssignment.eventName,
+      #             "course": course.courseTitle,
+      #             "assignment.id": assignment[0] }
+      #    assignmentData.append(newObj)
+      # response = {
+      #             "message": "Success. Assignments retrieved.", 
+      #             "assignmentData": assignmentData
+      #          }
+      # print(response)
+
+   
+   
+   
+   # course=Course.objects.get(id=18)
+   # userObject = Student.objects.get(id=26)
+   # print(userObject.email)
+   # yearGrade = YearGrade.objects.get(yearGradeClass=userObject.yearGrade)
+   # print("hej")
+   # courseScheduleList = list(CourseSchedule.objects.filter(course=course, yearGrade=yearGrade).values_list('id', flat=True))
+   # eventNameList=[]
+   # print("courseScheduleList: ", courseScheduleList)
+   # for item in courseScheduleList:
+   #    print(item)
+   #    courseSchedule=CourseSchedule.objects.get(id=item)
+   #    if not UserSchedule.objects.filter(user_id=26, startDateTime=courseSchedule.eventStartTime).exists():
+   #       obj = UserSchedule.objects.create(user=userObject, event=courseSchedule.courseEvent, startDateTime=courseSchedule.eventStartTime,
+   #                                        endDateTime=courseSchedule.eventEndTime, course=course)
+   #    else:
+   #          print("already exists")
+   #          continue
+   # print("thisYear: ", datetime.now().year)
     
    # availableHoursList =list(AvailableHours.objects.filter(student=26).values("theDate", "availableHours"))
    # myAssignments = list(MyAssignments.objects.filter(student=26).values("id","assignment", "donewith"))

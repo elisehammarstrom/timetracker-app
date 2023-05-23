@@ -90,7 +90,7 @@ const ChooseAssignmentScreen = ({route}) => {
                   console.log(response);
                 });
         }
-        navigation.navigate('CalendarOpScreen', {token: token, courses: courses, assignments: assignments, courseIDs: courseIDs})
+        navigation.navigate('CalendarOpScreen', {token: token, courses: courses, courseIDs: courseIDs})
     }
     if (data.length > 0) {
     return (
