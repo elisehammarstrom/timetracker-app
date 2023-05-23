@@ -1,7 +1,7 @@
 #from msilib import sequence
 from django.shortcuts import render
-from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer, CourseCalendarSerializer, UserFreetimeSerializer, CourseScheduleSerializer, YearGradeSerializer, CourseEvaluationSerializer, QuestionAnswerSerializer, QuestionSerializer, MyAssignmentsSerializer, UserScheduleSerializer, AvailableHoursSerializer
-from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking, CourseCalendar, UserFreetime, ExcelFile, CourseSchedule, YearGrade, CourseEvaluation, Question, Answer, QuestionAnswer, MyAssignments, UserSchedule, AvailableHours
+from .serializers import CourseSerializer, ProgrammeSerializer, UserSerializer, StudentSerializer, UserCourseTrackingSerializer, CourseCalendarSerializer, UserFreetimeSerializer, CourseScheduleSerializer, YearGradeSerializer, CourseEvaluationSerializer, QuestionAnswerSerializer, QuestionSerializer, MyAssignmentsSerializer, UserScheduleSerializer, AvailableHoursSerializer, OptimalScheduleSerializer
+from .models import Course, Programme, User, Student, Teacher, ProgrammeHead, UserCourseTracking, CourseCalendar, UserFreetime, ExcelFile, CourseSchedule, YearGrade, CourseEvaluation, Question, Answer, QuestionAnswer, MyAssignments, UserSchedule, AvailableHours, OptimalSchedule
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -1690,7 +1690,7 @@ class MyAssignmentsViewset(viewsets.ModelViewSet):
                     "assignmentData": assignmentData
                 } 
             return Response(data=response, status=status.HTTP_200_OK)
-    @action(detail=False, methods=['GET'])
+    @action(detail=False, methods=['POST'])
     def get_assignments_user_courses(self, request, **extra_fields):
         userObject = Student.objects.get(id=request.user.pk)
         coursesList =[]
@@ -1716,7 +1716,7 @@ class MyAssignmentsViewset(viewsets.ModelViewSet):
                 course = Course.objects.get(id=assignment[1])
                 newObj ={"assignmentName": newAssignment.eventName,
                          "course": course.courseTitle,
-                         "assignment.id": assignment[0] }
+                         "assignmentId": assignment[0] }
                 assignmentData.append(newObj)
         response = {
                     "message": "Success. Assignments retrieved.", 
@@ -1843,6 +1843,12 @@ class AvailableHoursViewset(viewsets.ModelViewSet):
                          "availableHours": availableHoursList,
                         }
             return Response(data=response, status=status.HTTP_200_OK)
+        
+class OptimalScheduleViewset(viewsets.ModelViewSet):
+    queryset = OptimalSchedule.objects.all()
+    serializer_class = OptimalScheduleSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
 
     @action(detail=False, methods=['POST'])
     def create_optimal_schedule(self, request, **extra_fields):
@@ -1927,7 +1933,7 @@ class AvailableHoursViewset(viewsets.ModelViewSet):
                             if slotsAvailable[i]["availableHours"] >= hoursLeft:
                                 # print("if innuti if hoursLeft > 0")
                                 # print("the date before assignment: ", availableHoursList[i])
-                                dateList.append({"date": slotsAvailable[i]["theDate"], "hours": assignment["expectedHours"], "eventName": assignment["eventName"], "course": assignment["course"], "dueTime": assignment["dueTime"], "startDateTime": assignment["startDateTime"]})
+                                dateList.append({"date": slotsAvailable[i]["theDate"], "hours": hoursLeft, "eventName": assignment["eventName"], "course": assignment["course"], "dueTime": assignment["dueTime"], "startDateTime": assignment["startDateTime"]})
                                 slotsAvailable[i]["availableHours"] -= hoursLeft
                                 hoursLeft = hoursLeft - hoursLeft
                                 # print("hours left: ", hoursLeft)
@@ -1980,6 +1986,8 @@ class AvailableHoursViewset(viewsets.ModelViewSet):
             duedate = thedateList[j]["dueTime"]
             startDateTime = thedateList[j]["startDateTime"]
             printList.append({"eventName": eventName, "date": str(printDate), "hours": hours, "courseTitle":course.courseTitle, "dueTime": duedate, "startDateTime": startDateTime})
+            newObj = OptimalSchedule.objects.create(student =userObject, theDate = printDate, hours =hours, course =course, assignmentName = eventName)
+            newObj.save()
                     
         #print("thedateList: ", thedateList)
         # print("printList: ", printList)
@@ -1990,8 +1998,40 @@ class AvailableHoursViewset(viewsets.ModelViewSet):
         return Response(data=response, status=status.HTTP_200_OK)
 
             #Lägga till kurs och namn på uppgift till dateList?
-        
-                            
+    
+    @action(detail=False, methods=['POST'])
+    def get_optimal_schedule_by_date(self, request, **extra_fields):
+        if 'date' not in request.data: 
+            response = {"message": "You must provide a date to retrive optimal schedule"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            userObject = Student.objects.get(id=request.user.pk)
+            optimalAssignmentsList =[]
+            coursesIdList = list(User.objects.filter(id=request.user.pk).values_list("courses", flat=True))
+            print(coursesIdList)
+            assignmentData =[]
+            for course in coursesIdList:
+                thisCourse =Course.objects.get(id=int(course))
+                optimalAssignmentsIdList = list(OptimalSchedule.objects.filter(student=userObject, theDate=request.data.get('date'), course=thisCourse).values_list("id", flat=True))
+                print("optimalAssignmentsIdList: ", optimalAssignmentsIdList)
+                assignmentData =[]
+                courseStr=""
+                for assignment in optimalAssignmentsIdList:
+                    optimalAssignment = OptimalSchedule.objects.get(id=assignment)
+                    optimalAssignmentObj ={"assignmentName": optimalAssignment.assignmentName, "hours": optimalAssignment.hours}
+                    assignmentData.append(optimalAssignmentObj)
+                    courseStr= optimalAssignment.course.courseTitle
+                if assignmentData != []:
+                    courseAssignmentObj={courseStr : assignmentData}
+                else:
+                    continue
+                optimalAssignmentsList.append(courseAssignmentObj)    
+            response = {
+                        "message": "Success. Optimal Schedule retrieved.", 
+                        "optimalAssignmentsList": optimalAssignmentsList
+                    } 
+            return Response(data=response, status=status.HTTP_200_OK)
+                                
 
                     
 
