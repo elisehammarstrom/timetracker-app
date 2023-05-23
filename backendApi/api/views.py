@@ -1751,10 +1751,18 @@ class MyAssignmentsViewset(viewsets.ModelViewSet):
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
         else:
             userObject = User.objects.get(id=request.user.pk)
-            print(userObject.email)
+            theassignment = CourseCalendar.objects.get(id=request.data.get('assignmentID'))
+            myAssignments =list(MyAssignments.objects.filter(student_id=request.user.pk).values_list('assignment_id', flat=True))
+            for item in myAssignments:
+                savedAssignment = CourseCalendar.objects.get(id=item)
+                if savedAssignment.course_id == theassignment.course_id:
+                    if savedAssignment.eventNumber == theassignment.eventNumber:
+                        response = {"message": "This assignment is already added"}
+                        return Response(response, status = status.HTTP_400_BAD_REQUEST)
             newAssignment= MyAssignments.objects.create(student=userObject, assignment=CourseCalendar.objects.get(id=request.data.get('assignmentID')),
                                                         donewith=False, hoursTracked='00:00:00')
             newAssignment.save()
+            course = Course.objects.get(id=newAssignment.assignment.course_id)
             response ={ "message": "Success. Assignment added to user.", 
                         "userObject": {
                             "user.id": userObject.id,
@@ -1762,7 +1770,8 @@ class MyAssignmentsViewset(viewsets.ModelViewSet):
                         },
                         "assignmentObject":{
                             "assignment.id": newAssignment.id,
-                            "assigment added": newAssignment.assignment.eventName
+                            "assigment added": newAssignment.assignment.eventName,
+                            "course": course.courseTitle
                         } }
             return Response(data=response, status=status.HTTP_200_OK)
     
@@ -1814,6 +1823,39 @@ class MyAssignmentsViewset(viewsets.ModelViewSet):
                     "assignmentData": assignmentData
                 } 
             return Response(data=response, status=status.HTTP_200_OK)
+    @action(detail=False, methods=['GET'])
+    def get_assignments_user_courses(self, request, **extra_fields):
+        userObject = Student.objects.get(id=request.user.pk)
+        coursesList =[]
+        coursesIdList = list(User.objects.filter(id=request.user.pk).values_list("courses", flat=True))
+        print(coursesIdList)
+        assignmentData =[]
+        for course in coursesIdList:
+            print("course: ", course)
+            courseId=int(course)
+            print("courseId: ", courseId)
+            coursesList.append(Course.objects.get(id=int(course)))
+            myAssignments=[]
+            gradAssignments = list(CourseCalendar.objects.filter(course_id=courseId, grade = userObject.yearGrade.yearGradeClass).values_list('id', "course_id"))
+            myAssignments.extend(gradAssignments)
+            otherAssignments = list(CourseCalendar.objects.filter(course_id=courseId,grade__isnull=True).values_list('id', "course_id"))
+            myAssignments.extend(otherAssignments)
+            for assignment in myAssignments:
+                print("hej")
+                print("assignment: ", assignment)
+                print("assignment id: ", assignment[0])
+                print("assignment course_id: ", assignment[1])
+                newAssignment=CourseCalendar.objects.get(id=assignment[0])
+                course = Course.objects.get(id=assignment[1])
+                newObj ={"assignmentName": newAssignment.eventName,
+                         "course": course.courseTitle,
+                         "assignment.id": assignment[0] }
+                assignmentData.append(newObj)
+        response = {
+                    "message": "Success. Assignments retrieved.", 
+                    "assignmentData": assignmentData
+                } 
+        return Response(data=response, status=status.HTTP_200_OK)
 
 class UserScheduleViewset(viewsets.ModelViewSet):
     queryset = UserSchedule.objects.all()
@@ -1840,11 +1882,15 @@ class UserScheduleViewset(viewsets.ModelViewSet):
             for item in courseScheduleList:
                 print(item)
                 courseSchedule=CourseSchedule.objects.get(id=item)
-                obj = UserSchedule.objects.create(user=userObject, event=courseSchedule.courseEvent, startDateTime=courseSchedule.eventStartTime,
-                                                  endDateTime=courseSchedule.eventEndTime, course=course)
-                                                                      
-                obj.save()
-                eventNameList.append(obj.event)
+                if not UserSchedule.objects.filter(user_id=request.user.pk, startDateTime=courseSchedule.eventStartTime).exists():
+                    obj = UserSchedule.objects.create(user=userObject, event=courseSchedule.courseEvent, startDateTime=courseSchedule.eventStartTime,
+                                                    endDateTime=courseSchedule.eventEndTime, course=course)
+                                                                        
+                    obj.save()
+                    eventNameList.append(obj.event)
+                else:
+                    print("already exists")
+                    continue
             
             response ={"message": "Success. Schedule created.",
                        "userObject": {
@@ -1865,7 +1911,7 @@ class AvailableHoursViewset(viewsets.ModelViewSet):
 
 
     @action(detail=False, methods=['POST'])
-    def create_avaiableHours(self, request, **extra_fields):
+    def create_availableHours(self, request, **extra_fields):
         userObject = Student.objects.get(id=request.user.pk)
         print(userObject.email)
         #      user_courses_qs = User.objects.get(id=request.user.pk).courses.all()
@@ -1884,8 +1930,9 @@ class AvailableHoursViewset(viewsets.ModelViewSet):
             print("early: ", early)
             days = pd.bdate_range(start=early.date(), end=late.date())
             print("days: ", days)
+            thisYear=datetime.now().year
             holidaysList=[]
-            for date in holidays.Sweden(years=int(date.today().year)).items():
+            for date in holidays.Sweden(years=int(thisYear)).items():
                 if "Sunday" not in str(date[1]):
                     holidaysList.append(str(date[0]))
 
@@ -1914,6 +1961,8 @@ class AvailableHoursViewset(viewsets.ModelViewSet):
                     if freeHoursOfDay < 0:
                         freeHoursOfDay = 0
                     print("Day: ", day.date(), " ", "freeHours: ", freeHoursOfDay)
+                if freeHoursOfDay == 0:
+                    continue
                 obj = AvailableHours.objects.create(student=userObject, theDate=day, availableHours=freeHoursOfDay)
                 obj.save() 
                 dataObj = {"date": day,
@@ -1927,7 +1976,155 @@ class AvailableHoursViewset(viewsets.ModelViewSet):
                          "availableHours": availableHoursList,
                         }
             return Response(data=response, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['POST'])
+    def create_optimal_schedule(self, request, **extra_fields):
+        userObject = User.objects.get(id=request.user.pk)
+        availableHoursList =list(AvailableHours.objects.filter(student=userObject.id).values("theDate", "availableHours").order_by("theDate"))
+        #myAssignments = list(MyAssignments.objects.filter(student=26).values("id","assignment", "donewith"))
+        myAssignmentsId = list(MyAssignments.objects.filter(student=userObject.id).values_list("assignment", flat=True))
+        slotsAvailable = []
+        theAssignments = list(CourseCalendar.objects.filter(id__in=myAssignmentsId).order_by( "-startDateTime","-dueTime").values("expectedHours", "eventName", "dueTime", "mandatory", "startDateTime", "course"))
+        totalStudyTime =0
+        for a in theAssignments:
+            totalStudyTime += a["expectedHours"]
+            print(a["eventName"], a["course" ])
+        #print("theAssignments: ", theAssignments)
+        print(availableHoursList)
+        #print("test: ", availableHoursList[1]["theDate"])
+        print("totalStudyTime: ", totalStudyTime)
+        totalAvailableHoursLeft =0
+        for item in availableHoursList:
+            totalAvailableHoursLeft += item["availableHours"]
+            slotsAvailable.append({"theDate": item["theDate"], "availableHours": item["availableHours"], "available": True})
+        print("toatal hours left: ", totalAvailableHoursLeft)
+        disregaredAssignments =[]
+        thedateList =[]
+        dateList =[]
+        for assignment in theAssignments:
+            print(assignment["eventName"])
+            dateIndex= 0
+            countIndex=0
+            stopIndex=-1
+           # print(countIndex)
+            for x in slotsAvailable:
+                # print("hej: ", availableHoursList)
+                thisDate= x["theDate"]
+                # print("thisDate: ", thisDate)
+                # print("dueTime: ", theAssignments[ind]["dueTime"].date())
+                if x["theDate"] < assignment["dueTime"].date():
+                    #print("thisDate2: ", thisDate)
+                    dateIndex =slotsAvailable.index(x,countIndex)
+                    countIndex += 1
+                    # print("theDate: ", x["theDate"] )
+                    # print("dateIndex: ", dateIndex)
+                    if assignment["startDateTime"]  is not None:
+                        
+                        if thisDate <= assignment["startDateTime"].date():
+                            print(dateIndex)
+                            stopIndex=dateIndex
+                        else:
+                            print("break")
+                            break
+                    else:
+                        stopIndex=-1
+                else:
+                    countIndex +=1
+                    #continue
+            print("countIndex: ", countIndex)
+            hoursLeft = assignment["expectedHours"]
+            #print(stopIndex)
+            
+            if assignment["expectedHours"] <= totalAvailableHoursLeft:
+                
+                count = 0
+                # print(stopIndex)
+            
+
+                for i in range(dateIndex, stopIndex, -1):
+                    count += 1
+                    print("count: ", count)
+                    # print("assignment: ", assignment["eventName"], " range: ", availableHoursList[i]["theDate"])
                     
+
+
+                    #print(availableHoursList[i])
+                    # if availableHoursList[i]["availableHours"] >= assignment["expectedHours"]:
+                    #    print("yes")
+                    #    break
+                    # else:
+                    #    print("timmarna som är kvar: ", assignment["expectedHours"] -  availableHoursList[0]["availableHours"])
+                    
+                    if hoursLeft > 0:
+                        if slotsAvailable[i]["available"] == True:
+                            if slotsAvailable[i]["availableHours"] >= hoursLeft:
+                                # print("if innuti if hoursLeft > 0")
+                                # print("the date before assignment: ", availableHoursList[i])
+                                dateList.append({"date": slotsAvailable[i]["theDate"], "hours": assignment["expectedHours"], "eventName": assignment["eventName"], "course": assignment["course"], "dueTime": assignment["dueTime"], "startDateTime": assignment["startDateTime"]})
+                                slotsAvailable[i]["availableHours"] -= hoursLeft
+                                hoursLeft = hoursLeft - hoursLeft
+                                # print("hours left: ", hoursLeft)
+                                # print ("the date after added assignment: ", availableHoursList[i])
+                                # print("break, if innuti if hoursLeft > 0 ")
+                                if slotsAvailable[i]["availableHours"] == 0:
+                                    slotsAvailable[i]["available"]=False
+                                break
+                            else:
+                                # print("else innuti if hoursLeft > 0")
+                                # print("innan hours left: ", hoursLeft)
+                                # print("hourslist: ", availableHoursList[i]["availableHours"])
+                                # print("the date before assignment: ", availableHoursList[i])
+                                dateList.append({"date": slotsAvailable[i]["theDate"], "hours": slotsAvailable[i]["availableHours"], "eventName": assignment["eventName"], "course": assignment["course"], "dueTime": assignment["dueTime"], "startDateTime": assignment["startDateTime"]})
+                                hoursLeft = hoursLeft - slotsAvailable[i]["availableHours"]
+                                slotsAvailable[i]["availableHours"]=0
+                                slotsAvailable[i]["available"]=False
+                                # print("dateList: ", dateList)
+                                # print("hours left: ", hoursLeft)
+                                #print(" availableHoursList: ", availableHoursList[
+                                # print ("the date after added assignment: ", availableHoursList[i])
+                            #break
+                        else:
+                            continue
+                    #print(thedateList)
+                    #print(thedateList)
+                    #thedateList= thedateList + dateList
+                    #print(thedateList)
+                    print("else i höjd med if hoursLeft > 0")
+
+                    #Prova nytt, ta inte bort indexerna i loopen utan spara de som ska bort senare, kanske påverkar vilka som går att använda, lista?
+
+                    # print("konsting else")
+                    # print("efter assignment hoursLeft: ", hoursLeft)
+                    # print("thedateList: ", thedateList)
+                    #break
+                    #break
+            else:
+                disregaredAssignments.append(assignment)
+        print("slotsAvailable: ", slotsAvailable)
+        printList =[]
+        thedateList= thedateList + dateList
+        print("totalHoursLeft: ", totalAvailableHoursLeft)
+        for j in range(len(thedateList)):
+
+            printDate = thedateList[j]["date"]
+            eventName = thedateList[j]["eventName"]
+            hours = thedateList[j]["hours"]
+            course =Course.objects.get(id=thedateList[j]["course"])
+            duedate = thedateList[j]["dueTime"]
+            startDateTime = thedateList[j]["startDateTime"]
+            printList.append({"eventName": eventName, "date": str(printDate), "hours": hours, "courseTitle":course.courseTitle, "dueTime": duedate, "startDateTime": startDateTime})
+                    
+        #print("thedateList: ", thedateList)
+        # print("printList: ", printList)
+        print("disregaredAssignments: ", disregaredAssignments)
+        response ={"message": "Success. Schedule created.",
+                         "Schedule": printList,
+                        }
+        return Response(data=response, status=status.HTTP_200_OK)
+
+            #Lägga till kurs och namn på uppgift till dateList?
+        
+                            
 
                     
 
