@@ -5,9 +5,10 @@ import axios from 'axios';
 import DropDown from '../../components/DropDown';
 import Text from '../../components/Text';
 
-const CalendarBlock = ({ courseID, courseName, color, studyTime, assignments }) => {
+const CalendarBlock = ({ courseID, courseName, color, studyTime }) => {
   
   const [selectedItem, setSelectedItem] = useState(null);
+  
 
 
   //hämta in uppgifter från databasen
