@@ -3,9 +3,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager, User
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.conf import settings
-from django.core.validators import MinValueValidator, MaxValueValidator
-from datetime import date, datetime, timedelta
-
+from datetime import datetime
 
 class Course(models.Model):
     courseCode = models.CharField(max_length=10, null=True, blank=True)
@@ -25,8 +23,7 @@ class CourseEvaluation(models.Model):
     user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING, null=True, related_name="courseEvaluationUser") 
     
     class Meta: 
-        unique_together = (("user", "course" ), ) #vi behöver kolla att man 
-        #kan ändra sin kursutvärdering och stresslevel
+        unique_together = (("user", "course" ), )
         index_together = (("user", "course" ), )
 
     def __str__(self):
@@ -57,18 +54,12 @@ class QuestionAnswer(models.Model):
     def __str__(self):
         return self
     
-
 class UserCourseTracking(models.Model):
     user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
-
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     date = models.DateField()
     duration = models.TimeField(blank=True, null=True, default=datetime(2023,3,30).time())
-
     stress = models.IntegerField(blank=True, null=True, default=0)
-
-    #def __str__(self):
-    #   return self
     
     class Meta:
         constraints = [
@@ -127,7 +118,6 @@ class ProgrammeHeadManager(BaseUserManager):
         results = super().get_queryset(*args, **kwargs)
         return results.filter(role=User.Role.PROGRAMMEHEAD)
 
-
 class ProgrammeHead(User):
     base_role = User.Role.PROGRAMMEHEAD
     university = models.CharField(max_length=70)
@@ -146,7 +136,6 @@ class TeacherManager(BaseUserManager):
 class Teacher(User):
     base_role = User.Role.TEACHER
     university = models.CharField(max_length=70)
-    #courses= models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
     teacher = TeacherManager()
     
     def welcome(self):
@@ -163,7 +152,6 @@ class Student(User):
     university = models.CharField(max_length=70, blank=True, null=True)
     programme= models.ForeignKey(Programme, on_delete=models.CASCADE, null=True, blank=True)
     yearGrade = models.ForeignKey(YearGrade, on_delete=models.CASCADE, null=True, blank=True)
-    #courses = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True)
 
     student = StudentManager()
 
@@ -171,7 +159,7 @@ class Student(User):
         return "Only for students"
     
     def __str__(self):
-        studentInfoString =  self.email #+ ", Courses: " + self.courses
+        studentInfoString =  self.email
         return studentInfoString
 
 class CourseCalendar(models.Model):
@@ -194,20 +182,16 @@ class CourseCalendar(models.Model):
     mandatory= models.BooleanField(null=True)
     avgHoursDone = models.IntegerField(blank=True, null=True)
     grade = models.CharField(max_length=10, null=True, blank=True)
-    eventNumber = models.IntegerField(blank=True, null=True)
-
-             
+    eventNumber = models.IntegerField(blank=True, null=True)  
     
     def __str__(self):
         infoString = self.eventName 
         return infoString
 
-
 class SeminarManager(models.Manager):
     def get_queryset(self, *args, **kwargs):
         results = super().get_queryset(*args, **kwargs)
         return results.filter(eventType=CourseCalendar.EventType.SEMINAR)
-
 
 class Seminar(CourseCalendar):
     class Meta:
@@ -340,10 +324,7 @@ class CourseSchedule(models.Model):
     eventStartTime = models.DateTimeField()
     eventEndTime = models.DateTimeField()
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
-    yearGrade = models.ForeignKey(YearGrade, on_delete=models.CASCADE, null=True)
-
-
-    
+    yearGrade = models.ForeignKey(YearGrade, on_delete=models.CASCADE, null=True)  
 
 class MyAssignments(models.Model):
     student = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
@@ -358,7 +339,6 @@ class UserSchedule(models.Model):
    startDateTime = models.DateTimeField(null=True)
    endDateTime = models.DateTimeField(null=True)
    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
-   
    
    def __str__(self):
         userScheduleInfoString = self.user + "'s schedule"

@@ -11,7 +11,6 @@ from rest_framework.decorators import action
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.request import Request
-from django.utils.dateparse import parse_datetime
 from django.db import IntegrityError
 from django.http import JsonResponse
 from .forms import ExcelForm
@@ -19,29 +18,16 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 import pandas as pd
 import os
-from pathlib import Path
-
-from django.db.models import Avg
-import time
 from datetime import date, datetime, timedelta
-import json as simplejson
-from django.http import HttpResponse
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
-from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import authenticate, login, logout
 from datetime import time
-from rest_framework.decorators import api_view, permission_classes as view_permission_classes, authentication_classes as view_authentication_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 import numpy as np
 import holidays
-
-
-#fakkar detta med något?
-#from django.contrib.auth import get_user_model
 from django.contrib.auth import get_user
-
 
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()

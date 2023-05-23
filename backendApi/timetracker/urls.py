@@ -27,22 +27,7 @@ urlpatterns = [
     path('api/', include('api.urls')),
     path('auth/', obtain_auth_token),
     path("accounts/", include("django.contrib.auth.urls")),
-
-    
-    #path("accounts/", include("django.contrib.auth.urls")),
-
-    #path("password_change/", views.password_change, name="password_change"),
-    #path("accounts/", include("django.contrib.auth.urls")),
-    
     path('auth/login/', views.LoginView.as_view(), name="login"),
-    #path('accounts/login/', auth_views.LoginView.as_view(), name="login"),
-    #path('auth/password-change/', views.LoginView.as_view(), name="login"),
-    path('auth/password-change/', views.PasswordChangeView.as_view(), name='password_change'),
-    
+    #path('auth/password-change/', views.PasswordChangeView.as_view(), name='password_change'),
     path('auth/logout/', views.LogoutView.as_view(), name="logout"),
-    #path('accounts/logout/', auth_views.LogoutView.as_view(), name="logout"),
-    
-    #path('auth/password/', views.PasswordChangeView.as_view()),
-    #path('auth/password/', auth_views.PasswordChangeView.as_view()),
-
 ]
