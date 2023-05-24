@@ -31,23 +31,6 @@ const CalendarOpScreen = ({ route }) => {
     .then(function (response) {
         //handle success
         console.log(response.data)
-        axios({
-          method: "post",
-          url: "http://127.0.0.1:8000/api/optimalSchedule/create_optimal_schedule/",
-          headers: {
-            'Authorization': `token ` + token
-      
-          }
-          })
-          .then(function (response) {
-              //handle success
-              console.log(response.data)
-      
-          })
-          .catch(function (response) {
-              //handle error
-              console.log(response);
-          });
 
     })
     .catch(function (response) {
