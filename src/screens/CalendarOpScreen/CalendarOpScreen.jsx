@@ -6,6 +6,7 @@ import ClickableWeekCalendar from '../../components/ClickableWeekCalendar';
 import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
 import Title from '../../components/Title';
 import CustomButton from '../../components/CustomButton/CustomButton';
+import axios from 'axios';
 
 const CalendarOpScreen = ({ route }) => {
 
@@ -18,6 +19,43 @@ const CalendarOpScreen = ({ route }) => {
   var year = date.getFullYear()
   var month = date.getMonth() + 1
   var day = date.getDate()
+
+  axios({
+    method: "post",
+    url: "http://127.0.0.1:8000/api/availableHours/create_availableHours/",
+    headers: {
+      'Authorization': `token ` + token
+
+    }
+    })
+    .then(function (response) {
+        //handle success
+        console.log(response.data)
+        axios({
+          method: "post",
+          url: "http://127.0.0.1:8000/api/optimalSchedule/create_optimal_schedule/",
+          headers: {
+            'Authorization': `token ` + token
+      
+          }
+          })
+          .then(function (response) {
+              //handle success
+              console.log(response.data)
+      
+          })
+          .catch(function (response) {
+              //handle error
+              console.log(response);
+          });
+
+    })
+    .catch(function (response) {
+        //handle error
+        console.log(response);
+    });
+
+  
 
   //make date in the correct format
   if (month && day < 10) {

@@ -13,6 +13,9 @@ const CalendarBlock = ({ courseName, color, token, date }) => {
   var formData = new FormData();
   formData.append('date', date);
 
+
+  
+
   axios({
     method: "post",
     url: "http://127.0.0.1:8000/api/optimalSchedule/get_optimal_schedule_by_date/",
