@@ -19,8 +19,6 @@ from django.urls import path
 from django.conf.urls import include
 from rest_framework.authtoken.views import obtain_auth_token
 from api import views
-from django.contrib.auth import views as auth_views
-#from . import accounts
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,6 +26,5 @@ urlpatterns = [
     path('auth/', obtain_auth_token),
     path("accounts/", include("django.contrib.auth.urls")),
     path('auth/login/', views.LoginView.as_view(), name="login"),
-    #path('auth/password-change/', views.PasswordChangeView.as_view(), name='password_change'),
     path('auth/logout/', views.LogoutView.as_view(), name="logout"),
 ]
