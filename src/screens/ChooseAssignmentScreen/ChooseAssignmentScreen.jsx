@@ -88,6 +88,24 @@ const ChooseAssignmentScreen = ({route}) => {
                   console.log(response);
                 });
         }
+        axios({
+            method: "post",
+            url: "http://127.0.0.1:8000/api/optimalSchedule/create_optimal_schedule/",
+            headers: {
+              'Authorization': `token ` + token
+        
+            }
+            })
+            .then(function (response) {
+                //handle success
+                console.log(response.data)
+        
+            })
+            .catch(function (response) {
+                //handle error
+                console.log(response);
+            });
+            
         navigation.navigate('CalendarOpScreen', {token: token, courses: courses, courseIDs: courseIDs})
     }
     if (data.length > 0) {
