@@ -12,11 +12,9 @@ const ChooseAssignmentScreen = ({route}) => {
     const {token} = route.params;
     const {courses} = route.params;
     const {courseIDs} = route.params;
-    const fakedata = ["hej", "råtta", "dinråtat"]
     const [data, setData] = useState('');
 
     const [assignments, setAssignments] = useState([]);
-    const [assignmentNames, setAssignmentNames] = useState('');
     const navigation = useNavigation();
 
 
@@ -53,7 +51,7 @@ const ChooseAssignmentScreen = ({route}) => {
         />
         );
     };
-
+    console.log("data = ", data)
 
     function pickAssignment(selectedAssignment) {
         // If you press a box that is already checked you remove it
@@ -107,7 +105,7 @@ const ChooseAssignmentScreen = ({route}) => {
                             {assignments.includes(item) && <Text style={styles.check}>✓</Text>}
                         </TouchableOpacity>
 
-                        <Text style={styles.courseName}>{item.assignmentName}</Text>
+                        <Text style={styles.courseName}> {item.course} - {item.assignmentName}</Text>
 
                         </View>
 

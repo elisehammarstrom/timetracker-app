@@ -5,10 +5,29 @@ import axios from 'axios';
 import DropDown from '../../components/DropDown';
 import Text from '../../components/Text';
 
-const CalendarBlock = ({ courseID, courseName, color, studyTime }) => {
+const CalendarBlock = ({ courseID, courseName, color, studyTime, token, date }) => {
   
   const [selectedItem, setSelectedItem] = useState(null);
-  
+  var formData = new FormData();
+  formData.append('date', date);
+
+  axios({
+    method: "post",
+    url: "http://127.0.0.1:8000/api/optimalSchedule/get_optimal_schedule_by_date/",
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      'Authorization': `token ` + token
+    }
+  })
+    .then(function (response) {
+      //handle success
+      console.log(response.data)
+    })
+    .catch(function (response) {
+      //handle error
+      console.log(response);
+    });
 
 
   //hämta in uppgifter från databasen
