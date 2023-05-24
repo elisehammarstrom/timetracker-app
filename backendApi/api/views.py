@@ -1751,7 +1751,7 @@ class AvailableHoursViewset(viewsets.ModelViewSet):
         thisYear=datetime.now().year
         holidaysList=[]
         for date in holidays.Sweden(years=int(thisYear)).items():
-            if "Sunday" not in str(date[1]):
+            if "Sunday" or "Söndag" not in str(date[1]):
                 holidaysList.append(str(date[0]))
 
         for date in holidaysList:
