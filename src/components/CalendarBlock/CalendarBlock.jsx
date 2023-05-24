@@ -5,11 +5,13 @@ import axios from 'axios';
 import DropDown from '../../components/DropDown';
 import Text from '../../components/Text';
 
-const CalendarBlock = ({ courseID, courseName, color, studyTime, token, date }) => {
+const CalendarBlock = ({ courseName, color, token, date }) => {
   
   const [selectedItem, setSelectedItem] = useState(null);
+  const [data, setData] = useState('');
+  const [studyTime, setStudyTime] = useState('')
   var formData = new FormData();
-  formData.append('date', date);
+  formData.append('date', '2023-04-25');
 
   axios({
     method: "post",
@@ -22,7 +24,14 @@ const CalendarBlock = ({ courseID, courseName, color, studyTime, token, date }) 
   })
     .then(function (response) {
       //handle success
-      console.log(response.data)
+  
+      for (let i=0;i<response.data.optimalAssignmentsList.length;i++) {
+        if (response.data.optimalAssignmentsList[i][courseName] != undefined & data.length <1) {
+          console.log(response.data.optimalAssignmentsList[i][courseName])
+          setData(response.data.optimalAssignmentsList[i][courseName])
+        }
+      }
+
     })
     .catch(function (response) {
       //handle error
@@ -30,27 +39,10 @@ const CalendarBlock = ({ courseID, courseName, color, studyTime, token, date }) 
     });
 
 
-  //hämta in uppgifter från databasen
-  let fruits = [
-    { id: 1, name: courseName, time: 5 + ' h' },
-    { id: 2, name: 'Assignment 1', time: 1 + 'h' },
-    { id: 3, name: 'Lecture 3', time: 2 + 'h' },
-    { id: 4, name: 'Lesson 2', time: 2 + 'h' },
-    { id: 5, name: 'Group project', time: 0.5 + ' h' },
-    { id: 6, name: 'Repetition', time: 1 + ' h ' }
-  ]
-
   const onSelect = (item) => {
     setSelectedItem(item)
   }
-
-
-  var day = new Date().getDate();
-  var month = new Date().getMonth() + 1;
-  var year = new Date().getFullYear();
-  var date = year + '-' + month + '-' + day;
-
-
+  
   return (
     <SafeAreaView>
 
@@ -62,7 +54,7 @@ const CalendarBlock = ({ courseID, courseName, color, studyTime, token, date }) 
 
             <DropDown
               value={selectedItem}
-              data={fruits}
+              data={data}
               courseName={courseName}
               onSelect={onSelect}
             />
