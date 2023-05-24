@@ -1711,69 +1711,92 @@ class AvailableHoursViewset(viewsets.ModelViewSet):
     def create_availableHours(self, request, **extra_fields):
         userObject = Student.objects.get(id=request.user.pk)
         print(userObject.email)
+        deletedObj=0
+        updatedObj=0
+        deletedObjList =[]
+        updatedObjList =[]
         #      user_courses_qs = User.objects.get(id=request.user.pk).courses.all()
 
         # user_courses = []
         # for course in user_courses_qs:
         #     user_courses.append(course.id)
         print("user.courses: ", userObject.courses.all())
-        if len(userObject.courses.all()) < 3:
-            response = {"message": "You have added less than three courses, if you study three courses or more you should add them all before creating schedule"}
-            return Response(data=response, status=status.HTTP_200_OK)
-        else:   
-            early = UserSchedule.objects.filter(user_id=userObject.id).values_list('startDateTime', flat=True).earliest("startDateTime")
-            late = UserSchedule.objects.filter(user_id=userObject.id).values_list('startDateTime', flat=True).latest("startDateTime")
-            print("late: ", late)
-            print("early: ", early)
-            days = pd.bdate_range(start=early.date(), end=late.date())
-            print("days: ", days)
-            thisYear=datetime.now().year
-            holidaysList=[]
-            for date in holidays.Sweden(years=int(thisYear)).items():
-                if "Sunday" not in str(date[1]):
-                    holidaysList.append(str(date[0]))
+        # if len(userObject.courses.all()) < 3:
+        #     response = {"message": "You have added less than three courses, if you study three courses or more you should add them all before creating schedule"}
+        #     return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        # else:   
+        early = UserSchedule.objects.filter(user_id=userObject.id).values_list('startDateTime', flat=True).earliest("startDateTime")
+        late = UserSchedule.objects.filter(user_id=userObject.id).values_list('startDateTime', flat=True).latest("startDateTime")
+        print("late: ", late)
+        print("early: ", early)
+        days = pd.bdate_range(start=early.date(), end=late.date())
+        print("days: ", days)
+        thisYear=datetime.now().year
+        holidaysList=[]
+        for date in holidays.Sweden(years=int(thisYear)).items():
+            if "Sunday" not in str(date[1]):
+                holidaysList.append(str(date[0]))
 
-            for date in holidaysList:
-                print("date", date)
-                if early.date() <= datetime.strptime(date, '%Y-%m-%d').date() <= late.date():
-                    days=days.drop(labels=date)
-            availableHoursList =[]
-            for day in days:
-                print("day", day)
-                newDays = UserSchedule.objects.filter(user_id=userObject.id, startDateTime__contains=day.date()).values_list('id', flat=True)
-                print("newDays: ", newDays)
-                freeHoursOfDay =8
-                for item in newDays:
-                    userScheduleObject = UserSchedule.objects.get(id=item)
-                    startTime = userScheduleObject.startDateTime
-                    endTime = userScheduleObject.endDateTime
-                    differenceHour = endTime -startTime
-                    total_seconds = differenceHour.total_seconds()                # Convert timedelta into seconds
-                    seconds_in_hour = 60 * 60                         # Set the number of seconds in an hour
-                    td_in_hours = total_seconds / seconds_in_hour
-                    td_in_hours=round(td_in_hours+0.49) 
-                    print ("differenceHour: ",differenceHour)
-                    print("I timmar: ", td_in_hours)
-                    freeHoursOfDay = freeHoursOfDay - td_in_hours
-                    if freeHoursOfDay < 0:
-                        freeHoursOfDay = 0
-                    print("Day: ", day.date(), " ", "freeHours: ", freeHoursOfDay)
+        for date in holidaysList:
+            print("date", date)
+            if early.date() <= datetime.strptime(date, '%Y-%m-%d').date() <= late.date():
+                days=days.drop(labels=date)
+        availableHoursList =[]
+        for day in days:
+            print("day", day)
+            newDays = UserSchedule.objects.filter(user_id=userObject.id, startDateTime__contains=day.date()).values_list('id', flat=True)
+            print("newDays: ", newDays)
+            freeHoursOfDay =8
+            for item in newDays:
+                userScheduleObject = UserSchedule.objects.get(id=item)
+                startTime = userScheduleObject.startDateTime
+                endTime = userScheduleObject.endDateTime
+                differenceHour = endTime -startTime
+                total_seconds = differenceHour.total_seconds()                # Convert timedelta into seconds
+                seconds_in_hour = 60 * 60                         # Set the number of seconds in an hour
+                td_in_hours = total_seconds / seconds_in_hour
+                td_in_hours=round(td_in_hours+0.49) 
+                print ("differenceHour: ",differenceHour)
+                print("I timmar: ", td_in_hours)
+                freeHoursOfDay = freeHoursOfDay - td_in_hours
+                if freeHoursOfDay < 0:
+                    freeHoursOfDay = 0
+                print("Day: ", day.date(), " ", "freeHours: ", freeHoursOfDay)
                 if freeHoursOfDay == 0:
+                    print("hej")
+                    if AvailableHours.objects.filter(student=userObject, theDate=day.date()).exists():
+                        deletedObjList.append(AvailableHours.objects.filter(student=userObject, theDate=day.date()).values('theDate', "availableHours"))
+                        AvailableHours.objects.filter(student=userObject, theDate=day.date()).delete()
+                        deletedObj += 1
+
                     continue
-                obj = AvailableHours.objects.create(student=userObject, theDate=day, availableHours=freeHoursOfDay)
-                obj.save() 
-                dataObj = {"date": day,
-                           "availableHours": freeHoursOfDay}
-                availableHoursList.append(dataObj)
-            response ={"message": "Success. AvailableHours created.",
-                       "userObject": {
+                elif AvailableHours.objects.filter(student=userObject, theDate=day.date()).exists() is True:
+                    print("halåå")
+                    AvailableHours.objects.filter(student=userObject, theDate=day.date()).update(availableHours=freeHoursOfDay)
+                    updatedObjList.append(AvailableHours.objects.filter(student=userObject, theDate=day.date()).values('theDate', "availableHours"))
+                    updatedObj += 1
+
+                    continue
+                else:
+                    print("hejdå")
+                    obj = AvailableHours.objects.create(student=userObject, theDate=day, availableHours=freeHoursOfDay)
+                    obj.save() 
+                    dataObj = {"date": day,
+                            "availableHours": freeHoursOfDay}
+                    availableHoursList.append(dataObj)
+        print("updatedObj: ", updatedObj)
+        print("deletedObj: ", deletedObj)
+        print("updatedObjList: ", updatedObjList)
+        print("deletedObjList: ", deletedObjList)
+        response ={"message": "Success. AvailableHours created.",
+                    "userObject": {
                             "user.id": userObject.id,
                             "user.email": userObject.email,
                         },
-                         "availableHours": availableHoursList,
+                        "availableHours": availableHoursList,
                         }
-            return Response(data=response, status=status.HTTP_200_OK)
-        
+        return Response(data=response, status=status.HTTP_200_OK)
+            
 class OptimalScheduleViewset(viewsets.ModelViewSet):
     queryset = OptimalSchedule.objects.all()
     serializer_class = OptimalScheduleSerializer

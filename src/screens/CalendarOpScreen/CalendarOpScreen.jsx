@@ -14,7 +14,29 @@ const CalendarOpScreen = ({ route }) => {
   const { courseIDs } = route.params;
 
   const [date, setDate] = useState(new Date());
+  // console.log("date= ", date)
+  var year = date.getFullYear()
+  var month = date.getMonth() + 1
+  var day = date.getDate()
 
+  //make date in the correct format
+  if (month && day < 10) {
+      var month = '0' + month
+      var day = '0' + day
+      var newDate = year + '-' + month + '-' + day
+  }
+  else if (day < 10) {
+      var day = '0' + day
+      var newDate = year + '-' + month + '-' + day
+  }
+  else if (month < 10) {
+      var month = '0' + month
+      var newDate = year + '-' + month + '-' + day
+  }
+  else {
+      var newDate = year + '-' + month + '-' + day
+  }
+console.log("newdae= ", newDate)
 
   const navigation = useNavigation();
 
@@ -56,7 +78,9 @@ const CalendarOpScreen = ({ route }) => {
                 color={colors[i]}
                 courseName={option}
                 studyTime={studyTime[i]}
-                courseID={courseIDs[i]} />
+                courseID={courseIDs[i]}
+                date={newDate}
+                token={token} />
             </TouchableOpacity>
           ))}
 
