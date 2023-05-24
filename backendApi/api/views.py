@@ -1957,6 +1957,9 @@ class OptimalScheduleViewset(viewsets.ModelViewSet):
         if 'date' not in request.data: 
             response = {"message": "You must provide a date to retrive optimal schedule"}
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        # elif 'courseID' not in request.data: 
+        #     response = {"message": "You must provide a courseID to retrive optimal schedule"}
+        #     return Response(response, status = status.HTTP_400_BAD_REQUEST)
         else:
             userObject = Student.objects.get(id=request.user.pk)
             optimalAssignmentsList =[]
