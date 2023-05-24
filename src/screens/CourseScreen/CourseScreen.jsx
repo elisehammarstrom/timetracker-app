@@ -82,6 +82,24 @@ const CourseScreen = ({ route }) => {
           console.log(response);
         });
 
+        axios({
+          method: "post",
+          url: "http://127.0.0.1:8000/api/userSchedule/create_user_schedule_course/",
+          data: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `token ` + token
+          }
+        })
+          .then(function (response) {
+            //handle success
+            console.log(response.data);
+          })
+          .catch(function (response) {
+            //handle error
+            console.log(response);
+          });
+
     }
 
     // Remove courses from database of chosen courses if not picked

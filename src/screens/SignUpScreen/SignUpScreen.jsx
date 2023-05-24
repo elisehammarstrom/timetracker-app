@@ -99,7 +99,7 @@ const SignUpScreen = () => {
             password: data.password,
             university: selectedUni,
             pID: pID[0],
-            yearGradeClass: data.selectedYearGrade,
+            yearGradeClass: selectedYearGrade,
             role: 'STUDENT'
         }
 
@@ -107,7 +107,7 @@ const SignUpScreen = () => {
             Accept: 'application/json',
             'Content-Type': 'multipart/form-data',
         }
-
+        console.log("yearGradeClass= ", info.yearGradeClass)
         const formData = new FormData();
         formData.append('email', info.email);
         formData.append('last_name', info.last_name);
