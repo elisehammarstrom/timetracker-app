@@ -1676,10 +1676,9 @@ class UserScheduleViewset(viewsets.ModelViewSet):
                 for object in list_w_same_courseCode:
                     if object.courseStartDateTime > newestCourse.courseStartDateTime:
                         newestCourse = object        
-                courseInstance = newestCourse
+                course = newestCourse
             else:
-                courseInstance = list_w_same_courseCode[0]
-            course=Course.objects.get(id=request.data.get('courseID'))
+                course = list_w_same_courseCode[0]
             userObject = Student.objects.get(id=request.user.pk)
             print(userObject.email)
             yearGrade = YearGrade.objects.get(yearGradeClass=userObject.yearGrade)
