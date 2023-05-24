@@ -28,7 +28,7 @@ const DropDown = ({ data = [], value = {}, courseName }) => {
                     <ScrollView>
                         {data.map((val, i) => {
                             return (
-                                <View key={val}>
+                                <View key={val.assignmentName}>
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                         <Text style={{ padding: 5 }}>{val.assignmentName}</Text>
                                         <Text> {val.hours} h </Text>

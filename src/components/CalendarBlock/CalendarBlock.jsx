@@ -27,7 +27,8 @@ const CalendarBlock = ({ courseName, color, token, date }) => {
   
       for (let i=0;i<response.data.optimalAssignmentsList.length;i++) {
         if (response.data.optimalAssignmentsList[i][courseName] != undefined & data.length <1) {
-          setData(response.data.optimalAssignmentsList[i][courseName][0])
+          console.log(response.data.optimalAssignmentsList[i][courseName])
+          setData(response.data.optimalAssignmentsList[i][courseName])
         }
       }
 
@@ -53,7 +54,7 @@ const CalendarBlock = ({ courseName, color, token, date }) => {
 
             <DropDown
               value={selectedItem}
-              data={[data]}
+              data={data}
               courseName={courseName}
               onSelect={onSelect}
             />
