@@ -1826,6 +1826,8 @@ class OptimalScheduleViewset(viewsets.ModelViewSet):
     @action(detail=False, methods=['POST'])
     def create_optimal_schedule(self, request, **extra_fields):
         userObject = User.objects.get(id=request.user.pk)
+        if OptimalSchedule.objects.filter(student=userObject).exists() == True:
+            OptimalSchedule.objects.filter(student=userObject).delete()
         availableHoursList =list(AvailableHours.objects.filter(student=userObject.id).values("theDate", "availableHours").order_by("theDate"))
         #myAssignments = list(MyAssignments.objects.filter(student=26).values("id","assignment", "donewith"))
         myAssignmentsId = list(MyAssignments.objects.filter(student=userObject.id).values_list("assignment", flat=True))
