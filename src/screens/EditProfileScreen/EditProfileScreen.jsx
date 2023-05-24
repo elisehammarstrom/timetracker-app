@@ -2,19 +2,18 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Dimensions, TouchableOpacity, Image, ScrollView } from 'react-native';
 import CustomButton from '../../components/CustomButton';
-import CustomInput from '../../components/CustomInput';
 import { useForm } from 'react-hook-form';
 import { useNavigation } from '@react-navigation/native';
 import { SelectList } from 'react-native-dropdown-select-list';
 import CloseIcon from '../../../assets/close.png';
 import axios from 'axios';
 import Text from '../../components/Text';
+import Title from '../../components/Title';
 
 
 const EditProfileScreen = ({ route }) => {
   const { token } = route.params;
-  const { control, handleSubmit, formState: { errors }, watch } = useForm();
-  const pwd = watch('password');
+  const { handleSubmit} = useForm();
   const [programmeInfo, setProgrammeInfo] = useState('');
   const [programmeNames, setProgrammeNames] = useState('');
   const [selectedProgramme, setSelectedProgramme] = useState("");
@@ -141,7 +140,9 @@ const EditProfileScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
+      
       <View style={styles.closeContainer}>
+      <Title style={styles.title}>Edit Profile</Title>
         <TouchableOpacity activeOpacity={0.5} onPress={onClosedPress} >
           <Image
             source={CloseIcon}
@@ -153,35 +154,6 @@ const EditProfileScreen = ({ route }) => {
       <ScrollView>
         <View style={styles.form}>
 
-          <Text style={styles.topLabel}><B>Change password</B></Text>
-
-
-          <Text style={styles.label}><B>Old password:</B></Text>
-          <CustomInput
-            name="oldpassword"
-            control={control}
-            rules={{ minLength: { value: 8, message: 'Password should be at least 8 characters long' } }}
-            secureTextEntry
-            placeholder='Old Password'
-            minLength='30'
-          />
-
-          <Text style={styles.label}><B>New password:</B></Text>
-          <CustomInput
-            name="password"
-            control={control}
-            rules={{ minLength: { value: 8, message: 'Password should be at least 8 characters long' } }}
-            secureTextEntry
-            placeholder='New Password'
-          />
-          <Text style={styles.label}><B>Repeat new password:</B></Text>
-          <CustomInput
-            name="passwordrepeat"
-            control={control}
-            rules={{ validate: value => value === pwd || 'Password do not match' }}
-            secureTextEntry
-            placeholder='New password'
-          />
 
           <Text style={styles.selectLabel}><B>Programme:</B> </Text>
           <SelectList
@@ -259,11 +231,19 @@ const styles = StyleSheet.create({
   },
   closeContainer: {
     paddingRight: 20,
-    justifyContent: 'flex-start',
-    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
   },
   button: {
     marginTop: '10%'
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#EFEFEF',
+    marginLeft: '30%',
+    marginTop:'5%'
+
   }
 
 });
