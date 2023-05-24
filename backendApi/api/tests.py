@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.db import models
 #from .views import UserScheduleViewset
-from .models import Course, Student, OptimalSchedule, User #YearGrade, CourseSchedule, UserSchedule #AvailableHours, User, MyAssignments, CourseCalendar, Course
+from .models import Course, Student, AvailableHours, UserSchedule, OptimalSchedule, User #YearGrade, CourseSchedule, UserSchedule #AvailableHours, User, MyAssignments, CourseCalendar, Course
 import pandas
 import holidays
 print(holidays.__version__)
@@ -13,29 +13,134 @@ import numpy as np
 from datetime import date, datetime, timedelta
 
 class TestClass(TestCase):
-   userObject = Student.objects.get(id=33)
-   coursesList =[]
-   coursesIdList = list(User.objects.filter(id=33).values_list("courses", flat=True))
-   print(coursesIdList)
-   optimalAssignmentsList =[]
-   for course in coursesIdList:
-      thisCourse =Course.objects.get(id=int(course))
-      optimalAssignmentsIdList = list(OptimalSchedule.objects.filter(student=userObject, theDate=datetime.strptime('2023-04-25', "%Y-%m-%d").date(), course=thisCourse).values_list("id", flat=True))
-      print("optimalAssignmentsIdList: ", optimalAssignmentsIdList)
-      assignmentData =[]
-      courseStr=""
-      for assignment in optimalAssignmentsIdList:
-         optimalAssignment = OptimalSchedule.objects.get(id=assignment)
-         optimalAssignmentObj ={"assignmentName": optimalAssignment.assignmentName, "hours": optimalAssignment.hours}
-         assignmentData.append(optimalAssignmentObj)
-         courseStr= optimalAssignment.course.courseTitle
-      if assignmentData != []:
-         for item in assignmentData:
-            courseAssignmentObj={courseStr : item}
-      else:
-         continue
-      optimalAssignmentsList.append(courseAssignmentObj)
-   print("optimalAssignmentsList: ", optimalAssignmentsList)
+   userOne =Student.objects.get(id=54)
+   userTwo = Student.objects.get(id=33)
+   availableHoursOne =AvailableHours.objects.filter(student=userOne).values_list("id", flat=True)
+   availableHoursTwo =AvailableHours.objects.filter(student=userTwo).values_list("id", flat=True)
+   for i in range(len(availableHoursTwo)):
+      objOne = AvailableHours.objects.filter(id=availableHoursOne[i]).values("theDate", "availableHours")
+      objTwo = AvailableHours.objects.filter(id=availableHoursTwo[i]).values("theDate", "availableHours")
+      if objTwo != objOne:
+         print("NO!!!")
+         print("rätt: ", objTwo)
+         print("fel: ", objOne)
+
+
+   #    userObject = Student.objects.get(id=13)
+   #    print(userObject.email)
+   #    deletedObj=0
+   #    updatedObj=0
+   #    deletedObjList =[]
+   #    updatedObjList =[]
+   #    #      user_courses_qs = User.objects.get(id=request.user.pk).courses.all()
+
+   #    # user_courses = []
+   #    # for course in user_courses_qs:
+   #    #     user_courses.append(course.id)
+   #    print("user.courses: ", userObject.courses.all())
+   #    # if len(userObject.courses.all()) < 3:
+   #    #     response = {"message": "You have added less than three courses, if you study three courses or more you should add them all before creating schedule"}
+   #    #     return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+   #    # else:   
+   #    early = UserSchedule.objects.filter(user_id=userObject.id).values_list('startDateTime', flat=True).earliest("startDateTime")
+   #    late = UserSchedule.objects.filter(user_id=userObject.id).values_list('startDateTime', flat=True).latest("startDateTime")
+   #    print("late: ", late)
+   #    print("early: ", early)
+   #    days = pd.bdate_range(start=early.date(), end=late.date())
+   #    print("days: ", days)
+   #    thisYear=datetime.now().year
+   #    holidaysList=[]
+   #    for date in holidays.Sweden(years=int(thisYear)).items():
+   #       if "Sunday" not in str(date[1]):
+   #             holidaysList.append(str(date[0]))
+
+   #    for date in holidaysList:
+   #       print("date", date)
+   #       if early.date() <= datetime.strptime(date, '%Y-%m-%d').date() <= late.date():
+   #             days=days.drop(labels=date)
+   #    availableHoursList =[]
+   #    print("days2:", days)
+   #    for day in days:
+   #       print("day", day)
+   #       newDays = UserSchedule.objects.filter(user_id=userObject.id, startDateTime__contains=day.date()).values_list('id', flat=True)
+   #       print("newDays: ", newDays)
+   #       freeHoursOfDay =8
+   #       for item in newDays:
+   #          userScheduleObject = UserSchedule.objects.get(id=item)
+   #          startTime = userScheduleObject.startDateTime
+   #          endTime = userScheduleObject.endDateTime
+   #          differenceHour = endTime -startTime
+   #          total_seconds = differenceHour.total_seconds()                # Convert timedelta into seconds
+   #          seconds_in_hour = 60 * 60                         # Set the number of seconds in an hour
+   #          td_in_hours = total_seconds / seconds_in_hour
+   #          td_in_hours=round(td_in_hours+0.49) 
+   #          print ("differenceHour: ",differenceHour)
+   #          print("I timmar: ", td_in_hours)
+   #          freeHoursOfDay = freeHoursOfDay - td_in_hours
+   #          if freeHoursOfDay < 0:
+   #             freeHoursOfDay = 0
+   #          print("Day: ", day.date(), " ", "freeHours: ", freeHoursOfDay)
+   #          print("exist(): ", AvailableHours.objects.filter(student=userObject, theDate=day.date()).exists())
+   #       if freeHoursOfDay == 0:
+   #          print("hej")
+   #          if AvailableHours.objects.filter(student=userObject, theDate=day.date()).exists() == True:
+   #             deletedObjList.append(AvailableHours.objects.filter(student=userObject, theDate=day.date()).values('theDate', "availableHours"))
+   #             AvailableHours.objects.filter(student=userObject, theDate=day.date()).delete()
+   #             deletedObj += 1
+
+   #          continue
+   #       elif AvailableHours.objects.filter(student=userObject, theDate=day.date()).exists() == True:
+   #          print("elif:")
+   #          AvailableHours.objects.filter(student=userObject, theDate=day.date()).update(availableHours=freeHoursOfDay)
+   #          updatedObjList.append(AvailableHours.objects.filter(student=userObject, theDate=day.date()).values('theDate', "availableHours"))
+   #          updatedObj += 1
+
+   #          continue
+   #       else:
+   #          print("hejdå")
+   #          obj = AvailableHours.objects.create(student=userObject, theDate=day, availableHours=freeHoursOfDay)
+   #          obj.save() 
+   #          dataObj = {"date": day,
+   #                   "availableHours": freeHoursOfDay}
+   #          availableHoursList.append(dataObj)
+   #    print("updatedObj: ", updatedObj)
+   #    print("deletedObj: ", deletedObj)
+   #    print("updatedObjList: ", updatedObjList)
+   #    print("deletedObjList: ", deletedObjList)
+   #    response ={"message": "Success. AvailableHours created.",
+   #                "userObject": {
+   #                         "user.id": userObject.id,
+   #                         "user.email": userObject.email,
+   #                   },
+   #                   "availableHours": availableHoursList,
+   #                   }
+   #    print("response: ", response)
+   
+   
+   
+   # # userObject = Student.objects.get(id=33)
+   # # coursesList =[]
+   # # coursesIdList = list(User.objects.filter(id=33).values_list("courses", flat=True))
+   # # print(coursesIdList)
+   # # optimalAssignmentsList =[]
+   # # for course in coursesIdList:
+   # #    thisCourse =Course.objects.get(id=int(course))
+   # #    optimalAssignmentsIdList = list(OptimalSchedule.objects.filter(student=userObject, theDate=datetime.strptime('2023-04-25', "%Y-%m-%d").date(), course=thisCourse).values_list("id", flat=True))
+   # #    print("optimalAssignmentsIdList: ", optimalAssignmentsIdList)
+   # #    assignmentData =[]
+   # #    courseStr=""
+   # #    for assignment in optimalAssignmentsIdList:
+   # #       optimalAssignment = OptimalSchedule.objects.get(id=assignment)
+   # #       optimalAssignmentObj ={"assignmentName": optimalAssignment.assignmentName, "hours": optimalAssignment.hours}
+   #       assignmentData.append(optimalAssignmentObj)
+   #       courseStr= optimalAssignment.course.courseTitle
+   #    if assignmentData != []:
+   #       for item in assignmentData:
+   #          courseAssignmentObj={courseStr : item}
+   #    else:
+   #       continue
+   #    optimalAssignmentsList.append(courseAssignmentObj)
+   # print("optimalAssignmentsList: ", optimalAssignmentsList)
          
       
       

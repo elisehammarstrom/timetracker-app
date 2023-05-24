@@ -1143,6 +1143,7 @@ class UserViewset(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'])
     def get_user_data(self, request, **extra_fields):
         userInstance = Student.objects.get(id=request.user.pk)
+        print("user Yeargrade: ", userInstance.yearGrade.yearGradeClass)
 
         response = {
                 "message": "Success. User retrieved. ", 
@@ -1152,7 +1153,7 @@ class UserViewset(viewsets.ModelViewSet):
                    "programmeName": userInstance.programme.programmeName,
                    "programmeShortName": userInstance.programme.shortProgrammeName,
                    "university" : userInstance.university,
-                   "yearGrade": userInstance.yearGrade
+                   "yearGrade": userInstance.yearGrade.yearGradeClass
                 }
             } 
         return Response(data=response, status=status.HTTP_200_OK)
@@ -1762,28 +1763,31 @@ class AvailableHoursViewset(viewsets.ModelViewSet):
                 if freeHoursOfDay < 0:
                     freeHoursOfDay = 0
                 print("Day: ", day.date(), " ", "freeHours: ", freeHoursOfDay)
-                if freeHoursOfDay == 0:
-                    print("hej")
-                    if AvailableHours.objects.filter(student=userObject, theDate=day.date()).exists():
-                        deletedObjList.append(AvailableHours.objects.filter(student=userObject, theDate=day.date()).values('theDate', "availableHours"))
-                        AvailableHours.objects.filter(student=userObject, theDate=day.date()).delete()
-                        deletedObj += 1
+            if freeHoursOfDay == 0:
+                print("hej")
+                if AvailableHours.objects.filter(student=userObject, theDate=day.date()).exists() == True:
+                    deletedObjList.append(AvailableHours.objects.filter(student=userObject, theDate=day.date()).values('theDate', "availableHours"))
+                    AvailableHours.objects.filter(student=userObject, theDate=day.date()).delete()
+                    deletedObj += 1
 
-                    continue
-                elif AvailableHours.objects.filter(student=userObject, theDate=day.date()).exists() is True:
-                    print("halåå")
-                    AvailableHours.objects.filter(student=userObject, theDate=day.date()).update(availableHours=freeHoursOfDay)
-                    updatedObjList.append(AvailableHours.objects.filter(student=userObject, theDate=day.date()).values('theDate', "availableHours"))
-                    updatedObj += 1
+                continue
+            elif AvailableHours.objects.filter(student=userObject, theDate=day.date()).exists() == True:
+                print("halåå")
+                AvailableHours.objects.filter(student=userObject, theDate=day.date()).update(availableHours=freeHoursOfDay)
+                updatedObjList.append(AvailableHours.objects.filter(student=userObject, theDate=day.date()).values('theDate', "availableHours"))
+                updatedObj += 1
+                dataObj = {"date": day,
+                        "availableHours": freeHoursOfDay}
+                availableHoursList.append(dataObj)
 
-                    continue
-                else:
-                    print("hejdå")
-                    obj = AvailableHours.objects.create(student=userObject, theDate=day, availableHours=freeHoursOfDay)
-                    obj.save() 
-                    dataObj = {"date": day,
-                            "availableHours": freeHoursOfDay}
-                    availableHoursList.append(dataObj)
+                continue
+            else:
+                print("hejdå")
+                obj = AvailableHours.objects.create(student=userObject, theDate=day, availableHours=freeHoursOfDay)
+                obj.save() 
+                dataObj = {"date": day,
+                        "availableHours": freeHoursOfDay}
+                availableHoursList.append(dataObj)
         print("updatedObj: ", updatedObj)
         print("deletedObj: ", deletedObj)
         print("updatedObjList: ", updatedObjList)
@@ -1844,7 +1848,7 @@ class OptimalScheduleViewset(viewsets.ModelViewSet):
                     countIndex += 1
                     # print("theDate: ", x["theDate"] )
                     # print("dateIndex: ", dateIndex)
-                    if assignment["startDateTime"]  is not None:
+                    if assignment["startDateTime"]  != None:
                         
                         if thisDate <= assignment["startDateTime"].date():
                             print(dateIndex)
