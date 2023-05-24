@@ -1143,7 +1143,6 @@ class UserViewset(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'])
     def get_user_data(self, request, **extra_fields):
         userInstance = Student.objects.get(id=request.user.pk)
-        print("user Yeargrade: ", userInstance.yearGrade.yearGradeClass)
 
         response = {
                 "message": "Success. User retrieved. ", 
@@ -1664,11 +1663,22 @@ class UserScheduleViewset(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def create_user_schedule_course(self, request, **extra_fields):
-        if 'courseID' not in request.data: 
-            response = {"message": "You must provide a courseID as foreinkey to create schedule"}
-            return Response(response, status = status.HTTP_400_BAD_REQUEST)
-        
-        else:
+        if 'courseCode' in request.data: 
+            courseCode = request.POST.get('courseCode')
+            list_w_same_courseCode = []
+
+            for item in CourseViewset.queryset:
+                if courseCode == item.courseCode:
+                    list_w_same_courseCode.append(item)
+            if len(list_w_same_courseCode) > 1:
+                print("Many entries with same courseCode exists, taking the newest")
+                newestCourse = list_w_same_courseCode[0]
+                for object in list_w_same_courseCode:
+                    if object.courseStartDateTime > newestCourse.courseStartDateTime:
+                        newestCourse = object        
+                courseInstance = newestCourse
+            else:
+                courseInstance = list_w_same_courseCode[0]
             course=Course.objects.get(id=request.data.get('courseID'))
             userObject = Student.objects.get(id=request.user.pk)
             print(userObject.email)
@@ -1700,6 +1710,9 @@ class UserScheduleViewset(viewsets.ModelViewSet):
                             "course": course.courseTitle,
                         },}
             return Response(data=response, status=status.HTTP_200_OK)
+        else:
+            response = {"message": "You need to provide a courseCode for the course (e.g. '1FA104' for the course Mechanics)"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
     
 class AvailableHoursViewset(viewsets.ModelViewSet):
     queryset = AvailableHours.objects.all()
