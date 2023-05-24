@@ -974,10 +974,10 @@ class UserViewset(viewsets.ModelViewSet):
            #create with programme 
            if pID != None:
                 pID = request.POST.get('pID')
-                user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=Programme.objects.get(id=request.POST.get('pID')), yearGrade=yearGradeClass)
+                user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=Programme.objects.get(id=request.POST.get('pID')), yearGrade=YearGrade.objects.get(yearGradeClass=yearGradeClass))
            else:
                #create with no programme or course
-               user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=pID, yearGrade=yearGradeClass)
+               user = Student.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, role=User.Role.STUDENT, university=university, programme=pID, yearGrade=YearGrade.objects.get(yearGradeClass=yearGradeClass))
            user.is_active = True
            user.save()
 
