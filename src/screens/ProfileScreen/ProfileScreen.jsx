@@ -103,7 +103,7 @@ const ProfileScreen = ({ route }) => {
 
           <Text style={styles.label}><B>Programme:</B> {profile.programmeName}</Text>
 
-          <Text style={styles.label}><B>Year Grade:</B> STS2.A{/* {profile.yearGrade} */}</Text>
+          <Text style={styles.label}><B>Year Grade:</B> {profile.yearGrade}</Text>
 
           {/* <Text style={styles.label}><B>Language</B> {profile.language}</Text> */}
 

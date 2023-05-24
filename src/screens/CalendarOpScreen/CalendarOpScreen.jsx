@@ -72,11 +72,13 @@ const CalendarOpScreen = ({ route }) => {
             </View>
           ))}
 
-
-          <CustomButton
-            text="Choose assignments"
-            onPress={onChooseAssignmentPressed}
-          />
+          <View style={styles.button}>
+            <CustomButton
+              text="Choose assignments"
+              onPress={onChooseAssignmentPressed}
+            />
+          </View>
+          
         </ScrollView>
 
 
@@ -133,6 +135,9 @@ const styles = StyleSheet.create({
   scroll: {
     height: '80%',
 
+  },
+  button: {
+    padding: 50
   }
 
 
