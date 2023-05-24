@@ -1752,12 +1752,16 @@ class AvailableHoursViewset(viewsets.ModelViewSet):
         holidaysList=[]
         for date in holidays.Sweden(years=int(thisYear)).items():
             if "Sunday" or "Söndag" not in str(date[1]):
+                print("fel lista: ", str(date[1]))
                 holidaysList.append(str(date[0]))
 
         for date in holidaysList:
             print("date", date)
             if early.date() <= datetime.strptime(date, '%Y-%m-%d').date() <= late.date():
-                days=days.drop(labels=date)
+                try:
+                    days=days.drop(labels=date)
+                except:
+                    continue
         availableHoursList =[]
         for day in days:
             print("day", day)
