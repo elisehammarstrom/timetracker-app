@@ -36,20 +36,10 @@ const CalendarOpScreen = ({ route }) => {
   else {
       var newDate = year + '-' + month + '-' + day
   }
-console.log("newdae= ", newDate)
 
   const navigation = useNavigation();
 
-
   const colors = ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX']
-
-  //get total study time per course from database
-  const studyTime = [5, 1, 2]
-
-  const showInfo = (option) => {
-    let name = option
-   // console.log(name)
-  }
 
   const onChooseAssignmentPressed = () => {
     navigation.navigate('ChooseAssignment', {token: token, courses: courses, courseIDs: courseIDs})
@@ -72,16 +62,14 @@ console.log("newdae= ", newDate)
 
           {courses.map((option, i) => (
 
-            <TouchableOpacity key={option} onPress={() => { setShowingInfo(false); showInfo({ option }) }} >
+            <View key={option} >
 
               <CalendarBlock
                 color={colors[i]}
                 courseName={option}
-                studyTime={studyTime[i]}
-                courseID={courseIDs[i]}
                 date={newDate}
                 token={token} />
-            </TouchableOpacity>
+            </View>
           ))}
 
 

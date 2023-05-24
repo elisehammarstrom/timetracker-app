@@ -6,19 +6,9 @@ import DropdownArrow from '../../../assets/dropdownArrow.png'
 import Text from '../../components/Text';
 
 
-const DropDown = ({
-    data = [],
-    value = {},
-    courseName,
-    onSelect = () => { }
-}) => {
-
+const DropDown = ({ data = [], value = {}, courseName }) => {
+    
     const [showOption, setShowOption] = useState(false);
-    const onSelectedItem = (val) => {
-        setShowOption(false)
-        onSelect(val)
-
-    }
     return (
         <View style={styles.container}>
             <TouchableOpacity activeOpacity={0.5} style={styles.dropdownStyle} onPress={() => setShowOption(!showOption)}>
@@ -34,22 +24,22 @@ const DropDown = ({
 
             </TouchableOpacity>
             {showOption && (<View style={{ padding: 8, borderRadius: 6, maxHeight: 100 }}>
-                <ScrollView>
-                    {data.map((val, i) => {
-                        return (
-                            <TouchableOpacity activeOpacity={0.5}
-                                key={String(i)}
-                                onPress={() => onSelectedItem(val)}
-                            /* style = {{backgroundColor: value.id == val.id? 'pink':'transparent'}} */
-                            >
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                    <Text style={{ padding: 5 }}>{val.name}</Text>
-                                    <Text> {val.time} </Text>
+                {data != '' ?
+                    <ScrollView>
+                        {data.map((val, i) => {
+                            return (
+                                <View key={val}>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                        <Text style={{ padding: 5 }}>{val.assignmentName}</Text>
+                                        <Text> {val.hours} h </Text>
+                                    </View>
                                 </View>
-                            </TouchableOpacity>
-                        )
-                    })}
-                </ScrollView>
+                            )
+                        })}
+                    </ScrollView>
+
+                : null}
+               
             </View>)}
 
         </View>
