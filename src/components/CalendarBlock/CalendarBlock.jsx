@@ -9,9 +9,9 @@ const CalendarBlock = ({ courseName, color, token, date }) => {
   
   const [selectedItem, setSelectedItem] = useState(null);
   const [data, setData] = useState('');
-  const [studyTime, setStudyTime] = useState('')
+  const [studyTime, setStudyTime] = useState(0)
   var formData = new FormData();
-  formData.append('date', '2023-04-25');
+  formData.append('date', date);
 
   axios({
     method: "post",
@@ -27,8 +27,15 @@ const CalendarBlock = ({ courseName, color, token, date }) => {
   
       for (let i=0;i<response.data.optimalAssignmentsList.length;i++) {
         if (response.data.optimalAssignmentsList[i][courseName] != undefined & data.length <1) {
-          console.log(response.data.optimalAssignmentsList[i][courseName])
           setData(response.data.optimalAssignmentsList[i][courseName])
+          let sum = 0;
+          for (let j=0; j<response.data.optimalAssignmentsList[i][courseName].length; j++){
+            sum =  sum + response.data.optimalAssignmentsList[i][courseName][j].hours;
+          }
+          if (`${studyTime}` != `${sum}`) {
+            setStudyTime(sum)
+          }
+
         }
       }
 
