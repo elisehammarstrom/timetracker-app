@@ -6,56 +6,64 @@ import DropDown from '../../components/DropDown';
 import Text from '../../components/Text';
 
 const CalendarBlock = ({ courseName, color, token, date }) => {
-  
+
   const [selectedItem, setSelectedItem] = useState(null);
   const [data, setData] = useState('');
   const [studyTime, setStudyTime] = useState(0)
   var formData = new FormData();
   formData.append('date', date);
 
-
-  
   setTimeout(() => {
-    
 
-  axios({
-    method: "post",
-    url: "http://127.0.0.1:8000/api/optimalSchedule/get_optimal_schedule_by_date/",
-    data: formData,
-    headers: {
-      'Content-Type': 'multipart/form-data',
-      'Authorization': `token ` + token
-    }
-  }) 
-    .then(function (response) {
-      //handle success
-  
-      for (let i=0;i<response.data.optimalAssignmentsList.length;i++) {
-        if (response.data.optimalAssignmentsList[i][courseName] != undefined & data.length <1) {
-          setData(response.data.optimalAssignmentsList[i][courseName])
-          let sum = 0;
-          for (let j=0; j<response.data.optimalAssignmentsList[i][courseName].length; j++){
-            sum =  sum + response.data.optimalAssignmentsList[i][courseName][j].hours;
-          }
-          if (`${studyTime}` != `${sum}`) {
-            setStudyTime(sum)
-          }
 
-        }
+    axios({
+      method: "post",
+      url: "http://127.0.0.1:8000/api/optimalSchedule/get_optimal_schedule_by_date/",
+      data: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `token ` + token
       }
-
     })
-    .catch(function (response) {
-      //handle error
-      console.log(response);
-    });
-  }, 1000);
+      .then(function (response) {
+        //handle success
+
+        if (response.data.optimalAssignmentsList.length === 0) {
+          //reset all values
+          setStudyTime(0)
+          setData('')
+        }
+        else {
+          for (let i = 0; i < response.data.optimalAssignmentsList.length; i++) {
+/*             console.log('condition if sats', response.data.optimalAssignmentsList[i][courseName]) */
+            if (response.data.optimalAssignmentsList[i][courseName] != undefined & data.length < 1) {
+              setData(response.data.optimalAssignmentsList[i][courseName])
+              let sum = 0;
+              for (let j = 0; j < response.data.optimalAssignmentsList[i][courseName].length; j++) {
+                sum = sum + response.data.optimalAssignmentsList[i][courseName][j].hours;
+
+              }
+              if (`${studyTime}` != `${sum}`) {
+                setStudyTime(sum)
+              }
+
+
+            }
+          }
+        }
+
+      })
+      .catch(function (response) {
+        //handle error
+        console.log(response);
+      });
+  }, 100);
 
   const onSelect = (item) => {
     setSelectedItem(item)
   }
 
-  
+
   return (
     <SafeAreaView>
 
