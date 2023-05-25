@@ -11,10 +11,12 @@ const CalendarBlock = ({ courseName, color, token, date }) => {
   const [data, setData] = useState('');
   const [studyTime, setStudyTime] = useState(0)
   var formData = new FormData();
-  formData.append('date', date);
+  formData.append('date', '2023-04-25');
 
 
   
+  setTimeout(() => {
+    
 
   axios({
     method: "post",
@@ -24,7 +26,7 @@ const CalendarBlock = ({ courseName, color, token, date }) => {
       'Content-Type': 'multipart/form-data',
       'Authorization': `token ` + token
     }
-  })
+  }) 
     .then(function (response) {
       //handle success
   
@@ -47,11 +49,12 @@ const CalendarBlock = ({ courseName, color, token, date }) => {
       //handle error
       console.log(response);
     });
-
+  }, 1000);
 
   const onSelect = (item) => {
     setSelectedItem(item)
   }
+
   
   return (
     <SafeAreaView>
