@@ -1207,7 +1207,7 @@ class UserViewset(viewsets.ModelViewSet):
             return Response(data=response, status=status.HTTP_200_OK)
         
     @action(detail=False, methods=['POST'])
-    def remove_course(self, request, **extra_fields):
+    def r(self, request, **extra_fields):
         if 'courseID' not in request.data: 
             response = {"message": "You must provide a courseID to get remove a course (courseID)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
