@@ -125,7 +125,7 @@ const CalendarScreen = ({ route }) => {
                     if (sum != 0) {
                         navigation.navigate('YourReports', { firstDate: firstDate, lastDate: lastDate, courses: courses, token: token, courseIDs: courseIDs });
                     } else {
-                        alert('You have not tracked during this perios, please choose another');
+                        alert('You have not tracked during this period, please choose another');
                         setFirstDate('');
                         setLastDate('');
                     }
