@@ -1099,6 +1099,31 @@ class UserViewset(viewsets.ModelViewSet):
         else:
             response = {"message": "You need to provide a courseCode for the course (e.g. '1FA104' for the course Mechanics)"}
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        
+    @action(detail=False, methods=['POST'])
+    def temp_add_course(self, request, **extra_fields):
+        user = request.user
+        courseID = request.POST.get('courseID')
+
+        courseInstance = Course.objects.get(id=courseID)
+        user.courses.add(courseInstance)
+        user.save()
+        userInstance = User.objects.get(id=user.id)
+        userInstance.save()
+        serializer = self.serializer_class(request.user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        response = {'Courses assigned to user: ': str(user.email),
+                        "course: ": {
+                            "systemID: ": courseInstance.id,
+                            "courseTitle: ": courseInstance.courseTitle,
+                            "courseCode: ": courseInstance.courseCode,
+                            "courseStartDateTime: ":courseInstance.courseStartDateTime,
+                            "courseEndDateTime: ": courseInstance.courseEndDateTime
+                            }
+            }
+        return Response(response, status = status.HTTP_200_OK)
     
     @action(detail=False, methods=['GET'])
     def get_courses(self, request, **extra_fields):
