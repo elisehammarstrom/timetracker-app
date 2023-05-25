@@ -2,7 +2,7 @@ import { StyleSheet, View, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import CalendarBlock from '../../components/CalendarBlock';
-import ClickableWeekCalendar from '../../components/ClickableWeekCalendar';
+import WeekCalendar from '../../components/WeekCalendar';
 import ButtonMenu from '../../components/ButtonMenu/ButtonMenu';
 import Title from '../../components/Title';
 import CustomButton from '../../components/CustomButton/CustomButton';
@@ -76,7 +76,7 @@ const CalendarOpScreen = ({ route }) => {
 
       </View>
 
-      <ClickableWeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
+      <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} />
 
       <View style={styles.scroll}>
         <ScrollView style={{ marginBottom: 80 }}>
