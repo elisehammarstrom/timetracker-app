@@ -11,7 +11,7 @@ const CalendarBlock = ({ courseName, color, token, date }) => {
   const [data, setData] = useState('');
   const [studyTime, setStudyTime] = useState(0)
   var formData = new FormData();
-  formData.append('date', '2023-04-25');
+  formData.append('date', date);
 
 
   
