@@ -65,7 +65,7 @@ const SignInScreen = () => {
 
                 <Image
                     source={Logo}
-                    style={[styles.logo, { height: height * 0.3 }]}
+                    style={[styles.logo, { height: height * 0.4 }]}
                     resizeMode="contain"
                 />
 

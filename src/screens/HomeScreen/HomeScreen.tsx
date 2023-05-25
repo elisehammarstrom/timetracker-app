@@ -92,7 +92,7 @@ const HomeScreen: React.FC = ({ route }) => {
 
         <Image
           source={Logo}
-          style={[styles.logo, { height: 200 * 0.3 }]}
+          style={[styles.logo, { height: 230 * 0.4 }]}
           resizeMode="contain"
         />
 
