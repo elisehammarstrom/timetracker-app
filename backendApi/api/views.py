@@ -2027,14 +2027,17 @@ class OptimalScheduleViewset(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['POST'])
     def get_optimal_schedule_by_date(self, request, **extra_fields):
+        userObject = Student.objects.get(id=request.user.pk)
         if 'date' not in request.data: 
             response = {"message": "You must provide a date to retrive optimal schedule"}
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
         # elif 'courseID' not in request.data: 
         #     response = {"message": "You must provide a courseID to retrive optimal schedule"}
         #     return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        elif OptimalSchedule.objects.filter(student=userObject).exists() == False:
+            response = {"message": "You choose assignments first to create a schedule"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
         else:
-            userObject = Student.objects.get(id=request.user.pk)
             optimalAssignmentsList =[]
             coursesIdList = list(User.objects.filter(id=request.user.pk).values_list("courses", flat=True))
             print(coursesIdList)
