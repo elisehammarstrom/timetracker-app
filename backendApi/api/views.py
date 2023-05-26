@@ -2062,12 +2062,12 @@ class OptimalScheduleViewset(viewsets.ModelViewSet):
                         eventHours = round(((courseEvent.endDateTime -courseEvent.startDateTime).total_seconds())/(60*60)  + 0.49)
                         courseEventData = {"assignmentName": courseEvent.event, "hours": eventHours }
                         assignmentData.append(courseEventData)
-                # if assignmentData != []:
-                #     courseAssignmentObj={courseStr : assignmentData}
+                if assignmentData != []:
+                    courseAssignmentObj={courseStr : assignmentData}
                     
-                # else:
-                #     continue
-                optimalAssignmentsList.append({courseStr : assignmentData}) 
+                else:
+                    continue
+                optimalAssignmentsList.append(courseAssignmentObj) 
             response = {
                         "message": "Success. Optimal Schedule retrieved.", 
                         "optimalAssignmentsList": optimalAssignmentsList
