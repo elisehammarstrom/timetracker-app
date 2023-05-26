@@ -166,7 +166,8 @@ const CalendarOpScreen = ({ route }) => {
                 color={colors[i]}
                 courseName={option}
                 date={newDate}
-                token={token} />
+                token={token} 
+                courseID={courseIDs[i]}/>
             </View>
           ))}
 

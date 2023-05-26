@@ -5,17 +5,17 @@ import axios from 'axios';
 import DropDown from '../../components/DropDown';
 import Text from '../../components/Text';
 
-const CalendarBlock = ({ courseName, color, token, date }) => {
+const CalendarBlock = ({ courseName, color, token, date, courseID }) => {
 
   const [selectedItem, setSelectedItem] = useState(null);
   const [data, setData] = useState('');
   const [studyTime, setStudyTime] = useState(0)
   var formData = new FormData();
   formData.append('date', date);
+  formData.append('courseID', courseID);
 
   setTimeout(() => {
-
-
+    
     axios({
       method: "post",
       url: "http://127.0.0.1:8000/api/optimalSchedule/get_optimal_schedule_by_date/",
@@ -27,80 +27,72 @@ const CalendarBlock = ({ courseName, color, token, date }) => {
     })
       .then(function (response) {
         //handle success
-
         if (response.data.optimalAssignmentsList.length === 0) {
           //reset all values
+          console.log('inne i reset')
+
+
           setStudyTime(0)
           setData('')
         }
-        else {
-          for (let i = 0; i < response.data.optimalAssignmentsList.length; i++) {
-            if (response.data.optimalAssignmentsList[i][courseName] === undefined) {
-              //reset all values
-              setStudyTime(0)
-              setData('')
-            }
-            else {
-              console.log('condition if sats', response.data.optimalAssignmentsList[i][courseName])
-              if (response.data.optimalAssignmentsList[i][courseName] != undefined & data.length < 1) {
-                console.log('data if sats:', data)
-                console.log('studyTime if sats:', studyTime)
-                setData(response.data.optimalAssignmentsList[i][courseName])
-                let sum = 0;
-                for (let j = 0; j < response.data.optimalAssignmentsList[i][courseName].length; j++) {
-                  sum = sum + response.data.optimalAssignmentsList[i][courseName][j].hours;
+        else if (`${data}` != `${response.data.optimalAssignmentsList}`) { 
+          console.log('response data', response.data.optimalAssignmentsList)
+          
 
-                }
-                if (`${studyTime}` != `${sum}`) {
-                  setStudyTime(sum)
-                }
+        setData(response.data.optimalAssignmentsList)
+        let sum = 0;
+        for (let j = 0; j < response.data.optimalAssignmentsList.length; j++) {
+          sum = sum + response.data.optimalAssignmentsList[j].hours;
 
-
-              }
-            }
-          }
         }
+        if (`${studyTime}` != `${sum}`) {
+          setStudyTime(sum)
+        }
+        console.log('data', data)
+        console.log('studyTime', studyTime)
+
+      }
 
       })
-      .catch(function (response) {
-        //handle error
-        console.log(response);
-      });
+      .catch (function (response) {
+  //handle error
+  console.log(response);
+});
   }, 100);
 
-  const onSelect = (item) => {
-    setSelectedItem(item)
-  }
+const onSelect = (item) => {
+  setSelectedItem(item)
+}
 
 
-  return (
-    <SafeAreaView>
+return (
+  <SafeAreaView>
 
 
-      <View style={styles.container}>
+    <View style={styles.container}>
 
-        <View style={[styles.sectionStyle, styles[`sectionStyle_${color}`]]}>
-          <View style={styles.titleContainer}>
+      <View style={[styles.sectionStyle, styles[`sectionStyle_${color}`]]}>
+        <View style={styles.titleContainer}>
 
-            <DropDown
-              value={selectedItem}
-              data={data}
-              courseName={courseName}
-              onSelect={onSelect}
-            />
-            <Text style={styles.title}>{studyTime}h</Text>
-
-          </View>
-
-
+          <DropDown
+            value={selectedItem}
+            data={data}
+            courseName={courseName}
+            onSelect={onSelect}
+          />
+          <Text style={styles.title}>{studyTime}h</Text>
 
         </View>
 
+
+
       </View>
 
+    </View>
 
-    </SafeAreaView>
-  )
+
+  </SafeAreaView>
+)
 }
 
 const styles = StyleSheet.create({
