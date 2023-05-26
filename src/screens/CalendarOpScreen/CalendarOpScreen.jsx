@@ -174,6 +174,7 @@ const CalendarOpScreen = ({ route }) => {
             <CustomButton
               text="Choose assignments"
               onPress={onChooseAssignmentPressed}
+              screen='calendar'
             />
           </View>
 
