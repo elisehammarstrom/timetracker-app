@@ -95,7 +95,7 @@ const CourseStatsScreen = ({ route }) => {
                     .then(function (response) {
                         //handle success
                         // Setting the average time tracking the data for all students who have tracked
-                        if (`${avgData}` != `${response.data.weekDurationArray}` & `${label}` != `${response.data.weekNoArray}`) {
+                        if (`${avgData}` != `${response.data.weekDurationArray}` ) {
                             setAvgData(response.data.weekDurationArray)
                             setLabel(response.data.weekNoArray)
                             console.log(response.data.weekDurationArray)

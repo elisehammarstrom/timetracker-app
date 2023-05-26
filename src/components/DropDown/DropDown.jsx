@@ -8,7 +8,7 @@ import Text from '../../components/Text';
 
 const DropDown = ({ data = [], value = {}, courseName }) => {
     
-    const [showOption, setShowOption] = useState(false);
+    const [showOption, setShowOption] = useState(true);
     return (
         <View style={styles.container}>
             <TouchableOpacity activeOpacity={0.5} style={styles.dropdownStyle} onPress={() => setShowOption(!showOption)}>
@@ -30,7 +30,7 @@ const DropDown = ({ data = [], value = {}, courseName }) => {
                             return (
                                 <View key={val.assignmentName}>
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                        <Text style={{ padding: 5 }}>{val.assignmentName}</Text>
+                                        <Text >{val.assignmentName}</Text>
                                         <Text> {val.hours} h </Text>
                                     </View>
                                 </View>

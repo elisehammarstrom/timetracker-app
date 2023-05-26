@@ -868,6 +868,7 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                 return Response(data=response, status=status.HTTP_200_OK)
             
             stressArray = allCourseObjStress
+
             try:
                 no_of_instances = len(stressArray)
 
@@ -876,12 +877,13 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                 else:
                     no_of_tracking_instances = 0
                     total_stress = 0
-          
+        
                     for stress in stressArray:
-                        no_of_tracking_instances += 1
-                        total_stress += stress
+                        if stress != 0:
+                            no_of_tracking_instances += 1
+                            total_stress += stress
                             
-                    avg_stress = round(total_stress/no_of_instances, 2)
+                    avg_stress = round(total_stress/no_of_tracking_instances, 2)
                 response = {
                         "message": "Average time",  
                         "avg_stress": avg_stress,
@@ -1099,6 +1101,31 @@ class UserViewset(viewsets.ModelViewSet):
         else:
             response = {"message": "You need to provide a courseCode for the course (e.g. '1FA104' for the course Mechanics)"}
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        
+    @action(detail=False, methods=['POST'])
+    def temp_add_course(self, request, **extra_fields):
+        user = request.user
+        courseID = request.POST.get('courseID')
+
+        courseInstance = Course.objects.get(id=courseID)
+        user.courses.add(courseInstance)
+        user.save()
+        userInstance = User.objects.get(id=user.id)
+        userInstance.save()
+        serializer = self.serializer_class(request.user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        response = {'Courses assigned to user: ': str(user.email),
+                        "course: ": {
+                            "systemID: ": courseInstance.id,
+                            "courseTitle: ": courseInstance.courseTitle,
+                            "courseCode: ": courseInstance.courseCode,
+                            "courseStartDateTime: ":courseInstance.courseStartDateTime,
+                            "courseEndDateTime: ": courseInstance.courseEndDateTime
+                            }
+            }
+        return Response(response, status = status.HTTP_200_OK)
     
     @action(detail=False, methods=['GET'])
     def get_courses(self, request, **extra_fields):
@@ -1182,7 +1209,7 @@ class UserViewset(viewsets.ModelViewSet):
             return Response(data=response, status=status.HTTP_200_OK)
         
     @action(detail=False, methods=['POST'])
-    def remove_course(self, request, **extra_fields):
+    def r(self, request, **extra_fields):
         if 'courseID' not in request.data: 
             response = {"message": "You must provide a courseID to get remove a course (courseID)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
