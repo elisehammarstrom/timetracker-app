@@ -2031,49 +2031,74 @@ class OptimalScheduleViewset(viewsets.ModelViewSet):
         if 'date' not in request.data: 
             response = {"message": "You must provide a date to retrive optimal schedule"}
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
-        # elif 'courseID' not in request.data: 
-        #     response = {"message": "You must provide a courseID to retrive optimal schedule"}
-        #     return Response(response, status = status.HTTP_400_BAD_REQUEST)
+        elif 'courseID' not in request.data: 
+            response = {"message": "You must provide a courseID to retrive optimal schedule"}
+            return Response(response, status = status.HTTP_400_BAD_REQUEST)
         elif OptimalSchedule.objects.filter(student=userObject).exists() == False:
             response = {"message": "You choose assignments first to create a schedule"}
             return Response(response, status = status.HTTP_400_BAD_REQUEST)
         else:
-            optimalAssignmentsList =[]
-            coursesIdList = list(User.objects.filter(id=request.user.pk).values_list("courses", flat=True))
-            print(coursesIdList)
+            course = Course.objects.get(id=request.data.get('courseID'))
             assignmentData =[]
-            for course in coursesIdList:
-                thisCourse =Course.objects.get(id=int(course))
-                optimalAssignmentsIdList = list(OptimalSchedule.objects.filter(student=userObject, theDate=request.data.get('date'), course=thisCourse).values_list("id", flat=True))
-                print("optimalAssignmentsIdList: ", optimalAssignmentsIdList)
-                assignmentData =[]
-                courseStr=thisCourse.courseTitle
-                if len(optimalAssignmentsIdList) > 0:
-                    for assignment in optimalAssignmentsIdList:
-                        optimalAssignment = OptimalSchedule.objects.get(id=assignment)
-                        optimalAssignmentObj ={"assignmentName": optimalAssignment.assignmentName, "hours": optimalAssignment.hours}
-                        assignmentData.append(optimalAssignmentObj)
-                courseEventListId = UserSchedule.objects.filter(user=userObject, course=thisCourse, startDateTime__contains=request.data.get('date')).values_list("id", flat=True)
-                #eventListCourse=[]
-                if len(courseEventListId) > 0:
-                    for item in courseEventListId:
-                        courseEvent= UserSchedule.objects.get(id=item)
-                        print("skillnad: ", courseEvent.event, " ", courseEvent.endDateTime -courseEvent.startDateTime)
-                        eventHours = round(((courseEvent.endDateTime -courseEvent.startDateTime).total_seconds())/(60*60)  + 0.49)
-                        courseEventData = {"assignmentName": courseEvent.event, "hours": eventHours }
-                        assignmentData.append(courseEventData)
-                if assignmentData != []:
-                    courseAssignmentObj={courseStr : assignmentData}
-                    
-                else:
-                    continue
-                optimalAssignmentsList.append(courseAssignmentObj) 
-            response = {
-                        "message": "Success. Optimal Schedule retrieved.", 
-                        "optimalAssignmentsList": optimalAssignmentsList
-                    } 
-            return Response(data=response, status=status.HTTP_200_OK)
+            optimalAssignmentsIdList = list(OptimalSchedule.objects.filter(student=userObject, theDate=request.data.get('date'), course=course).values_list("id", flat=True))
+            print("optimalAssignmentsIdList: ", optimalAssignmentsIdList)
+            if len(optimalAssignmentsIdList) > 0:
+                for assignment in optimalAssignmentsIdList:
+                    optimalAssignment = OptimalSchedule.objects.get(id=assignment)
+                    optimalAssignmentObj ={"assignmentName": optimalAssignment.assignmentName, "hours": optimalAssignment.hours}
+                    assignmentData.append(optimalAssignmentObj)
+            courseEventListId = UserSchedule.objects.filter(user=userObject, course=course, startDateTime__contains=request.data.get('date')).values_list("id", flat=True)
+            #eventListCourse=[]
+            if len(courseEventListId) > 0:
+                for item in courseEventListId:
+                    courseEvent= UserSchedule.objects.get(id=item)
+                    print("skillnad: ", courseEvent.event, " ", courseEvent.endDateTime -courseEvent.startDateTime)
+                    eventHours = round(((courseEvent.endDateTime -courseEvent.startDateTime).total_seconds())/(60*60)  + 0.49)
+                    courseEventData = {"assignmentName": courseEvent.event, "hours": eventHours }
+                    assignmentData.append(courseEventData)
+        response = {
+                    "message": "Success. Optimal Schedule retrieved.", 
+                    "optimalAssignmentsList": assignmentData
+                } 
+        return Response(data=response, status=status.HTTP_200_OK)
                                               
+#  optimalAssignmentsList =[]
+#             coursesIdList = list(User.objects.filter(id=request.user.pk).values_list("courses", flat=True))
+#             print(coursesIdList)
+#             assignmentData =[]
+#             for course in coursesIdList:
+#                 thisCourse =Course.objects.get(id=int(course))
+#                 optimalAssignmentsIdList = list(OptimalSchedule.objects.filter(student=userObject, theDate=request.data.get('date'), course=thisCourse).values_list("id", flat=True))
+#                 print("optimalAssignmentsIdList: ", optimalAssignmentsIdList)
+#                 assignmentData =[]
+#                 courseStr=thisCourse.courseTitle
+#                 if len(optimalAssignmentsIdList) > 0:
+#                     for assignment in optimalAssignmentsIdList:
+#                         optimalAssignment = OptimalSchedule.objects.get(id=assignment)
+#                         optimalAssignmentObj ={"assignmentName": optimalAssignment.assignmentName, "hours": optimalAssignment.hours}
+#                         assignmentData.append(optimalAssignmentObj)
+#                 courseEventListId = UserSchedule.objects.filter(user=userObject, course=thisCourse, startDateTime__contains=request.data.get('date')).values_list("id", flat=True)
+#                 #eventListCourse=[]
+#                 if len(courseEventListId) > 0:
+#                     for item in courseEventListId:
+#                         courseEvent= UserSchedule.objects.get(id=item)
+#                         print("skillnad: ", courseEvent.event, " ", courseEvent.endDateTime -courseEvent.startDateTime)
+#                         eventHours = round(((courseEvent.endDateTime -courseEvent.startDateTime).total_seconds())/(60*60)  + 0.49)
+#                         courseEventData = {"assignmentName": courseEvent.event, "hours": eventHours }
+#                         assignmentData.append(courseEventData)
+#                 if assignmentData != []:
+#                     courseAssignmentObj={courseStr : assignmentData}
+                    
+#                 else:
+#                     continue
+#                 optimalAssignmentsList.append(courseAssignmentObj) 
+#             response = {
+#                         "message": "Success. Optimal Schedule retrieved.", 
+#                         "optimalAssignmentsList": optimalAssignmentsList
+#                     } 
+#             return Response(data=response, status=status.HTTP_200_OK)
+                                              
+
 
 
 
