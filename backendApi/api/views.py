@@ -868,6 +868,7 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                 return Response(data=response, status=status.HTTP_200_OK)
             
             stressArray = allCourseObjStress
+
             try:
                 no_of_instances = len(stressArray)
 
@@ -876,13 +877,13 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                 else:
                     no_of_tracking_instances = 0
                     total_stress = 0
-          
+        
                     for stress in stressArray:
                         if stress != 0:
                             no_of_tracking_instances += 1
                             total_stress += stress
                             
-                    avg_stress = round(total_stress/no_of_instances, 2)
+                    avg_stress = round(total_stress/no_of_tracking_instances, 2)
                 response = {
                         "message": "Average time",  
                         "avg_stress": avg_stress,
