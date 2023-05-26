@@ -35,19 +35,28 @@ const CalendarBlock = ({ courseName, color, token, date }) => {
         }
         else {
           for (let i = 0; i < response.data.optimalAssignmentsList.length; i++) {
-/*             console.log('condition if sats', response.data.optimalAssignmentsList[i][courseName]) */
-            if (response.data.optimalAssignmentsList[i][courseName] != undefined & data.length < 1) {
-              setData(response.data.optimalAssignmentsList[i][courseName])
-              let sum = 0;
-              for (let j = 0; j < response.data.optimalAssignmentsList[i][courseName].length; j++) {
-                sum = sum + response.data.optimalAssignmentsList[i][courseName][j].hours;
+            if (response.data.optimalAssignmentsList[i][courseName] === undefined) {
+              //reset all values
+              setStudyTime(0)
+              setData('')
+            }
+            else {
+              console.log('condition if sats', response.data.optimalAssignmentsList[i][courseName])
+              if (response.data.optimalAssignmentsList[i][courseName] != undefined & data.length < 1) {
+                console.log('data if sats:', data)
+                console.log('studyTime if sats:', studyTime)
+                setData(response.data.optimalAssignmentsList[i][courseName])
+                let sum = 0;
+                for (let j = 0; j < response.data.optimalAssignmentsList[i][courseName].length; j++) {
+                  sum = sum + response.data.optimalAssignmentsList[i][courseName][j].hours;
+
+                }
+                if (`${studyTime}` != `${sum}`) {
+                  setStudyTime(sum)
+                }
+
 
               }
-              if (`${studyTime}` != `${sum}`) {
-                setStudyTime(sum)
-              }
-
-
             }
           }
         }
