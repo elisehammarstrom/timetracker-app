@@ -14,7 +14,7 @@ import BarChartIcon from '../../../assets/bar-graph.png';
 import Text from '../../components/Text';
 
 
-const ButtonMenu = ({ token }) => {
+const ButtonMenu = ({ token, screen }) => {
   const [courseIDs, setCourseIDs] = useState('');
   const [courses, setCourses] = useState([]);
 
@@ -85,8 +85,10 @@ const ButtonMenu = ({ token }) => {
     // Five buttons for the five different screens you can navigate to
     <View style={styles.container}>
 
-      <View style={styles.buttonContainer1}>
-        <TouchableOpacity activeOpacity={0.5} onPress={onComparePress}>
+      <View style={[styles.buttonContainer1, screen==='compare' ? {backgroundColor: '#605F5F', borderRadius: 5}: {backgroundColor: 'transparent'}]}>
+        <TouchableOpacity 
+        activeOpacity={0.5} 
+        onPress={onComparePress}>
           <Image
             source={LineChartIcon}
             style={[{ height: 120 * 0.3 }, { width: 120 * 0.3 }, { marginBottom: 10 }]}
@@ -95,7 +97,7 @@ const ButtonMenu = ({ token }) => {
           <Text style={styles.buttonIcon}>Compare</Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.buttonContainer2}>
+      <View style={[styles.buttonContainer2,screen==='reports' ? {backgroundColor: '#605F5F', borderRadius: 5}: {backgroundColor: 'transparent'}]}>
 
         <TouchableOpacity activeOpacity={0.5} onPress={onReportsPress}>
           <Image
@@ -109,7 +111,7 @@ const ButtonMenu = ({ token }) => {
       </View>
 
 
-      <View style={styles.buttonContainer3}>
+      <View style={[styles.buttonContainer3, screen==='timeTracking' ? {backgroundColor: '#605F5F', borderRadius: 5}: {backgroundColor: 'transparent'}]}>
         <TouchableOpacity activeOpacity={0.5} onPress={onTimetrackingPress}>
           <Image
             source={TimeIcon}
@@ -122,7 +124,7 @@ const ButtonMenu = ({ token }) => {
       </View>
 
 
-      <View style={styles.buttonContainer4}>
+      <View style={[styles.buttonContainer4, screen==='calendar' ? {backgroundColor: 'red', borderRadius: 5}: {backgroundColor: 'transparent'}]}>
         <TouchableOpacity activeOpacity={0.5} onPress={onCalendarPress}>
           <Image
             source={CalendarIcon}
@@ -135,7 +137,7 @@ const ButtonMenu = ({ token }) => {
       </View>
 
 
-      <View style={styles.buttonContainer5}>
+      <View style={[styles.buttonContainer5, screen==='evaluation' ? {backgroundColor: '#605F5F', borderRadius: 5}: {backgroundColor: 'transparent'}]}>
         <TouchableOpacity activeOpacity={0.5} onPress={onCourseStatsPress}>
           <Image
             source={EvaluationIcon}

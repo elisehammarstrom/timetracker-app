@@ -56,6 +56,7 @@ const YourReportsScreen = ({ route }) => {
 
 
   //Fetching the users study time on each course for the dates you have picked
+  if (startDate.length >0) {
   const formData = new FormData();
   formData.append('startDate', startDate)
   formData.append('endDate', endDate)
@@ -84,9 +85,12 @@ const YourReportsScreen = ({ route }) => {
       //console.error(error)
 
     })
+  }
 
   // Getting the avg stress for each course and the timespan chosen
   for (let i = 0; i < courseIDs.length; i++) {
+    if (startDate.length > 0) {
+    console.log("startDate= ", startDate)
     const formData = new FormData();
     formData.append('startDate', startDate)
     formData.append('endDate', endDate)
@@ -115,6 +119,7 @@ const YourReportsScreen = ({ route }) => {
         //console.error(error)
       })
   }
+}
   // Getting an array of the stress (rounded up), so we can compare to the stress smileys
   let stressNumbers = [];
   if (stress.length === courseIDs.length) {
@@ -295,7 +300,7 @@ const YourReportsScreen = ({ route }) => {
 
         <View>
           <ButtonMenu
-            screen="yourReports"
+            screen="reports"
             token={token}
           />
         </View>

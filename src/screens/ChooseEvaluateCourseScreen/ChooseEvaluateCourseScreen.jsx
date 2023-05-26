@@ -80,6 +80,7 @@ const EvaluateCourseScreen = ({ route }) => {
                 <ButtonMenu
                     screen="courseStats"
                     token={token}
+                    screen='evaluation'
                 />
             </View>
 

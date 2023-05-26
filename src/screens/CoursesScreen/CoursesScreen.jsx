@@ -43,7 +43,7 @@ const CourseStatsScreen = ({ route }) => {
             <View>
 
                 <ButtonMenu
-                    screen='courseStats'
+                    screen='evaluation'
                     token={token}
                 />
 
