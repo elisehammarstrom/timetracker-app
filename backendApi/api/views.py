@@ -878,8 +878,9 @@ class UserCourseTrackingViewset(viewsets.ModelViewSet):
                     total_stress = 0
           
                     for stress in stressArray:
-                        no_of_tracking_instances += 1
-                        total_stress += stress
+                        if stress != 0:
+                            no_of_tracking_instances += 1
+                            total_stress += stress
                             
                     avg_stress = round(total_stress/no_of_instances, 2)
                 response = {
