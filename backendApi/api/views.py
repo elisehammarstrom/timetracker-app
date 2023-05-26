@@ -2045,18 +2045,20 @@ class OptimalScheduleViewset(viewsets.ModelViewSet):
                 print("optimalAssignmentsIdList: ", optimalAssignmentsIdList)
                 assignmentData =[]
                 courseStr=thisCourse.courseTitle
-                for assignment in optimalAssignmentsIdList:
-                    optimalAssignment = OptimalSchedule.objects.get(id=assignment)
-                    optimalAssignmentObj ={"assignmentName": optimalAssignment.assignmentName, "hours": optimalAssignment.hours}
-                    assignmentData.append(optimalAssignmentObj)
+                if len(optimalAssignmentsIdList) > 0:
+                    for assignment in optimalAssignmentsIdList:
+                        optimalAssignment = OptimalSchedule.objects.get(id=assignment)
+                        optimalAssignmentObj ={"assignmentName": optimalAssignment.assignmentName, "hours": optimalAssignment.hours}
+                        assignmentData.append(optimalAssignmentObj)
                 courseEventListId = UserSchedule.objects.filter(user=userObject, course=thisCourse, startDateTime__contains=request.data.get('date')).values_list("id", flat=True)
                 #eventListCourse=[]
-                for item in courseEventListId:
-                    courseEvent= UserSchedule.objects.get(id=item)
-                    print("skillnad: ", courseEvent.event, " ", courseEvent.endDateTime -courseEvent.startDateTime)
-                    eventHours = round(((courseEvent.endDateTime -courseEvent.startDateTime).total_seconds())/(60*60)  + 0.49)
-                    courseEventData = {"assignmentName": courseEvent.event, "hours": eventHours }
-                    assignmentData.append(courseEventData)
+                if len(courseEventListId) > 0:
+                    for item in courseEventListId:
+                        courseEvent= UserSchedule.objects.get(id=item)
+                        print("skillnad: ", courseEvent.event, " ", courseEvent.endDateTime -courseEvent.startDateTime)
+                        eventHours = round(((courseEvent.endDateTime -courseEvent.startDateTime).total_seconds())/(60*60)  + 0.49)
+                        courseEventData = {"assignmentName": courseEvent.event, "hours": eventHours }
+                        assignmentData.append(courseEventData)
                 if assignmentData != []:
                     courseAssignmentObj={courseStr : assignmentData}
                     
