@@ -1209,7 +1209,7 @@ class UserViewset(viewsets.ModelViewSet):
             return Response(data=response, status=status.HTTP_200_OK)
         
     @action(detail=False, methods=['POST'])
-    def r(self, request, **extra_fields):
+    def remove_course(self, request, **extra_fields):
         if 'courseID' not in request.data: 
             response = {"message": "You must provide a courseID to get remove a course (courseID)"}
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
@@ -1719,7 +1719,7 @@ class UserScheduleViewset(viewsets.ModelViewSet):
 
             for item in CourseViewset.queryset:
                 if courseCode == item.courseCode:
-                    list_w_same_courseCode.append(item)
+                    list_w_same_courseCode.cdappend(item)
             if len(list_w_same_courseCode) > 1:
                 print("Many entries with same courseCode exists, taking the newest")
                 newestCourse = list_w_same_courseCode[0]
@@ -2045,7 +2045,7 @@ class OptimalScheduleViewset(viewsets.ModelViewSet):
             if len(optimalAssignmentsIdList) > 0:
                 for assignment in optimalAssignmentsIdList:
                     optimalAssignment = OptimalSchedule.objects.get(id=assignment)
-                    optimalAssignmentObj ={"assignmentName": optimalAssignment.assignmentName, "hours": optimalAssignment.hours}
+                    optimalAssignmentObj ={"assignmentName": optimalAssignment.assignmentName, "hours": optimalAssignment.hours}#, "who": "the University" }
                     assignmentData.append(optimalAssignmentObj)
             courseEventListId = UserSchedule.objects.filter(user=userObject, course=course, startDateTime__contains=request.data.get('date')).values_list("id", flat=True)
             #eventListCourse=[]
@@ -2054,7 +2054,7 @@ class OptimalScheduleViewset(viewsets.ModelViewSet):
                     courseEvent= UserSchedule.objects.get(id=item)
                     print("skillnad: ", courseEvent.event, " ", courseEvent.endDateTime -courseEvent.startDateTime)
                     eventHours = round(((courseEvent.endDateTime -courseEvent.startDateTime).total_seconds())/(60*60)  + 0.49)
-                    courseEventData = {"assignmentName": courseEvent.event, "hours": eventHours }
+                    courseEventData = {"assignmentName": courseEvent.event, "hours": eventHours}#, "who": "You" }
                     assignmentData.append(courseEventData)
         response = {
                     "message": "Success. Optimal Schedule retrieved.", 
