@@ -30,7 +30,7 @@ const CalendarOpScreen = ({ route }) => {
   var ourDate = new Date();
 
   //Change it so that it is 7 days in the future
-  var pastDate = ourDate.getDate() + 7;
+  var pastDate = ourDate.getDate() +7;
   ourDate.setDate(pastDate);
 
   const onCalendarPressed = () => {
@@ -186,7 +186,7 @@ const CalendarOpScreen = ({ route }) => {
       </View>
       <View>
         <ButtonMenu
-          screen="courseStats"
+          screen="calendar"
           token={token}
         />
       </View>

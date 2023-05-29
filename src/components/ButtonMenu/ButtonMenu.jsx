@@ -9,8 +9,8 @@ import TimeIcon from '../../../assets/timeIcon.png';
 import CalendarIcon from '../../../assets/calendar.png';
 import LineChartIcon from '../../../assets/chart.png';
 //Line chart icons created by ibobicon
-import BarChartIcon from '../../../assets/bar-graph.png';
-//Graph icons created by fjstudio
+import BarChartIcon from '../../../assets/bar-chart-2.png';
+//Bar chart icon created by Freepik
 import Text from '../../components/Text';
 
 
@@ -85,10 +85,8 @@ const ButtonMenu = ({ token, screen }) => {
     // Five buttons for the five different screens you can navigate to
     <View style={styles.container}>
 
-      <View style={[styles.buttonContainer1, screen==='compare' ? {backgroundColor: '#605F5F', borderRadius: 5}: {backgroundColor: 'transparent'}]}>
-        <TouchableOpacity 
-        activeOpacity={0.5} 
-        onPress={onComparePress}>
+      <View style={[styles.buttonContainer1, screen === 'compare' ? { backgroundColor: '#605F5F', borderRadius: 10 } : { backgroundColor: 'transparent' }]}>
+        <TouchableOpacity activeOpacity={0.5} onPress={onComparePress}>
           <Image
             source={LineChartIcon}
             style={[{ height: 120 * 0.3 }, { width: 120 * 0.3 }, { marginBottom: 10 }]}
@@ -97,9 +95,9 @@ const ButtonMenu = ({ token, screen }) => {
           <Text style={styles.buttonIcon}>Compare</Text>
         </TouchableOpacity>
       </View>
-      <View style={[styles.buttonContainer2,screen==='reports' ? {backgroundColor: '#605F5F', borderRadius: 5}: {backgroundColor: 'transparent'}]}>
+      <View style={[styles.buttonContainer2, screen === 'reports' ? { backgroundColor: '#605F5F', borderRadius: 10 } : { backgroundColor: 'transparent' }]}>
 
-        <TouchableOpacity activeOpacity={0.5} onPress={onReportsPress}>
+        <TouchableOpacity activeOpacity={0.5} onPress={onReportsPress} style={{ alignSelf: 'center' }}>
           <Image
             source={BarChartIcon}
             style={[{ height: 120 * 0.3 }, { width: 120 * 0.3 }, { marginBottom: 10 }]}
@@ -111,8 +109,8 @@ const ButtonMenu = ({ token, screen }) => {
       </View>
 
 
-      <View style={[styles.buttonContainer3, screen==='timeTracking' ? {backgroundColor: '#605F5F', borderRadius: 5}: {backgroundColor: 'transparent'}]}>
-        <TouchableOpacity activeOpacity={0.5} onPress={onTimetrackingPress}>
+      <View style={[styles.buttonContainer3, screen === 'timeTracking' ? { backgroundColor: '#605F5F', borderRadius: 10 } : { backgroundColor: 'transparent' }]}>
+        <TouchableOpacity activeOpacity={0.5} onPress={onTimetrackingPress} style={{ alignSelf: 'center' }}>
           <Image
             source={TimeIcon}
             style={[{ height: 120 * 0.3 }, { width: 120 * 0.3 }, { marginBottom: 10 }]}
@@ -123,9 +121,8 @@ const ButtonMenu = ({ token, screen }) => {
 
       </View>
 
-
-      <View style={[styles.buttonContainer4, screen==='calendar' ? {backgroundColor: 'red', borderRadius: 5}: {backgroundColor: 'transparent'}]}>
-        <TouchableOpacity activeOpacity={0.5} onPress={onCalendarPress}>
+      <View style={[styles.buttonContainer4, screen === 'calendar' ? { backgroundColor: '#605F5F', borderRadius: 10, width: 10 } : { backgroundColor: 'transparent' }]}>
+        <TouchableOpacity activeOpacity={0.5} onPress={onCalendarPress} style={{ alignSelf: 'center' }} >
           <Image
             source={CalendarIcon}
             style={[{ height: 120 * 0.3 }, { width: 120 * 0.3 }, { marginBottom: 10 }]}
@@ -137,7 +134,7 @@ const ButtonMenu = ({ token, screen }) => {
       </View>
 
 
-      <View style={[styles.buttonContainer5, screen==='evaluation' ? {backgroundColor: '#605F5F', borderRadius: 5}: {backgroundColor: 'transparent'}]}>
+      <View style={[styles.buttonContainer5, screen === 'evaluation' ? { backgroundColor: '#605F5F', borderRadius: 10 } : { backgroundColor: 'transparent' }]}>
         <TouchableOpacity activeOpacity={0.5} onPress={onCourseStatsPress}>
           <Image
             source={EvaluationIcon}
@@ -156,25 +153,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     backgroundColor: '#313131',
     position: 'absolute',
     bottom: 0,
     paddingTop: 10,
     borderTopWidth: 2,
-    borderTopColor: '#D3D0D0'
+    borderTopColor: '#D3D0D0',
+    paddingLeft: 15,
+    paddingRight: 15
+
   },
   buttonContainer1: {
     flex: 1,
-    paddingLeft: 30,
-    padding: 10
+    paddingTop: 10,
+    paddingLeft: 15
   },
 
   buttonContainer2: {
     flex: 1,
-    padding: 10
-
+    padding: 10,
   },
 
   buttonContainer3: {
@@ -184,13 +181,13 @@ const styles = StyleSheet.create({
   },
   buttonContainer4: {
     flex: 1,
-    padding: 10
+    padding: 10,
 
   },
   buttonContainer5: {
-    justifyContent: 'flex-end',
     flex: 1,
-    padding: 10
+    paddingTop: 10,
+    paddingLeft: 15
 
   },
   buttonIcon: {
