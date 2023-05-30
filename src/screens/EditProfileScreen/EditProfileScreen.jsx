@@ -52,7 +52,6 @@ const EditProfileScreen = ({ route }) => {
   const getYearGrades = (selectedProgramme) => {
     const formData = new FormData();
     formData.append('programmeName', selectedProgramme);
-    console.log('selectedProgramme:', selectedProgramme)
 
     axios({
       method: "post",
@@ -63,9 +62,7 @@ const EditProfileScreen = ({ route }) => {
       }
     })
       .then(function (response) {
-        console.log('yearGrades:', response.data.yearGrades)
         //handle success
-
         setYearGradeInfo(response.data)
         setYearGrades(response.data.yearGrades)
 
@@ -96,7 +93,7 @@ const EditProfileScreen = ({ route }) => {
         })
           .then(function (response) {
             //handle success
-            console.log(response.data);
+            // console.log(response.data);
 
           })
           .catch(function (response) {
@@ -119,7 +116,7 @@ const EditProfileScreen = ({ route }) => {
     })
       .then(function (response) {
         //handle success
-        console.log(response.data);
+        // console.log(response.data);
       })
       .catch(function (response) {
         //handle error

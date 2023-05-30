@@ -45,14 +45,13 @@ const SignUpScreen = () => {
         })
         .catch(function (response) {
             //handle error
-            //console.log(response);
+            console.log(response);
         });
 
     // Get the different year grades from the database
     const getYearGrades = (selectedProgramme) => {
         const formData = new FormData();
         formData.append('programmeName', selectedProgramme);
-        //console.log('selectedProgramme:', selectedProgramme)
 
         axios({
             method: "post",
@@ -71,7 +70,7 @@ const SignUpScreen = () => {
             })
             .catch(function (response) {
                 //handle error
-                //console.log(response);
+                console.log(response);
             });
 
 
@@ -107,7 +106,6 @@ const SignUpScreen = () => {
             Accept: 'application/json',
             'Content-Type': 'multipart/form-data',
         }
-        console.log("yearGradeClass= ", info.yearGradeClass)
         const formData = new FormData();
         formData.append('email', info.email);
         formData.append('last_name', info.last_name);
@@ -123,7 +121,6 @@ const SignUpScreen = () => {
                 timeout: 3000,
             })
             .then(async response => {
-                //console.log(response.data);
                 axios.post('http://127.0.0.1:8000/auth/login/', formData)
                     //If successful you get navigated to choose your courses
                     .then((res) => {
@@ -131,11 +128,11 @@ const SignUpScreen = () => {
 
                     })
                     .catch((error) => {
-                       // console.error(error)
+                       console.error(error)
                     })
             })
             .catch(error => {
-               // console.log("error in creating user :");
+               console.log("error in creating user :");
             })
     };
 

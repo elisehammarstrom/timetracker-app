@@ -75,7 +75,7 @@ const CourseScreen = ({ route }) => {
       })
         .then(function (response) {
           //handle success
-          console.log(response.data);
+          // console.log(response.data);
         })
         .catch(function (response) {
           //handle error
@@ -93,7 +93,7 @@ const CourseScreen = ({ route }) => {
         })
           .then(function (response) {
             //handle success
-            console.log(response.data);
+            // console.log(response.data);
           })
           .catch(function (response) {
             //handle error
@@ -106,7 +106,6 @@ const CourseScreen = ({ route }) => {
     // This is mainly for when the student want to change courses
     for (let i = 0; i < testCourses.length; i++) {
       if (courses.includes(testCourses[i].id)) {
-        console.log("samma")
       } else {
         const formData = new FormData();
         formData.append('courseID', testCourses[i].id);
@@ -122,7 +121,7 @@ const CourseScreen = ({ route }) => {
         })
           .then(function (response) {
             //handle success
-            console.log(response.data);
+            // console.log(response.data);
           })
           .catch(function (response) {
             //handle error

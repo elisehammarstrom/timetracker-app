@@ -37,7 +37,6 @@ const ChooseAssignmentScreen = ({route}) => {
           console.log(response);
         });
 
- console.log("assignments= ", assignments)
     // Just a line that separate each item in the list
     const ItemSeparatorView = () => {
         return (
@@ -51,7 +50,6 @@ const ChooseAssignmentScreen = ({route}) => {
         />
         );
     };
-    console.log("data = ", data)
 
     function pickAssignment(selectedAssignment) {
         // If you press a box that is already checked you remove it
@@ -66,7 +64,6 @@ const ChooseAssignmentScreen = ({route}) => {
 
     const onReturnPressed = () => {
         for (let i=0; i<assignments.length;i++) {
-            console.log(assignments[i].assignmentId)
             var formData = new FormData();
             formData.append('assignmentID', assignments[i].assignmentId);
 
@@ -81,7 +78,7 @@ const ChooseAssignmentScreen = ({route}) => {
               })
                 .then(function (response) {
                   //handle success
-                  console.log(response.data)
+                //   console.log(response.data)
                 })
                 .catch(function (response) {
                   //handle error
@@ -98,7 +95,7 @@ const ChooseAssignmentScreen = ({route}) => {
             })
             .then(function (response) {
                 //handle success
-                console.log(response.data)
+                // console.log(response.data)
         
             })
             .catch(function (response) {

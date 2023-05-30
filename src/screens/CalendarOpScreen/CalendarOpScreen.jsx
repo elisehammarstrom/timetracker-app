@@ -39,7 +39,6 @@ const CalendarOpScreen = ({ route }) => {
 
   }
 
-  // console.log("date= ", date)
   var year = date.getFullYear()
   var month = date.getMonth() + 1
   var day = date.getDate()
@@ -54,7 +53,7 @@ const CalendarOpScreen = ({ route }) => {
   })
     .then(function (response) {
       //handle success
-      console.log(response.data)
+      // console.log(response.data)
 
     })
     .catch(function (response) {
@@ -82,8 +81,6 @@ const CalendarOpScreen = ({ route }) => {
   else {
     var newDate = year + '-' + month + '-' + day
   }
-
-  console.log('newDate', newDate)
 
   const navigation = useNavigation();
 

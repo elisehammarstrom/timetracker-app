@@ -48,7 +48,6 @@ const CustomRadioButton = ({ token, question, answerID, submit, firstOption, sec
       formData.append('answerText', answer[i])
       formData.append('answerID', answerid[i])
       formData.append('answerNumber', answernumber[i])
-      console.log("----formData", formData)
 
       // We update the already created course evaluation with answers
       axios({
@@ -62,7 +61,7 @@ const CustomRadioButton = ({ token, question, answerID, submit, firstOption, sec
       })
         .then(function (response) {
           //handle success
-          console.log(response.data);
+          // console.log(response.data);
         })
         .catch(function (response) {
           //handle error

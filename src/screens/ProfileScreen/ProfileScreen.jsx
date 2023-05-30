@@ -33,7 +33,7 @@ const ProfileScreen = ({ route }) => {
 
     })
     .catch((error) => {
-      //console.error(error)
+      console.error(error)
     })
   // Navigate to edit screens
   const onEditPressed = () => {
@@ -64,7 +64,7 @@ const ProfileScreen = ({ route }) => {
       })
       .catch(function (response) {
         //handle error
-       // console.log(response);
+       console.log(response);
       });
 
   }
@@ -104,8 +104,6 @@ const ProfileScreen = ({ route }) => {
           <Text style={styles.label}><B>Programme:</B> {profile.programmeName}</Text>
 
           <Text style={styles.label}><B>Year Grade:</B> {profile.yearGrade}</Text>
-
-          {/* <Text style={styles.label}><B>Language</B> {profile.language}</Text> */}
 
 
           <CustomButton

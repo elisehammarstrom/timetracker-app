@@ -50,12 +50,12 @@ const ButtonMenu = ({ token, screen }) => {
 
         })
         .catch((error) => {
-          //console.error(error)
+          console.error(error)
         })
 
     })
     .catch((error) => {
-      // console.error(error)
+      console.error(error)
     })
 
   const navigation = useNavigation();

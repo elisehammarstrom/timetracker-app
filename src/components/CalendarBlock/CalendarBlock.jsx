@@ -29,14 +29,12 @@ const CalendarBlock = ({ courseName, color, token, date, courseID }) => {
         //handle success
         if (response.data.optimalAssignmentsList.length === 0) {
           //reset all values
-          console.log('inne i reset')
 
 
           setStudyTime(0)
           setData('')
         }
         else if (`${data}` != `${response.data.optimalAssignmentsList}`) { 
-          console.log('response data', response.data.optimalAssignmentsList)
           
 
         setData(response.data.optimalAssignmentsList)
@@ -48,9 +46,6 @@ const CalendarBlock = ({ courseName, color, token, date, courseID }) => {
         if (`${studyTime}` != `${sum}`) {
           setStudyTime(sum)
         }
-        console.log('data', data)
-        console.log('studyTime', studyTime)
-
       }
 
       })

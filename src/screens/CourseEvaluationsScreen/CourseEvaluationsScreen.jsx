@@ -78,7 +78,6 @@ const CourseEvaluationsScreen = ({ route }) => {
                             setStress(0)
                         }
                     }
-                    console.log("stress= ", stress)
                 })
                 .catch(function (response) {
                     //handle error

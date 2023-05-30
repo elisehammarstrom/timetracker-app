@@ -82,7 +82,7 @@ const YourReportsScreen = ({ route }) => {
       }
     })
     .catch((error) => {
-      //console.error(error)
+      console.error(error)
 
     })
   }
@@ -90,7 +90,6 @@ const YourReportsScreen = ({ route }) => {
   // Getting the avg stress for each course and the timespan chosen
   for (let i = 0; i < courseIDs.length; i++) {
     if (startDate.length > 0) {
-    console.log("startDate= ", startDate)
     const formData = new FormData();
     formData.append('startDate', startDate)
     formData.append('endDate', endDate)
@@ -116,7 +115,7 @@ const YourReportsScreen = ({ route }) => {
 
       })
       .catch((error) => {
-        //console.error(error)
+        console.error(error)
       })
   }
 }

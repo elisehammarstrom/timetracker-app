@@ -71,25 +71,17 @@ const UntrackedScreen = ({ route }) => {
         var month = '0' + month
         var day = '0' + day
         var newDate = year + '-' + month + '-' + day
-       // console.log(newDate)
-        //console.log('type:', typeof (newDate))
     }
     else if (day < 10) {
         var day = '0' + day
         var newDate = year + '-' + month + '-' + day
-        //console.log(newDate)
-        //console.log('type:', typeof (newDate))
     }
     else if (month < 10) {
         var month = '0' + month
         var newDate = year + '-' + month + '-' + day
-        //console.log(newDate)
-        //console.log('type:', typeof (newDate))
     }
     else {
         var newDate = year + '-' + month + '-' + day
-        //console.log(newDate)
-        //console.log('type:', typeof (newDate))
     }
 
     const onClosedPress = () => {
@@ -105,7 +97,6 @@ const UntrackedScreen = ({ route }) => {
         for (let i = 0; i < courses.length; i++) {
             if (selectedCourse === courses[i]) {
                 let time = selectedHour + ':' + selectedMinute + ':' + '00';
-                //console.log("date= ", newDate)
                 const formData = new FormData();
                 formData.append('courseID', courseIDs[i]);
                 formData.append('date', newDate);
@@ -122,13 +113,12 @@ const UntrackedScreen = ({ route }) => {
                 })
                     .then(function (response) {
                         //handle success
-                       // console.log(response.data);
                         alert('Time tracked');
 
                     })
                     .catch(function (response) {
                         //handle error
-                        //console.log(response);
+                        console.log(response);
                     });
 
 

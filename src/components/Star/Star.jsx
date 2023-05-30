@@ -46,7 +46,7 @@ const Star = ({token, question, answerID, submit}) => {
         })
         .then(function (response) {
             //handle success
-            console.log(response.data);
+            // console.log(response.data);
         })
         .catch(function (response) {
             //handle error

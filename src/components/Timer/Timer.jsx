@@ -33,7 +33,6 @@ const Timer = ({ courseID, courseName, color, token }) => {
   })
     .then(function (response) {
       //handle success
-      // console.log(response.data.results)
       for (let i = 0; i < Object.keys(response.data.results).length; i++) {
         if (response.data.results[i].courseID === courseID) {
           if (duration.length < 1) {
@@ -90,7 +89,7 @@ const Timer = ({ courseID, courseName, color, token }) => {
       })
         .then(function (response) {
           //handle success
-          console.log(response.data);
+          // console.log(response.data);
         })
         .catch(function (response) {
           //handle error

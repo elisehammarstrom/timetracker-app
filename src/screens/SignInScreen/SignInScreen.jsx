@@ -46,7 +46,6 @@ const SignInScreen = () => {
 
             })
             .catch(error => {
-                //console.log("error from image :");
                 alert('Wrong email or password')
 
             })
