@@ -168,7 +168,6 @@ const styles = StyleSheet.create({
   },
 
   sectionStyle: {
-    /*    flex: 5, */
     flexDirection: 'row',
     alignIems: 'center',
     justifyContent: 'space-between',

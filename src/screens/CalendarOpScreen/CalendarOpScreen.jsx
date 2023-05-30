@@ -95,7 +95,7 @@ const CalendarOpScreen = ({ route }) => {
 
 
       <View style={styles.topContainer}>
-        <Title style={styles.title}>Recommended Study Hours</Title>
+        <Title style={styles.title}>Recommended study hours</Title>
 
 
       </View>

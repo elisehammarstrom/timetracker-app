@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
   },
   customButtonContainer: {
     paddingHorizontal: 50,
-    marginBottom: 80
+    marginBottom: 100
   },
   timeLoop: {
     width: '100%',

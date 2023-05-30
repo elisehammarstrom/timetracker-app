@@ -98,6 +98,7 @@ const CourseStatsScreen = ({ route }) => {
                         if (`${avgData}` != `${response.data.weekDurationArray}` ) {
                             setAvgData(response.data.weekDurationArray)
                             setLabel(response.data.weekNoArray)
+                            console.log(response.data.weekDurationArray)
                         }
                     })
                     .catch(function (response) {
@@ -201,7 +202,7 @@ const CourseStatsScreen = ({ route }) => {
 
     return (
         <View style={styles.container}>
-            <Title style={styles.title}>Compare Course Stats</Title>
+            <Title style={styles.title}>Compare course stats</Title>
 
             <View style={styles.selectListContainer}>
 
@@ -306,10 +307,12 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     yourTime: {
-        backgroundColor: '#AC7CE4'
+        backgroundColor: '#AC7CE4',
+        borderRadius: 5,
     },
     averageTime: {
-        backgroundColor: '#5987CC'
+        backgroundColor: '#5987CC',
+        borderRadius: 5,
     },
     backArrow: {
         width: '10%',

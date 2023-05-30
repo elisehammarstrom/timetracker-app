@@ -56,48 +56,13 @@ const YourReportsScreen = ({ route }) => {
 
 
   //Fetching the users study time on each course for the dates you have picked
-  if (startDate.length >0) {
-  const formData = new FormData();
-  formData.append('startDate', startDate)
-  formData.append('endDate', endDate)
-  axios({
-    method: "post",
-    url: "http://127.0.0.1:8000/api/tracking/get_user_course_study_time/",
-    data: formData,
-    headers: {
-      'Content-Type': 'multipart/form-data',
-      'Authorization': `token ` + token
-    }
-  })
-    .then((res) => {
-      // We push the data of the timestudied and the courses the an array each
-      for (let i = 0; i < res.data.results.length; i++) {
-        fetchedTimeStudied.push(res.data.results[i].timeStudied)
-        fetchedCourses.push(res.data.results[i].Course)
-      }
-      // Setting the courses and timestudied to the fetched data
-      if (`${fetchedTimeStudied}` != `${timeStudied}`) {
-        setCourses(fetchedCourses);
-        setTimeStudied(fetchedTimeStudied);
-      }
-    })
-    .catch((error) => {
-      console.error(error)
-
-    })
-  }
-
-  // Getting the avg stress for each course and the timespan chosen
-  for (let i = 0; i < courseIDs.length; i++) {
-    if (startDate.length > 0) {
+  if (startDate.length > 0) {
     const formData = new FormData();
     formData.append('startDate', startDate)
     formData.append('endDate', endDate)
-    formData.append('courseID', courseIDs[i])
-
     axios({
       method: "post",
-      url: "http://127.0.0.1:8000/api/tracking/get_user_stress_period/",
+      url: "http://127.0.0.1:8000/api/tracking/get_user_course_study_time/",
       data: formData,
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -105,20 +70,55 @@ const YourReportsScreen = ({ route }) => {
       }
     })
       .then((res) => {
-        // fetching the stress and setting it to a number for each course
-        if (stress.length === 0) {
-          fetchedStress.push(res.data)
-          if (stress != fetchedStress) {
-            setStress(fetchedStress)
-          }
+        // We push the data of the timestudied and the courses the an array each
+        for (let i = 0; i < res.data.results.length; i++) {
+          fetchedTimeStudied.push(res.data.results[i].timeStudied)
+          fetchedCourses.push(res.data.results[i].Course)
         }
-
+        // Setting the courses and timestudied to the fetched data
+        if (`${fetchedTimeStudied}` != `${timeStudied}`) {
+          setCourses(fetchedCourses);
+          setTimeStudied(fetchedTimeStudied);
+        }
       })
       .catch((error) => {
         console.error(error)
+
       })
   }
-}
+
+  // Getting the avg stress for each course and the timespan chosen
+  for (let i = 0; i < courseIDs.length; i++) {
+    if (startDate.length > 0) {
+      const formData = new FormData();
+      formData.append('startDate', startDate)
+      formData.append('endDate', endDate)
+      formData.append('courseID', courseIDs[i])
+
+      axios({
+        method: "post",
+        url: "http://127.0.0.1:8000/api/tracking/get_user_stress_period/",
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `token ` + token
+        }
+      })
+        .then((res) => {
+          // fetching the stress and setting it to a number for each course
+          if (stress.length === 0) {
+            fetchedStress.push(res.data)
+            if (stress != fetchedStress) {
+              setStress(fetchedStress)
+            }
+          }
+
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+    }
+  }
   // Getting an array of the stress (rounded up), so we can compare to the stress smileys
   let stressNumbers = [];
   if (stress.length === courseIDs.length) {
@@ -292,17 +292,18 @@ const YourReportsScreen = ({ route }) => {
                 </TouchableOpacity>
 
               ))}
+
             </View>
           </ScrollView>
         </View>
 
 
-        <View>
-          <ButtonMenu
-            screen="reports"
-            token={token}
-          />
-        </View>
+
+        <ButtonMenu
+          screen="reports"
+          token={token}
+        />
+
 
       </View>
     )
@@ -337,10 +338,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: '5%',
     margin: 4,
-    alignItems: 'center'
+    marginBottom: 10,
+    alignItems: 'center',
+    borderRadius: 5,
   },
   dataContainer: {
     alignItems: 'center',
+    marginTop: 40
   },
   dataText: {
     fontSize: 18,
@@ -362,7 +366,7 @@ const styles = StyleSheet.create({
   data: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '85%'
+    width: '85%',
   },
   scrollView: {
     width: Dimensions.get('window').width,
@@ -370,8 +374,8 @@ const styles = StyleSheet.create({
   center: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 40
-  }
+    marginBottom: 380
+  },
 })
 
 export default YourReportsScreen;

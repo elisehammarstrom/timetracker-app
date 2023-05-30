@@ -15,7 +15,7 @@ const CalendarBlock = ({ courseName, color, token, date, courseID }) => {
   formData.append('courseID', courseID);
 
   setTimeout(() => {
-    
+
     axios({
       method: "post",
       url: "http://127.0.0.1:8000/api/optimalSchedule/get_optimal_schedule_by_date/",
@@ -29,65 +29,63 @@ const CalendarBlock = ({ courseName, color, token, date, courseID }) => {
         //handle success
         if (response.data.optimalAssignmentsList.length === 0) {
           //reset all values
-
-
           setStudyTime(0)
           setData('')
         }
-        else if (`${data}` != `${response.data.optimalAssignmentsList}`) { 
-          
+        //to update the schedule if there are new values
+        else if (`${data}` != `${response.data.optimalAssignmentsList}`) {
+          setData(response.data.optimalAssignmentsList)
+          let sum = 0;
+          //add study time to sum
+          for (let j = 0; j < response.data.optimalAssignmentsList.length; j++) {
+            sum = sum + response.data.optimalAssignmentsList[j].hours;
 
-        setData(response.data.optimalAssignmentsList)
-        let sum = 0;
-        for (let j = 0; j < response.data.optimalAssignmentsList.length; j++) {
-          sum = sum + response.data.optimalAssignmentsList[j].hours;
-
+          }
+          if (`${studyTime}` != `${sum}`) {
+            setStudyTime(sum)
+          }
         }
-        if (`${studyTime}` != `${sum}`) {
-          setStudyTime(sum)
-        }
-      }
 
       })
-      .catch (function (response) {
-  //handle error
-  console.log(response);
-});
+      .catch(function (response) {
+        //handle error
+        console.log(response);
+      });
   }, 100);
 
-const onSelect = (item) => {
-  setSelectedItem(item)
-}
+  const onSelect = (item) => {
+    setSelectedItem(item)
+  }
 
 
-return (
-  <SafeAreaView>
+  return (
+    <SafeAreaView>
 
 
-    <View style={styles.container}>
+      <View style={styles.container}>
 
-      <View style={[styles.sectionStyle, styles[`sectionStyle_${color}`]]}>
-        <View style={styles.titleContainer}>
+        <View style={[styles.sectionStyle, styles[`sectionStyle_${color}`]]}>
+          <View style={styles.titleContainer}>
 
-          <DropDown
-            value={selectedItem}
-            data={data}
-            courseName={courseName}
-            onSelect={onSelect}
-          />
-          <Text style={styles.title}>{studyTime}h</Text>
+            <DropDown
+              value={selectedItem}
+              data={data}
+              courseName={courseName}
+              onSelect={onSelect}
+            />
+            <Text style={styles.title}>{studyTime}h</Text>
+
+          </View>
+
+
 
         </View>
 
-
-
       </View>
 
-    </View>
 
-
-  </SafeAreaView>
-)
+    </SafeAreaView>
+  )
 }
 
 const styles = StyleSheet.create({
